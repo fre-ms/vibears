@@ -19,4 +19,4 @@
 \OCP\Util::addStyle('pulse', 'embed');
 \OCP\Util::addScript('pulse', 'pulse-embed');
 ?>
-<div id="pulse-embed-root" class="pulse-embed-loading">Pulse …</div>
+<div id="pulse-embed-root" class="pulse-embed-loading">vibeARS …</div>

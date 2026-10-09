@@ -1,6 +1,7 @@
 <?php
 
 // SPDX-FileCopyrightText: 2026 hotochan123
+// SPDX-FileCopyrightText: 2026 fre.ms
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 declare(strict_types=1);
@@ -26,7 +27,7 @@ class AddinManifest {
      */
     public const ADDIN_ID = 'c941db89-f0ae-45c6-b685-e94eecc47c91';
 
-    public const SUPPORT_URL = 'https://github.com/hotochan123/nextcloud-pulse';
+    public const SUPPORT_URL = 'https://github.com/fre-ms/vibears';
 
     /**
      * @param string $origin    scheme+host of the instance, e.g. https://cloud.example.com
@@ -56,11 +57,11 @@ class AddinManifest {
         return <<<XML
         <?xml version="1.0" encoding="UTF-8"?>
         <!--
-          Pulse — Content-Add-in für PowerPoint (Live-Umfrage auf der Folie).
+          vibeARS — Content-Add-in für PowerPoint (Live-Umfrage auf der Folie).
 
           VON DIESER NEXTCLOUD ERZEUGT, nicht von Hand bearbeiten: die Adressen
           unten stammen aus der Instanz, von der die Datei geladen wurde. Neu
-          herunterladen unter Pulse -> Deck-Menü -> „PowerPoint add-in".
+          herunterladen unter vibeARS -> Deck-Menü -> „PowerPoint add-in".
           Einbauanleitung: {$support}/blob/main/office-addin/README.md
         -->
         <OfficeApp
@@ -70,13 +71,13 @@ class AddinManifest {
             xsi:type="ContentApp">
           <Id>{$id}</Id>
           <Version>{$ver}</Version>
-          <ProviderName>hotochan123</ProviderName>
+          <ProviderName>vibeARS</ProviderName>
           <DefaultLocale>en-US</DefaultLocale>
-          <DisplayName DefaultValue="Pulse live poll">
-            <Override Locale="de-de" Value="Pulse Live-Umfrage"/>
+          <DisplayName DefaultValue="vibeARS live poll">
+            <Override Locale="de-de" Value="vibeARS Live-Umfrage"/>
           </DisplayName>
-          <Description DefaultValue="Shows a live Pulse poll or quiz on the slide itself. Runs against your own Nextcloud.">
-            <Override Locale="de-de" Value="Zeigt eine Pulse-Umfrage oder ein Quiz live auf der Folie. Läuft gegen die eigene Nextcloud."/>
+          <Description DefaultValue="Shows a live vibeARS poll or quiz on the slide itself. Runs against your own Nextcloud.">
+            <Override Locale="de-de" Value="Zeigt eine vibeARS-Umfrage oder ein Quiz live auf der Folie. Läuft gegen die eigene Nextcloud."/>
           </Description>
           <SupportUrl DefaultValue="{$support}"/>
           <!-- Alle Navigationsziele des Add-ins liegen auf dieser Domain. -->

@@ -1,5 +1,6 @@
 <!--
   - SPDX-FileCopyrightText: 2026 hotochan123
+  - SPDX-FileCopyrightText: 2026 fre.ms
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
@@ -12,7 +13,7 @@
 		-->
 		<section v-if="phase === 'start'" class="start" :class="{ 'has-rooms': myRooms.length }">
 			<div class="start-intro">
-				<p class="eyebrow">Pulse</p>
+				<p class="eyebrow">vibeARS</p>
 				<h1>{{ t('pulse', 'Live poll or quiz') }}</h1>
 				<p class="lede">{{ t('pulse', 'Build a deck of questions, project code and QR, and click through it during your talk.') }}</p>
 
@@ -31,6 +32,17 @@
 				<!-- Joining is the rarer action and therefore appears as a
 				     text button, not as a second outlined button next to Start. -->
 				<a class="start-join" :href="joinPagePath" target="_blank" rel="noopener">{{ t('pulse', 'Join a room') }}</a>
+
+				<!-- A deck file (Markdown with a YAML header, see "Export as Markdown"
+				     in a room's menu) becomes a new room. The file input stays hidden
+				     behind a labelled button; the text is read in the browser and sent
+				     as JSON, so the server sees one string, not an upload. -->
+				<p class="start-import">
+					<label class="pulse-btn is-secondary is-sm start-import-pick" :class="{ 'is-disabled': busy || importBusy }">
+						<PulseIcon name="download" size="1em" class="ic-flip-v" /> {{ importBusy ? t('pulse', 'Importing …') : t('pulse', 'Import a deck (Markdown)') }}
+						<input ref="importInput" class="start-import-input" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" :disabled="busy || importBusy" @change="importDeck">
+					</label>
+				</p>
 			</div>
 
 			<div v-if="myRooms.length" class="myrooms">
@@ -124,7 +136,7 @@
 						<span class="deck-num">{{ i + 1 }}</span>
 						<div class="deck-body">
 							<button class="deck-q" :title="deckLocked ? null : t('pulse', 'Edit')" :disabled="deckLocked" @click="openComposer(p)">{{ p.question }}</button>
-							<span class="deck-type"><span v-if="p.image" class="deck-imgflag" :title="t('pulse', 'This question has an image')">{{ t('pulse', 'Image') }}</span><span class="deck-tico" :class="'is-' + typeTag(p.type).c">{{ typeTag(p.type).t }}</span>{{ typeLabel(p.type) }}<template v-if="p.type === 'scale'"> · <b class="deck-submode">{{ scaleModeLabel(p) }}</b></template><span v-if="isQuiz"><template v-if="showRowLimit"> · {{ p.timeLimit }}s</template> · {{ answerHint(p) }}</span></span>
+							<span class="deck-type"><span v-if="p.image" class="deck-imgflag" :title="t('pulse', 'This question has an image')">{{ t('pulse', 'Image') }}</span><span class="deck-tico" :class="'is-' + typeTag(p.type).c">{{ typeTag(p.type).t }}</span>{{ typeLabel(p.type) }}<template v-if="p.type === 'scale'"> · <b class="deck-submode">{{ scaleModeLabel(p) }}</b></template><span v-if="isQuiz"><template v-if="showRowLimit"> · {{ p.timeLimit ? p.timeLimit + 's' : t('pulse', 'no time limit') }}</template> · {{ answerHint(p) }}</span></span>
 						</div>
 						<span v-if="p.id === currentId" class="pulse-chip is-accent deck-current-chip">{{ t('pulse', 'Current') }}</span>
 						<button v-if="!isPaced" class="pulse-btn is-sm is-secondary" @click="present(p.id)"><PulseIcon name="play" size="1em" /> {{ t('pulse', 'Show') }}</button>
@@ -317,11 +329,16 @@
 							{{ t('pulse', 'words per person') }}</label>
 					</template>
 
+					<!-- 0 = no limit: the question runs until the moderator reveals or
+					     leaves it (DeckService::NO_LIMIT). Without a clock there are no
+					     speed points — a correct answer earns the full base points. -->
 					<label v-if="isQuiz" class="words-hint quiz-time">{{ t('pulse', 'Time per question') }}
 						<select v-model.number="draft.timeLimit" class="pinput pinput--sel">
-							<option v-for="n in [10, 15, 20, 30, 45, 60, 90]" :key="n" :value="n">{{ n }} s</option>
+							<option v-for="n in [10, 15, 20, 30, 45, 60, 90, 120, 180, 300]" :key="n" :value="n">{{ n }} s</option>
+							<option :value="0">{{ t('pulse', 'No limit — you end the question') }}</option>
 						</select>
 					</label>
+					<p v-if="isQuiz && draft.timeLimit === 0" class="quiz-hint">{{ isPaced ? t('pulse', 'Without a time limit this question can be skipped, and a correct answer earns the full points regardless of speed.') : t('pulse', 'The question stays open until you reveal it or move on. A correct answer earns the full points regardless of speed.') }}</p>
 
 					<div class="composer-actions">
 						<button class="pulse-btn is-primary" :disabled="busy" @click="saveQuestion">{{ busy ? '…' : (editingId ? t('pulse', 'Save') : t('pulse', 'Add to the deck')) }}</button>
@@ -521,7 +538,7 @@
  * repository (see "References in code comments" in the README).
  */
 import axios from '@nextcloud/axios'
-import { MOD_TIMEOUT, roomsApi, roomApi, pollImage, participantPage, joinPage, screenPage, roomPage, home, addinManifest, openProjector } from './util/routes.js'
+import { MOD_TIMEOUT, roomsApi, roomApi, importApi, pollImage, participantPage, joinPage, screenPage, roomPage, home, addinManifest, openProjector } from './util/routes.js'
 import { t, n } from './util/l10n.js'
 import { showError, showSuccess, serverMessage } from './toast.js'
 import draggable from 'vuedraggable'
@@ -537,7 +554,7 @@ import CountdownRing from './components/CountdownRing.vue'
 import IntakeBoard from './components/IntakeBoard.vue'
 import { pulseConfirm } from './util/confirm.js'
 import { formatCode, remainingSecs, paceStateChip, fmtAgo } from './util/format.js'
-import { csvUrl } from './util/csv.js'
+import { csvUrl, downloadMarkdown } from './util/csv.js'
 import { isPacedRoom, windowState, progressCounts } from './util/pace.js'
 import { QUESTION_TYPES, emptyDraft, typeOptionsFor, typeTag, scaleModeLabel, typeLabel, answerHint, lossText } from './util/question-types.js'
 import pollingMixin from './mixins/polling.js'
@@ -568,6 +585,7 @@ export default {
 			demoBusy: false,
 			online: true,
 			busy: false,
+			importBusy: false, // a deck file is being read and sent
 			isFullscreen: false,
 			joinOpen: false,   // join panel — a state, not a column (§9.4)
 			frameScale: 0.5,   // scale of the canvas preview (1280×720 -> box)
@@ -811,6 +829,7 @@ export default {
 			}
 			if (this.deck.length) {
 				items.push({ key: 'summary', label: t('pulse', 'Summary'), icon: 'poll', act: this.openSummary })
+				items.push({ key: 'md', label: t('pulse', 'Export as Markdown'), icon: 'download', act: this.exportMarkdown })
 			}
 			// Self-paced mode has neither interim standings to show nor a
 			// "Reveal at the end" — the window governs both.
@@ -1085,6 +1104,34 @@ export default {
 				showSuccess(t('pulse', 'Join link copied.'))
 			} catch (e) {
 				showError(t('pulse', 'Could not copy the link.'))
+			}
+		},
+		// The deck as a file: Markdown with a YAML header, questions with their
+		// solutions and settings. A download, like the CSV.
+		exportMarkdown() {
+			if (this.room) downloadMarkdown(this.room.code)
+		},
+		// A deck file becomes a new room (POST /import). The file is read here
+		// and sent as text; the server answers with the room, which we open
+		// like one from "My rooms". The caps, the rate limit and every rule
+		// of the composer say why an import fails (400 with a message that
+		// names the line or the question).
+		async importDeck(event) {
+			const input = event.target
+			const file = input && input.files && input.files[0]
+			if (!file) return
+			this.importBusy = true
+			try {
+				const markdown = await file.text()
+				const { data } = await axios.post(importApi(), { markdown })
+				showSuccess(t('pulse', 'Imported: {room}', { room: data.title || this.spaced(data.code) }))
+				await this.openRoom(data.code)
+			} catch (e) {
+				showError(serverMessage(e, t('pulse', 'Could not import the file.')))
+			} finally {
+				this.importBusy = false
+				// The same file again counts as a change next time.
+				input.value = ''
 			}
 		},
 		// Copy a room as a template: the server creates the copy with the same
@@ -1587,7 +1634,8 @@ export default {
 				const d = emptyDraft()
 				d.type = poll.type
 				d.question = poll.question
-				d.timeLimit = poll.timeLimit || 30
+				// 0 is a value of its own (no limit), not "unset".
+				d.timeLimit = typeof poll.timeLimit === 'number' ? poll.timeLimit : 30
 				const spec = QUESTION_TYPES[poll.type]
 				if (spec) spec.toDraft(poll, poll.answerKey || {}, d)
 				d.imageExisting = poll.image || ''
@@ -1703,6 +1751,7 @@ export default {
 		roomMenu(r) {
 			return [
 				{ key: 'copy', label: t('pulse', 'Copy as a template'), icon: 'copy', disabled: this.busy, act: () => this.duplicateRoom(r) },
+				{ key: 'md', label: t('pulse', 'Export as Markdown'), icon: 'download', disabled: !r.pollCount, act: () => downloadMarkdown(r.code) },
 				{ key: 'del', label: t('pulse', 'Delete room'), icon: 'trash', act: () => this.deleteRoom(r), danger: true },
 			]
 		},
@@ -1841,7 +1890,7 @@ export default {
 		 */
 		downloadAddin() {
 			window.location.href = addinManifest()
-			showSuccess(t('pulse', 'Manifest downloaded. Register it in PowerPoint once — see the add-in guide in the Pulse README.'))
+			showSuccess(t('pulse', 'Manifest downloaded. Register it in PowerPoint once — see the add-in guide in the vibeARS README.'))
 		},
 		goHome() {
 			this.stopPolling()
@@ -2124,6 +2173,13 @@ export default {
    and should not compete with Start (§9.5). */
 .start-join { display: inline-block; margin-top: 18px; font-size: 15px; font-weight: 600; color: var(--pulse-primary); text-decoration: underline; text-underline-offset: 3px; }
 .start-join:hover { color: var(--pulse-primary-hover); }
+/* Import: a labelled button in front of the (visually hidden) file input. */
+.start-import { margin: 22px 0 0; }
+.start-import-pick { position: relative; cursor: pointer; }
+.start-import-pick.is-disabled { opacity: 0.6; cursor: default; }
+.start-import-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.start-import-input:disabled { cursor: default; }
+.ic-flip-v { transform: scaleY(-1); }
 
 /* My rooms */
 .myrooms { text-align: left; }

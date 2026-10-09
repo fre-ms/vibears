@@ -1,9 +1,11 @@
 /**
  * SPDX-FileCopyrightText: 2026 hotochan123
+ * SPDX-FileCopyrightText: 2026 fre.ms
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Pulse — the moderator's CSV downloads with a request token.
+ * vibeARS — the moderator's downloads (CSV, the deck as Markdown) with a
+ * request token.
  *
  * The export route only has #[NoAdminRequired]; Nextcloud's SecurityMiddleware
  * therefore requires a request token. An <a href download> or
@@ -11,7 +13,7 @@
  * CHANGELOG 0.17 fixed for the image route). Request::passesCSRFCheck
  * also reads `requesttoken` from the query, though, so that is where it goes.
  */
-import { roomApi } from './routes.js'
+import { roomApi, roomMarkdown } from './routes.js'
 import { getRequestToken } from '@nextcloud/auth'
 
 /**
@@ -35,4 +37,21 @@ export function csvUrl(code, view = '') {
  */
 export function downloadCsv(code, view = '') {
 	window.location.assign(csvUrl(code, view))
+}
+
+/**
+ * URL of the deck file (Markdown with a YAML header), token read at call time.
+ * @param {string} code room code
+ * @return {string} URL with request token
+ */
+export function markdownUrl(code) {
+	return roomMarkdown(code) + '?requesttoken=' + encodeURIComponent(getRequestToken() || '')
+}
+
+/**
+ * Download the deck file (buttons without <a>).
+ * @param {string} code room code
+ */
+export function downloadMarkdown(code) {
+	window.location.assign(markdownUrl(code))
 }

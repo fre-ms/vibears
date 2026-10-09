@@ -16,8 +16,10 @@ use OCA\Pulse\Db\Room;
 use OCA\Pulse\Db\RoomMapper;
 use OCA\Pulse\Db\VoteMapper;
 use OCA\Pulse\Service\PollImageService;
+use OCA\Pulse\Service\Retention;
 use OCA\Pulse\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IUserManager;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -262,13 +264,19 @@ class CleanupOrphansTest extends TestCase {
         return $service;
     }
 
+    /** With the automatic deletion switched on (30 days), as the upstream app had it. */
     private function job(?RoomService $rooms = null, ?PollImageService $images = null, ?IUserManager $users = null, ?IConfig $config = null): CleanupStaleRoomsJob {
         $time = $this->createMock(ITimeFactory::class);
         $time->method('getTime')->willReturn(self::NOW);
+        $appConfig = $this->createMock(IAppConfig::class);
+        $appConfig->method('getValueInt')->willReturnCallback(
+            static fn (string $app, string $key, int $default = 0): int => $key === Retention::KEY_ENABLED ? 1 : $default,
+        );
         return new CleanupStaleRoomsJob(
             $time,
             $rooms ?? $this->createMock(RoomService::class),
             $images ?? $this->createMock(PollImageService::class),
+            new Retention($appConfig),
             $users ?? $this->createMock(IUserManager::class),
             $config ?? $this->createMock(IConfig::class),
             $this->logger(),

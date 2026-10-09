@@ -40,7 +40,7 @@
 			</div>
 
 			<div v-else-if="!code" class="center entry">
-				<p class="eyebrow-p">Pulse</p>
+				<p class="eyebrow-p">vibeARS</p>
 				<h1>{{ t('pulse', 'Enter code') }}</h1>
 				<div class="digits" role="group" :aria-label="t('pulse', 'Room code, 6 characters')">
 					<input v-for="i in 6" :key="i" ref="digits"
@@ -59,7 +59,7 @@
 
 			<!-- Unknown room (§4.11) — no dead end: a way back to the code entry -->
 			<div v-else-if="!roomExists" class="center empty-part">
-				<p class="eyebrow-p">Pulse</p>
+				<p class="eyebrow-p">vibeARS</p>
 				<h1>{{ t('pulse', 'This room does not exist.') }}</h1>
 				<p class="muted">{{ t('pulse', 'That code is not right — type a new one.') }}</p>
 				<a class="pulse-btn is-primary empty-cta" :href="joinPagePath">{{ t('pulse', 'Enter a new code') }}</a>

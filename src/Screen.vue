@@ -6,7 +6,7 @@
 	<div class="scr" :class="{ 'is-live': isLive, 'is-race': raceView }" :data-image="hasImage ? '' : null">
 		<!-- Unknown room (§4.11) — branded, a clear message -->
 		<div v-if="!roomExists" class="scr-center">
-			<p class="scr-eyebrow">Pulse</p>
+			<p class="scr-eyebrow">vibeARS</p>
 			<h1>{{ t('pulse', 'This room does not exist.') }}</h1>
 			<p class="scr-muted">{{ t('pulse', 'Check the code and open the projector link again.') }}</p>
 		</div>
@@ -55,7 +55,7 @@
 
 		<!-- Lobby: no active question yet -->
 		<div v-else-if="!poll" class="scr-lobby" :class="{ 'is-paced': isPaced }">
-			<p class="scr-eyebrow">Pulse</p>
+			<p class="scr-eyebrow">vibeARS</p>
 			<h1 class="scr-lobby-title">{{ lobbyTitle }}</h1>
 			<p v-if="lobbySub" class="scr-lobby-sub">{{ lobbySub }}</p>
 			<p v-if="practice" class="scr-practice"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run') }}</p>

@@ -143,6 +143,8 @@ class RoomGoneTest extends TestCase {
             $this->createMock(ITimeFactory::class),
             $this->createMock(ILimiter::class),
             new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            $this->createMock(\OCA\Pulse\Service\DeckMarkdown::class),
+            $this->createMock(\OCA\Pulse\Service\DeckImportService::class),
         );
     }
 

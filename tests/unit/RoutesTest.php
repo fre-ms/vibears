@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  * appinfo/routes.php, straight from the file as Nextcloud includes it.
  *
  * The room code requirement is the URL-shape and brute-force guard of every
- * public endpoint, and routes.php repeats it by hand on 37 routes; a new
+ * public endpoint, and routes.php repeats it by hand on 38 routes; a new
  * route must not silently lose it. The route table itself is pinned as a
  * whole: a changed or new route also has to get past the APCu route cache
  * (a 404 until the container restarts), so it is never a side effect.
@@ -37,6 +37,8 @@ class RoutesTest extends TestCase {
         ['roomApi#summary', '/api/1.0/rooms/{code}/summary', 'GET'],
         ['roomApi#leaderboard', '/api/1.0/rooms/{code}/leaderboard', 'GET'],
         ['roomApi#exportCsv', '/api/1.0/rooms/{code}/export', 'GET'],
+        ['roomApi#exportMarkdown', '/api/1.0/rooms/{code}/markdown', 'GET'],
+        ['roomApi#importMarkdown', '/api/1.0/import', 'POST'],
         ['roomApi#show', '/api/1.0/rooms/{code}', 'GET'],
         ['roomApi#destroy', '/api/1.0/rooms/{code}', 'DELETE'],
         ['roomApi#rename', '/api/1.0/rooms/{code}/title', 'POST'],
@@ -62,6 +64,7 @@ class RoutesTest extends TestCase {
         ['roomApi#demoClear', '/api/1.0/rooms/{code}/demo', 'DELETE'],
         ['roomApi#pace', '/api/1.0/rooms/{code}/pace', 'POST'],
         ['roomApi#progress', '/api/1.0/rooms/{code}/progress', 'GET'],
+        ['adminSettings#retention', '/api/1.0/admin/retention', 'POST'],
         ['public#join', '/join', 'GET'],
         ['public#show', '/s/{code}', 'GET'],
         ['public#screen', '/screen/{code}', 'GET'],
@@ -103,7 +106,7 @@ class RoutesTest extends TestCase {
             $withCode += isset($expected['code']) ? 1 : 0;
             $withPollId += isset($expected['pollId']) ? 1 : 0;
         }
-        $this->assertSame(37, $withCode, 'routes with {code}');
+        $this->assertSame(38, $withCode, 'routes with {code}');
         $this->assertSame(11, $withPollId, 'routes with {pollId}');
     }
 

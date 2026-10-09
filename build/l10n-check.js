@@ -50,6 +50,8 @@ const found = new Map() // key -> set of locations
 const files = [
 	...walk(path.join(root, 'src'), ['.vue', '.js']),
 	...walk(path.join(root, 'lib'), ['.php']),
+	// The administration form translates in the template ($l->t).
+	...walk(path.join(root, 'templates'), ['.php']),
 	// Hand-written asset without a bundle — translatable since B3, so check it too.
 	path.join(root, 'js', 'pulse-embed.js'),
 ]

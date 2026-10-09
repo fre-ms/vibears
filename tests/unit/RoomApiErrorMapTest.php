@@ -11,6 +11,8 @@ use OCA\Pulse\Controller\RoomApiController;
 use OCA\Pulse\Db\Poll;
 use OCA\Pulse\Db\Room;
 use OCA\Pulse\Db\RoomMapper;
+use OCA\Pulse\Service\DeckImportService;
+use OCA\Pulse\Service\DeckMarkdown;
 use OCA\Pulse\Service\DeckService;
 use OCA\Pulse\Service\DemoService;
 use OCA\Pulse\Service\Limits;
@@ -67,7 +69,7 @@ class RoomApiErrorMapTest extends TestCase {
      * one side.
      */
     private const WITHOUT_MESSAGE_ANSWER = [
-        'index', 'summary', 'exportCsv', 'rename', 'leaderboard', 'show', 'destroy',
+        'index', 'summary', 'exportCsv', 'exportMarkdown', 'rename', 'leaderboard', 'show', 'destroy',
         'resetRoom', 'practice', 'reveal', 'endQuiz', 'progress', 'showImage', 'demoClear',
     ];
 
@@ -76,7 +78,7 @@ class RoomApiErrorMapTest extends TestCase {
      * so they have no case in missingPoll() (demoSeed finds the running
      * question through the cursor and answers "No active question." itself).
      */
-    private const WITHOUT_QUESTION_LOOKUP = ['addPoll', 'create', 'demoSeed', 'duplicate', 'pace'];
+    private const WITHOUT_QUESTION_LOOKUP = ['addPoll', 'create', 'demoSeed', 'duplicate', 'importMarkdown', 'pace'];
 
     /** 'service::method' that throws InvalidArgumentException('x'); '' = none. */
     private string $throwAt = '';
@@ -96,6 +98,8 @@ class RoomApiErrorMapTest extends TestCase {
     private PollImageService&MockObject $images;
     private PaceService&MockObject $pace;
     private PaceStateService&MockObject $paceState;
+    private DeckMarkdown&MockObject $markdown;
+    private DeckImportService&MockObject $importer;
 
     protected function setUp(): void {
         $this->room = $this->liveRoom();
@@ -166,6 +170,12 @@ class RoomApiErrorMapTest extends TestCase {
             'progress' => fn (): array => ['n' => 3],
             'version' => fn (): string => 'v1',
         ]);
+
+        $this->markdown = $this->createMock(DeckMarkdown::class);
+        $this->stub($this->markdown, 'markdown', ['export' => fn (): string => '']);
+
+        $this->importer = $this->createMock(DeckImportService::class);
+        $this->stub($this->importer, 'importer', ['import' => fn (): Room => $this->room]);
     }
 
     // ── InvalidArgumentException → 400 / 404 ─────────────────────────────
@@ -187,6 +197,7 @@ class RoomApiErrorMapTest extends TestCase {
             'gradeAnswer' => ['gradeAnswer', ['ABCDEF', 7], 'votes::gradeTextAnswer', Http::STATUS_BAD_REQUEST],
             'uploadImage: unusable image' => ['uploadImage', ['ABCDEF', 7], 'images::store', Http::STATUS_BAD_REQUEST],
             'demoSeed' => ['demoSeed', ['ABCDEF'], 'demo::seedDemoVotes', Http::STATUS_BAD_REQUEST],
+            'importMarkdown' => ['importMarkdown', [], 'importer::import', Http::STATUS_BAD_REQUEST],
             // 404
             'setCurrent' => ['setCurrent', ['ABCDEF'], 'deck::setCurrent', Http::STATUS_NOT_FOUND],
             'deletePoll' => ['deletePoll', ['ABCDEF', 7], 'deck::deletePoll', Http::STATUS_NOT_FOUND],
@@ -217,7 +228,7 @@ class RoomApiErrorMapTest extends TestCase {
             }
         }
         $catching = array_values(array_unique(array_column(self::invalidArgument(), 0)));
-        $this->assertCount(16, $catching, 'actions that answer with the InvalidArgumentException message');
+        $this->assertCount(17, $catching, 'actions that answer with the InvalidArgumentException message');
         $known = array_merge($catching, self::WITHOUT_MESSAGE_ANSWER);
         sort($declared);
         sort($known);
@@ -317,6 +328,7 @@ class RoomApiErrorMapTest extends TestCase {
             'index' => ['index', [], 'rooms::listRooms', false],
             'summary' => ['summary', ['ABCDEF'], 'state::summary', false],
             'exportCsv' => ['exportCsv', ['ABCDEF'], 'state::exportCsv', false],
+            'exportMarkdown' => ['exportMarkdown', ['ABCDEF'], 'markdown::export', false],
             'rename' => ['rename', ['ABCDEF'], 'rooms::setTitle', false],
             'leaderboard' => ['leaderboard', ['ABCDEF'], 'votes::leaderboardFor', false],
             'show' => ['show', ['ABCDEF'], 'deck::roomView', false],
@@ -463,6 +475,8 @@ class RoomApiErrorMapTest extends TestCase {
             $this->createMock(ITimeFactory::class),
             $this->createMock(ILimiter::class),
             new Limits($this->createMock(IAppConfig::class)),
+            $this->markdown,
+            $this->importer,
         );
     }
 

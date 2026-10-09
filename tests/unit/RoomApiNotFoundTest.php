@@ -79,12 +79,12 @@ class RoomApiNotFoundTest extends TestCase {
         });
     }
 
-    /** Every action that names a room (all public ones except index and create). */
+    /** Every action that names a room (all public ones except index, create and the import). */
     public static function roomActions(): array {
         $out = [];
         foreach ((new \ReflectionClass(RoomApiController::class))->getMethods(\ReflectionMethod::IS_PUBLIC) as $m) {
             if ($m->getDeclaringClass()->getName() !== RoomApiController::class
-                || in_array($m->getName(), ['__construct', 'index', 'create'], true)) {
+                || in_array($m->getName(), ['__construct', 'index', 'create', 'importMarkdown'], true)) {
                 continue;
             }
             $args = [];
@@ -125,6 +125,8 @@ class RoomApiNotFoundTest extends TestCase {
             'addPoll' => ['addPoll', ['ABCDEF'], 'pulse-add_poll', 120],
             'uploadImage' => ['uploadImage', ['ABCDEF', 7], 'pulse-upload_image', 30],
             'demoSeed' => ['demoSeed', ['ABCDEF'], 'pulse-demo', 30],
+            // creates a room, so it shares the room limit
+            'importMarkdown' => ['importMarkdown', [], 'pulse-create', 30],
         ];
     }
 
@@ -230,7 +232,16 @@ class RoomApiNotFoundTest extends TestCase {
             $this->createMock(ITimeFactory::class),
             $this->limiter,
             new Limits($this->createMock(IAppConfig::class)),
+            $this->createMock(\OCA\Pulse\Service\DeckMarkdown::class),
+            $this->importer(),
         );
+    }
+
+    /** The importer answers with a room; the test's rate-limit cases never reach it. */
+    private function importer(): \OCA\Pulse\Service\DeckImportService {
+        $importer = $this->createMock(\OCA\Pulse\Service\DeckImportService::class);
+        $importer->method('import')->willReturnCallback(fn (): Room => $this->room());
+        return $importer;
     }
 
     private function room(): Room {

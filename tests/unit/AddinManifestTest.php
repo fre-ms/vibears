@@ -115,7 +115,7 @@ class AddinManifestTest extends TestCase {
         $xml = $this->manifest->build('https://x.example', 'https://x.example/apps/pulse/embed', '0.18.0');
 
         $this->assertStringContainsString('<DefaultLocale>en-US</DefaultLocale>', $xml);
-        $this->assertStringContainsString('<Override Locale="de-de" Value="Pulse Live-Umfrage"/>', $xml);
+        $this->assertStringContainsString('<Override Locale="de-de" Value="vibeARS Live-Umfrage"/>', $xml);
     }
 
     /**

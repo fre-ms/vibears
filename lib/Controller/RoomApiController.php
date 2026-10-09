@@ -1,6 +1,7 @@
 <?php
 
 // SPDX-FileCopyrightText: 2026 hotochan123
+// SPDX-FileCopyrightText: 2026 fre.ms
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 declare(strict_types=1);
@@ -12,6 +13,8 @@ use OCA\Pulse\Db\Poll;
 use OCA\Pulse\Db\Room;
 use OCA\Pulse\Db\RoomMapper;
 use OCA\Pulse\Service\ConflictException;
+use OCA\Pulse\Service\DeckImportService;
+use OCA\Pulse\Service\DeckMarkdown;
 use OCA\Pulse\Service\DeckService;
 use OCA\Pulse\Service\DemoService;
 use OCA\Pulse\Service\Input;
@@ -94,6 +97,9 @@ class RoomApiController extends Controller {
         private ITimeFactory $timeFactory,
         private ILimiter $limiter,
         private Limits $limits,
+        // the deck file (Markdown with a YAML header): export and import
+        private DeckMarkdown $deckMarkdown,
+        private DeckImportService $deckImport,
     ) {
         parent::__construct(Application::APP_ID, $request);
     }
@@ -140,6 +146,43 @@ class RoomApiController extends Controller {
                 'text/csv; charset=utf-8',
             );
         });
+    }
+
+    /**
+     * The deck as a file: Markdown with a YAML header (DeckMarkdown), the
+     * questions with their solutions and settings, no votes and no images.
+     * Downloaded like the CSV: with the request token in the query.
+     */
+    #[NoAdminRequired]
+    public function exportMarkdown(string $code): Response {
+        return $this->withRoom($code, function ($room) {
+            return new DataDownloadResponse(
+                $this->deckMarkdown->export($room, $this->deckService->deck($room)),
+                'vibears-' . $room->getCode() . '.md',
+                'text/markdown; charset=utf-8',
+            );
+        });
+    }
+
+    /**
+     * A new room from a deck file. Body: { markdown: string }. Counts
+     * against the room rate limit (it creates one) and the caps; a file
+     * that does not parse, or a question the composer would refuse, is a
+     * 400 with a message that names the line or the question, and no room
+     * stays behind (DeckImportService).
+     */
+    #[NoAdminRequired]
+    public function importMarkdown(): JSONResponse {
+        if ($limited = $this->rateLimited(Limits::RATE_CREATE)) {
+            return $limited;
+        }
+        $markdown = Input::str($this->request->getParam('markdown'));
+        try {
+            $room = $this->deckImport->import($this->uid(), $markdown);
+        } catch (\InvalidArgumentException $e) {
+            return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+        }
+        return new JSONResponse($this->deckService->roomView($room), Http::STATUS_CREATED);
     }
 
     #[NoAdminRequired]

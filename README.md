@@ -1,33 +1,71 @@
-# Pulse — live polls for Nextcloud
+# vibeARS — audience response for Nextcloud
 
-> **Vibe-coded:** Pulse was written by AI coding agents (Anthropic's Claude Code),
-> not by hand. The maintainer set the goals, made the product decisions and tried
-> the app out in the browser; there has been no independent human code review and
-> no security audit. Details: [How this app was built](#how-this-app-was-built-ai-disclosure).
+> **Vibe-coded:** vibeARS was written by AI coding agents (Anthropic's Claude
+> Code), not by hand — the upstream app Pulse and this fork alike. The
+> maintainers set the goals, made the product decisions and tried the app out
+> in the browser; there has been no independent human code review and no
+> security audit. Details: [How this app was built](#how-this-app-was-built-ai-disclosure).
 
-Live polls, word clouds and quizzes for presentations as a native Nextcloud app —
-a self-hosted alternative to services such as Kahoot!, Mentimeter or Slido. The
+vibeARS (vibe Audience Response System) brings live polls, word clouds and
+quizzes for lectures and presentations into Nextcloud as a native app — a
+self-hosted alternative to services such as Kahoot!, Mentimeter or Slido. The
 presenter opens a room and projects a six-character code; the audience joins
 through a public link without a Nextcloud account and votes from their phones.
 Results update live through polling.
 
+## About this fork
+
+vibeARS is a fork of [Pulse](https://github.com/hotochan123/nextcloud-pulse)
+by [hotochan123](https://github.com/hotochan123) (forked at Pulse 0.19.1,
+October 2026). It keeps Pulse's app ID `pulse`, its routes, tables and
+configuration keys, so it installs in Pulse's place, takes over its rooms and
+can keep merging upstream fixes. What it changes:
+
+- **Name and icon.** The app is called vibeARS, its navigation entry "ARS",
+  and the icon — a speech bubble from the audience with the response bars in
+  it — is white, as Nextcloud's navigation bar expects (`img/app.svg`; the
+  black copy `img/app-dark.svg` serves the settings sidebar).
+- **Room retention is a setting.** Pulse deleted rooms nobody had used for 30
+  days. vibeARS keeps every room until its owner deletes it; the administration
+  can switch automatic deletion on and choose the number of days under
+  Settings → Administration → ARS (see [Room retention](#room-retention)).
+- **Decks as files.** Every room exports its questions as Markdown with a YAML
+  header, and such a file imports as a new room — for a question bank in git,
+  for sharing between lecturers, for writing a quiz in a text editor (see
+  [Deck files](#deck-files-markdown-with-a-yaml-header)).
+- **Quiz questions without a time limit.** "Time per question" offers "No
+  limit": the question stays open until the moderator reveals it or moves on,
+  and a correct answer earns the full points regardless of speed.
+
+Issues and pull requests for the fork go to
+[fre-ms/vibears](https://github.com/fre-ms/vibears/issues); everything that is
+not about these changes is Pulse's work, and bug reports that affect Pulse as
+well are best filed upstream too.
+
 ## How this app was built (AI disclosure)
 
-Pulse is vibe-coded. The maintainer ([hotochan123](https://github.com/hotochan123))
-did not write the code by hand. They set the goals, made the product decisions
-and tried the app out in the browser. Everything else was written by AI coding
-agents:
+vibeARS is vibe-coded, like Pulse before it. Pulse's maintainer
+([hotochan123](https://github.com/hotochan123)) did not write the code by hand.
+They set the goals, made the product decisions and tried the app out in the
+browser. Everything else was written by AI coding agents:
 
 - all code — PHP, JavaScript/Vue, CSS and the database migrations;
 - the tests, the development tools (HTTP simulation, screenshot harness) and the
   throwaway scripts used for request fuzzing;
 - the documentation, including this README, and the German translation.
 
-**Tool and models.** The agents ran in Anthropic's Claude Code. The private
-development history has 87 commits, from 16 July to 29 September 2026. Every one
-of them carries a `Co-Authored-By` trailer naming the model: Claude Opus 4.8
-(37 commits), Claude Opus 5 (44) and Claude Opus 5.5 (6). Commits in this public
-repository carry the same trailers.
+The fork's maintainer ([fre.ms](https://github.com/fre-ms)) works the same
+way: the changes listed under [About this fork](#about-this-fork) — code,
+tests, translation and documentation — were written by AI coding agents in
+Anthropic's Claude Code on the maintainer's instructions, reviewed by reading
+the diffs and by trying the app out, not by an independent reviewer.
+
+**Tool and models.** The agents ran in Anthropic's Claude Code. Pulse's
+private development history has 87 commits, from 16 July to 29 September
+2026, every one of them with a `Co-Authored-By` trailer naming the model:
+Claude Opus 4.8 (37 commits), Claude Opus 5 (44) and Claude Opus 5.5 (6);
+the commits in Pulse's public repository carry the same trailers. The fork's
+commits carry no such trailer.
 
 **Design.** The UI design explorations (mockups, design briefs) were also
 produced with AI tools. They are not part of this repository.
@@ -46,20 +84,21 @@ checks that the dev scripts parse. The simulation (`dev/sim`) and the
 screenshot harness (`dev/design-shots`) are run by hand — they need a running
 Nextcloud instance — and the fuzzing scripts were one-offs that are not in this
 repository. There has been no independent human code review and no security
-audit. In September 2026 AI agents of the same kind reviewed the code for
+audit. In September 2026 AI agents of the same kind reviewed Pulse's code for
 security problems and fixed what they found (listed under "Security" in
 [`CHANGELOG.md`](CHANGELOG.md)); what remains is described under
 [Security notes](#security-notes). That review is no substitute for an
-independent audit. How to report a problem: [`SECURITY.md`](SECURITY.md).
+independent audit, and the fork's additions have not had one either. How to
+report a problem: [`SECURITY.md`](SECURITY.md).
 
-**History.** This public repository starts with one squashed commit. The earlier
-history is kept private because early screenshots in it showed an internal host
-name; the code is the same.
+**History.** Pulse's public repository starts with one squashed commit; the
+earlier history is kept private because early screenshots in it showed an
+internal host name. The fork starts from that public history.
 
-**What this means for you.** Evaluate Pulse yourself before you rely on it,
+**What this means for you.** Evaluate vibeARS yourself before you rely on it,
 especially for anything sensitive. Issues and reviews are welcome
-([issue tracker](https://github.com/hotochan123/nextcloud-pulse/issues)).
-Pulse is licensed under AGPL-3.0-or-later and comes without any warranty.
+([issue tracker](https://github.com/fre-ms/vibears/issues)).
+vibeARS is licensed under AGPL-3.0-or-later and comes without any warranty.
 
 ## Features
 
@@ -80,17 +119,22 @@ Pulse is licensed under AGPL-3.0-or-later and comes without any warranty.
 - An anonymous voter cookie (no link to a person) discourages double voting;
   whoever clears their cookies can vote again (see
   [Security notes](#security-notes)).
-- A daily background job deletes rooms after 30 days without any activity:
-  no participant was there, and the owner did nothing with the room — did not
-  open it, edit the deck, present or look at the results. A deck prepared
-  weeks ahead therefore stays. Participants alone keep a room alive only while
-  its owner has used it within the last 180 days, so a room whose code keeps
-  being polled still goes about 180 days after its owner last used it.
-  Deleting a Nextcloud account deletes that account's rooms, with their
-  questions, votes, players and images. The same daily job also deletes the
-  rooms of accounts that no longer exist — for example ones deleted while
-  Pulse was disabled, which would otherwise pass to a new account with the same
-  user ID — and question images that no question refers to any more.
+- Quiz questions run with a countdown of 10 to 300 seconds — or without one:
+  "No limit" keeps the question open until the moderator reveals it or moves
+  on, and a correct answer then earns the full points regardless of speed. In
+  a self-paced quiz such a question can be skipped.
+- **Decks as files:** "Export as Markdown" in a room's menu writes the
+  questions, solutions and settings as Markdown with a YAML header; "Import a
+  deck" on the start page turns such a file into a new room. See
+  [Deck files](#deck-files-markdown-with-a-yaml-header).
+- Rooms stay until their owner deletes them. The administration can let a
+  daily background job delete rooms after a chosen number of days without any
+  activity instead — see [Room retention](#room-retention). Deleting a
+  Nextcloud account always deletes that account's rooms, with their questions,
+  votes, players and images, and the daily job always deletes the rooms of
+  accounts that no longer exist — for example ones deleted while vibeARS was
+  disabled, which would otherwise pass to a new account with the same user ID
+  — and question images that no question refers to any more.
 
 ## Self-paced quiz
 
@@ -134,6 +178,129 @@ class is in. Implementation notes with
 test paths and open points:
 [`docs/pace-2026-09/UI.md`](docs/pace-2026-09/UI.md).
 
+## Room retention
+
+By default nothing is deleted automatically: a lecturer's question bank is a
+deck that may rest for a semester. Under Settings → Administration → ARS an
+administrator can switch on **Delete unused rooms automatically** and choose
+after how many days (1 to 3650; the upstream default was 30). "Unused" means:
+no participant was there, and the owner did nothing with the room — did not
+open it, edit the deck, present or look at the results — for that many days.
+A deck prepared weeks ahead therefore stays as long as its owner keeps
+working on it. Participants alone keep a room alive only while its owner has
+used it within the last 180 days, so a room whose code keeps being polled
+still goes about 180 days after its owner last used it. For a self-paced
+quiz, opening, the deadline, closing and the release count as activity as
+well, so a homework that is graded weeks after its deadline does not vanish.
+
+The two settings are app config keys and can be set with occ as well:
+
+```
+occ config:app:set pulse retention_enabled --value 1 --type integer    # 0 = off (default)
+occ config:app:set pulse retention_days --value 90 --type integer      # 1–3650, default 30
+```
+
+Whatever the setting says, the same daily job deletes the rooms of accounts
+that no longer exist and image files that no question refers to any more,
+and deleting a Nextcloud account deletes that account's rooms at once.
+
+## Deck files (Markdown with a YAML header)
+
+Every room's menu offers **Export as Markdown** (also under "My rooms", in a
+room's menu), and the start page **Import a deck (Markdown)**. The file holds
+the questions with their solutions and settings — no votes, no participants
+and no images (the image of a question is not exported; add it again after
+the import). Importing creates a new room; the caps of the account and every
+rule of the composer apply, and a file that fails on its seventh question
+leaves no room behind. The format, version `vibears/1`:
+
+```markdown
+---
+format: "vibears/1"
+title: "Lecture 3"
+mode: "quiz"          # poll | quiz
+revealAtEnd: false    # quiz: reveal only at the end
+pace: "live"          # quiz: live (moderated) | self (self-paced)
+timed: true           # quiz, self-paced: the "Timer" default
+feedback: "each"      # quiz, self-paced: each | end
+---
+
+## Which planet is the largest?
+type: choice
+time: 20
+- [x] Jupiter
+- [ ] Saturn
+- [ ] Earth
+
+## Water boils at 100 °C at sea level.
+type: truefalse
+time: 15
+answer: true
+
+## Which of these are prime numbers?
+type: multi
+time: none
+- [x] 2
+- [x] 3
+- [ ] 4
+
+## In which year did the Berlin Wall fall?
+type: number
+time: 30
+target: 1989
+tolerance: 1
+
+## Who wrote "Faust"?
+type: text
+time: 60
+- Goethe
+- Johann Wolfgang von Goethe
+
+## Order the planets, closest to the Sun first.
+type: rank
+time: 45
+1. Mercury
+2. Venus
+3. Earth
+
+## Match capital and country.
+type: match
+time: 60
+- Paris → France
+- Berlin → Germany
+```
+
+- The header is a flat YAML mapping; only `mode` matters for a poll, the
+  other keys describe a quiz's flow and are optional (the composer's defaults
+  apply). Quoted strings take the usual escapes; `yes`/`no`/`on`/`off` are
+  booleans too.
+- One question per `## ` heading. Below it, `key: value` settings and a
+  list. Any list marker works (`-`, `*`, `+`, `1.`, `1)`); only the order and
+  the `[x]` marks count. `- [x]` marks the correct option (one for
+  `choice`, several for `multi`); an ordered list is the solution of a
+  `rank` question in a quiz; `left → right` (also `->`, `=>`) is a
+  `match` pair; the items of a `text` question are its accepted answers.
+- `time` (quiz only) is a number of seconds, `30 s` works too, and `none`
+  (or `0`) means no limit. Missing, the composer's default of 30 applies;
+  anything else is clamped into 5–300 like in the composer.
+- Poll types: `words` takes `maxWords`; `scale` takes `scaleMode` (`single`
+  with `scaleMax`, `minLabel`, `maxLabel`; `spectrum` with `scaleMax` and a
+  list of `aspect | low pole | high pole`; `compass` with `range`,
+  `axisX`/`axisY` as `title | low pole | high pole`, the four labels
+  `cornerBottomLeft`, `cornerBottomRight`, `cornerTopLeft`, `cornerTopRight`
+  and `heatmapThreshold`).
+- HTML comments (`<!-- … -->`) are ignored, as is a document title (`# …`)
+  before the first question. An unknown setting, text that is neither a
+  setting nor a list item, a pair without an arrow or two `[x]` on a
+  single-choice question are refused with the line that holds them; whatever
+  the composer would refuse (an empty question, one option, no correct
+  answer) is refused with the question's number.
+- Files are limited to 1 MB and must be UTF-8; a BOM and Windows line
+  endings are fine.
+
+The export is stable: importing a file and exporting the new room gives the
+same file again, so a deck kept in git shows only real changes in its diffs.
+
 ## Architecture
 
 - **Public access** without login through `#[PublicPage]` + `#[NoCSRFRequired]` —
@@ -163,19 +330,23 @@ test paths and open points:
 ## Structure
 
 ```
-lib/Controller/   PageController (moderator SPA), RoomApiController (moderator API),
-                  PublicController (participant pages), PublicVoteController (public API),
-                  AddinController (PowerPoint add-in manifest)
+lib/Controller/   PageController (moderator SPA), RoomApiController (moderator API,
+                  deck file export/import included), PublicController (participant pages),
+                  PublicVoteController (public API), AddinController (PowerPoint add-in
+                  manifest), AdminSettingsController (the administration form)
 lib/Db/           Room, Poll, Vote, Player, Presence, Progress + QBMapper
 lib/Service/      RoomService (rooms), DeckService (questions), VoteService (votes),
                   StateService (read views + CSV), TallyService (tallying),
                   AnswerRules (per-type answer checks + grading), QuizService (points),
                   PollImageService (images), DemoService, CodeGenerator,
                   PaceService + PaceStateService (self-paced quiz: window, read views),
-                  PublicPayload (capped public views), Limits (caps per account)
+                  PublicPayload (capped public views), Limits (caps per account),
+                  Retention (the administration's deletion setting),
+                  DeckMarkdown (the deck file: export and parse) + DeckImportService
+lib/Settings/     AdminSettings + AdminSection (Settings → Administration → ARS)
 lib/SetupCheck/   EmbedFraming (setup check for the PowerPoint embed)
-lib/BackgroundJob/ CleanupStaleRoomsJob (deletes rooms unused for 30 days, rooms of deleted
-                  accounts and question images nothing refers to)
+lib/BackgroundJob/ CleanupStaleRoomsJob (deletes unused rooms when the administration says so,
+                  rooms of deleted accounts and question images nothing refers to)
 lib/Listener/     UserDeletedListener (a deleted account takes its rooms with it)
 lib/Migration/    Schema (pulse_rooms, pulse_polls, pulse_votes, … pulse_progress)
 src/              Moderator.vue (control desk), Participant.vue (phone), Screen.vue (projector),
@@ -185,7 +356,9 @@ src/              Moderator.vue (control desk), Participant.vue (phone), Screen.
                   util/question-types.js (composer contract per question type, no browser),
                   util/routes.js (every URL and request time limit of the Vue frontend;
                   js/pulse-embed.js builds its own),
-                  styles.js (token layer without Vue — for the embed shell)
+                  styles.js (token layer without Vue — for the embed shell),
+                  admin.js (the administration form, without Vue)
+templates/        index.php (moderator), public.php (phone, projector), embed.php, admin.php
 l10n/             Translations (de.json is maintained, de.js is generated from it)
 build/            l10n-build.js (json -> js), l10n-check.js (coverage),
                   package.sh (release archive), certificate.sh (signing key)
@@ -216,24 +389,16 @@ record of the self-paced UI, which is included.
 
 ## Installation
 
-Pulse has been in the [Nextcloud App Store](https://apps.nextcloud.com/apps/pulse)
-since 3 October 2026. As an admin, open Apps in Nextcloud, search for "Pulse"
-and install it, or run `occ app:install pulse`. A new release can take some
-hours to show up there: Nextcloud reads a copy of the store's app list that
-the store renews only from time to time. Every release is signed with the
-app's certificate from Nextcloud and attached to the
-[GitHub releases](https://github.com/hotochan123/nextcloud-pulse/releases),
-which is where the store sends every instance to download it.
-Pulse runs on Nextcloud 34 and 35 and has been tested on 34.0.1 and 35.0.1
-with fresh installations on SQLite, MariaDB 11.8, PostgreSQL 17 and MySQL 8.4,
-and on 34.0.4 with PostgreSQL, including the server update from 34.0.4 to
-35.0.1. The signed archives of 0.19.0 and 0.19.1 were installed on 34.0.4 and
-35.0.1 through the same download and signature checks an installation from the
-store runs, and both have been installed from the store itself (0.19.0 on
-34.0.4, 0.19.1 on 35.0.1).
+vibeARS is not in the Nextcloud App Store; install it from this repository.
+It carries Pulse's app ID `pulse`, so on an instance that has Pulse
+installed it takes Pulse's place — the rooms, questions and votes stay, and
+`occ upgrade` runs the (unchanged) migrations. Pulse runs on Nextcloud 34 and
+35 and was tested there on SQLite, MariaDB, PostgreSQL and MySQL; vibeARS has
+the same dependencies and the same schema. Note that an instance with the
+App Store enabled will offer Pulse's next release as an "update" of the app
+ID `pulse`; declining it keeps vibeARS.
 
-To install from the repository instead (for example a state that has not
-been released yet), do not clone it into the web root. A checkout carries the
+Do not clone the repository into the web root. A checkout carries the
 development tree — tests, the simulation and screenshot harness, sources and,
 after a build, `node_modules/` with demo pages of its packages — and the web
 server hands out static files below `apps/` as they are, so all of it would be
@@ -243,11 +408,11 @@ repository, so this needs no build step, only Node.js for the translation
 check:
 
 ```
-git clone https://github.com/hotochan123/nextcloud-pulse.git ~/pulse-src
-cd ~/pulse-src
-SKIP_BUILD=1 ALLOW_UNRELEASED=1 sh build/package.sh   # -> build/pulse-<version>.tar.gz
+git clone https://github.com/fre-ms/vibears.git ~/vibears-src
+cd ~/vibears-src
+SKIP_BUILD=1 sh build/package.sh        # -> build/pulse-<version>.tar.gz
 tar -xzf build/pulse-<version>.tar.gz -C <nextcloud>/apps/
-occ app:enable pulse
+occ app:enable pulse                    # or occ upgrade when Pulse was installed before
 ```
 
 The archive holds a single folder `pulse/` (the directory has to be named after
@@ -260,7 +425,7 @@ release tag packs without it). Copying those folders yourself, for example with
 the new folder; when the version in `appinfo/info.xml` went up, run
 `occ upgrade` afterwards (until then Nextcloud does not serve the app).
 
-Running Pulse straight from a git checkout inside `apps/` still works, and the
+Running vibeARS straight from a git checkout inside `apps/` still works, and the
 repository ships an `.htaccess` as a safety net for that case: on Apache (with
 `mod_alias` and `AllowOverride` for the app folders, as in Nextcloud's own
 setup) it answers 404 for `node_modules/`, `dev/`, `build/`, `tests/`, `src/`,
@@ -273,7 +438,7 @@ Build outside the web root as well, then deploy as above:
 
 ```
 npm ci             # exactly the dependency versions of package-lock.json
-npm run build      # produces js/pulse-main.js, js/pulse-public.js and js/pulse-styles.js
+npm run build      # produces js/pulse-main.js, js/pulse-public.js, js/pulse-styles.js and js/pulse-admin.js
 ```
 
 Use Node.js 22.18.0, the version the committed bundles are built with: with it,
@@ -371,14 +536,14 @@ edit on every installation. Guide: `office-addin/README.md`.
 `lib/base.php` — an app cannot override that. For `/apps/pulse/screen/` and
 `/apps/pulse/embed` the header has to be removed in the web server or reverse
 proxy; snippets for Apache, nginx and Traefik are in `office-addin/README.md`.
-Whether it is still there is reported by the setup check "Pulse: embedding in
+Whether it is still there is reported by the setup check "vibeARS: embedding in
 PowerPoint" under Administration → Overview, separately for each address.
 
 ## Limits
 
-**Per account and quiz room.** No user quota counts what Pulse stores — question
+**Per account and quiz room.** No user quota counts what vibeARS stores — question
 images live in Nextcloud's app data, rooms and questions in the database — and
-anonymous participants can add players to a quiz, so Pulse keeps its own caps.
+anonymous participants can add players to a quiz, so vibeARS keeps its own caps.
 Each can be changed per instance, for example
 `occ config:app:set pulse max_rooms_per_owner --value 500`. Only a positive
 whole number overrides the default (anything else keeps it, so a typo never
@@ -389,7 +554,7 @@ means "unlimited"), and a change takes effect within a few seconds.
 | `max_rooms_per_owner` | 200 | rooms of one account |
 | `max_polls_per_room` | 100 | questions in one room |
 | `max_question_length` | 1000 | characters of a question text |
-| `max_image_bytes_per_owner` | 209715200 (200 MB) | question images of all rooms of one account, counted as stored — Pulse re-encodes every upload as PNG or JPEG, which can be several times the size of the upload |
+| `max_image_bytes_per_owner` | 209715200 (200 MB) | question images of all rooms of one account, counted as stored — vibeARS re-encodes every upload as PNG or JPEG, which can be several times the size of the upload |
 | `max_players_per_room` | 600 | players who have joined one quiz: every player of a moderated quiz, started or not in a self-paced one (the self-paced cap of 300 who have started is fixed); the flood guard on joining grows with it |
 | `max_new_players_per_address` | 120 | new names per address and self-paced quiz within ten minutes — raise it when a larger class or a lecture hall joins from behind one address |
 | `rate_limit_create` | 30 | new rooms per account and minute |
@@ -480,7 +645,7 @@ network.
   and again under new identities — another browser, a private window, or a
   script. Voter tokens are random values the server does not sign, so a script
   can make up its own; the limit on new identities (see [Limits](#limits))
-  only slows down scripts that send no cookie at all. Pulse cannot prevent
+  only slows down scripts that send no cookie at all. vibeARS cannot prevent
   this: the result of an anonymous poll is an impression, not a head count.
   What is bounded is the cost for everybody else: public views are capped (see
   [Architecture](#architecture)), an unchanged state costs no vote reads, a
@@ -514,7 +679,7 @@ network.
   question makes its answer final at once and shows whether it was right, so a
   few throwaway identities find the right option of every choice question. For
   anything graded, open the quiz with feedback "At the end", lock joining once
-  the class is in and check the names against your class list. Pulse cannot
+  the class is in and check the names against your class list. vibeARS cannot
   tie an identity to a person; where that matters, use a tool with a sign-in
   for every participant.
 - **Framing.** `/apps/pulse/screen/{code}` (the projector view) and
@@ -537,8 +702,10 @@ network.
   [Installation](#installation).
 - **Logs.** Voter tokens, nicknames and answers are marked as sensitive
   parameters, so they do not end up in exception traces in `nextcloud.log`.
-- **Retention.** Rooms, with their answers and nicknames, are deleted by the
-  daily job as described under [Features](#features).
+- **Retention.** Rooms, with their answers and nicknames, stay until their
+  owner deletes them unless the administration switches the daily deletion
+  on — see [Room retention](#room-retention). Without it, old room codes stay
+  valid for as long as the room exists.
 - As described [above](#how-this-app-was-built-ai-disclosure), the code has not
   had an independent human review or a security audit; the AI agents' own
   security review is summarised in the changelog. Reporting a problem:
@@ -551,14 +718,16 @@ build/certificate.sh    # once: key + certificate request for the signature
 build/package.sh        # builds, checks, signs and packs build/pulse-<version>.tar.gz
 ```
 
-The whole way into the Nextcloud App Store — public repository, certificate,
-app ID registration, version, signature, upload — is described in
-[`docs/APPSTORE.md`](docs/APPSTORE.md).
+`docs/APPSTORE.md` describes the way Pulse took into the Nextcloud App Store —
+public repository, certificate, app ID registration, version, signature,
+upload. vibeARS is not published there (the app ID belongs to Pulse); the
+document is kept for reference.
 
 ## Licence
 
 AGPL-3.0-or-later, see [`LICENSE`](LICENSE). Every source file carries the
-matching SPDX header. The one exception inside a file: the `copy`, `more`,
+matching SPDX header (`hotochan123` for Pulse's code, `fre.ms` for the fork's
+additions, both where a file was changed). The one exception inside a file: the `copy`, `more`,
 `plus` and `close` icons in `src/components/ui/PulseIcon.vue` are taken from
 or adapted from [Feather Icons](https://github.com/feathericons/feather)
 (`copy` with a slightly smaller front square), under the MIT License:
@@ -592,7 +761,7 @@ SOFTWARE.
 
 </details>
 
-Pulse is an independent project and is not affiliated with or endorsed by the
+vibeARS is an independent project and is not affiliated with or endorsed by the
 providers of Kahoot!, Mentimeter or Slido; these names are trademarks of their
 respective owners.
 
@@ -600,10 +769,10 @@ respective owners.
 
 - Languages: English and German. Further languages would go through
   Transifex and need Nextcloud's involvement.
-- Nextcloud 34 and 35 only (`min-version="34" max-version="35"`, 35 since
-  2 October 2026; the test is described in `docs/APPSTORE.md`). Copies from
-  before that date carry `max-version="34"`, so Nextcloud 35's updater turns
-  them off.
+- Nextcloud 34 and 35 only (`min-version="34" max-version="35"`; Pulse's
+  test on 35 is described in `docs/APPSTORE.md`).
+- The deck file carries no images; a question's image has to be added again
+  after an import.
 - Question type image hotspot (tap on an image instead of choosing an answer).
 - Self-paced quiz: a rejoin code for switching devices, starting from the
   waiting state without a tap, a demo race and store images; plus small engine

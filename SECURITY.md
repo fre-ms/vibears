@@ -1,5 +1,6 @@
 <!--
 SPDX-FileCopyrightText: 2026 hotochan123
+SPDX-FileCopyrightText: 2026 fre.ms
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -7,12 +8,13 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 ## Status of the code
 
-Pulse was written by AI coding agents (Anthropic's Claude Code), not by hand.
-It has had no independent human code review and no security audit. In
-September 2026 AI agents reviewed the code for security problems; the fixes are
-listed under "Security" in [`CHANGELOG.md`](CHANGELOG.md), and what remains is
-described under "Security notes" and "Known limits" in the
-[README](README.md#security-notes). Please evaluate Pulse yourself before you
+vibeARS — a fork of Pulse — was written by AI coding agents (Anthropic's
+Claude Code), not by hand, and so were the fork's additions. It has had no
+independent human code review and no security audit. In September 2026 AI
+agents reviewed Pulse's code for security problems; the fixes are listed under
+"Security" in [`CHANGELOG.md`](CHANGELOG.md), and what remains is described
+under "Security notes" and "Known limits" in the
+[README](README.md#security-notes). Please evaluate vibeARS yourself before you
 rely on it. Details: [How this app was built](README.md#how-this-app-was-built-ai-disclosure).
 
 ## Reporting a vulnerability
@@ -21,19 +23,21 @@ Please do not describe a security problem in a public issue.
 
 - **Preferred:** GitHub's private vulnerability reporting — "Report a
   vulnerability" on the repository's
-  [Security tab](https://github.com/hotochan123/nextcloud-pulse/security).
+  [Security tab](https://github.com/fre-ms/vibears/security).
 - **If that button is not there** (for example because private reporting has
   been switched off):
-  open an [issue](https://github.com/hotochan123/nextcloud-pulse/issues)
+  open an [issue](https://github.com/fre-ms/vibears/issues)
   that only says you have found a security problem and asks for a private way
   to send the details — no description, no proof of concept. The maintainer
   will answer with a contact.
 
-Helpful in a report: the Pulse version or commit, the Nextcloud version and
+Helpful in a report: the vibeARS version or commit, the Nextcloud version and
 database, what an attacker needs (a room code, a Nextcloud account, a site on
 the same domain, …), the steps to reproduce and the effect.
 
-Pulse is maintained by one person. There is no bug bounty
+vibeARS is maintained by one person; a problem that also affects Pulse is
+worth reporting upstream as well
+(<https://github.com/hotochan123/nextcloud-pulse/security>). There is no bug bounty
 and no guaranteed response time; fixes go into the next release, and only the
 newest release is supported.
 
@@ -45,7 +49,8 @@ In scope:
   bundles and their sources, the PowerPoint add-in shell and the manifest the
   app generates;
 - the participant pages and API (`/apps/pulse/s/…`, `/screen/…`, `/embed`),
-  the moderator API and the background job;
+  the moderator API (the deck file import included), the administration
+  settings and the background job;
 - the release tooling (`build/package.sh`) and the CI configuration, as far as
   they affect what gets shipped;
 - a way around a protection or limit that the README describes, for example

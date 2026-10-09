@@ -1,20 +1,53 @@
 # Changelog
 
-All notable changes to Pulse are documented here. The format follows
+All notable changes to vibeARS are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-Release notes on the Nextcloud App Store are taken from the topmost sections of
-this file, so every published version needs an entry here.
+vibeARS is a fork of [Pulse](https://github.com/hotochan123/nextcloud-pulse);
+the entries up to 0.19.1 are Pulse's. `build/package.sh` reads the release
+notes of a version from its section here, so every version needs an entry.
 
-## [Unreleased]
+## [0.20.0] - 2026-10-09
+
+The first release of the fork. The app ID stays `pulse`, so this version
+installs in Pulse's place and takes over its rooms.
+
+### Added
+- **Decks as files.** "Export as Markdown" in a room's menu (in the deck and
+  under "My rooms") writes the questions with their solutions and settings as
+  Markdown with a YAML header; "Import a deck (Markdown)" on the start page
+  turns such a file into a new room. Every question type of both room modes
+  round-trips, the import applies the same rules and caps as the composer,
+  and a file that fails on one question leaves no room behind. The format is
+  documented in the README.
+- **Quiz questions without a time limit.** "Time per question" offers "No
+  limit — you end the question": the question stays open until the moderator
+  reveals it or moves on, phones and the projector show no countdown, and a
+  correct answer earns the full points regardless of speed. In a self-paced
+  quiz such a question can be skipped, as questions without a timer could
+  already. The composer also offers 120, 180 and 300 seconds.
+- **Room retention is an administration setting.** Settings → Administration
+  → ARS: whether unused rooms are deleted automatically, and after how many
+  days (1 to 3650). Also as app config keys `retention_enabled` and
+  `retention_days`.
 
 ### Changed
-- Pulse's JavaScript files are about half as big: 0.6 MB instead of 1.2 MB
+- Renamed to vibeARS (vibe Audience Response System); the navigation entry
+  says "ARS". New icon: a speech bubble from the audience with the response
+  bars in it, white as Nextcloud's navigation bar expects it (Pulse's was
+  black and vanished on the default header), with a black copy for the
+  settings sidebar.
+- **Rooms are no longer deleted automatically by default.** Pulse deleted
+  rooms after 30 days without any activity; vibeARS keeps every room until
+  its owner deletes it unless the administration switches the deletion on.
+  The other two sweeps of the daily job — rooms of accounts that no longer
+  exist, question images nothing refers to — run as before.
+- The JavaScript files are about half as big: 0.6 MB instead of 1.2 MB
   for the moderator view, 0.5 MB instead of 1.0 MB for the audience and
   projector pages. The build no longer embeds a second copy of every
   stylesheet, with its source, as a source map; the styles themselves are
-  unchanged.
+  unchanged. (From Pulse's unreleased changes after 0.19.1.)
 
 ## [0.19.1] - 2026-10-03
 

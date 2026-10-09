@@ -1,7 +1,7 @@
 {
   "name": "pulse",
-  "version": "0.19.1",
-  "description": "Live polls and quizzes for presentations in Nextcloud",
+  "version": "0.20.0",
+  "description": "vibeARS — live polls and quizzes (audience response) for presentations in Nextcloud",
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "build": "webpack --node-env production --config webpack.config.js",

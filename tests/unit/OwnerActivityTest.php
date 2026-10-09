@@ -43,7 +43,7 @@ class OwnerActivityTest extends TestCase {
 
     private const NOW = 1_800_000_000;
     /** Actions without a room: they must not touch anything. */
-    private const WITHOUT_ROOM = ['index', 'create'];
+    private const WITHOUT_ROOM = ['index', 'create', 'importMarkdown'];
 
     private Room $room;
     private bool $foreign = false;
@@ -90,6 +90,7 @@ class OwnerActivityTest extends TestCase {
             'unlockPoll' => ['unlockPoll', $p],
             'demoSeed' => ['demoSeed', $c],
             'demoClear' => ['demoClear', $c],
+            'exportMarkdown' => ['exportMarkdown', $c],
         ];
     }
 
@@ -250,6 +251,8 @@ class OwnerActivityTest extends TestCase {
             $time,
             $this->createMock(\OCP\Security\RateLimiting\ILimiter::class),
             new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            $this->createMock(\OCA\Pulse\Service\DeckMarkdown::class),
+            $this->createMock(\OCA\Pulse\Service\DeckImportService::class),
         );
     }
 

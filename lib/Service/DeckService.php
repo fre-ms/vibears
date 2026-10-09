@@ -43,9 +43,18 @@ class DeckService {
      * them back — the rest beyond this is dropped.
      */
     public const ACCEPTED_MAX = 50;
-    /** Time limit of a quiz question in seconds (lower/upper bound). */
-    private const QUIZ_MIN_LIMIT = 5;
-    private const QUIZ_MAX_LIMIT = 300;
+    /**
+     * Time limit of a quiz question in seconds (lower/upper bound of a timed
+     * question). NO_LIMIT (0) is the third choice: the question runs until
+     * the moderator reveals or leaves it, and a correct answer earns the
+     * flat BASE_POINTS (QuizService::points) — there are no speed points
+     * without a clock. Phone and projector show no countdown for 0
+     * (format.js remainingSecs), and a self-paced quiz treats it as it
+     * treats "Timer off" (PaceStateService::limitFor).
+     */
+    public const QUIZ_MIN_LIMIT = 5;
+    public const QUIZ_MAX_LIMIT = 300;
+    public const NO_LIMIT = 0;
 
     public function __construct(
         private RoomMapper $roomMapper,
@@ -252,9 +261,21 @@ class DeckService {
         }
 
         if ($quiz) {
-            $limit = Input::int($data['timeLimit'] ?? null) ?? 30;
-            $poll->setTimeLimit(max(self::QUIZ_MIN_LIMIT, min(self::QUIZ_MAX_LIMIT, $limit)));
+            $poll->setTimeLimit(self::timeLimit(Input::int($data['timeLimit'] ?? null) ?? 30));
         }
+    }
+
+    /**
+     * The stored time limit for a requested one: NO_LIMIT stays NO_LIMIT
+     * (the moderator ends the question), anything else is clamped into
+     * QUIZ_MIN_LIMIT..QUIZ_MAX_LIMIT — so a typo never means "no limit",
+     * and a negative number does not either.
+     */
+    public static function timeLimit(int $requested): int {
+        if ($requested === self::NO_LIMIT) {
+            return self::NO_LIMIT;
+        }
+        return max(self::QUIZ_MIN_LIMIT, min(self::QUIZ_MAX_LIMIT, $requested));
     }
 
     /**

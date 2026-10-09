@@ -1,6 +1,6 @@
-# Embedding Pulse in PowerPoint (content add-in)
+# Embedding vibeARS in PowerPoint (content add-in)
 
-Embeds the Pulse projector/poll view **live in a PowerPoint slide**. No Office
+Embeds the vibeARS projector/poll view **live in a PowerPoint slide**. No Office
 Store needed; the add-in is loaded by **sideloading**.
 
 ## How it works
@@ -14,7 +14,7 @@ The manifest points to the hosted shell `/apps/pulse/embed`. The shell loads
 `office.js`, asks **once** for the six-character room code (stored in the
 document settings of the `.pptx`) and then frames `/apps/pulse/screen/{code}`
 from the same origin. When the moderator moves on to the next question in the
-deck, the slide updates by itself (Pulse's own state polling).
+deck, the slide updates by itself (vibeARS's own state polling).
 
 The manifest asks PowerPoint for the lowest permission level, **Restricted**:
 the add-in only keeps the room code in the document settings and can neither
@@ -35,13 +35,13 @@ open the shell in a browser to test it, use a **private window**.
 - **Internet** for `office.js` (Microsoft CDN) — the add-in wrapper needs it; the
   poll content comes from the Nextcloud instance.
 - The web server/proxy has to drop `X-Frame-Options` for two paths (see below).
-  Pulse checks this itself and reports it under **Administration → Overview**.
+  vibeARS checks this itself and reports it under **Administration → Overview**.
 
 ## Setup (once)
 
 ### 0. Download the manifest from your own instance
 
-In Pulse, open a room → the deck's overflow menu → **"PowerPoint add-in"**.
+In vibeARS, open a room → the deck's overflow menu → **"PowerPoint add-in"**.
 Or directly: `https://YOUR-INSTANCE/apps/pulse/addin/manifest.xml`.
 
 The file is fully filled in — it carries exactly the address it was downloaded
@@ -56,7 +56,7 @@ add-in.
 the manifest again and replace the file in the catalog folder (or upload it
 again in the Microsoft 365 admin center). PowerPoint may keep its cached copy
 while the manifest's version number stays the same — it changes with the next
-Pulse release — so also tick **"Next time Office starts, clear all
+vibeARS release — so also tick **"Next time Office starts, clear all
 previously-started web add-ins cache"** under Trusted Add-in Catalogs (step 1a)
 and restart PowerPoint.
 
@@ -88,10 +88,10 @@ entry on every device.
 ### 2. Insert the add-in
 1. **Insert → My Add-ins** → for the folder route, additionally
    **▾ → Shared Folder**.
-2. Choose **Pulse live poll** (in a German Office: "Pulse Live-Umfrage") →
+2. Choose **vibeARS live poll** (in a German Office: "vibeARS Live-Umfrage") →
    **Add/Insert**.
 3. The add-in appears on the slide: **type in the room code → Show**.
-   (Create the room in Pulse beforehand to get a code.)
+   (Create the room in vibeARS beforehand to get a code.)
 4. **Slide show (F5):** the poll runs live in the slide.
    The audience votes on their phones as usual, via QR code or `/s/CODE`.
 
@@ -165,7 +165,7 @@ curl -sI https://YOUR-INSTANCE/apps/pulse/embed            | grep -i x-frame-opt
 curl -sI https://YOUR-INSTANCE/index.php/apps/pulse/embed  | grep -i x-frame-options
 ```
 
-Pulse does the same on its own: the setup check **"Pulse: embedding in
+vibeARS does the same on its own: the setup check **"vibeARS: embedding in
 PowerPoint"** (Administration → Overview) fetches the embed page under every
 address the server can reach itself on — and reports it separately when the
 rule applies for the internal name but is missing for the public one. Without

@@ -1,6 +1,6 @@
 # Design screenshots
 
-Captures every Pulse view automatically: projector, phone, join page, embed
+Captures every vibeARS view automatically: projector, phone, join page, embed
 shell and the moderator UI — per question type, open and revealed, light and
 dark. Meant for design passes: instead of clicking through by hand and taking
 pictures, a run leaves ~55 PNGs side by side.
@@ -180,7 +180,7 @@ A finding (`FEHLT`, `ÜBERLAPPT`, `ÜBER DIE MITTE`, `RAGT HERAUS`,
 If a room is deleted or reset while a `/s/…` or `/screen/…` page — or the
 projector preview in the run view — is still polling, 404s on `pulseRoomCode`
 pile up, and at some point Nextcloud answers the server address with 429 on
-all Pulse routes. Therefore:
+all vibeARS routes. Therefore:
 
 - In every track, load `about:blank` first before `reset` or `destroy`;
   `close`, `release`, `window` and `remove` do not need this. `run.sh` only

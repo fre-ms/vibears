@@ -1,5 +1,5 @@
 /**
- * Pulse — embed shell for the Office/PowerPoint add-in.
+ * vibeARS — embed shell for the Office/PowerPoint add-in.
  *
  * Hand-written asset (NOT a webpack bundle) — NC loads it via
  * \OCP\Util::addScript with a CSP nonce. Because the NC CSP uses
@@ -66,7 +66,7 @@
         frame.className = 'pulse-embed-frame';
         frame.src = screenUrl(code);
         frame.setAttribute('allowfullscreen', '');
-        frame.setAttribute('title', tr('Pulse live view'));
+        frame.setAttribute('title', tr('vibeARS live view'));
 
         // Thin bar, shown on hover, for changing the code — it does not get in
         // the way of the projection but is reachable while setting up.
@@ -113,7 +113,7 @@
         // is — before, there was just a bare input field.
         var mark = document.createElement('p');
         mark.className = 'pulse-embed-mark';
-        mark.innerHTML = '<span class="pulse-embed-dot"></span>Pulse';
+        mark.innerHTML = '<span class="pulse-embed-dot"></span>vibeARS';
 
         var p = document.createElement('p');
         p.className = 'pulse-embed-lede';

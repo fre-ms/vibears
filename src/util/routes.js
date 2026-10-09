@@ -1,5 +1,6 @@
 /**
  * SPDX-FileCopyrightText: 2026 hotochan123
+ * SPDX-FileCopyrightText: 2026 fre.ms
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
@@ -47,6 +48,31 @@ export function roomsApi() {
  */
 export function roomApi(code, suffix = '') {
 	return generateUrl('/apps/pulse/api/1.0/rooms/' + code + suffix)
+}
+
+/**
+ * The deck of one room as a Markdown file (GET, a download).
+ * @param {string} code room code
+ * @return {string} URL
+ */
+export function roomMarkdown(code) {
+	return generateUrl('/apps/pulse/api/1.0/rooms/' + code + '/markdown')
+}
+
+/**
+ * Moderator API: a new room from a deck file (POST { markdown }).
+ * @return {string} URL
+ */
+export function importApi() {
+	return generateUrl('/apps/pulse/api/1.0/import')
+}
+
+/**
+ * Administration: save the retention settings (POST, admin only).
+ * @return {string} URL
+ */
+export function adminRetentionApi() {
+	return generateUrl('/apps/pulse/api/1.0/admin/retention')
 }
 
 /**

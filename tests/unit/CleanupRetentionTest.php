@@ -41,7 +41,7 @@ class CleanupRetentionTest extends TestCase {
 
     private const NOW = 1_800_000_000;
     private const DAY = 86_400;
-    private const MAX_AGE = 30 * self::DAY; // CleanupStaleRoomsJob::RETENTION_DAYS
+    private const MAX_AGE = 30 * self::DAY; // Retention::DEFAULT_DAYS
     private const CUTOFF = self::NOW - self::MAX_AGE;
 
     private RoomService $service;

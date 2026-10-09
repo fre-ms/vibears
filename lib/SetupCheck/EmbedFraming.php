@@ -43,7 +43,7 @@ use Psr\Log\LoggerInterface;
 class EmbedFraming implements ISetupCheck {
     use CheckServerResponseTrait;
 
-    private const DOC = 'https://github.com/hotochan123/nextcloud-pulse/blob/main/office-addin/README.md';
+    private const DOC = 'https://github.com/fre-ms/vibears/blob/main/office-addin/README.md';
 
     public function __construct(
         protected IL10N $l10n,
@@ -59,7 +59,7 @@ class EmbedFraming implements ISetupCheck {
     }
 
     public function getName(): string {
-        return $this->l10n->t('Pulse: embedding in PowerPoint');
+        return $this->l10n->t('vibeARS: embedding in PowerPoint');
     }
 
     public function run(): SetupResult {
@@ -89,7 +89,7 @@ class EmbedFraming implements ISetupCheck {
 
         if (!$blockedHosts && !$openHosts) {
             return SetupResult::warning(
-                $this->l10n->t('Could not reach the Pulse embed page, so whether PowerPoint can frame it is unknown. Check by hand: the response to %s must not carry an X-Frame-Options header.', [$path])
+                $this->l10n->t('Could not reach the vibeARS embed page, so whether PowerPoint can frame it is unknown. Check by hand: the response to %s must not carry an X-Frame-Options header.', [$path])
                 . "\n" . $this->serverConfigHelp(),
                 self::DOC,
             );
@@ -97,7 +97,7 @@ class EmbedFraming implements ISetupCheck {
 
         if (!$blockedHosts) {
             return SetupResult::success(
-                $this->l10n->t('The Pulse embed page can be framed, so the PowerPoint add-in works. Checked: %s.', [implode(', ', $openHosts)]),
+                $this->l10n->t('The vibeARS embed page can be framed, so the PowerPoint add-in works. Checked: %s.', [implode(', ', $openHosts)]),
                 self::DOC,
             );
         }
@@ -109,13 +109,13 @@ class EmbedFraming implements ISetupCheck {
         // correctly. A warning would be wrong in exactly the setups this check is for.
         if (!$openHosts) {
             return SetupResult::info(
-                $this->l10n->t('Nextcloud sends "X-Frame-Options: SAMEORIGIN" for the Pulse embed page, so a PowerPoint slide shows an empty box instead of the poll. Checked: %s. This only affects the PowerPoint add-in — remove that header in the web server or proxy, and only for the paths /apps/pulse/embed and /apps/pulse/screen/. The projector view in a second window works either way.', [implode(', ', $blockedHosts)]),
+                $this->l10n->t('Nextcloud sends "X-Frame-Options: SAMEORIGIN" for the vibeARS embed page, so a PowerPoint slide shows an empty box instead of the poll. Checked: %s. This only affects the PowerPoint add-in — remove that header in the web server or proxy, and only for the paths /apps/pulse/embed and /apps/pulse/screen/. The projector view in a second window works either way.', [implode(', ', $blockedHosts)]),
                 self::DOC,
             );
         }
 
         return SetupResult::info(
-            $this->l10n->t('The Pulse embed page can be framed under %1$s, but not under %2$s. Only the address the presenting laptop uses has to work — an address that goes past the reverse proxy, such as localhost, keeps the X-Frame-Options header no matter how the proxy is configured.', [
+            $this->l10n->t('The vibeARS embed page can be framed under %1$s, but not under %2$s. Only the address the presenting laptop uses has to work — an address that goes past the reverse proxy, such as localhost, keeps the X-Frame-Options header no matter how the proxy is configured.', [
                 implode(', ', $openHosts),
                 implode(', ', $blockedHosts),
             ]),

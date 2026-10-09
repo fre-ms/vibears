@@ -19,6 +19,9 @@ return [
         ['name' => 'roomApi#summary',    'url' => '/api/1.0/rooms/{code}/summary',        'verb' => 'GET', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#leaderboard', 'url' => '/api/1.0/rooms/{code}/leaderboard',   'verb' => 'GET', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#exportCsv',  'url' => '/api/1.0/rooms/{code}/export',         'verb' => 'GET', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
+        // The deck as a file (Markdown with a YAML header) and a new room from one
+        ['name' => 'roomApi#exportMarkdown', 'url' => '/api/1.0/rooms/{code}/markdown',   'verb' => 'GET', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
+        ['name' => 'roomApi#importMarkdown', 'url' => '/api/1.0/import',                  'verb' => 'POST'],
         ['name' => 'roomApi#show',       'url' => '/api/1.0/rooms/{code}',                'verb' => 'GET',    'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#destroy',    'url' => '/api/1.0/rooms/{code}',                'verb' => 'DELETE', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#rename',     'url' => '/api/1.0/rooms/{code}/title',          'verb' => 'POST',   'requirements' => ['code' => '[A-Za-z0-9]{6}']],
@@ -52,6 +55,9 @@ return [
         ['name' => 'roomApi#pace',      'url' => '/api/1.0/rooms/{code}/pace',     'verb' => 'POST', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         // Progress per person/question (race/homework), polled adaptively with ?v=
         ['name' => 'roomApi#progress',  'url' => '/api/1.0/rooms/{code}/progress', 'verb' => 'GET',  'requirements' => ['code' => '[A-Za-z0-9]{6}']],
+
+        // ── Administration settings (admin only: no NoAdminRequired on the controller) ──
+        ['name' => 'adminSettings#retention', 'url' => '/api/1.0/admin/retention', 'verb' => 'POST'],
 
         // ── Join page (public): type in the code ────────────────────────────
         ['name' => 'public#join', 'url' => '/join', 'verb' => 'GET'],

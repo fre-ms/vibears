@@ -1,6 +1,7 @@
 <?php
 
 // SPDX-FileCopyrightText: 2026 hotochan123
+// SPDX-FileCopyrightText: 2026 fre.ms
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 declare(strict_types=1);
@@ -8,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Pulse\BackgroundJob;
 
 use OCA\Pulse\Service\PollImageService;
+use OCA\Pulse\Service\Retention;
 use OCA\Pulse\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
@@ -16,11 +18,15 @@ use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 /**
- * Deletes, once a day, rooms that nobody has used for more than RETENTION_DAYS.
- * Rooms are session artefacts (one talk, one meeting) and should not live
- * forever: that would keep old codes valid (brute-force surface) and fill the DB.
- * "Used" means: a participant heartbeat, any request of the owner on the room
- * (opening it, editing the deck, presenting — in every room mode), and in
+ * Deletes, once a day, rooms that nobody has used for more than the
+ * retention period — but only when the administration has switched that on
+ * (Retention: off by default, the number of days is a setting). Rooms are
+ * session artefacts (one talk, one meeting), and the upstream app deleted
+ * them after 30 days so that old codes do not stay valid (brute-force
+ * surface) and the database stays small; a lecturer's question bank, on the
+ * other hand, may rest for a semester. "Used" means: a participant
+ * heartbeat, any request of the owner on the room (opening it, editing the
+ * deck, presenting — in every room mode), and in
  * self-paced mode also opening, deadline, closing and release; so a deck
  * prepared weeks ahead survives, and so does a homework assignment with a
  * deadline on day 0 that is only evaluated on day 32. Heartbeats count only
@@ -43,8 +49,6 @@ use Psr\Log\LoggerInterface;
  * as used on the day of the update, so its first run deletes none of them.
  */
 class CleanupStaleRoomsJob extends TimedJob {
-    /** Rooms unused for this many days are removed. */
-    private const RETENTION_DAYS = 30;
     /**
      * Image files younger than this are never swept: an upload writes its
      * file a moment before the question row points to it.
@@ -55,6 +59,7 @@ class CleanupStaleRoomsJob extends TimedJob {
         ITimeFactory $time,
         private RoomService $roomService,
         private PollImageService $imageService,
+        private Retention $retention,
         private IUserManager $userManager,
         private IConfig $config,
         private LoggerInterface $logger,
@@ -67,7 +72,10 @@ class CleanupStaleRoomsJob extends TimedJob {
 
     protected function run($argument): void {
         $this->step('stale rooms', function (): void {
-            $deleted = $this->roomService->cleanupStaleRooms(self::RETENTION_DAYS * 24 * 60 * 60);
+            if (!$this->retention->enabled()) {
+                return; // the administration keeps every room (the default)
+            }
+            $deleted = $this->roomService->cleanupStaleRooms($this->retention->maxAgeSeconds());
             if ($deleted > 0) {
                 $this->logger->info('Pulse: cleaned up {count} stale rooms.', ['count' => $deleted]);
             }

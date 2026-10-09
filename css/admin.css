@@ -1,0 +1,7 @@
+/**
+ * SPDX-FileCopyrightText: 2026 fre.ms
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+/* Administration settings form (templates/admin.php). */
+#pulse-admin .pulse-admin-form p { margin: 8px 0; }
+#pulse-admin .pulse-admin-days { width: 6em; margin: 0 6px; }

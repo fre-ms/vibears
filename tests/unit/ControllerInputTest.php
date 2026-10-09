@@ -183,6 +183,8 @@ class ControllerInputTest extends TestCase {
             'unlockPoll' => ['unlockPoll', $p, false],
             'demoSeed' => ['demoSeed', $c, false],
             'demoClear' => ['demoClear', $c, false],
+            'exportMarkdown' => ['exportMarkdown', $c, false],
+            'importMarkdown' => ['importMarkdown', [], false],
         ];
     }
 
@@ -572,6 +574,8 @@ class ControllerInputTest extends TestCase {
             $this->time,
             $this->createMock(ILimiter::class),
             new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            $this->createMock(\OCA\Pulse\Service\DeckMarkdown::class),
+            $this->createMock(\OCA\Pulse\Service\DeckImportService::class),
         );
     }
 
