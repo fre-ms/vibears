@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Migration;
+namespace OCA\Vibears\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -31,9 +31,9 @@ use OCP\Migration\SimpleMigrationStep;
  * poll IDs): "question k of n" and "next question" come only from it, never
  * from `position`.
  *
- * `pulse_progress` holds, per (question, person), the personal start (the clock
+ * `vibears_progress` holds, per (question, person), the personal start (the clock
  * only runs from "Next") and when the question was left. Deliberately NO
- * placeholder votes in `pulse_votes`: every row there counts everywhere as an
+ * placeholder votes in `vibears_votes`: every row there counts everywhere as an
  * answer (tally, leaderboard, CSV, projector).
  *
  * Caution: this schema is final. Once this version has run
@@ -50,7 +50,7 @@ class Version000000Date20260927120000 extends SimpleMigrationStep {
         $schema = $schemaClosure();
 
         // ── Rooms: pace and window ──────────────────────────────────────────
-        $rooms = $schema->getTable('pulse_rooms');
+        $rooms = $schema->getTable('vibears_rooms');
         if (!$rooms->hasColumn('pace')) {
             // 'live' | 'self'
             $rooms->addColumn('pace', Types::STRING, ['notnull' => true, 'length' => 8, 'default' => 'live']);
@@ -96,8 +96,8 @@ class Version000000Date20260927120000 extends SimpleMigrationStep {
         // One row per question this person has REACHED. At most one
         // open row (left_at = 0) per (room_id, voter_token) – the flow in
         // PaceService::next guarantees that, not the DB.
-        if (!$schema->hasTable('pulse_progress')) {
-            $table = $schema->createTable('pulse_progress');
+        if (!$schema->hasTable('vibears_progress')) {
+            $table = $schema->createTable('vibears_progress');
             $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true]);
             $table->addColumn('room_id', Types::BIGINT, ['notnull' => true]);
             $table->addColumn('poll_id', Types::BIGINT, ['notnull' => true]);
@@ -110,9 +110,9 @@ class Version000000Date20260927120000 extends SimpleMigrationStep {
             $table->addColumn('left_at', Types::BIGINT, ['notnull' => true, 'default' => 0]);
             $table->setPrimaryKey(['id']);
             // carries the idempotency of "Next" (double tap, second tab)
-            $table->addUniqueIndex(['poll_id', 'voter_token'], 'pulse_progress_uniq_idx');
+            $table->addUniqueIndex(['poll_id', 'voter_token'], 'vibears_progress_uniq_idx');
             // rows of one person; as a prefix also all rows of a room
-            $table->addIndex(['room_id', 'voter_token'], 'pulse_progress_tok_idx');
+            $table->addIndex(['room_id', 'voter_token'], 'vibears_progress_tok_idx');
         }
 
         return $schema;

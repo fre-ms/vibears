@@ -5,9 +5,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Settings;
+namespace OCA\Vibears\Settings;
 
-use OCA\Pulse\AppInfo\Application;
+use OCA\Vibears\AppInfo\Application;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;

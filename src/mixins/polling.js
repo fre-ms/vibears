@@ -22,7 +22,7 @@
  *
  * Permanently off (room gone -> 404, or view destroyed): pollStopped = true.
  * Important, because a tab that keeps hammering would otherwise trigger the
- * pulseRoomCode brute-force throttle (429 "Too Many Requests").
+ * vibearsRoomCode brute-force throttle (429 "Too Many Requests").
  */
 export default {
 	data() {

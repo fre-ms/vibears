@@ -48,7 +48,7 @@ In scope:
 - the app in this repository: the PHP code, the templates, the JavaScript
   bundles and their sources, the PowerPoint add-in shell and the manifest the
   app generates;
-- the participant pages and API (`/apps/pulse/s/…`, `/screen/…`, `/embed`),
+- the participant pages and API (`/apps/vibears/s/…`, `/screen/…`, `/embed`),
   the moderator API (the deck file import included), the administration
   settings and the background job;
 - the release tooling (`build/package.sh`) and the CI configuration, as far as

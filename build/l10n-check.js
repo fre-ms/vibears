@@ -36,13 +36,13 @@ function walk(dir, exts, out = []) {
 // in a t(), it needs its own entry: t() never looks inside a plural (that is
 // how "answers" went missing in the CSV file name while the check stayed silent).
 const SINGULAR = [
-	/\bt\(\s*'pulse'\s*,\s*'((?:[^'\\]|\\.)*)'/g,
-	// Embed shell: its own helper tr('Text') instead of t('pulse', 'Text').
+	/\bt\(\s*'vibears'\s*,\s*'((?:[^'\\]|\\.)*)'/g,
+	// Embed shell: its own helper tr('Text') instead of t('vibears', 'Text').
 	/\btr\(\s*'((?:[^'\\]|\\.)*)'/g,
 	/->t\(\s*'((?:[^'\\]|\\.)*)'/g,
 ]
 const PLURAL = [
-	/\bn\(\s*'pulse'\s*,\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'/g,
+	/\bn\(\s*'vibears'\s*,\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'/g,
 	/->n\(\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'/g,
 ]
 
@@ -53,7 +53,7 @@ const files = [
 	// The administration form translates in the template ($l->t).
 	...walk(path.join(root, 'templates'), ['.php']),
 	// Hand-written asset without a bundle — translatable since B3, so check it too.
-	path.join(root, 'js', 'pulse-embed.js'),
+	path.join(root, 'js', 'vibears-embed.js'),
 ]
 const unescape = (s) => s.replace(/\\'/g, '\'').replace(/\\\\/g, '\\')
 const note = (key, rel) => {

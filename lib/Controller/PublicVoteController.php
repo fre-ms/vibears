@@ -5,22 +5,22 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Controller;
+namespace OCA\Vibears\Controller;
 
-use OCA\Pulse\AppInfo\Application;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\CodeGenerator;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\Input;
-use OCA\Pulse\Service\JoinLimitException;
-use OCA\Pulse\Service\Limits;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\RoomGoneException;
-use OCA\Pulse\Service\RoomService;
-use OCA\Pulse\Service\StateService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\AppInfo\Application;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\CodeGenerator;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\Input;
+use OCA\Vibears\Service\JoinLimitException;
+use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\RoomGoneException;
+use OCA\Vibears\Service\RoomService;
+use OCA\Vibears\Service\StateService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -62,10 +62,10 @@ use OCP\Security\RateLimiting\IRateLimitExceededException;
  *    needs a CORS preflight that Nextcloud does not grant. So another site
  *    (a sibling subdomain included) can neither vote or rename in a visitor's
  *    name nor replace their cookie with a fresh one (403, no cookie).
- *  - The voter cookie is `__Host-pulse_vt` on https with an empty webroot:
+ *  - The voter cookie is `__Host-vibears_vt` on https with an empty webroot:
  *    browsers accept such a cookie only from this very origin (Secure, Path=/,
  *    no Domain), so a sibling subdomain cannot plant a token it knows
- *    (cookie tossing). Elsewhere it stays `pulse_vt`. See voterCookie().
+ *    (cookie tossing). Elsewhere it stays `vibears_vt`. See voterCookie().
  *  - Unknown room codes are throttled by hand (throttleUnknownCode()), not
  *    with #[BruteForceProtection]: the attribute consults the throttle before
  *    every request, whatever the code — ten wrong codes from one address locked
@@ -83,7 +83,7 @@ use OCP\Security\RateLimiting\IRateLimitExceededException;
  */
 class PublicVoteController extends Controller {
     /** Brute-force action for unknown room codes (IThrottler). */
-    public const CODE_ACTION = 'pulseRoomCode';
+    public const CODE_ACTION = 'vibearsRoomCode';
 
     /** Name of the voter cookie on https with an empty webroot (see hostCookie()). */
     public const HOST_COOKIE = '__Host-' . Application::VOTER_COOKIE;
@@ -109,14 +109,14 @@ class PublicVoteController extends Controller {
     public const NEW_PRESENCE_LIMIT = 600;
 
     /**
-     * How long after the switch to __Host-pulse_vt a single legacy pulse_vt
+     * How long after the switch to __Host-vibears_vt a single legacy vibears_vt
      * cookie is still adopted, in seconds: long enough for a 30-day homework
      * running during the update plus its review. After that a legacy cookie is
      * ignored — it is exactly the cookie a sibling subdomain could plant.
      */
     public const LEGACY_ADOPT_PERIOD = 60 * 86400;
 
-    /** App config key: when this instance first used __Host-pulse_vt (Unix time). */
+    /** App config key: when this instance first used __Host-vibears_vt (Unix time). */
     public const HOST_COOKIE_SINCE = 'voter_cookie_host_since';
 
     public function __construct(
@@ -174,7 +174,7 @@ class PublicVoteController extends Controller {
             $sendCookie = true;
         } else {
             $this->roomService->heartbeat($room, $token, fn (): bool => $this->allowNewPresence($room));
-            // A legacy cookie is moved to __Host-pulse_vt (and expired).
+            // A legacy cookie is moved to __Host-vibears_vt (and expired).
             $sendCookie = $cookie['adopted'] || $cookie['dropLegacy'];
         }
 
@@ -286,7 +286,7 @@ class PublicVoteController extends Controller {
         }
         try {
             $this->limiter->registerAnonRequest(
-                'pulse-join-' . $room->getId(),
+                'vibears-join-' . $room->getId(),
                 PaceService::joinLimit($this->limits->get(Limits::PLAYERS_PER_ROOM)),
                 PaceService::JOIN_PERIOD,
                 $this->request->getRemoteAddress(),
@@ -470,7 +470,7 @@ class PublicVoteController extends Controller {
     /**
      * The voter token of this request, read from the cookie — only in the form
      * that CodeGenerator::voterToken issues. Anything else counts as "no
-     * cookie" (state/join/vote issue a new one): `pulse_vt[x]=…` arrives in PHP
+     * cookie" (state/join/vote issue a new one): `vibears_vt[x]=…` arrives in PHP
      * as a list (TypeError, 500), an overlong or broken token failed on the
      * varchar(32) column or on the database's UTF-8 (500). A cookie name that
      * occurs more than once in the Cookie header counts as none as well: PHP
@@ -478,8 +478,8 @@ class PublicVoteController extends Controller {
      * a sibling subdomain adds a second one with a token it knows.
      *
      * On https with an empty webroot (hostCookie()) the cookie is
-     * `__Host-pulse_vt`; if it was sent at all, it alone decides. Without it, a
-     * single legacy `pulse_vt` is adopted during LEGACY_ADOPT_PERIOD (moved to
+     * `__Host-vibears_vt`; if it was sent at all, it alone decides. Without it, a
+     * single legacy `vibears_vt` is adopted during LEGACY_ADOPT_PERIOD (moved to
      * the new name by setVoterCookie()), so an update does not cost anyone
      * their name, points or progress. A legacy cookie that arrives is expired
      * with the next cookie-setting response.
@@ -502,7 +502,7 @@ class PublicVoteController extends Controller {
     }
 
     /**
-     * Cookie name `__Host-pulse_vt`? Only on https (overwriteprotocol and
+     * Cookie name `__Host-vibears_vt`? Only on https (overwriteprotocol and
      * trusted proxies included) and with an empty webroot: the prefix demands
      * Secure and Path=/, and Nextcloud sets every cookie with the webroot as
      * its path.
@@ -552,14 +552,14 @@ class PublicVoteController extends Controller {
      * How often cookie $name occurs in the raw Cookie header. Names are
      * compared the way PHP registers them: leading blanks dropped, ' ' and '.'
      * become '_', and `a[x]` is the array `a` (without a closing ']' the '['
-     * becomes '_' as well) — so `pulse.vt` and `pulse_vt[x]` count as
-     * `pulse_vt` too.
+     * becomes '_' as well) — so `vibears.vt` and `vibears_vt[x]` count as
+     * `vibears_vt` too.
      *
      * Also like PHP (since 8.0.24, CVE-2022-31629): a name that starts with
      * `__Host-` or `__Secure-` only after that mangling is dropped, not
-     * registered. Browsers apply no prefix rule to `_.Host-pulse_vt`, so any
+     * registered. Browsers apply no prefix rule to `_.Host-vibears_vt`, so any
      * sibling subdomain can set it for the whole domain; counting it as a
-     * second `__Host-pulse_vt` turned every request into "no cookie" and
+     * second `__Host-vibears_vt` turned every request into "no cookie" and
      * cost the participant their identity on every poll.
      */
     private function cookieCount(string $name): int {
@@ -610,7 +610,7 @@ class PublicVoteController extends Controller {
     private function allowNewToken(Room $room): bool {
         try {
             $this->limiter->registerAnonRequest(
-                'pulse-token-' . $room->getId(),
+                'vibears-token-' . $room->getId(),
                 self::NEW_TOKEN_LIMIT,
                 self::NEW_TOKEN_PERIOD,
                 $this->request->getRemoteAddress(),
@@ -629,7 +629,7 @@ class PublicVoteController extends Controller {
     private function allowNewPresence(Room $room): bool {
         try {
             $this->limiter->registerAnonRequest(
-                'pulse-presence-' . $room->getId(),
+                'vibears-presence-' . $room->getId(),
                 self::NEW_PRESENCE_LIMIT,
                 self::NEW_TOKEN_PERIOD,
                 $this->request->getRemoteAddress(),
@@ -644,7 +644,7 @@ class PublicVoteController extends Controller {
 
     /**
      * Answer for a room code that does not exist: 404 and a failed attempt of
-     * the brute-force action 'pulseRoomCode' for this address — or 429 once
+     * the brute-force action 'vibearsRoomCode' for this address — or 429 once
      * the address has more than ten failed attempts within 30 minutes
      * (Nextcloud 34 no longer delays, it blocks). Only misses consult the
      * throttler: a request for an existing code never does, so neither typos

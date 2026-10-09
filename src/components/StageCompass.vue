@@ -34,13 +34,13 @@
 			<span v-if="corners[3]" class="splot-corner splot-corner--tr">{{ corners[3] }}</span>
 			<span v-if="corners[0]" class="splot-corner splot-corner--bl">{{ corners[0] }}</span>
 			<span v-if="corners[1]" class="splot-corner splot-corner--br">{{ corners[1] }}</span>
-			<span v-if="centre" class="splot-centre" :style="centre.style">{{ t('pulse', 'Centre of gravity') }}</span>
+			<span v-if="centre" class="splot-centre" :style="centre.style">{{ t('vibears', 'Centre of gravity') }}</span>
 		</div>
 		<div class="splot-legend">
-			<span><i class="splot-sw splot-sw--dot" />{{ t('pulse', 'Centre of gravity') }}</span>
+			<span><i class="splot-sw splot-sw--dot" />{{ t('vibears', 'Centre of gravity') }}</span>
 			<span>{{ heatmap
-				? t('pulse', 'Heat map from {count} answers', { count: threshold })
-				: t('pulse', 'Single dots below {count} answers', { count: threshold }) }}</span>
+				? t('vibears', 'Heat map from {count} answers', { count: threshold })
+				: t('vibears', 'Single dots below {count} answers', { count: threshold }) }}</span>
 		</div>
 	</div>
 </template>

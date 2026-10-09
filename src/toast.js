@@ -53,7 +53,7 @@ function showToast(message, opts = {}) {
 	const el = document.createElement('div')
 	el.className = variant === 'success' ? 'pulse-toast is-ok' : 'pulse-toast'
 	el.setAttribute('role', opts.role || 'alert')
-	el.textContent = String(message || (variant === 'success' ? t('pulse', 'Done') : t('pulse', 'Error')))
+	el.textContent = String(message || (variant === 'success' ? t('vibears', 'Done') : t('vibears', 'Error')))
 	const remove = () => {
 		if (!el.parentNode) { return }
 		el.classList.add('is-out')

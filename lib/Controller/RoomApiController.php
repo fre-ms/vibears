@@ -6,28 +6,28 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Controller;
+namespace OCA\Vibears\Controller;
 
-use OCA\Pulse\AppInfo\Application;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\ConflictException;
-use OCA\Pulse\Service\DeckImportService;
-use OCA\Pulse\Service\DeckMarkdown;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\DemoService;
-use OCA\Pulse\Service\Input;
-use OCA\Pulse\Service\Limits;
-use OCA\Pulse\Service\NotOwnerException;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\PaceStateService;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\PollNotFoundException;
-use OCA\Pulse\Service\RoomGoneException;
-use OCA\Pulse\Service\RoomService;
-use OCA\Pulse\Service\StateService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\AppInfo\Application;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\ConflictException;
+use OCA\Vibears\Service\DeckImportService;
+use OCA\Vibears\Service\DeckMarkdown;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\DemoService;
+use OCA\Vibears\Service\Input;
+use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\NotOwnerException;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\PaceStateService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\PollNotFoundException;
+use OCA\Vibears\Service\RoomGoneException;
+use OCA\Vibears\Service\RoomService;
+use OCA\Vibears\Service\StateService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -136,13 +136,13 @@ class RoomApiController extends Controller {
                 };
                 return new DataDownloadResponse(
                     $this->paceState->exportCsv($room, $view),
-                    'pulse-' . $room->getCode() . '-' . $label . '.csv',
+                    'vibears-' . $room->getCode() . '-' . $label . '.csv',
                     'text/csv; charset=utf-8',
                 );
             }
             return new DataDownloadResponse(
                 $this->stateService->exportCsv($room),
-                'pulse-' . $room->getCode() . '-' . $this->l10n->t('results') . '.csv',
+                'vibears-' . $room->getCode() . '-' . $this->l10n->t('results') . '.csv',
                 'text/csv; charset=utf-8',
             );
         });
@@ -705,7 +705,7 @@ class RoomApiController extends Controller {
             return null; // not reachable without login; nothing to count against
         }
         try {
-            $this->limiter->registerUserRequest('pulse-' . $action, $this->limits->rate($action), Limits::RATE_PERIOD, $user);
+            $this->limiter->registerUserRequest('vibears-' . $action, $this->limits->rate($action), Limits::RATE_PERIOD, $user);
         } catch (IRateLimitExceededException) {
             return new JSONResponse(['message' => $this->l10n->t('Too many attempts. Please wait a moment.')], Http::STATUS_TOO_MANY_REQUESTS);
         }

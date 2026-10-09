@@ -78,13 +78,13 @@ export function fmtDeadline(ts) {
 export function fmtAgo(ts, nowServer) {
 	if (!ts) return ''
 	const s = Math.max(0, Math.floor(nowServer) - ts)
-	if (s < 90) return t('pulse', 'just now')
+	if (s < 90) return t('vibears', 'just now')
 	const m = Math.floor(s / 60)
-	if (m < 60) return t('pulse', '{count} min ago', { count: m })
+	if (m < 60) return t('vibears', '{count} min ago', { count: m })
 	const h = Math.floor(m / 60)
-	if (h < 24) return t('pulse', '{count} h ago', { count: h })
+	if (h < 24) return t('vibears', '{count} h ago', { count: h })
 	const d = Math.floor(h / 24)
-	return n('pulse', '%n day ago', '%n days ago', d)
+	return n('vibears', '%n day ago', '%n days ago', d)
 }
 
 /**
@@ -99,12 +99,12 @@ export function paceStateChip(win, nowServer) {
 	const st = windowState(win, nowServer)
 	if (st === 'open') {
 		return win.closesAt > 0
-			? { cls: 'is-live', dot: true, label: t('pulse', 'Open until {time}', { time: fmtDeadline(win.closesAt) }) }
-			: { cls: 'is-live', dot: true, label: t('pulse', 'Open now') }
+			? { cls: 'is-live', dot: true, label: t('vibears', 'Open until {time}', { time: fmtDeadline(win.closesAt) }) }
+			: { cls: 'is-live', dot: true, label: t('vibears', 'Open now') }
 	}
-	if (st === 'closed') return { cls: 'is-warning', dot: false, label: t('pulse', 'Quiz closed') }
-	if (st === 'released') return { cls: 'is-neutral', dot: false, label: t('pulse', 'Results released') }
-	return { cls: 'is-neutral', dot: false, label: t('pulse', 'Self-paced') }
+	if (st === 'closed') return { cls: 'is-warning', dot: false, label: t('vibears', 'Quiz closed') }
+	if (st === 'released') return { cls: 'is-neutral', dot: false, label: t('vibears', 'Results released') }
+	return { cls: 'is-neutral', dot: false, label: t('vibears', 'Self-paced') }
 }
 
 /**
@@ -115,11 +115,11 @@ export function paceStateChip(win, nowServer) {
  */
 export function fmtDuration(sec) {
 	const { d, h, m } = splitDuration(sec)
-	const minutes = () => n('pulse', '%n minute', '%n minutes', m)
+	const minutes = () => n('vibears', '%n minute', '%n minutes', m)
 	if (d === 0 && h === 0) return minutes()
 	const hours = d * 24 + h
-	if (hours < 48) return n('pulse', '%n hour', '%n hours', hours) + (m ? ', ' + minutes() : '')
-	return n('pulse', '%n day', '%n days', d) + (h ? ', ' + n('pulse', '%n hour', '%n hours', h) : '')
+	if (hours < 48) return n('vibears', '%n hour', '%n hours', hours) + (m ? ', ' + minutes() : '')
+	return n('vibears', '%n day', '%n days', d) + (h ? ', ' + n('vibears', '%n hour', '%n hours', h) : '')
 }
 
 // From this label length on, rows are laid out on two lines — for ALL rows

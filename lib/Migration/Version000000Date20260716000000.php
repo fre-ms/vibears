@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Migration;
+namespace OCA\Vibears\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -25,8 +25,8 @@ class Version000000Date20260716000000 extends SimpleMigrationStep {
         // ── Rooms ───────────────────────────────────────────────────────────
         // The room is the stable unit of sharing: the 6-digit code stays the
         // same while the presenter switches questions.
-        if (!$schema->hasTable('pulse_rooms')) {
-            $table = $schema->createTable('pulse_rooms');
+        if (!$schema->hasTable('vibears_rooms')) {
+            $table = $schema->createTable('vibears_rooms');
             $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true]);
             $table->addColumn('code', Types::STRING, ['notnull' => true, 'length' => 6]);
             $table->addColumn('owner_uid', Types::STRING, ['notnull' => true, 'length' => 64]);
@@ -34,13 +34,13 @@ class Version000000Date20260716000000 extends SimpleMigrationStep {
             $table->addColumn('active_poll_id', Types::BIGINT, ['notnull' => true, 'default' => 0]);
             $table->addColumn('created_at', Types::BIGINT, ['notnull' => true]);
             $table->setPrimaryKey(['id']);
-            $table->addUniqueIndex(['code'], 'pulse_rooms_code_idx');
-            $table->addIndex(['owner_uid'], 'pulse_rooms_owner_idx');
+            $table->addUniqueIndex(['code'], 'vibears_rooms_code_idx');
+            $table->addIndex(['owner_uid'], 'vibears_rooms_owner_idx');
         }
 
         // ── Polls ───────────────────────────────────────────────────────────
-        if (!$schema->hasTable('pulse_polls')) {
-            $table = $schema->createTable('pulse_polls');
+        if (!$schema->hasTable('vibears_polls')) {
+            $table = $schema->createTable('vibears_polls');
             $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true]);
             $table->addColumn('room_id', Types::BIGINT, ['notnull' => true]);
             $table->addColumn('type', Types::STRING, ['notnull' => true, 'length' => 16]); // 'choice' | 'words'
@@ -51,7 +51,7 @@ class Version000000Date20260716000000 extends SimpleMigrationStep {
             $table->addColumn('status', Types::STRING, ['notnull' => true, 'length' => 16, 'default' => 'active']); // 'active' | 'ended'
             $table->addColumn('created_at', Types::BIGINT, ['notnull' => true]);
             $table->setPrimaryKey(['id']);
-            $table->addIndex(['room_id'], 'pulse_polls_room_idx');
+            $table->addIndex(['room_id'], 'vibears_polls_room_idx');
         }
 
         // ── Votes ───────────────────────────────────────────────────────────
@@ -59,8 +59,8 @@ class Version000000Date20260716000000 extends SimpleMigrationStep {
         // tallied via COUNT/aggregate — no shared counter that gets incremented
         // (that would swallow votes when people vote at the same time).
         // Re-vote = upsert on this UNIQUE key (last write wins per person).
-        if (!$schema->hasTable('pulse_votes')) {
-            $table = $schema->createTable('pulse_votes');
+        if (!$schema->hasTable('vibears_votes')) {
+            $table = $schema->createTable('vibears_votes');
             $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true]);
             $table->addColumn('poll_id', Types::BIGINT, ['notnull' => true]);
             $table->addColumn('voter_token', Types::STRING, ['notnull' => true, 'length' => 32]);
@@ -68,7 +68,7 @@ class Version000000Date20260716000000 extends SimpleMigrationStep {
             $table->addColumn('payload', Types::TEXT, ['notnull' => true]);
             $table->addColumn('created_at', Types::BIGINT, ['notnull' => true]);
             $table->setPrimaryKey(['id']);
-            $table->addUniqueIndex(['poll_id', 'voter_token'], 'pulse_votes_unique_idx');
+            $table->addUniqueIndex(['poll_id', 'voter_token'], 'vibears_votes_unique_idx');
         }
 
         return $schema;

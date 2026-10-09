@@ -16,7 +16,7 @@ import { translate, translatePlural } from '@nextcloud/l10n'
 const OPTIONS = { escape: false, sanitize: false }
 
 /**
- * @param {string} app app id, always 'pulse' for us
+ * @param {string} app app id, always 'vibears' for us
  * @param {string} text English source text
  * @param {object} [vars] values for {placeholders}
  * @return {string} translated text
@@ -26,7 +26,7 @@ export function t(app, text, vars) {
 }
 
 /**
- * @param {string} app app id, always 'pulse' for us
+ * @param {string} app app id, always 'vibears' for us
  * @param {string} singular English text for 1
  * @param {string} plural English text for n
  * @param {number} count count (also replaces %n)

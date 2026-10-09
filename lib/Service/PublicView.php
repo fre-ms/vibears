@@ -5,11 +5,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
-use OCA\Pulse\AppInfo\Application;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\Room;
+use OCA\Vibears\AppInfo\Application;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\Room;
 
 /**
  * Pure building blocks of the public view (phone, projector, public API):
@@ -31,6 +31,8 @@ class PublicView {
      * so no client stays stuck on the old state with a 204.
      */
     public static function opaque(string $raw, string $secret): string {
+        // The salt is Pulse's on purpose: it is never visible, and the golden
+        // tests (StateVersionTest, PublicSpoilerTest) pin values computed with it.
         return substr(hash_hmac('sha256', 'v' . Application::PROTOCOL . ':' . $raw, 'pulse-state:' . $secret), 0, 24);
     }
 
@@ -55,7 +57,7 @@ class PublicView {
         if ($room->getMode() !== 'quiz' || $revealed) {
             return $data;
         }
-        $key = 'pulse-order:' . $secret;
+        $key = 'pulse-order:' . $secret; // Pulse's salt, see opaque()
         $prefix = $poll->getId() . ':';
         $shuffle = static function (array $list) use ($key, $prefix): array {
             $keyed = [];

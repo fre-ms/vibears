@@ -6,47 +6,47 @@
 	<section class="pace-run">
 		<header class="pace-top">
 			<div class="pace-top-row">
-				<h2 ref="title" class="pace-title" :class="{ 'is-untitled': !room.title }" tabindex="-1">{{ room.title || t('pulse', 'Your quiz') }}</h2>
+				<h2 ref="title" class="pace-title" :class="{ 'is-untitled': !room.title }" tabindex="-1">{{ room.title || t('vibears', 'Your quiz') }}</h2>
 				<span v-if="stateChip" class="pulse-chip pace-state" :class="stateChip.cls"><span v-if="stateChip.dot" class="pulse-chip-dot" />{{ stateChip.label }}</span>
-				<span class="pulse-chip is-live pace-here" :title="t('pulse', '{count} participants active in the last few seconds', { count: here })"><span class="pulse-chip-dot" />{{ t('pulse', '{count} here', { count: here }) }}</span>
-				<span v-if="room.practice" class="pulse-chip is-warning"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run') }}</span>
-				<span v-if="room.joinsLocked" class="pulse-chip is-locked"><PulseIcon name="lock" size="1em" /> {{ t('pulse', 'Joining locked') }}</span>
-				<span v-if="pointsShown" class="pulse-chip is-warning"><PulseIcon name="eye" size="1em" /> {{ t('pulse', 'Points visible') }}</span>
+				<span class="pulse-chip is-live pace-here" :title="t('vibears', '{count} participants active in the last few seconds', { count: here })"><span class="pulse-chip-dot" />{{ t('vibears', '{count} here', { count: here }) }}</span>
+				<span v-if="room.practice" class="pulse-chip is-warning"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</span>
+				<span v-if="room.joinsLocked" class="pulse-chip is-locked"><PulseIcon name="lock" size="1em" /> {{ t('vibears', 'Joining locked') }}</span>
+				<span v-if="pointsShown" class="pulse-chip is-warning"><PulseIcon name="eye" size="1em" /> {{ t('vibears', 'Points visible') }}</span>
 				<span class="pace-spacer" />
-				<span class="pace-code" :title="t('pulse', 'Room code')">{{ spacedCode }}</span>
-				<PulseMenu ref="menu" :items="menuItems" :label="t('pulse', 'More actions')" small />
+				<span class="pace-code" :title="t('vibears', 'Room code')">{{ spacedCode }}</span>
+				<PulseMenu ref="menu" :items="menuItems" :label="t('vibears', 'More actions')" small />
 			</div>
 			<!-- The settings fixed on opening stay visible — as on the phone. -->
 			<p class="pace-facts">{{ facts }}</p>
-			<p v-if="!online" class="pulse-notice is-warn pace-offline" role="status"><PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" /><span>{{ t('pulse', 'No connection — the room is not answering. The main action stays disabled until it is back.') }}</span></p>
+			<p v-if="!online" class="pulse-notice is-warn pace-offline" role="status"><PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" /><span>{{ t('vibears', 'No connection — the room is not answering. The main action stays disabled until it is back.') }}</span></p>
 		</header>
 
 		<div class="pace-body">
 			<!-- Private: names, progress and points per person. What gets projected
 			     is the projector window, never this page. -->
 			<section class="pace-people" aria-labelledby="pace-people-head">
-				<h3 id="pace-people-head" class="pace-private-head"><PulseIcon name="lock" size="1.05em" /> {{ t('pulse', 'Only for you') }}</h3>
-				<p class="pace-private-sub">{{ t('pulse', 'Progress per person. Mirror the projector window, not this page.') }}</p>
+				<h3 id="pace-people-head" class="pace-private-head"><PulseIcon name="lock" size="1.05em" /> {{ t('vibears', 'Only for you') }}</h3>
+				<p class="pace-private-sub">{{ t('vibears', 'Progress per person. Mirror the projector window, not this page.') }}</p>
 				<div class="pace-tools">
-					<span class="pace-count">{{ t('pulse', '{joined} joined · {started} started · {finished} finished', { joined: players.length, started: startedCount, finished: finishedCount }) }}</span>
+					<span class="pace-count">{{ t('vibears', '{joined} joined · {started} started · {finished} finished', { joined: players.length, started: startedCount, finished: finishedCount }) }}</span>
 					<span class="pace-sort">
-						<span class="pace-sort-label" aria-hidden="true">{{ t('pulse', 'Sort by') }}</span>
-						<PulseSegmented v-model="sortKey" :options="sortOptions" :label="t('pulse', 'Sort by')" />
+						<span class="pace-sort-label" aria-hidden="true">{{ t('vibears', 'Sort by') }}</span>
+						<PulseSegmented v-model="sortKey" :options="sortOptions" :label="t('vibears', 'Sort by')" />
 					</span>
 				</div>
 				<div v-if="players.length" class="pace-table-wrap">
 					<table class="pace-table">
-						<caption class="pace-sr">{{ t('pulse', 'Participants') }}</caption>
+						<caption class="pace-sr">{{ t('vibears', 'Participants') }}</caption>
 						<thead>
 							<tr>
-								<th scope="col">{{ t('pulse', 'Name') }}</th>
-								<th scope="col">{{ t('pulse', 'Question') }}</th>
-								<th scope="col" class="is-num is-long">{{ t('pulse', 'Answered') }}</th>
-								<th scope="col" class="is-num is-long">{{ t('pulse', 'Skipped') }}</th>
-								<th scope="col" class="is-num">{{ t('pulse', 'Correct') }}</th>
-								<th scope="col" class="is-num">{{ t('pulse', 'Points') }}</th>
-								<th scope="col">{{ t('pulse', 'Last active') }}</th>
-								<th scope="col" class="pace-act"><span class="pace-sr">{{ t('pulse', 'Row actions') }}</span></th>
+								<th scope="col">{{ t('vibears', 'Name') }}</th>
+								<th scope="col">{{ t('vibears', 'Question') }}</th>
+								<th scope="col" class="is-num is-long">{{ t('vibears', 'Answered') }}</th>
+								<th scope="col" class="is-num is-long">{{ t('vibears', 'Skipped') }}</th>
+								<th scope="col" class="is-num">{{ t('vibears', 'Correct') }}</th>
+								<th scope="col" class="is-num">{{ t('vibears', 'Points') }}</th>
+								<th scope="col">{{ t('vibears', 'Last active') }}</th>
+								<th scope="col" class="pace-act"><span class="pace-sr">{{ t('vibears', 'Row actions') }}</span></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -55,12 +55,12 @@
 									<!-- When space gets tight, the chip slides below the name instead of widening the table. -->
 									<div class="pace-name">
 										<span class="pace-nick">{{ p.nickname }}</span>
-										<span v-if="p.pending > 0" class="pulse-chip is-warning pace-cell-chip"><PulseIcon name="hourglass" size="1em" /> {{ n('pulse', '%n to check', '%n to check', p.pending) }}</span>
+										<span v-if="p.pending > 0" class="pulse-chip is-warning pace-cell-chip"><PulseIcon name="hourglass" size="1em" /> {{ n('vibears', '%n to check', '%n to check', p.pending) }}</span>
 									</div>
 								</td>
 								<td>
-									<span v-if="p.finished" class="pulse-chip is-success pace-cell-chip"><PulseIcon name="flag" size="1em" /> {{ t('pulse', 'Finished') }}</span>
-									<span v-else-if="!p.started" class="pace-muted">{{ t('pulse', 'Not started') }}</span>
+									<span v-if="p.finished" class="pulse-chip is-success pace-cell-chip"><PulseIcon name="flag" size="1em" /> {{ t('vibears', 'Finished') }}</span>
+									<span v-else-if="!p.started" class="pace-muted">{{ t('vibears', 'Not started') }}</span>
 									<span v-else class="pace-pos">{{ p.k }} / {{ total }}</span>
 								</td>
 								<td class="is-num">{{ p.answered }}</td>
@@ -68,33 +68,33 @@
 								<td class="is-num">{{ p.correct === null ? '—' : p.correct }}</td>
 								<td class="is-num">{{ p.score === null ? '—' : fmtNum(p.score, 0) }}</td>
 								<td>
-									<span v-if="p.online" class="pulse-chip is-live pace-cell-chip"><span class="pulse-chip-dot" />{{ t('pulse', 'online') }}</span>
+									<span v-if="p.online" class="pulse-chip is-live pace-cell-chip"><span class="pulse-chip-dot" />{{ t('vibears', 'online') }}</span>
 									<span v-else class="pace-muted">{{ fmtAgo(p.lastActivity, nowServer) || '—' }}</span>
 								</td>
 								<!-- Exactly one entry, and it is red: whoever lost their device
 								     or is squatting a name gets removed here. -->
 								<td class="pace-act">
-									<PulseMenu :items="rowMenu(p)" :label="t('pulse', 'Actions for {name}', { name: p.nickname })" small />
+									<PulseMenu :items="rowMenu(p)" :label="t('vibears', 'Actions for {name}', { name: p.nickname })" small />
 								</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
-				<p v-else-if="progress" class="pace-empty">{{ t('pulse', 'Nobody has joined yet — share the code.') }}</p>
+				<p v-else-if="progress" class="pace-empty">{{ t('vibears', 'Nobody has joined yet — share the code.') }}</p>
 			</section>
 
 			<aside class="pace-side">
 				<!-- Right after opening, sharing the link is the main task
 				     (homework: into the class chat). Only while open. -->
 				<section v-if="state === 'open'" class="pace-card pace-join" aria-labelledby="pace-join-head">
-					<h3 id="pace-join-head" class="pace-side-head">{{ t('pulse', 'Join in') }}</h3>
+					<h3 id="pace-join-head" class="pace-side-head">{{ t('vibears', 'Join in') }}</h3>
 					<div class="pace-join-in">
 						<div class="pace-qr"><QrCode :value="joinUrlFull" /></div>
 						<span class="pace-join-code">{{ spacedCode }}</span>
 					</div>
 					<div class="pace-join-link">
 						<a class="pace-join-url" :href="joinPath" target="_blank" rel="noopener">{{ joinUrlFull }}</a>
-						<button class="pulse-btn is-secondary is-icon is-xs" :title="t('pulse', 'Copy join link')" :aria-label="t('pulse', 'Copy join link')" @click="$emit('copy')"><PulseIcon name="copy" size="1em" /></button>
+						<button class="pulse-btn is-secondary is-icon is-xs" :title="t('vibears', 'Copy join link')" :aria-label="t('vibears', 'Copy join link')" @click="$emit('copy')"><PulseIcon name="copy" size="1em" /></button>
 					</div>
 				</section>
 
@@ -105,18 +105,18 @@
 					<!-- Stays in place as long as "Checked just now" has something — then without
 					     "0 … waiting". The warning after the release only as long as there is something
 					     to grade here (open, or the list for re-grading expanded). -->
-					<h3 id="pace-grade-head" ref="gradeHead" class="pace-side-head" tabindex="-1">{{ pendingSum ? n('pulse', '%n free text waiting', '%n free texts waiting', pendingSum) : t('pulse', 'All free texts checked') }}</h3>
-					<p v-if="state === 'released' && (pendingSum > 0 || checkedOpen)" class="pulse-notice is-warn pace-grade-warn"><PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" /><span>{{ t('pulse', 'Standings update for everyone.') }}</span></p>
+					<h3 id="pace-grade-head" ref="gradeHead" class="pace-side-head" tabindex="-1">{{ pendingSum ? n('vibears', '%n free text waiting', '%n free texts waiting', pendingSum) : t('vibears', 'All free texts checked') }}</h3>
+					<p v-if="state === 'released' && (pendingSum > 0 || checkedOpen)" class="pulse-notice is-warn pace-grade-warn"><PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" /><span>{{ t('vibears', 'Standings update for everyone.') }}</span></p>
 					<div v-for="g in pendingGroups" :key="g.pollId" class="pace-grade-q">
-						<p class="pace-grade-qhead"><span class="pace-grade-k">{{ t('pulse', 'Question {number}', { number: g.k }) }}</span> <span class="pace-grade-qtext" :title="g.question">{{ g.question }}</span></p>
+						<p class="pace-grade-qhead"><span class="pace-grade-k">{{ t('vibears', 'Question {number}', { number: g.k }) }}</span> <span class="pace-grade-qtext" :title="g.question">{{ g.question }}</span></p>
 						<TextGrading keyless :busy="gradingBusy" :results="g.results" @grade="(sample, ok) => grade(g, sample, ok)" />
 					</div>
 					<!-- Undo without a detour through the summary: the same
 					     endpoint re-grades. This session only. -->
 					<details v-if="checked.length" class="pace-checked" @toggle="checkedOpen = $event.target.open">
-						<summary>{{ t('pulse', 'Checked just now ({count})', { count: checked.length }) }}</summary>
+						<summary>{{ t('vibears', 'Checked just now ({count})', { count: checked.length }) }}</summary>
 						<div v-for="g in checkedGroups" :key="g.pollId" class="pace-grade-q">
-							<p class="pace-grade-qhead"><span class="pace-grade-k">{{ t('pulse', 'Question {number}', { number: g.k }) }}</span> <span class="pace-grade-qtext" :title="g.question">{{ g.question }}</span></p>
+							<p class="pace-grade-qhead"><span class="pace-grade-k">{{ t('vibears', 'Question {number}', { number: g.k }) }}</span> <span class="pace-grade-qtext" :title="g.question">{{ g.question }}</span></p>
 							<TextGrading keyless :busy="gradingBusy" :results="g.results" @grade="(sample, ok) => grade(g, sample, ok)" />
 						</div>
 					</details>
@@ -124,21 +124,21 @@
 
 				<!-- What the room sees — the real projector page, scaled down. -->
 				<section class="pace-card pace-preview" aria-labelledby="pace-preview-head">
-					<h3 id="pace-preview-head" class="pace-side-head">{{ t('pulse', 'Projector view') }}</h3>
-					<ScreenPreview :src="screenPath" :title="t('pulse', 'Preview of the projector view')" />
-					<button class="pulse-btn is-secondary is-sm pace-preview-open" @click="openBeamer"><PulseIcon name="beamer" size="1em" /> {{ t('pulse', 'Projector') }}</button>
+					<h3 id="pace-preview-head" class="pace-side-head">{{ t('vibears', 'Projector view') }}</h3>
+					<ScreenPreview :src="screenPath" :title="t('vibears', 'Preview of the projector view')" />
+					<button class="pulse-btn is-secondary is-sm pace-preview-open" @click="openBeamer"><PulseIcon name="beamer" size="1em" /> {{ t('vibears', 'Projector') }}</button>
 				</section>
 
 				<section v-if="questions.length" class="pace-card pace-questions" aria-labelledby="pace-q-head">
-					<h3 id="pace-q-head" class="pace-side-head">{{ t('pulse', 'Questions') }}</h3>
+					<h3 id="pace-q-head" class="pace-side-head">{{ t('vibears', 'Questions') }}</h3>
 					<ol class="pace-qlist">
 						<li v-for="q in questions" :key="q.pollId" class="pace-q">
 							<span class="pace-qk">{{ q.k }}</span>
 							<span class="pace-qbody">
 								<span class="pace-qtext" :title="q.question">{{ q.question }}</span>
-								<span class="pace-qstats"><span class="pace-qstat">{{ t('pulse', 'Reached') }} <b>{{ q.reached }}</b></span> · <span class="pace-qstat">{{ t('pulse', 'Answered') }} <b>{{ q.answered }}</b></span> · <span class="pace-qstat">{{ t('pulse', 'Correct') }} <b>{{ q.correct === null ? '—' : q.correct }}</b></span></span>
+								<span class="pace-qstats"><span class="pace-qstat">{{ t('vibears', 'Reached') }} <b>{{ q.reached }}</b></span> · <span class="pace-qstat">{{ t('vibears', 'Answered') }} <b>{{ q.answered }}</b></span> · <span class="pace-qstat">{{ t('vibears', 'Correct') }} <b>{{ q.correct === null ? '—' : q.correct }}</b></span></span>
 							</span>
-							<span v-if="q.pending > 0" class="pulse-chip is-warning pace-cell-chip"><PulseIcon name="hourglass" size="1em" /> {{ n('pulse', '%n to check', '%n to check', q.pending) }}</span>
+							<span v-if="q.pending > 0" class="pulse-chip is-warning pace-cell-chip"><PulseIcon name="hourglass" size="1em" /> {{ n('vibears', '%n to check', '%n to check', q.pending) }}</span>
 						</li>
 					</ol>
 				</section>
@@ -151,7 +151,7 @@
 			<button v-if="primary"
 				class="pulse-btn is-primary is-lg pace-primary"
 				:disabled="!online || busy"
-				:title="online ? '' : t('pulse', 'No connection to the room')"
+				:title="online ? '' : t('vibears', 'No connection to the room')"
 				@click="runPrimary">
 				<PulseIcon :name="primary.icon" size="1.05em" /> {{ primary.label }}
 			</button>
@@ -295,17 +295,17 @@ export default {
 		facts() {
 			const w = this.win || {}
 			return [
-				n('pulse', '%n question', '%n questions', this.total),
-				w.timed ? t('pulse', 'with time limit') : t('pulse', 'no time limit'),
-				w.feedback === 'end' ? t('pulse', 'results at the end') : t('pulse', 'feedback after each question'),
+				n('vibears', '%n question', '%n questions', this.total),
+				w.timed ? t('vibears', 'with time limit') : t('vibears', 'no time limit'),
+				w.feedback === 'end' ? t('vibears', 'results at the end') : t('vibears', 'feedback after each question'),
 			].join(' · ')
 		},
 		sortOptions() {
 			const opts = [
-				{ value: 'furthest', label: t('pulse', 'Furthest first') },
-				{ value: 'name', label: t('pulse', 'Name') },
+				{ value: 'furthest', label: t('vibears', 'Furthest first') },
+				{ value: 'name', label: t('vibears', 'Name') },
 			]
-			if (!this.scoresHidden) opts.push({ value: 'points', label: t('pulse', 'Points') })
+			if (!this.scoresHidden) opts.push({ value: 'points', label: t('vibears', 'Points') })
 			return opts
 		},
 		// Default: released with visible points by points, otherwise whoever is
@@ -353,7 +353,7 @@ export default {
 		// The sentence appended to every close/release confirmation.
 		pendingNote() {
 			return this.pendingSum > 0
-				? ' ' + n('pulse', '%n free-text answer is not checked yet — it counts as 0 points.', '%n free-text answers are not checked yet — they count as 0 points.', this.pendingSum)
+				? ' ' + n('vibears', '%n free-text answer is not checked yet — it counts as 0 points.', '%n free-text answers are not checked yet — they count as 0 points.', this.pendingSum)
 				: ''
 		},
 		/*
@@ -365,19 +365,19 @@ export default {
 		primary() {
 			const st = this.state
 			if (st === 'open') {
-				return { key: 'close', label: t('pulse', 'Close quiz'), icon: 'check', act: this.win.closesAt > 0 ? this.confirmCloseTimed : this.confirmCloseRace }
+				return { key: 'close', label: t('vibears', 'Close quiz'), icon: 'check', act: this.win.closesAt > 0 ? this.confirmCloseTimed : this.confirmCloseRace }
 			}
 			if ((st === 'closed' || st === 'released') && this.room.practice) {
-				return { key: 'practice', label: t('pulse', 'End practice run'), icon: 'reset', act: () => this.$emit('end-practice') }
+				return { key: 'practice', label: t('vibears', 'End practice run'), icon: 'reset', act: () => this.$emit('end-practice') }
 			}
 			if ((st === 'closed' || st === 'released') && this.pendingSum > 0) {
-				return { key: 'check', label: n('pulse', 'Check %n answer', 'Check %n answers', this.pendingSum), icon: 'hourglass', act: this.focusGrading }
+				return { key: 'check', label: n('vibears', 'Check %n answer', 'Check %n answers', this.pendingSum), icon: 'hourglass', act: this.focusGrading }
 			}
 			if (st === 'closed') {
-				return { key: 'release', label: t('pulse', 'Release results'), icon: 'eye', act: this.confirmRelease }
+				return { key: 'release', label: t('vibears', 'Release results'), icon: 'eye', act: this.confirmRelease }
 			}
 			if (st === 'released') {
-				return { key: 'csv', label: t('pulse', 'Participants as CSV'), icon: 'download', act: () => downloadCsv(this.room.code, 'players') }
+				return { key: 'csv', label: t('vibears', 'Participants as CSV'), icon: 'download', act: () => downloadCsv(this.room.code, 'players') }
 			}
 			return null
 		},
@@ -395,18 +395,18 @@ export default {
 			const st = this.state
 			const w = this.win || {}
 			if (st === 'open') {
-				if (!this.startedCount) return t('pulse', 'Open — everyone now taps “Start quiz” on their phone.')
+				if (!this.startedCount) return t('vibears', 'Open — everyone now taps “Start quiz” on their phone.')
 				if (this.allThrough) {
 					return w.closesAt > 0
-						? t('pulse', 'Everyone still here is through — you can close the quiz now.')
-						: t('pulse', 'Everyone still here is through — close the quiz to release the results.')
+						? t('vibears', 'Everyone still here is through — you can close the quiz now.')
+						: t('vibears', 'Everyone still here is through — close the quiz to release the results.')
 				}
 				return w.closesAt > 0
-					? t('pulse', 'Open until {time} — then it closes by itself.', { time: fmtDeadline(w.closesAt) })
-					: t('pulse', 'Open until you close it — closing also releases the results.')
+					? t('vibears', 'Open until {time} — then it closes by itself.', { time: fmtDeadline(w.closesAt) })
+					: t('vibears', 'Open until you close it — closing also releases the results.')
 			}
-			if (st === 'closed') return t('pulse', 'Closed — results stay hidden until you release them.')
-			if (st === 'released') return t('pulse', 'Results released on {time}.', { time: fmtDeadline(w.releasedAt) })
+			if (st === 'closed') return t('vibears', 'Closed — results stay hidden until you release them.')
+			if (st === 'released') return t('vibears', 'Results released on {time}.', { time: fmtDeadline(w.releasedAt) })
 			return ''
 		},
 		/*
@@ -415,9 +415,9 @@ export default {
 		 * started and unfinished after the close, but can no longer do anything.
 		 */
 		doneText() {
-			const base = t('pulse', '{done} of {total} finished', { done: this.finishedCount, total: this.players.length })
+			const base = t('vibears', '{done} of {total} finished', { done: this.finishedCount, total: this.players.length })
 			return this.state === 'open' && this.workingCount > 0
-				? base + ' · ' + n('pulse', '%n still working', '%n still working', this.workingCount)
+				? base + ' · ' + n('vibears', '%n still working', '%n still working', this.workingCount)
 				: base
 		},
 		// Counts for destructive confirmations (reset) — from our own fetch.
@@ -433,35 +433,35 @@ export default {
 			const st = this.state
 			const items = []
 			if (st === 'open' || st === 'closed') {
-				items.push({ key: 'lock', label: t('pulse', 'Lock joining'), checked: !!this.room.joinsLocked, act: this.toggleJoinsLocked })
+				items.push({ key: 'lock', label: t('vibears', 'Lock joining'), checked: !!this.room.joinsLocked, act: this.toggleJoinsLocked })
 			}
 			if (this.scoresToggle) {
-				items.push({ key: 'scores', label: t('pulse', 'Show points'), checked: this.showScores, act: this.toggleScores })
+				items.push({ key: 'scores', label: t('vibears', 'Show points'), checked: this.showScores, act: this.toggleScores })
 			}
 			if (st === 'open') {
-				items.push({ key: 'extend', label: t('pulse', 'Change the end …'), icon: 'calendar', act: this.openExtend })
+				items.push({ key: 'extend', label: t('vibears', 'Change the end …'), icon: 'calendar', act: this.openExtend })
 			}
 			if (st === 'closed') {
-				items.push({ key: 'reopen', label: t('pulse', 'Reopen …'), icon: 'reset', act: this.openExtend })
+				items.push({ key: 'reopen', label: t('vibears', 'Reopen …'), icon: 'reset', act: this.openExtend })
 			}
 			// Open only with a deadline (without a deadline "Close quiz" already releases);
 			// closed only if the main action is something else.
 			if (st === 'open' && this.win.closesAt > 0) {
-				items.push({ key: 'release', label: t('pulse', 'Release results'), icon: 'eye', act: this.confirmReleaseOpen })
+				items.push({ key: 'release', label: t('vibears', 'Release results'), icon: 'eye', act: this.confirmReleaseOpen })
 			}
 			if (st === 'closed' && (!this.primary || this.primary.key !== 'release')) {
-				items.push({ key: 'release', label: t('pulse', 'Release results'), icon: 'eye', act: this.confirmRelease })
+				items.push({ key: 'release', label: t('vibears', 'Release results'), icon: 'eye', act: this.confirmRelease })
 			}
 			if (!this.primary || this.primary.key !== 'csv') {
-				items.push({ key: 'csv-players', label: t('pulse', 'Participants as CSV'), icon: 'download', act: () => downloadCsv(this.room.code, 'players') })
+				items.push({ key: 'csv-players', label: t('vibears', 'Participants as CSV'), icon: 'download', act: () => downloadCsv(this.room.code, 'players') })
 			}
-			items.push({ key: 'csv-answers', label: t('pulse', 'Answers as CSV'), icon: 'download', act: () => downloadCsv(this.room.code, 'answers') })
-			items.push({ key: 'beamer', label: t('pulse', 'Projector'), icon: 'beamer', act: this.openBeamer })
-			items.push({ key: 'summary', label: t('pulse', 'Summary'), icon: 'poll', act: () => this.$emit('go', 'summary') })
-			items.push({ key: 'deck', label: t('pulse', 'Overview'), icon: 'edit', act: () => this.$emit('go', 'deck') })
-			items.push({ key: 'home', label: t('pulse', 'My rooms'), icon: 'chevron', act: () => this.$emit('go', 'home') })
+			items.push({ key: 'csv-answers', label: t('vibears', 'Answers as CSV'), icon: 'download', act: () => downloadCsv(this.room.code, 'answers') })
+			items.push({ key: 'beamer', label: t('vibears', 'Projector'), icon: 'beamer', act: this.openBeamer })
+			items.push({ key: 'summary', label: t('vibears', 'Summary'), icon: 'poll', act: () => this.$emit('go', 'summary') })
+			items.push({ key: 'deck', label: t('vibears', 'Overview'), icon: 'edit', act: () => this.$emit('go', 'deck') })
+			items.push({ key: 'home', label: t('vibears', 'My rooms'), icon: 'chevron', act: () => this.$emit('go', 'home') })
 			if (st !== 'open') {
-				items.push({ key: 'reset', label: t('pulse', 'Reset quiz'), icon: 'reset', danger: true, act: () => this.$emit('reset', this.counts) })
+				items.push({ key: 'reset', label: t('vibears', 'Reset quiz'), icon: 'reset', danger: true, act: () => this.$emit('reset', this.counts) })
 			}
 			return items
 		},
@@ -507,7 +507,7 @@ export default {
 			if (w && (!cur || w.state !== cur.state || w.closesAt !== cur.closesAt)) this.$emit('window', w)
 		},
 		onGone() {
-			showError(t('pulse', 'Room not found — it may have been deleted.'))
+			showError(t('vibears', 'Room not found — it may have been deleted.'))
 			this.$emit('go', 'home')
 		},
 		// 409: the room no longer runs self-paced -> reload.
@@ -560,11 +560,11 @@ export default {
 		// keeps the promise even if a second tab has set a deadline in the meantime.
 		async confirmCloseRace() {
 			const choice = await pulseConfirm({
-				title: t('pulse', 'Close the quiz now?'),
-				text: t('pulse', 'Nobody can answer any more, and the results are released right away: everyone sees the final standings and the solutions. This cannot be undone. To check answers first, stop without releasing.') + this.pendingNote,
-				confirmLabel: t('pulse', 'Close and release'),
-				cancelLabel: t('pulse', 'Cancel'),
-				altLabel: t('pulse', 'Stop without releasing'),
+				title: t('vibears', 'Close the quiz now?'),
+				text: t('vibears', 'Nobody can answer any more, and the results are released right away: everyone sees the final standings and the solutions. This cannot be undone. To check answers first, stop without releasing.') + this.pendingNote,
+				confirmLabel: t('vibears', 'Close and release'),
+				cancelLabel: t('vibears', 'Cancel'),
+				altLabel: t('vibears', 'Stop without releasing'),
 				danger: true,
 			})
 			if (choice === 'alt') return this.stopWithoutRelease()
@@ -576,17 +576,17 @@ export default {
 		// (without the parameter "close" would then release immediately).
 		async confirmCloseTimed() {
 			if (!await pulseConfirm({
-				title: t('pulse', 'Close the quiz now?'),
-				text: t('pulse', 'Nobody can answer any more. The results stay hidden until you release them — until then you can reopen the quiz.') + this.pendingNote,
-				confirmLabel: t('pulse', 'Close quiz'),
-				cancelLabel: t('pulse', 'Cancel'),
+				title: t('vibears', 'Close the quiz now?'),
+				text: t('vibears', 'Nobody can answer any more. The results stay hidden until you release them — until then you can reopen the quiz.') + this.pendingNote,
+				confirmLabel: t('vibears', 'Close quiz'),
+				cancelLabel: t('vibears', 'Cancel'),
 			})) return
 			return this.closeQuiz(false)
 		},
 		// `release` tells the server explicitly what the confirmation promised
 		// — never "depending on the deadline" (PaceService::closeWindow).
 		closeQuiz(release) {
-			return this.act(() => this.post({ action: 'close', release }), t('pulse', 'Could not close the quiz.'))
+			return this.act(() => this.post({ action: 'close', release }), t('vibears', 'Could not close the quiz.'))
 		},
 		/*
 		 * Stop without releasing — ONE call: close {release: false}. The room
@@ -599,34 +599,34 @@ export default {
 		},
 		async confirmRelease() {
 			if (!await pulseConfirm({
-				title: t('pulse', 'Release the results?'),
-				text: t('pulse', 'Everyone who took part sees their place, the final standings and the solutions. The quiz cannot be reopened after that.') + this.pendingNote,
-				confirmLabel: t('pulse', 'Release results'),
-				cancelLabel: t('pulse', 'Cancel'),
+				title: t('vibears', 'Release the results?'),
+				text: t('vibears', 'Everyone who took part sees their place, the final standings and the solutions. The quiz cannot be reopened after that.') + this.pendingNote,
+				confirmLabel: t('vibears', 'Release results'),
+				cancelLabel: t('vibears', 'Cancel'),
 				danger: true,
 			})) return
-			return this.act(() => this.post({ action: 'release' }), t('pulse', 'Could not release the results.'))
+			return this.act(() => this.post({ action: 'release' }), t('vibears', 'Could not release the results.'))
 		},
 		// Releasing from the open window (homework) closes at the same time —
 		// whoever has not finished yet is stopped in the process.
 		async confirmReleaseOpen() {
 			const nf = this.players.filter((p) => !p.finished).length
 			const text = nf === 0
-				? t('pulse', 'The quiz closes now. Everyone sees their place, the final standings and the solutions. This cannot be undone.')
-				: n('pulse', 'The quiz closes now and %n person who has not finished is stopped. Everyone sees their place, the final standings and the solutions. This cannot be undone.', 'The quiz closes now and %n people who have not finished are stopped. Everyone sees their place, the final standings and the solutions. This cannot be undone.', nf)
+				? t('vibears', 'The quiz closes now. Everyone sees their place, the final standings and the solutions. This cannot be undone.')
+				: n('vibears', 'The quiz closes now and %n person who has not finished is stopped. Everyone sees their place, the final standings and the solutions. This cannot be undone.', 'The quiz closes now and %n people who have not finished are stopped. Everyone sees their place, the final standings and the solutions. This cannot be undone.', nf)
 			if (!await pulseConfirm({
-				title: t('pulse', 'Close and release now?'),
+				title: t('vibears', 'Close and release now?'),
 				text: text + this.pendingNote,
-				confirmLabel: t('pulse', 'Close and release'),
-				cancelLabel: t('pulse', 'Cancel'),
+				confirmLabel: t('vibears', 'Close and release'),
+				cancelLabel: t('vibears', 'Cancel'),
 				danger: true,
 			})) return
-			return this.act(() => this.post({ action: 'release' }), t('pulse', 'Could not release the results.'))
+			return this.act(() => this.post({ action: 'release' }), t('vibears', 'Could not release the results.'))
 		},
 		// Lock joining: whoever is already in still gets in.
 		toggleJoinsLocked() {
 			const on = !this.room.joinsLocked
-			return this.act(() => this.post({ action: on ? 'lockJoins' : 'unlockJoins' }), t('pulse', 'Could not change joining.'))
+			return this.act(() => this.post({ action: on ? 'lockJoins' : 'unlockJoins' }), t('vibears', 'Could not change joining.'))
 		},
 		toggleScores() {
 			this.showScores = !this.showScores
@@ -638,18 +638,18 @@ export default {
 
 		// ── Removing a person ───────────────────────────────────────────────
 		rowMenu(p) {
-			return [{ key: 'remove', label: t('pulse', 'Remove from the quiz'), icon: 'trash', danger: true, act: () => this.confirmRemove(p) }]
+			return [{ key: 'remove', label: t('vibears', 'Remove from the quiz'), icon: 'trash', danger: true, act: () => this.confirmRemove(p) }]
 		},
 		// The name becomes free; whoever lost their device starts over.
 		async confirmRemove(p) {
 			if (!await pulseConfirm({
-				title: t('pulse', 'Remove {name}?', { name: p.nickname }),
-				text: t('pulse', 'The answers and progress of {name} are deleted and the name becomes free. Use this if someone lost their device: they can join again with the same name, but start from question 1 — unless joining is locked.', { name: p.nickname }),
-				confirmLabel: t('pulse', 'Remove person'),
-				cancelLabel: t('pulse', 'Cancel'),
+				title: t('vibears', 'Remove {name}?', { name: p.nickname }),
+				text: t('vibears', 'The answers and progress of {name} are deleted and the name becomes free. Use this if someone lost their device: they can join again with the same name, but start from question 1 — unless joining is locked.', { name: p.nickname }),
+				confirmLabel: t('vibears', 'Remove person'),
+				cancelLabel: t('vibears', 'Cancel'),
 				danger: true,
 			})) return
-			return this.act(() => this.post({ action: 'removePlayer', playerId: p.id }), t('pulse', 'Could not remove the person.'))
+			return this.act(() => this.post({ action: 'removePlayer', playerId: p.id }), t('vibears', 'Could not remove the person.'))
 		},
 
 		// ── Change the end / reopen ─────────────────────────────────────────
@@ -716,7 +716,7 @@ export default {
 				}
 				this.refresh()
 			} catch (e) {
-				this.fail(e, t('pulse', 'Could not grade.'))
+				this.fail(e, t('vibears', 'Could not grade.'))
 			} finally {
 				this.gradingBusy = false
 			}

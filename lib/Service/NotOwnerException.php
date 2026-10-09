@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
 /**
  * A room was accessed by someone who does not own it.

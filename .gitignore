@@ -11,7 +11,7 @@
 
 # Release build (build/package.sh)
 /build/dist/
-/build/pulse-*.tar.gz
+/build/vibears-*.tar.gz
 /build/info.xsd
 
 # Key material for the app signature never belongs in the repository

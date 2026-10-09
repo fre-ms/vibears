@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Migration;
+namespace OCA\Vibears\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -16,7 +16,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Quiz mode: rooms get a mode ('poll' | 'quiz'), quiz questions get a
  * correct answer, a time limit and a start time (for the countdown +
- * speed scoring). The new table pulse_players holds one nickname per
+ * speed scoring). The new table vibears_players holds one nickname per
  * voter token and room — still without a Nextcloud account.
  */
 class Version000000Date20260716160000 extends SimpleMigrationStep {
@@ -26,13 +26,13 @@ class Version000000Date20260716160000 extends SimpleMigrationStep {
         $schema = $schemaClosure();
 
         // ── Rooms: mode ─────────────────────────────────────────────────────
-        $rooms = $schema->getTable('pulse_rooms');
+        $rooms = $schema->getTable('vibears_rooms');
         if (!$rooms->hasColumn('mode')) {
             $rooms->addColumn('mode', Types::STRING, ['notnull' => true, 'length' => 16, 'default' => 'poll']);
         }
 
         // ── Polls: quiz fields ──────────────────────────────────────────────
-        $polls = $schema->getTable('pulse_polls');
+        $polls = $schema->getTable('vibears_polls');
         if (!$polls->hasColumn('correct_option')) {
             // Option ID of the correct answer (null/empty outside quiz mode).
             // Nullable, because NC rejects a NOT NULL text column with an empty-string default (Oracle: '' = NULL).
@@ -50,16 +50,16 @@ class Version000000Date20260716160000 extends SimpleMigrationStep {
         // ── Players (quiz) ──────────────────────────────────────────────────
         // One nickname per (room, voter token). The token stays anonymous; it
         // identifies no Nextcloud user, it only recognises the same browser again.
-        if (!$schema->hasTable('pulse_players')) {
-            $table = $schema->createTable('pulse_players');
+        if (!$schema->hasTable('vibears_players')) {
+            $table = $schema->createTable('vibears_players');
             $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true]);
             $table->addColumn('room_id', Types::BIGINT, ['notnull' => true]);
             $table->addColumn('voter_token', Types::STRING, ['notnull' => true, 'length' => 32]);
             $table->addColumn('nickname', Types::STRING, ['notnull' => true, 'length' => 32]);
             $table->addColumn('created_at', Types::BIGINT, ['notnull' => true]);
             $table->setPrimaryKey(['id']);
-            $table->addUniqueIndex(['room_id', 'voter_token'], 'pulse_players_uniq_idx');
-            $table->addIndex(['room_id'], 'pulse_players_room_idx');
+            $table->addUniqueIndex(['room_id', 'voter_token'], 'vibears_players_uniq_idx');
+            $table->addIndex(['room_id'], 'vibears_players_room_idx');
         }
 
         return $schema;

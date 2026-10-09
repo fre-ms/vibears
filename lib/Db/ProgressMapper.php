@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Db;
+namespace OCA\Vibears\Db;
 
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
@@ -22,7 +22,7 @@ use OCP\IDBConnection;
  */
 class ProgressMapper extends QBMapper {
     public function __construct(IDBConnection $db) {
-        parent::__construct($db, 'pulse_progress', Progress::class);
+        parent::__construct($db, 'vibears_progress', Progress::class);
     }
 
     /**

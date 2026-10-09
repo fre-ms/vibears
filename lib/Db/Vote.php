@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Db;
+namespace OCA\Vibears\Db;
 
 use OCP\AppFramework\Db\Entity;
 

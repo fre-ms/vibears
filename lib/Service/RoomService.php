@@ -5,16 +5,16 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\PresenceMapper;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Db\VoteMapper;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\PresenceMapper;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Db\VoteMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\TTransactional;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -414,7 +414,7 @@ class RoomService {
      */
     public function cleanupOrphanedRooms(callable $ownerGone): int {
         $qb = $this->db->getQueryBuilder();
-        $qb->selectDistinct('owner_uid')->from('pulse_rooms');
+        $qb->selectDistinct('owner_uid')->from('vibears_rooms');
         $result = $qb->executeQuery();
         $owners = [];
         while (($uid = $result->fetchOne()) !== false) {
@@ -442,7 +442,7 @@ class RoomService {
             $this->deleteRoom($room);
             return true;
         } catch (\Throwable $e) {
-            $this->logger->warning('Pulse: could not delete {reason} room {code}.', [
+            $this->logger->warning('vibeARS: could not delete {reason} room {code}.', [
                 'reason' => $reason,
                 'code' => $room->getCode(),
                 'exception' => $e,

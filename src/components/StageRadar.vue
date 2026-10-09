@@ -21,9 +21,9 @@
 			</span>
 		</div>
 		<div class="splot-legend">
-			<span><i class="splot-sw" style="background: var(--pulse-primary)" />{{ t('pulse', 'Average') }}</span>
-			<span><i class="splot-sw" style="background: var(--pulse-primary); opacity: .25" />{{ t('pulse', 'Spread (min–max)') }}</span>
-			<span><i class="splot-sw splot-sw--neutral" />{{ t('pulse', 'Neutral ({value})', { value: neutralLabel }) }}</span>
+			<span><i class="splot-sw" style="background: var(--pulse-primary)" />{{ t('vibears', 'Average') }}</span>
+			<span><i class="splot-sw" style="background: var(--pulse-primary); opacity: .25" />{{ t('vibears', 'Spread (min–max)') }}</span>
+			<span><i class="splot-sw splot-sw--neutral" />{{ t('vibears', 'Neutral ({value})', { value: neutralLabel }) }}</span>
 		</div>
 	</div>
 </template>

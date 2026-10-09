@@ -5,11 +5,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Service\QuizService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Service\QuizService;
+use OCA\Vibears\Service\VoteService;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -37,37 +37,37 @@ class SensitiveParameterTest extends TestCase {
 
     /** Generic names that hold such data in these methods. */
     private const EXPLICIT = [
-        ['OCA\Pulse\Controller\PublicVoteController', 'stateWithVersion', 'token'],
-        ['OCA\Pulse\Controller\PublicVoteController', 'setVoterCookie', 'token'],
-        ['OCA\Pulse\Service\CodeGenerator', 'isVoterToken', 's'],
-        ['OCA\Pulse\Service\VoteService', 'recordVote', 'value'],
-        ['OCA\Pulse\Service\VoteService', 'recordQuizVote', 'value'],
-        ['OCA\Pulse\Service\VoteService', 'recordSelfVote', 'value'],
-        ['OCA\Pulse\Service\VoteService', 'selfPayload', 'normalized'],
-        ['OCA\Pulse\Service\VoteService', 'correctSelfVote', 'normalized'],
-        ['OCA\Pulse\Service\VoteService', 'correctQuizVote', 'payload'],
-        ['OCA\Pulse\Service\VoteService', 'settleText', 'data'],
-        ['OCA\Pulse\Service\VoteService', 'forViewer', 'rows'],
-        ['OCA\Pulse\Service\AnswerRules', 'normalizeValue', 'value'],
-        ['OCA\Pulse\Service\AnswerRules', 'choice', 'value'],
-        ['OCA\Pulse\Service\AnswerRules', 'multi', 'value'],
-        ['OCA\Pulse\Service\AnswerRules', 'rank', 'value'],
-        ['OCA\Pulse\Service\AnswerRules', 'matching', 'value'],
-        ['OCA\Pulse\Service\AnswerRules', 'number', 'value'],
-        ['OCA\Pulse\Service\AnswerRules', 'text', 'value'],
-        ['OCA\Pulse\Service\AnswerRules', 'scale', 'value'],
-        ['OCA\Pulse\Service\AnswerRules', 'words', 'value'],
-        ['OCA\Pulse\Service\AnswerRules', 'quizPayload', 'normalized'],
-        ['OCA\Pulse\Service\PaceService', 'isFinal', 'payload'],
-        ['OCA\Pulse\Service\PaceStateService', 'answerText', 'value'],
-        ['OCA\Pulse\Service\QuizService', 'leaderboard', 'pointsByToken'],
-        ['OCA\Pulse\Service\QuizService', 'leaderboard', 'correctByToken'],
-        ['OCA\Pulse\Service\QuizService', 'leaderboard', 'timeByToken'],
-        ['OCA\Pulse\Service\TallyService', 'nameKey', 's'],
-        ['OCA\Pulse\Service\TallyService', 'namesClash', 'a'],
-        ['OCA\Pulse\Service\TallyService', 'namesClash', 'b'],
-        ['OCA\Pulse\Service\TallyService', 'clashIn', 'name'],
-        ['OCA\Pulse\Service\TallyService', 'clashIn', 'others'],
+        ['OCA\Vibears\Controller\PublicVoteController', 'stateWithVersion', 'token'],
+        ['OCA\Vibears\Controller\PublicVoteController', 'setVoterCookie', 'token'],
+        ['OCA\Vibears\Service\CodeGenerator', 'isVoterToken', 's'],
+        ['OCA\Vibears\Service\VoteService', 'recordVote', 'value'],
+        ['OCA\Vibears\Service\VoteService', 'recordQuizVote', 'value'],
+        ['OCA\Vibears\Service\VoteService', 'recordSelfVote', 'value'],
+        ['OCA\Vibears\Service\VoteService', 'selfPayload', 'normalized'],
+        ['OCA\Vibears\Service\VoteService', 'correctSelfVote', 'normalized'],
+        ['OCA\Vibears\Service\VoteService', 'correctQuizVote', 'payload'],
+        ['OCA\Vibears\Service\VoteService', 'settleText', 'data'],
+        ['OCA\Vibears\Service\VoteService', 'forViewer', 'rows'],
+        ['OCA\Vibears\Service\AnswerRules', 'normalizeValue', 'value'],
+        ['OCA\Vibears\Service\AnswerRules', 'choice', 'value'],
+        ['OCA\Vibears\Service\AnswerRules', 'multi', 'value'],
+        ['OCA\Vibears\Service\AnswerRules', 'rank', 'value'],
+        ['OCA\Vibears\Service\AnswerRules', 'matching', 'value'],
+        ['OCA\Vibears\Service\AnswerRules', 'number', 'value'],
+        ['OCA\Vibears\Service\AnswerRules', 'text', 'value'],
+        ['OCA\Vibears\Service\AnswerRules', 'scale', 'value'],
+        ['OCA\Vibears\Service\AnswerRules', 'words', 'value'],
+        ['OCA\Vibears\Service\AnswerRules', 'quizPayload', 'normalized'],
+        ['OCA\Vibears\Service\PaceService', 'isFinal', 'payload'],
+        ['OCA\Vibears\Service\PaceStateService', 'answerText', 'value'],
+        ['OCA\Vibears\Service\QuizService', 'leaderboard', 'pointsByToken'],
+        ['OCA\Vibears\Service\QuizService', 'leaderboard', 'correctByToken'],
+        ['OCA\Vibears\Service\QuizService', 'leaderboard', 'timeByToken'],
+        ['OCA\Vibears\Service\TallyService', 'nameKey', 's'],
+        ['OCA\Vibears\Service\TallyService', 'namesClash', 'a'],
+        ['OCA\Vibears\Service\TallyService', 'namesClash', 'b'],
+        ['OCA\Vibears\Service\TallyService', 'clashIn', 'name'],
+        ['OCA\Vibears\Service\TallyService', 'clashIn', 'others'],
     ];
 
     public function testEveryTokenNicknameAndAnswerParameterIsMarked(): void {
@@ -172,7 +172,7 @@ class SensitiveParameterTest extends TestCase {
             if (str_starts_with($rel, 'Migration/')) {
                 continue;
             }
-            $class = 'OCA\\Pulse\\' . str_replace('/', '\\', $rel);
+            $class = 'OCA\\Vibears\\' . str_replace('/', '\\', $rel);
             if (class_exists($class) || interface_exists($class) || trait_exists($class)) {
                 $out[] = $class;
             }

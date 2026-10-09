@@ -24,8 +24,8 @@ import { t } from '../../util/l10n.js'
 export default {
 	name: 'VizEmpty',
 	props: {
-		title: { type: String, default: t('pulse', 'No answers yet') },
-		hint: { type: String, default: t('pulse', 'As soon as people vote, the stage fills up.') },
+		title: { type: String, default: t('vibears', 'No answers yet') },
+		hint: { type: String, default: t('vibears', 'As soon as people vote, the stage fills up.') },
 	},
 }
 </script>

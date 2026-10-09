@@ -11,19 +11,19 @@
 			<!-- Empty state (declarative, rendered by Vue, not by the engine) -->
 			<div v-if="isEmpty" class="pl-cloud-empty">
 				<PulseIcon name="edit" size="clamp(40px, 5vw, 72px)" />
-				<b>{{ t('pulse', 'No answers yet') }}</b>
-				<span>{{ t('pulse', 'Scan the code and type your word.') }}</span>
+				<b>{{ t('vibears', 'No answers yet') }}</b>
+				<span>{{ t('vibears', 'Scan the code and type your word.') }}</span>
 			</div>
 
 			<!-- Honest hint at capped top-N words (no silent dropping) -->
-			<div v-if="overflowN > 0" class="pl-cloud-overflow">{{ t('pulse', '+{count} more', { count: overflowN }) }}</div>
+			<div v-if="overflowN > 0" class="pl-cloud-overflow">{{ t('vibears', '+{count} more', { count: overflowN }) }}</div>
 		</div>
 
 		<!-- Counter row: words · mentions · here (moved out on the projector) -->
 		<div v-if="!isEmpty && showFooter" class="pl-cloud-foot">
-			<span class="pl-stat"><b>{{ cWords }}</b> {{ n('pulse', 'word', 'words', cWords) }}</span>
-			<span class="pl-stat"><b>{{ cVotes }}</b> {{ n('pulse', 'mention', 'mentions', cVotes) }}</span>
-			<span v-if="cPeople" class="pl-stat"><b>{{ cPeople }}</b> {{ t('pulse', 'here') }}</span>
+			<span class="pl-stat"><b>{{ cWords }}</b> {{ n('vibears', 'word', 'words', cWords) }}</span>
+			<span class="pl-stat"><b>{{ cVotes }}</b> {{ n('vibears', 'mention', 'mentions', cVotes) }}</span>
+			<span v-if="cPeople" class="pl-stat"><b>{{ cPeople }}</b> {{ t('vibears', 'here') }}</span>
 		</div>
 
 		<!-- Screen reader live region: most frequent answers as text -->
@@ -55,14 +55,14 @@ const FONT_FAMILY = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Ne
 // without real participants. To activate: projector URL with ?demo=1.
 const DEMO_SEED = [['Vertrauen', 5], ['Zukunft', 7], ['Erinnerung', 9], ['Verantwortung', 6], ['Dialog', 4], ['Frieden', 3], ['Familie', 3], ['Hoffnung', 2]]
 const DEMO_POOL = [
-	t('pulse', 'Justice'), t('pulse', 'Courage'), t('pulse', 'Home'), t('pulse', 'Freedom'),
-	t('pulse', 'Witnesses'), t('pulse', 'Warning'), t('pulse', 'Learning'), t('pulse', 'Transformation'),
-	t('pulse', 'Community'), t('pulse', 'Respect'), t('pulse', 'History'), t('pulse', 'Preserving'),
-	t('pulse', 'Voice'), t('pulse', 'Truth'), t('pulse', 'Photos'), t('pulse', 'Loss'),
-	t('pulse', 'Peace'), t('pulse', 'Trust'), t('pulse', 'Future'), t('pulse', 'Dialogue'),
-	t('pulse', 'Hope'), t('pulse', 'Remembrance'), t('pulse', 'Humanity'), t('pulse', 'Responsibility'),
-	t('pulse', 'Coming to terms'), t('pulse', 'Solidarity'), t('pulse', 'Dignity'), t('pulse', 'Never again'),
-	t('pulse', 'Togetherness'), t('pulse', 'Family'),
+	t('vibears', 'Justice'), t('vibears', 'Courage'), t('vibears', 'Home'), t('vibears', 'Freedom'),
+	t('vibears', 'Witnesses'), t('vibears', 'Warning'), t('vibears', 'Learning'), t('vibears', 'Transformation'),
+	t('vibears', 'Community'), t('vibears', 'Respect'), t('vibears', 'History'), t('vibears', 'Preserving'),
+	t('vibears', 'Voice'), t('vibears', 'Truth'), t('vibears', 'Photos'), t('vibears', 'Loss'),
+	t('vibears', 'Peace'), t('vibears', 'Trust'), t('vibears', 'Future'), t('vibears', 'Dialogue'),
+	t('vibears', 'Hope'), t('vibears', 'Remembrance'), t('vibears', 'Humanity'), t('vibears', 'Responsibility'),
+	t('vibears', 'Coming to terms'), t('vibears', 'Solidarity'), t('vibears', 'Dignity'), t('vibears', 'Never again'),
+	t('vibears', 'Togetherness'), t('vibears', 'Family'),
 ]
 
 export default {
@@ -92,7 +92,7 @@ export default {
 		return {
 			isEmpty: true,
 			overflowN: 0,
-			srText: t('pulse', 'No answers yet.'),
+			srText: t('vibears', 'No answers yet.'),
 			cWords: 0,
 			cVotes: 0,
 			cPeople: 0,
@@ -100,7 +100,7 @@ export default {
 	},
 	computed: {
 		ariaLabel() {
-			return t('pulse', 'Live word cloud of the answers')
+			return t('vibears', 'Live word cloud of the answers')
 		},
 	},
 	watch: {
@@ -305,7 +305,7 @@ export default {
 			}
 			const top = [...this._words.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10)
 				.map(([w, n]) => w + ' (' + n + ')').join(', ')
-			this.srText = this._words.size ? t('pulse', 'Most frequent answers: {words}', { words: top }) : t('pulse', 'No answers yet.')
+			this.srText = this._words.size ? t('vibears', 'Most frequent answers: {words}', { words: top }) : t('vibears', 'No answers yet.')
 		},
 
 		// ── Data source: server snapshot instead of a live socket (§7) ─────────

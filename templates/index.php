@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 /** Moderator interface (signed-in users). */
-\OCP\Util::addScript('pulse', 'pulse-main');
+\OCP\Util::addScript('vibears', 'vibears-main');
 // CSS is injected by the JS bundle (vue-style-loader), so there is no separate css/.
 ?>
 <div id="pulse-app"></div>

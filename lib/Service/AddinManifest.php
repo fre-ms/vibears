@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
 /**
  * Builds the Office manifest of the PowerPoint add-in from the addresses of THIS instance.
@@ -25,13 +25,13 @@ class AddinManifest {
      * inserted. A separate GUID per instance would break in-place
      * updates — so the value stays fixed.
      */
-    public const ADDIN_ID = 'c941db89-f0ae-45c6-b685-e94eecc47c91';
+    public const ADDIN_ID = 'cfc0b20f-1f63-4937-98d6-510256657bc4';
 
     public const SUPPORT_URL = 'https://github.com/fre-ms/vibears';
 
     /**
      * @param string $origin    scheme+host of the instance, e.g. https://cloud.example.com
-     * @param string $embedUrl  absolute URL of the embed shell (/apps/pulse/embed)
+     * @param string $embedUrl  absolute URL of the embed shell (/apps/vibears/embed)
      * @param string $version   app version from info.xml, e.g. 0.18.0
      */
     public function build(string $origin, string $embedUrl, string $version): string {
@@ -43,7 +43,7 @@ class AddinManifest {
 
         // The order of the elements is fixed by the Office schema; swap it and
         // PowerPoint rejects the manifest without a useful message.
-        // <Permissions>: the lowest level. js/pulse-embed.js only calls
+        // <Permissions>: the lowest level. js/vibears-embed.js only calls
         // Office.context.document.settings get/set/saveAsync (the room code
         // travels inside the .pptx), and Microsoft's permission table puts
         // "the methods of the Settings object" under Restricted. Anything

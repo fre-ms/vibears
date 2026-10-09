@@ -475,7 +475,7 @@ test('scale compass: each corner label sits in the same corner in the composer, 
 	assert.ok(doc, 'order in the DeckService::buildCorners docblock')
 	assert.deepEqual(doc[1].split(',').map((s) => s.trim().split('-').map((w) => w[0]).join('')), STORED, 'DeckService')
 
-	const composer = [...src('src/Moderator.vue').matchAll(/t\('pulse', '(Top|Bottom) (left|right)'\) \}\}<\/span><input v-model="draft\.cornerLabels\[(\d)\]"/g)]
+	const composer = [...src('src/Moderator.vue').matchAll(/t\('vibears', '(Top|Bottom) (left|right)'\) \}\}<\/span><input v-model="draft\.cornerLabels\[(\d)\]"/g)]
 		.map((m) => [m[3], m[1][0].toLowerCase() + m[2][0]])
 	assert.deepEqual(byIndex(composer, 'Moderator'), STORED, 'composer (Moderator.vue)')
 

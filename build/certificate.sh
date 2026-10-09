@@ -4,7 +4,7 @@
 #
 # Creates the key and the certificate signing request (CSR) for signing the app.
 #
-#   build/certificate.sh              # -> ~/.nextcloud/certificates/pulse.{key,csr}
+#   build/certificate.sh              # -> ~/.nextcloud/certificates/vibears.{key,csr}
 #   OUT=/path build/certificate.sh
 #
 # The Common Name MUST be the app ID, otherwise Nextcloud rejects the certificate.
@@ -17,7 +17,7 @@
 set -eu
 umask 077
 
-APP_ID=pulse
+APP_ID=vibears
 OUT="${OUT:-$HOME/.nextcloud/certificates}"
 
 mkdir -p "$OUT"
@@ -50,7 +50,7 @@ Next:
        printf '%s' $APP_ID | openssl dgst -sha512 -sign $OUT/$APP_ID.key | openssl base64
      The registration reserves the ID; the store accepts no release before it.
   5. Sign and pack:
-     PULSE_KEY=$OUT/$APP_ID.key PULSE_CRT=$OUT/$APP_ID.crt build/package.sh
+     VIBEARS_KEY=$OUT/$APP_ID.key VIBEARS_CRT=$OUT/$APP_ID.crt build/package.sh
 
 Check that the request carries the app ID:
   openssl req -in $OUT/$APP_ID.csr -noout -subject

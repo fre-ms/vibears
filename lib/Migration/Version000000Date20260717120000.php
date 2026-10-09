@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Migration;
+namespace OCA\Vibears\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -25,7 +25,7 @@ class Version000000Date20260717120000 extends SimpleMigrationStep {
         /** @var ISchemaWrapper $schema */
         $schema = $schemaClosure();
 
-        $rooms = $schema->getTable('pulse_rooms');
+        $rooms = $schema->getTable('vibears_rooms');
         if (!$rooms->hasColumn('practice')) {
             $rooms->addColumn('practice', Types::BOOLEAN, ['notnull' => true, 'default' => false]);
         }

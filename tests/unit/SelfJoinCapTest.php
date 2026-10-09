@@ -5,16 +5,16 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\Progress;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Service\JoinLimitException;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\Progress;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Service\JoinLimitException;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\ICacheFactory;
 use OCP\IL10N;
@@ -203,9 +203,9 @@ class SelfJoinCapTest extends TestCase {
     }
 
     public function testCeilingFollowsTheAppConfig(): void {
-        // occ config:app:set pulse max_players_per_room --value 100: in the
+        // occ config:app:set vibears max_players_per_room --value 100: in the
         // draft the ceiling alone decides, below MAX_PLAYERS as well.
-        $this->limitConfig[\OCA\Pulse\Service\Limits::PLAYERS_PER_ROOM] = 100;
+        $this->limitConfig[\OCA\Vibears\Service\Limits::PLAYERS_PER_ROOM] = 100;
         $this->locked = $this->room(0);
         $this->roster = $this->players(100, self::NOW - 60);
 
@@ -213,7 +213,7 @@ class SelfJoinCapTest extends TestCase {
     }
 
     public function testLowCeilingEvictsInTheOpenWindow(): void {
-        $this->limitConfig[\OCA\Pulse\Service\Limits::PLAYERS_PER_ROOM] = 100;
+        $this->limitConfig[\OCA\Vibears\Service\Limits::PLAYERS_PER_ROOM] = 100;
         $this->roster = $this->players(100, self::NOW - PaceService::STALE_JOIN - 1, 'alt');
         $this->expectRegister('tok-neu', 'Cem');
 
@@ -223,7 +223,7 @@ class SelfJoinCapTest extends TestCase {
     }
 
     public function testHigherCeilingDoesNotEvictAtSixHundredYet(): void {
-        $this->limitConfig[\OCA\Pulse\Service\Limits::PLAYERS_PER_ROOM] = 1000;
+        $this->limitConfig[\OCA\Vibears\Service\Limits::PLAYERS_PER_ROOM] = 1000;
         $this->roster = $this->players(PaceService::MAX_JOINED, self::NOW - 7200);
         $this->players->expects($this->never())->method('delete');
         $this->expectRegister('tok-neu', 'Cem');
@@ -234,9 +234,9 @@ class SelfJoinCapTest extends TestCase {
     // ── New players per address ────────────────────────────────────────────
 
     public function testNewPlayersPerAddressFollowTheAppConfig(): void {
-        $this->limitConfig[\OCA\Pulse\Service\Limits::NEW_PLAYERS_PER_ADDRESS] = 7;
+        $this->limitConfig[\OCA\Vibears\Service\Limits::NEW_PLAYERS_PER_ADDRESS] = 7;
         $this->limiter->expects($this->once())->method('registerAnonRequest')
-            ->with('pulse-player-5', 7, PaceService::JOIN_PERIOD, self::IP);
+            ->with('vibears-player-5', 7, PaceService::JOIN_PERIOD, self::IP);
         $this->expectRegister('tok-neu', 'Cem');
 
         $this->join('tok-neu', 'Cem', self::IP);
@@ -250,7 +250,7 @@ class SelfJoinCapTest extends TestCase {
 
     public function testNewPlayerCountsAgainstTheirAddress(): void {
         $this->limiter->expects($this->once())->method('registerAnonRequest')
-            ->with('pulse-player-5', PaceService::NEW_PLAYER_LIMIT, PaceService::JOIN_PERIOD, self::IP)
+            ->with('vibears-player-5', PaceService::NEW_PLAYER_LIMIT, PaceService::JOIN_PERIOD, self::IP)
             ->willReturnCallback(function (): void {
                 $this->calls[] = 'count';
             });
@@ -380,11 +380,11 @@ class SelfJoinCapTest extends TestCase {
         return $row;
     }
 
-    private function limits(): \OCA\Pulse\Service\Limits {
+    private function limits(): \OCA\Vibears\Service\Limits {
         $config = $this->createMock(\OCP\IAppConfig::class);
         $config->method('getValueInt')->willReturnCallback(
             fn (string $app, string $key, int $default = 0): int => $this->limitConfig[$key] ?? $default
         );
-        return new \OCA\Pulse\Service\Limits($config);
+        return new \OCA\Vibears\Service\Limits($config);
     }
 }

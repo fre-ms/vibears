@@ -4,7 +4,7 @@
 -->
 <template>
 	<div class="cdr" :class="{ 'is-urgent': urgent, 'is-done': remaining <= 0 }"
-		role="status" :aria-label="n('pulse', '%n second left', '%n seconds left', Math.max(0, remaining))">
+		role="status" :aria-label="n('vibears', '%n second left', '%n seconds left', Math.max(0, remaining))">
 		<svg viewBox="0 0 100 100" aria-hidden="true">
 			<circle class="cdr-track" cx="50" cy="50" :r="R" />
 			<circle class="cdr-run" cx="50" cy="50" :r="R"

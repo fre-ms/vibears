@@ -5,22 +5,22 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\PublicController;
-use OCA\Pulse\Controller\PublicVoteController;
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\CodeGenerator;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\Limits;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\RoomService;
-use OCA\Pulse\Service\StateService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Controller\PublicController;
+use OCA\Vibears\Controller\PublicVoteController;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\CodeGenerator;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\RoomService;
+use OCA\Vibears\Service\StateService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Services\IInitialState;
@@ -63,7 +63,7 @@ abstract class PublicControllerTestCase extends TestCase {
     protected array $params = [];
     protected string $protocol = 'https';
     protected string $webroot = '';
-    /** App config pulse/voter_cookie_host_since (0 = not set). */
+    /** App config vibears/voter_cookie_host_since (0 = not set). */
     protected int $hostSince = 0;
     /** Set to make the app config throw like a value of the wrong type. */
     protected ?\Exception $configError = null;
@@ -378,7 +378,7 @@ abstract class PublicControllerTestCase extends TestCase {
             if ($this->configError !== null) {
                 throw $this->configError;
             }
-            return $app === 'pulse' && $key === PublicVoteController::HOST_COOKIE_SINCE ? $this->hostSince : 0;
+            return $app === 'vibears' && $key === PublicVoteController::HOST_COOKIE_SINCE ? $this->hostSince : 0;
         });
         $config->method('setValueInt')->willReturnCallback(function (string $app, string $key, int $value): bool {
             $this->calls[] = ['setValueInt', [$app, $key, $value]];

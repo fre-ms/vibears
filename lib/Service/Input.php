@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
 /**
  * Brings raw client values (request parameters and the fields inside them)

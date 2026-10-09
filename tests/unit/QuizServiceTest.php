@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Service\QuizService;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Service\QuizService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

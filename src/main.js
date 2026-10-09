@@ -11,7 +11,7 @@ import './styles/pulse-ds.css'
 import Moderator from './Moderator.vue'
 
 // Translations globally: t/n are available in template and script (app id
-// "pulse"). Nextcloud loads the language file l10n/<lang>.js before this bundle.
+// "vibears"). Nextcloud loads the language file l10n/<lang>.js before this bundle.
 Vue.prototype.t = t
 Vue.prototype.n = n
 

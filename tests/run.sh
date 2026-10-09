@@ -14,7 +14,7 @@
 set -eu
 
 CONTAINER="${CONTAINER:-nextcloud-nextcloud-1}"
-APP_DIR="${APP_DIR:-/var/www/html/apps/pulse}"
+APP_DIR="${APP_DIR:-/var/www/html/apps/vibears}"
 PHAR_URL="https://phar.phpunit.de/phpunit-11.phar"
 
 # The PHAR is deliberately kept out of version control (tools/ is ignored).

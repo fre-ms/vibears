@@ -17,9 +17,12 @@ Results update live through polling.
 
 vibeARS is a fork of [Pulse](https://github.com/hotochan123/nextcloud-pulse)
 by [hotochan123](https://github.com/hotochan123) (forked at Pulse 0.19.1,
-October 2026). It keeps Pulse's app ID `pulse`, its routes, tables and
-configuration keys, so it installs in Pulse's place, takes over its rooms and
-can keep merging upstream fixes. What it changes:
+October 2026). It has an app ID of its own, `vibears`, so it installs
+alongside Pulse: both apps can run on one instance, each with its own rooms,
+database tables (`vibears_*`), voter cookie (`vibears_vt`), routes
+(`/apps/vibears/…`), app data and settings. Apart from those identifiers the
+code is Pulse's, so upstream fixes can still be carried over by hand. What it
+changes:
 
 - **Name and icon.** The app is called vibeARS, its navigation entry "ARS",
   and the icon — a speech bubble from the audience with the response bars in
@@ -196,8 +199,8 @@ well, so a homework that is graded weeks after its deadline does not vanish.
 The two settings are app config keys and can be set with occ as well:
 
 ```
-occ config:app:set pulse retention_enabled --value 1 --type integer    # 0 = off (default)
-occ config:app:set pulse retention_days --value 90 --type integer      # 1–3650, default 30
+occ config:app:set vibears retention_enabled --value 1 --type integer    # 0 = off (default)
+occ config:app:set vibears retention_days --value 90 --type integer      # 1–3650, default 30
 ```
 
 Whatever the setting says, the same daily job deletes the rooms of accounts
@@ -305,7 +308,7 @@ same file again, so a deck kept in git shows only real changes in its diffs.
 
 - **Public access** without login through `#[PublicPage]` + `#[NoCSRFRequired]` —
   the same mechanism as share links. The room code is the share token:
-  `/apps/pulse/s/{code}`. Because that switches Nextcloud's CSRF check off, the
+  `/apps/vibears/s/{code}`. Because that switches Nextcloud's CSRF check off, the
   participant API checks for itself that a vote comes from its own page (see
   [Security notes](#security-notes)).
 - **Core decision on vote counting:** one database row per `(poll_id, voter_token)`
@@ -348,14 +351,14 @@ lib/SetupCheck/   EmbedFraming (setup check for the PowerPoint embed)
 lib/BackgroundJob/ CleanupStaleRoomsJob (deletes unused rooms when the administration says so,
                   rooms of deleted accounts and question images nothing refers to)
 lib/Listener/     UserDeletedListener (a deleted account takes its rooms with it)
-lib/Migration/    Schema (pulse_rooms, pulse_polls, pulse_votes, … pulse_progress)
+lib/Migration/    Schema (vibears_rooms, vibears_polls, vibears_votes, … vibears_progress)
 src/              Moderator.vue (control desk), Participant.vue (phone), Screen.vue (projector),
                   components/StageRow.vue (stage row model), ResultsView.vue,
                   self-paced: components/Pace*.vue (moderator), StageRace.vue (projector),
                   mixins/pace-phone.js (phone), util/pace.js (pure rules, no browser),
                   util/question-types.js (composer contract per question type, no browser),
                   util/routes.js (every URL and request time limit of the Vue frontend;
-                  js/pulse-embed.js builds its own),
+                  js/vibears-embed.js builds its own),
                   styles.js (token layer without Vue — for the embed shell),
                   admin.js (the administration form, without Vue)
 templates/        index.php (moderator), public.php (phone, projector), embed.php, admin.php
@@ -390,13 +393,13 @@ record of the self-paced UI, which is included.
 ## Installation
 
 vibeARS is not in the Nextcloud App Store; install it from this repository.
-It carries Pulse's app ID `pulse`, so on an instance that has Pulse
-installed it takes Pulse's place — the rooms, questions and votes stay, and
-`occ upgrade` runs the (unchanged) migrations. Pulse runs on Nextcloud 34 and
-35 and was tested there on SQLite, MariaDB, PostgreSQL and MySQL; vibeARS has
-the same dependencies and the same schema. Note that an instance with the
-App Store enabled will offer Pulse's next release as an "update" of the app
-ID `pulse`; declining it keeps vibeARS.
+Its app ID is `vibears`, so it installs next to Pulse rather than in its
+place: an instance can run both, and Pulse's rooms stay in Pulse (there is
+no path to move them over — Pulse has no deck export). Pulse runs on
+Nextcloud 34 and 35 and was tested there on SQLite, MariaDB, PostgreSQL and
+MySQL; vibeARS has the same dependencies and the same schema under its own
+table names, and has been checked by the same PHPUnit suite, not yet by an
+installation on every database.
 
 Do not clone the repository into the web root. A checkout carries the
 development tree — tests, the simulation and screenshot harness, sources and,
@@ -410,18 +413,18 @@ check:
 ```
 git clone https://github.com/fre-ms/vibears.git ~/vibears-src
 cd ~/vibears-src
-SKIP_BUILD=1 sh build/package.sh        # -> build/pulse-<version>.tar.gz
-tar -xzf build/pulse-<version>.tar.gz -C <nextcloud>/apps/
-occ app:enable pulse                    # or occ upgrade when Pulse was installed before
+SKIP_BUILD=1 sh build/package.sh        # -> build/vibears-<version>.tar.gz
+tar -xzf build/vibears-<version>.tar.gz -C <nextcloud>/apps/
+occ app:enable vibears
 ```
 
-The archive holds a single folder `pulse/` (the directory has to be named after
+The archive holds a single folder `vibears/` (the directory has to be named after
 the app ID) with only the runtime folders — `appinfo`, `css`, `img`, `js`,
 `l10n`, `lib`, `templates`, `office-addin` — plus README, licence and changelog.
 Without a key it is not signed, which Nextcloud accepts for an app installed by
 hand. `ALLOW_UNRELEASED=1` is only needed between releases (a checkout of a
 release tag packs without it). Copying those folders yourself, for example with
-`rsync`, works just as well. To update, replace `<nextcloud>/apps/pulse` with
+`rsync`, works just as well. To update, replace `<nextcloud>/apps/vibears` with
 the new folder; when the version in `appinfo/info.xml` went up, run
 `occ upgrade` afterwards (until then Nextcloud does not serve the app).
 
@@ -438,7 +441,7 @@ Build outside the web root as well, then deploy as above:
 
 ```
 npm ci             # exactly the dependency versions of package-lock.json
-npm run build      # produces js/pulse-main.js, js/pulse-public.js, js/pulse-styles.js and js/pulse-admin.js
+npm run build      # produces js/vibears-main.js, js/vibears-public.js, js/vibears-styles.js and js/vibears-admin.js
 ```
 
 Use Node.js 22.18.0, the version the committed bundles are built with: with it,
@@ -457,9 +460,9 @@ change.
 ```
 PHP:  $this->l10n->t('Room not found.')          // IL10N in the constructor
       $this->l10n->n('%n vote', '%n votes', $x)
-Vue:  {{ t('pulse', 'Save') }}                    // Vue.prototype.t/n from main.js
-      {{ n('pulse', 'answer', 'answers', total) }}
-      t('pulse', 'Hello {name}', { name })        // placeholders in curly braces
+Vue:  {{ t('vibears', 'Save') }}                    // Vue.prototype.t/n from main.js
+      {{ n('vibears', 'answer', 'answers', total) }}
+      t('vibears', 'Hello {name}', { name })        // placeholders in curly braces
 ```
 
 Only `l10n/de.json` is maintained by hand; `l10n/de.js` (the file Nextcloud
@@ -527,14 +530,14 @@ are not part of the repository — see `tests/README.md`.
 ## Embedding in PowerPoint
 
 A custom content add-in (sideloaded, not from the Office Store). Each instance
-serves the Office manifest itself — `/apps/pulse/addin/manifest.xml`, and
+serves the Office manifest itself — `/apps/vibears/addin/manifest.xml`, and
 "PowerPoint add-in" in the deck menu. It carries the address it was downloaded
 from; an Office manifest has no variables, so a shipped file would need a hand
 edit on every installation. Guide: `office-addin/README.md`.
 
 **Note:** Nextcloud sends `X-Frame-Options: SAMEORIGIN` from `.htaccess` and
-`lib/base.php` — an app cannot override that. For `/apps/pulse/screen/` and
-`/apps/pulse/embed` the header has to be removed in the web server or reverse
+`lib/base.php` — an app cannot override that. For `/apps/vibears/screen/` and
+`/apps/vibears/embed` the header has to be removed in the web server or reverse
 proxy; snippets for Apache, nginx and Traefik are in `office-addin/README.md`.
 Whether it is still there is reported by the setup check "vibeARS: embedding in
 PowerPoint" under Administration → Overview, separately for each address.
@@ -545,7 +548,7 @@ PowerPoint" under Administration → Overview, separately for each address.
 images live in Nextcloud's app data, rooms and questions in the database — and
 anonymous participants can add players to a quiz, so vibeARS keeps its own caps.
 Each can be changed per instance, for example
-`occ config:app:set pulse max_rooms_per_owner --value 500`. Only a positive
+`occ config:app:set vibears max_rooms_per_owner --value 500`. Only a positive
 whole number overrides the default (anything else keeps it, so a typo never
 means "unlimited"), and a change takes effect within a few seconds.
 
@@ -606,18 +609,17 @@ network.
   double voting without identifying anyone; whoever clears their cookies can
   vote again. In a quiz, participants only give a nickname.
 - **Voter cookie.** On https with Nextcloud at the root of its domain the cookie
-  is called `__Host-pulse_vt` (Secure, `Path=/`, no `Domain`, `HttpOnly`,
+  is called `__Host-vibears_vt` (Secure, `Path=/`, no `Domain`, `HttpOnly`,
   `SameSite=Lax`). Browsers accept such a cookie only from this very origin, so
   another service on a sibling subdomain can neither plant a token it knows —
   and then read a participant's answers with it — nor overwrite it. Under http
-  or a sub-path it stays `pulse_vt` without that protection. A `pulse_vt` from
-  before the update is taken over for 60 days after the first request under the
-  new name and ignored after that; the start is kept in the app config key
-  `voter_cookie_host_since`, and setting it to 1
-  (`occ config:app:set pulse voter_cookie_host_since --value=1 --type=integer`)
-  ends the takeover at once. A request that sends a cookie name twice counts as
-  having no cookie. A name that PHP only turns into `__Host-pulse_vt` —
-  `_.Host-pulse_vt`, which any sibling subdomain may set — is ignored, as PHP
+  or a sub-path it stays `vibears_vt` without that protection. (Pulse's
+  takeover of a cookie from before its `__Host-` change is kept in the code —
+  a plain `vibears_vt` is adopted for 60 days after the first request under
+  the `__Host-` name, governed by the app config key `voter_cookie_host_since`
+  — but a fresh vibeARS has no such cookies.) A request that sends a cookie name twice counts as
+  having no cookie. A name that PHP only turns into `__Host-vibears_vt` —
+  `_.Host-vibears_vt`, which any sibling subdomain may set — is ignored, as PHP
   itself ignores it.
 - **Votes only from the page itself.** Joining, voting and moving on in a
   self-paced quiz (`POST /s/{code}/join`, `/vote`, `/next`) need
@@ -627,7 +629,7 @@ network.
   rename in a participant's name nor replace their cookie. Reading (`/state`,
   `/summary`, images) needs only the code.
 - **Room codes** have six characters out of 32, about 10^9 codes. A wrong code
-  counts towards Nextcloud's brute-force protection (action `pulseRoomCode`):
+  counts towards Nextcloud's brute-force protection (action `vibearsRoomCode`):
   after ten misses from one address within 30 minutes, further unknown codes
   get 429. Only misses ever count, and an existing room always opens — a typo
   in the join form, a web page that embeds made-up codes or a room deleted
@@ -637,7 +639,7 @@ network.
   Nextcloud reads for that address on every check, its login included.
   The price: an address can still tell existing from unknown codes, even while
   it is blocked; only a rate limit in front of Nextcloud (in the reverse
-  proxy, for `/apps/pulse/s/` and `/apps/pulse/screen/`) bounds how fast. An
+  proxy, for `/apps/vibears/s/` and `/apps/vibears/screen/`) bounds how fast. An
   admin lifts a block with `occ security:bruteforce:reset <address>`. The
   moderator API answers someone else's room exactly like an unknown code (404
   "Room not found."), so a logged-in account learns no more there.
@@ -682,8 +684,8 @@ network.
   the class is in and check the names against your class list. vibeARS cannot
   tie an identity to a person; where that matters, use a tool with a sign-in
   for every participant.
-- **Framing.** `/apps/pulse/screen/{code}` (the projector view) and
-  `/apps/pulse/embed` (the add-in shell) may be framed by any site —
+- **Framing.** `/apps/vibears/screen/{code}` (the projector view) and
+  `/apps/vibears/embed` (the add-in shell) may be framed by any site —
   `frame-ancestors *`, and the web server drops `X-Frame-Options` for exactly
   these paths (see [Embedding in PowerPoint](#embedding-in-powerpoint)). That
   is what the PowerPoint add-in needs. Both are read-only; the projector view
@@ -715,13 +717,13 @@ network.
 
 ```
 build/certificate.sh    # once: key + certificate request for the signature
-build/package.sh        # builds, checks, signs and packs build/pulse-<version>.tar.gz
+build/package.sh        # builds, checks, signs and packs build/vibears-<version>.tar.gz
 ```
 
 `docs/APPSTORE.md` describes the way Pulse took into the Nextcloud App Store —
 public repository, certificate, app ID registration, version, signature,
-upload. vibeARS is not published there (the app ID belongs to Pulse); the
-document is kept for reference.
+upload. vibeARS is not published there; the document is kept for reference,
+and the same steps would apply to the app ID `vibears`.
 
 ## Licence
 

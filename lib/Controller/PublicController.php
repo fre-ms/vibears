@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Controller;
+namespace OCA\Vibears\Controller;
 
-use OCA\Pulse\AppInfo\Application;
-use OCA\Pulse\Db\RoomMapper;
+use OCA\Vibears\AppInfo\Application;
+use OCA\Vibears\Db\RoomMapper;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
@@ -23,10 +23,10 @@ use OCP\Security\Bruteforce\IThrottler;
 
 /**
  * Public participant page: no Nextcloud account needed. The room code in the
- * URL (/apps/pulse/s/{code}) acts like the token of a share link.
+ * URL (/apps/vibears/s/{code}) acts like the token of a share link.
  *
  * Unknown codes count as failed attempts of the brute-force action
- * 'pulseRoomCode' (codeBlocked()), shared with PublicVoteController — by
+ * 'vibearsRoomCode' (codeBlocked()), shared with PublicVoteController — by
  * hand, not with #[BruteForceProtection], so that only misses ever consult
  * the throttle and an existing room always opens.
  */
@@ -115,7 +115,7 @@ class PublicController extends Controller {
         // Caution: the second framing blocker, X-Frame-Options: SAMEORIGIN, comes
         // from the core .htaccess (Header always set) and can NOT be
         // overridden from PHP — it is removed for /screen in Traefik
-        // (dynamic_conf/http.routers.pulse-embed.yml). The voting pages
+        // (dynamic_conf/http.routers.vibears-embed.yml). The voting pages
         // (show/join) deliberately stay strictly on 'self'.
         $csp = new ContentSecurityPolicy();
         $csp->addAllowedFrameAncestorDomain('*');
@@ -133,7 +133,7 @@ class PublicController extends Controller {
      * browser tab rather than in Office) that third-party script has the reach of
      * their session. The second framing blocker,
      * X-Frame-Options, is additionally removed for this path in Traefik
-     * (dynamic_conf/http.routers.pulse-embed.yml).
+     * (dynamic_conf/http.routers.vibears-embed.yml).
      */
     #[PublicPage]
     #[NoCSRFRequired]
@@ -172,7 +172,7 @@ class PublicController extends Controller {
     }
 
     /**
-     * Record an unknown code as a failed attempt of 'pulseRoomCode' for this
+     * Record an unknown code as a failed attempt of 'vibearsRoomCode' for this
      * address; true once the address has more than ten of them within 30
      * minutes (-> 429, and then no further attempt is recorded). Only called
      * for misses: see PublicVoteController::codeMissBlocked().

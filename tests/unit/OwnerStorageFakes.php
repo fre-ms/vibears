@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
 use OCP\DB\IResult;
 use OCP\DB\QueryBuilder\ICompositeExpression;
@@ -20,7 +20,7 @@ use OCP\IDBConnection;
 
 /**
  * In-memory stand-ins for the two stores the owner-side storage code talks
- * to directly (security review, task D): the `pulse_rooms` / `pulse_polls`
+ * to directly (security review, task D): the `vibears_rooms` / `vibears_polls`
  * rows it queries with the query builder, and the AppData image folder.
  *
  * The query-builder fake understands exactly the shapes that
@@ -39,7 +39,7 @@ trait OwnerStorageFakes {
     private bool $fakeFolderExists = true;
     /** Called right before an UPDATE is evaluated — a "concurrent" writer. */
     private ?\Closure $beforeUpdate = null;
-    /** @var list<string> executed statements, e.g. "update pulse_polls" */
+    /** @var list<string> executed statements, e.g. "update vibears_polls" */
     private array $fakeLog = [];
 
     private function fakeDb(): IDBConnection {
@@ -62,7 +62,7 @@ trait OwnerStorageFakes {
             return $folder;
         });
         $factory = $this->createMock(IAppDataFactory::class);
-        $factory->method('get')->with('pulse')->willReturn($appData);
+        $factory->method('get')->with('vibears')->willReturn($appData);
         return $factory;
     }
 
@@ -216,13 +216,13 @@ trait OwnerStorageFakes {
             });
         }
         $qb->method('executeStatement')->willReturnCallback(function () use ($q, $composites): int {
-            if ($q['kind'] !== 'update' || $q['table'] !== 'pulse_polls') {
+            if ($q['kind'] !== 'update' || $q['table'] !== 'vibears_polls') {
                 throw new \LogicException('fake: unexpected statement');
             }
             if ($this->beforeUpdate !== null) {
                 ($this->beforeUpdate)();
             }
-            $this->fakeLog[] = 'update pulse_polls';
+            $this->fakeLog[] = 'update vibears_polls';
             $n = 0;
             foreach ($this->fakePolls as $id => $row) {
                 if ($this->fakeMatches($this->fakePollRow($id), $q, $composites)) {
@@ -259,20 +259,20 @@ trait OwnerStorageFakes {
     private function fakeSourceRows(\ArrayObject $q): array {
         $alias = $q['alias'];
         $rows = [];
-        if ($q['table'] === 'pulse_rooms') {
+        if ($q['table'] === 'vibears_rooms') {
             foreach ($this->fakeRooms as $id => $owner) {
                 $rows[] = $this->fakeQualify(['id' => $id, 'owner_uid' => $owner], $alias);
             }
             return $rows;
         }
-        if ($q['table'] !== 'pulse_polls') {
+        if ($q['table'] !== 'vibears_polls') {
             throw new \LogicException('fake: unknown table ' . $q['table']);
         }
         foreach (array_keys($this->fakePolls) as $id) {
             $row = $this->fakeQualify($this->fakePollRow($id), $alias);
             if ($q['join'] !== null) {
                 [$table, $joinAlias] = $q['join'];
-                if ($table !== 'pulse_rooms') {
+                if ($table !== 'vibears_rooms') {
                     throw new \LogicException('fake: unknown join');
                 }
                 $roomId = $row['room_id'];

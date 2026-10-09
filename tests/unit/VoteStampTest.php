@@ -5,11 +5,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
 use OC\Memcache\ArrayCache;
-use OCA\Pulse\Db\Vote;
-use OCA\Pulse\Db\VoteMapper;
+use OCA\Vibears\Db\Vote;
+use OCA\Vibears\Db\VoteMapper;
 use OCP\DB\IResult;
 use OCP\DB\QueryBuilder\IExpressionBuilder;
 use OCP\DB\QueryBuilder\IQueryBuilder;

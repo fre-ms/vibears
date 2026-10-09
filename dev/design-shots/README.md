@@ -43,16 +43,16 @@ it up, and the browser only loads the page.
 - Docker access to the Nextcloud container (`occ`, `probe.php`).
 - Node ≥ 18 (uses `fetch`).
 
-Settings via environment variables: `PULSE_HOST`, `CONTAINER`,
-`APP_IN_CONTAINER`, `PULSE_SHOTS_UID`, `PULSE_SHOTS_LANG` (default `en-US, en`),
-`PULSE_SHOTS_PORT`, `OUT` and `PULSE_SHOTS_ONLY=<track>` to redo a single
+Settings via environment variables: `VIBEARS_HOST`, `CONTAINER`,
+`APP_IN_CONTAINER`, `VIBEARS_SHOTS_UID`, `VIBEARS_SHOTS_LANG` (default `en-US, en`),
+`VIBEARS_SHOTS_PORT`, `OUT` and `VIBEARS_SHOTS_ONLY=<track>` to redo a single
 track: `public`, `edge`, `phone`, `types`, `dark`, `embed`, `overview`,
 `match`, `moderator`, `store` as well as `pace` (all four self-paced tracks)
 or individually `pace-mod`, `pace-run`, `pace-phone`, `pace-screen`.
 
 ## Full run
 
-Without `PULSE_SHOTS_ONLY` every track but `store` runs in one go, in the
+Without `VIBEARS_SHOTS_ONLY` every track but `store` runs in one go, in the
 order of the list above, on one set of rooms: a later track finds them as the
 earlier ones left them — more players and seeded votes, a quiz that has been
 ended once, the question the `phone` track appends to the types room before
@@ -60,7 +60,7 @@ ended once, the question the `phone` track appends to the types room before
 them for every run). Two consequences:
 
 - **Compare single tracks.** Baselines and comparisons of measurement lines
-  are per track (`PULSE_SHOTS_ONLY=<track>`). A full run shows that the tracks
+  are per track (`VIBEARS_SHOTS_ONLY=<track>`). A full run shows that the tracks
   run through together; its `index.md` does not line up with theirs.
 - **Numbering.** The counter runs across the whole run, so a track's files
   carry on from the previous track's last number instead of starting at `01-`
@@ -87,7 +87,7 @@ walkthroughs), `big` (24 questions, 300 people — nobody can join there any
 more), `mid` and `wide` (16 and 20 questions), `practice` (practice run,
 opened) and `click` (only for click tracks).
 
-`PULSE_SHOTS_ONLY=pace` runs `pace-mod` → `pace-run` → `pace-phone` →
+`VIBEARS_SHOTS_ONLY=pace` runs `pace-mod` → `pace-run` → `pace-phone` →
 `pace-screen` in this order, because some tracks change rooms; `pace-screen`
 releases `race` at the end. Among other things it measures: exactly one filled
 button per view, the footer of the run view above the fold, no solution in the
@@ -136,7 +136,7 @@ deliberately write raw):
 By hand, e.g.:
 
 ```sh
-docker exec -u www-data nextcloud-nextcloud-1 php /var/www/html/apps/pulse/dev/design-shots/probe.php open ABC123 259200 0 end
+docker exec -u www-data nextcloud-nextcloud-1 php /var/www/html/apps/vibears/dev/design-shots/probe.php open ABC123 259200 0 end
 ```
 
 ## Long words
@@ -178,7 +178,7 @@ A finding (`FEHLT`, `ÜBERLAPPT`, `ÜBER DIE MITTE`, `RAGT HERAUS`,
 ## Brute-force trap
 
 If a room is deleted or reset while a `/s/…` or `/screen/…` page — or the
-projector preview in the run view — is still polling, 404s on `pulseRoomCode`
+projector preview in the run view — is still polling, 404s on `vibearsRoomCode`
 pile up, and at some point Nextcloud answers the server address with 429 on
 all vibeARS routes. Therefore:
 
@@ -208,7 +208,7 @@ measurement lines of `index.md` with neutralised room codes — pixel
 comparisons show differences on every run, because code, QR code and seeded
 votes change.
 
-**Which instance?** `PULSE_HOST` beats everything. Otherwise `.host` in this
+**Which instance?** `VIBEARS_HOST` beats everything. Otherwise `.host` in this
 folder is read — one line, e.g. `https://nextcloud.intern.example`; the store
 track reads `.store-host` with the public name instead. Neither file is in the
 repository: an internal hostname has no business in a public repository. If

@@ -120,9 +120,9 @@ export default {
 			return targets.sort((a, b) => a.label.localeCompare(b.label))
 		},
 		hint() {
-			if (this.poll.type === 'multi') return this.t('pulse', 'Multiple answers possible')
-			if (this.poll.type === 'rank') return this.t('pulse', 'Sort on your phone')
-			if (this.poll.type === 'match') return this.t('pulse', 'Assign on your phone')
+			if (this.poll.type === 'multi') return this.t('vibears', 'Multiple answers possible')
+			if (this.poll.type === 'rank') return this.t('vibears', 'Sort on your phone')
+			if (this.poll.type === 'match') return this.t('vibears', 'Assign on your phone')
 			return ''
 		},
 	},

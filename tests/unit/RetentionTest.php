@@ -5,15 +5,15 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\BackgroundJob\CleanupStaleRoomsJob;
-use OCA\Pulse\Controller\AdminSettingsController;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\Retention;
-use OCA\Pulse\Service\RoomService;
-use OCA\Pulse\Settings\AdminSection;
-use OCA\Pulse\Settings\AdminSettings;
+use OCA\Vibears\BackgroundJob\CleanupStaleRoomsJob;
+use OCA\Vibears\Controller\AdminSettingsController;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\Retention;
+use OCA\Vibears\Service\RoomService;
+use OCA\Vibears\Settings\AdminSection;
+use OCA\Vibears\Settings\AdminSettings;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -184,26 +184,26 @@ class RetentionTest extends TestCase {
 
         $this->assertSame('admin', $form->getTemplateName());
         $this->assertSame('', $form->getRenderAs(), 'a settings form renders inside the settings page');
-        $this->assertSame('pulse', (new AdminSettings($this->retention(), $state))->getSection());
+        $this->assertSame('vibears', (new AdminSettings($this->retention(), $state))->getSection());
     }
 
     public function testTheSectionCarriesTheNavigationLabelAndTheDarkIcon(): void {
         $l10n = $this->createMock(IL10N::class);
         $l10n->method('t')->willReturnArgument(0);
         $urls = $this->createMock(IURLGenerator::class);
-        $urls->method('imagePath')->with('pulse', 'app-dark.svg')->willReturn('/apps/pulse/img/app-dark.svg');
+        $urls->method('imagePath')->with('vibears', 'app-dark.svg')->willReturn('/apps/vibears/img/app-dark.svg');
         $section = new AdminSection($l10n, $urls);
 
-        $this->assertSame('pulse', $section->getID());
+        $this->assertSame('vibears', $section->getID());
         $this->assertSame('ARS', $section->getName());
-        $this->assertSame('/apps/pulse/img/app-dark.svg', $section->getIcon());
+        $this->assertSame('/apps/vibears/img/app-dark.svg', $section->getIcon());
         $this->assertFileExists(dirname(__DIR__, 2) . '/img/app-dark.svg');
     }
 
     public function testInfoXmlRegistersFormSectionAndNavigationLabel(): void {
         $info = (string)file_get_contents(dirname(__DIR__, 2) . '/appinfo/info.xml');
-        $this->assertStringContainsString('<admin>OCA\Pulse\Settings\AdminSettings</admin>', $info);
-        $this->assertStringContainsString('<admin-section>OCA\Pulse\Settings\AdminSection</admin-section>', $info);
+        $this->assertStringContainsString('<admin>OCA\Vibears\Settings\AdminSettings</admin>', $info);
+        $this->assertStringContainsString('<admin-section>OCA\Vibears\Settings\AdminSection</admin-section>', $info);
         $this->assertMatchesRegularExpression('#<navigation>\s*<name>ARS</name>#', $info);
     }
 
@@ -215,7 +215,7 @@ class RetentionTest extends TestCase {
             fn (string $app, string $key, int $default = 0): int => $this->config[$key] ?? $default,
         );
         $appConfig->method('setValueInt')->willReturnCallback(function (string $app, string $key, int $value): bool {
-            $this->assertSame('pulse', $app);
+            $this->assertSame('vibears', $app);
             $this->config[$key] = $value;
             $this->written[] = [$key, $value];
             return true;

@@ -23,8 +23,8 @@
      */
     function tr(text, vars) {
         try {
-            if (typeof window.t === 'function') { return window.t('pulse', text, vars); }
-            if (window.OC && window.OC.L10N && window.OC.L10N.translate) { return window.OC.L10N.translate('pulse', text, vars); }
+            if (typeof window.t === 'function') { return window.t('vibears', text, vars); }
+            if (window.OC && window.OC.L10N && window.OC.L10N.translate) { return window.OC.L10N.translate('vibears', text, vars); }
         } catch (e) { /* source string as fallback */ }
         return text;
     }
@@ -34,14 +34,14 @@
     var settingsApi = null; // Office.context.document.settings, once available
 
     function screenUrl(code) {
-        return ORIGIN + '/apps/pulse/screen/' + encodeURIComponent(code);
+        return ORIGIN + '/apps/vibears/screen/' + encodeURIComponent(code);
     }
 
     function persist(code) {
-        try { window.localStorage.setItem('pulseCode', code); } catch (e) { /* ignore */ }
+        try { window.localStorage.setItem('vibearsCode', code); } catch (e) { /* ignore */ }
         if (settingsApi) {
             try {
-                settingsApi.set('pulseCode', code);
+                settingsApi.set('vibearsCode', code);
                 settingsApi.saveAsync(function () {});
             } catch (e) { /* ignore */ }
         }
@@ -49,13 +49,13 @@
 
     function loadSaved() {
         if (settingsApi) {
-            var c = settingsApi.get('pulseCode');
+            var c = settingsApi.get('vibearsCode');
             if (c) { return c; }
         }
         var q = null;
         try { q = new URLSearchParams(window.location.search).get('code'); } catch (e) { q = null; }
         if (q) { return q; }
-        try { return window.localStorage.getItem('pulseCode') || ''; } catch (e) { return ''; }
+        try { return window.localStorage.getItem('vibearsCode') || ''; } catch (e) { return ''; }
     }
 
     function renderIframe(code) {
@@ -95,7 +95,7 @@
      * in the public repository).
      */
     function roomExists(code) {
-        return fetch(ORIGIN + '/apps/pulse/s/' + encodeURIComponent(code) + '/state?spectate=1', {
+        return fetch(ORIGIN + '/apps/vibears/s/' + encodeURIComponent(code) + '/state?spectate=1', {
             headers: { Accept: 'application/json' },
         }).then(function (r) { return r.ok }).catch(function () {
             return null; // no network: no verdict, we let it through
@@ -235,8 +235,8 @@
      * Only a real room code goes into the frame. The saved value comes from
      * the document settings (they travel with the .pptx), ?code= or
      * localStorage, and nothing has checked it yet. screenUrl() does not
-     * make it safe: encodeURIComponent keeps '..', and /apps/pulse/screen/..
-     * resolves to /apps/pulse/, the moderator page (or the login page) inside
+     * make it safe: encodeURIComponent keeps '..', and /apps/vibears/screen/..
+     * resolves to /apps/vibears/, the moderator page (or the login page) inside
      * the slide. Anything else opens the form with the value filled in, where
      * go() checks it like a typed code.
      */

@@ -6,19 +6,19 @@
 	<details class="live-players" :open="open" @toggle="onToggle">
 		<summary class="live-players-sum">
 			<PulseIcon name="users" size="1em" />
-			<span>{{ t('pulse', 'Participants') }}</span>
-			<span v-if="loaded" class="pulse-chip is-neutral live-players-chip">{{ t('pulse', '{count} joined', { count: players.length }) }}</span>
-			<span v-if="joinsLocked" class="pulse-chip is-locked live-players-chip"><PulseIcon name="lock" size="1em" /> {{ t('pulse', 'Joining locked') }}</span>
+			<span>{{ t('vibears', 'Participants') }}</span>
+			<span v-if="loaded" class="pulse-chip is-neutral live-players-chip">{{ t('vibears', '{count} joined', { count: players.length }) }}</span>
+			<span v-if="joinsLocked" class="pulse-chip is-locked live-players-chip"><PulseIcon name="lock" size="1em" /> {{ t('vibears', 'Joining locked') }}</span>
 		</summary>
-		<p class="live-players-hint">{{ t('pulse', 'Remove names that do not belong in the quiz. Once everyone is in, lock joining in the menu.') }}</p>
+		<p class="live-players-hint">{{ t('vibears', 'Remove names that do not belong in the quiz. Once everyone is in, lock joining in the menu.') }}</p>
 		<ul v-if="players.length" class="live-players-list">
 			<li v-for="p in players" :key="p.playerId" class="live-players-row">
 				<span class="live-players-name">{{ p.nickname }}</span>
 				<!-- Exactly one entry, and it is red — the same as in the self-paced run view. -->
-				<PulseMenu :items="rowMenu(p)" :label="t('pulse', 'Actions for {name}', { name: p.nickname })" small />
+				<PulseMenu :items="rowMenu(p)" :label="t('vibears', 'Actions for {name}', { name: p.nickname })" small />
 			</li>
 		</ul>
-		<p v-else-if="loaded" class="live-players-empty">{{ t('pulse', 'Nobody has joined yet — share the code.') }}</p>
+		<p v-else-if="loaded" class="live-players-empty">{{ t('vibears', 'Nobody has joined yet — share the code.') }}</p>
 	</details>
 </template>
 
@@ -132,16 +132,16 @@ export default {
 			this.schedule()
 		},
 		rowMenu(p) {
-			return [{ key: 'remove', label: t('pulse', 'Remove from the quiz'), icon: 'trash', danger: true, act: () => this.confirmRemove(p) }]
+			return [{ key: 'remove', label: t('vibears', 'Remove from the quiz'), icon: 'trash', danger: true, act: () => this.confirmRemove(p) }]
 		},
 		// The name becomes free; the answers and points go with it.
 		async confirmRemove(p) {
 			if (this.busy) return
 			if (!await pulseConfirm({
-				title: t('pulse', 'Remove {name}?', { name: p.nickname }),
-				text: t('pulse', 'The answers of {name} are deleted and the name becomes free. They can join again, but start from zero points — unless joining is locked.', { name: p.nickname }),
-				confirmLabel: t('pulse', 'Remove person'),
-				cancelLabel: t('pulse', 'Cancel'),
+				title: t('vibears', 'Remove {name}?', { name: p.nickname }),
+				text: t('vibears', 'The answers of {name} are deleted and the name becomes free. They can join again, but start from zero points — unless joining is locked.', { name: p.nickname }),
+				confirmLabel: t('vibears', 'Remove person'),
+				cancelLabel: t('vibears', 'Cancel'),
 				danger: true,
 			})) return
 			this.busy = true
@@ -151,7 +151,7 @@ export default {
 				this.$emit('room', data)
 				this.$emit('removed')
 			} catch (e) {
-				showError(serverMessage(e, t('pulse', 'Could not remove the person.')))
+				showError(serverMessage(e, t('vibears', 'Could not remove the person.')))
 				if (e?.response?.status === 409) this.$emit('conflict')
 			} finally {
 				this.busy = false

@@ -5,9 +5,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\PublicVoteController;
+use OCA\Vibears\Controller\PublicVoteController;
 use OCP\AppFramework\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -102,7 +102,7 @@ class PublicCrossSiteTest extends PublicControllerTestCase {
         // A sibling subdomain whose request carries the visitor's Lax cookie.
         $this->headers = $headers;
         $this->room = $this->selfRoom();
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['nickname' => 'Eve', 'value' => 'AA', 'after' => 0];
 
         $response = $this->voteController()->$method('ABCDEF');
@@ -117,7 +117,7 @@ class PublicCrossSiteTest extends PublicControllerTestCase {
     public function testSameOriginPostGoesThrough(string $method, array $headers): void {
         $this->headers = $headers;
         $this->room = $this->selfRoom();
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['nickname' => 'Anna', 'value' => 'AA', 'after' => 0];
 
         $response = $this->voteController()->$method('ABCDEF');
@@ -129,7 +129,7 @@ class PublicCrossSiteTest extends PublicControllerTestCase {
     public function testReadingNeedsNoHeader(): void {
         // /state, /summary and the image are GETs: a plain poll and an <img>.
         $this->headers = [];
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $controller = $this->voteController();
 
         $this->assertSame(Http::STATUS_OK, $controller->state('ABCDEF')->getStatus());
@@ -144,7 +144,7 @@ class PublicCrossSiteTest extends PublicControllerTestCase {
      */
     public function testThePublicBundleSendsTheHeader(): void {
         $root = dirname(__DIR__, 2);
-        $bundle = (string)file_get_contents($root . '/js/pulse-public.js');
+        $bundle = (string)file_get_contents($root . '/js/vibears-public.js');
         $this->assertStringContainsString('"X-Requested-With":"XMLHttpRequest"', $bundle);
         foreach (['src/Participant.vue', 'src/mixins/pace-phone.js'] as $file) {
             $source = (string)file_get_contents($root . '/' . $file);

@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\AppData\IAppDataFactory;
@@ -353,7 +353,7 @@ class PollImageService {
      */
     private function swapImage(int $pollId, string $old, string $new): bool {
         $qb = $this->db->getQueryBuilder();
-        $qb->update('pulse_polls')
+        $qb->update('vibears_polls')
             ->set('image', $qb->createNamedParameter($new))
             ->where($qb->expr()->eq('id', $qb->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)));
         if ($old === '') {
@@ -372,7 +372,7 @@ class PollImageService {
     private function ownerOf(int $roomId): string {
         $qb = $this->db->getQueryBuilder();
         $qb->select('owner_uid')
-            ->from('pulse_rooms')
+            ->from('vibears_rooms')
             ->where($qb->expr()->eq('id', $qb->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
         $result = $qb->executeQuery();
         $uid = $result->fetchOne();
@@ -389,8 +389,8 @@ class PollImageService {
     private function usage(string $ownerUid, array $sizes): int {
         $qb = $this->db->getQueryBuilder();
         $qb->select('p.id', 'p.image')
-            ->from('pulse_polls', 'p')
-            ->innerJoin('p', 'pulse_rooms', 'r', $qb->expr()->eq('r.id', 'p.room_id'))
+            ->from('vibears_polls', 'p')
+            ->innerJoin('p', 'vibears_rooms', 'r', $qb->expr()->eq('r.id', 'p.room_id'))
             ->where($qb->expr()->eq('r.owner_uid', $qb->createNamedParameter($ownerUid)))
             ->andWhere($qb->expr()->isNotNull('p.image'));
         $result = $qb->executeQuery();
@@ -427,7 +427,7 @@ class PollImageService {
     private function referencedNames(): array {
         $qb = $this->db->getQueryBuilder();
         $qb->select('id', 'image')
-            ->from('pulse_polls')
+            ->from('vibears_polls')
             ->where($qb->expr()->isNotNull('image'));
         $result = $qb->executeQuery();
         $names = [];
@@ -464,13 +464,13 @@ class PollImageService {
     }
 
     private function folder(): ISimpleFolder {
-        return $this->existingFolder() ?? $this->appDataFactory->get('pulse')->newFolder(self::FOLDER);
+        return $this->existingFolder() ?? $this->appDataFactory->get('vibears')->newFolder(self::FOLDER);
     }
 
     /** The image folder, or null while no image was ever stored (reads only). */
     private function existingFolder(): ?ISimpleFolder {
         try {
-            return $this->appDataFactory->get('pulse')->getFolder(self::FOLDER);
+            return $this->appDataFactory->get('vibears')->getFolder(self::FOLDER);
         } catch (NotFoundException) {
             return null;
         }

@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\Room;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\Room;
 use OCP\IL10N;
 
 /**

@@ -5,18 +5,18 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\CodeGenerator;
-use OCA\Pulse\Service\DeckImportService;
-use OCA\Pulse\Service\DeckMarkdown;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\Limits;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\CodeGenerator;
+use OCA\Vibears\Service\DeckImportService;
+use OCA\Vibears\Service\DeckMarkdown;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
 use OCP\IL10N;

@@ -17,8 +17,8 @@ declare(strict_types=1);
  * Runs in the Nextcloud container (the PHP extensions tokenizer/xmlwriter are
  * missing on the host):
  *   docker exec -u www-data nextcloud-nextcloud-1 \
- *     php /var/www/html/apps/pulse/tools/phpunit.phar \
- *     -c /var/www/html/apps/pulse/phpunit.xml
+ *     php /var/www/html/apps/vibears/tools/phpunit.phar \
+ *     -c /var/www/html/apps/vibears/phpunit.xml
  *
  * NEXTCLOUD_ROOT overrides the server path if the app lives somewhere else.
  */
@@ -72,7 +72,7 @@ spl_autoload_register(static function (string $class) use ($ncRoot): void {
 });
 
 spl_autoload_register(static function (string $class): void {
-    $prefix = 'OCA\\Pulse\\';
+    $prefix = 'OCA\\Vibears\\';
     if (!str_starts_with($class, $prefix)) {
         return;
     }
@@ -82,10 +82,10 @@ spl_autoload_register(static function (string $class): void {
     }
 });
 
-// Shared test building blocks (e.g. PaceStateTestCase): OCA\Pulse\Tests\Unit\X
+// Shared test building blocks (e.g. PaceStateTestCase): OCA\Vibears\Tests\Unit\X
 // -> tests/unit/X.php. PHPUnit itself only loads files ending in "Test.php".
 spl_autoload_register(static function (string $class): void {
-    $prefix = 'OCA\\Pulse\\Tests\\Unit\\';
+    $prefix = 'OCA\\Vibears\\Tests\\Unit\\';
     if (!str_starts_with($class, $prefix)) {
         return;
     }

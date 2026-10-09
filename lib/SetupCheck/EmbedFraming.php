@@ -5,9 +5,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\SetupCheck;
+namespace OCA\Vibears\SetupCheck;
 
-use OCA\Pulse\AppInfo\Application;
+use OCA\Vibears\AppInfo\Application;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -18,7 +18,7 @@ use OCP\SetupCheck\SetupResult;
 use Psr\Log\LoggerInterface;
 
 /**
- * Checks whether the embed shell (/apps/pulse/embed) can be framed in PowerPoint.
+ * Checks whether the embed shell (/apps/vibears/embed) can be framed in PowerPoint.
  *
  * Nextcloud sends "X-Frame-Options: SAMEORIGIN" — under Apache from the
  * .htaccess with "always set", which PHP cannot override. So the app cannot
@@ -109,7 +109,7 @@ class EmbedFraming implements ISetupCheck {
         // correctly. A warning would be wrong in exactly the setups this check is for.
         if (!$openHosts) {
             return SetupResult::info(
-                $this->l10n->t('Nextcloud sends "X-Frame-Options: SAMEORIGIN" for the vibeARS embed page, so a PowerPoint slide shows an empty box instead of the poll. Checked: %s. This only affects the PowerPoint add-in — remove that header in the web server or proxy, and only for the paths /apps/pulse/embed and /apps/pulse/screen/. The projector view in a second window works either way.', [implode(', ', $blockedHosts)]),
+                $this->l10n->t('Nextcloud sends "X-Frame-Options: SAMEORIGIN" for the vibeARS embed page, so a PowerPoint slide shows an empty box instead of the poll. Checked: %s. This only affects the PowerPoint add-in — remove that header in the web server or proxy, and only for the paths /apps/vibears/embed and /apps/vibears/screen/. The projector view in a second window works either way.', [implode(', ', $blockedHosts)]),
                 self::DOC,
             );
         }
@@ -134,7 +134,7 @@ class EmbedFraming implements ISetupCheck {
      * 2. If the routes are loaded, the result depends on the context: without
      *    `htaccess.IgnoreFrontController` and without the environment variable
      *    `front_controller_active` (the .htaccess only sets it for web
-     *    requests) the result is `/index.php/apps/pulse/embed`. The same
+     *    requests) the result is `/index.php/apps/vibears/embed`. The same
      *    check would have measured different paths in the admin UI and in
      *    `occ setupchecks`.
      *
@@ -168,7 +168,7 @@ class EmbedFraming implements ISetupCheck {
                 'nextcloud' => ['allow_local_address' => true],
             ]);
         } catch (\Throwable $e) {
-            $this->logger->debug('Pulse: embed page not reachable for the framing check', ['exception' => $e, 'url' => $url]);
+            $this->logger->debug('vibeARS: embed page not reachable for the framing check', ['exception' => $e, 'url' => $url]);
             return null;
         }
         return $response->getHeader('X-Frame-Options');

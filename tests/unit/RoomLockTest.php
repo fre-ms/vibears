@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\IResult;
 use OCP\DB\QueryBuilder\IExpressionBuilder;
@@ -40,8 +40,8 @@ class RoomLockTest extends TestCase {
 
         $this->assertSame(5, $room->getId());
         $this->assertSame([
-            'update pulse_rooms', 'set id = id', 'where id', 'executeStatement',
-            'select *', 'from pulse_rooms', 'where id', 'executeQuery',
+            'update vibears_rooms', 'set id = id', 'where id', 'executeStatement',
+            'select *', 'from vibears_rooms', 'where id', 'executeQuery',
         ], $this->log);
     }
 
@@ -58,7 +58,7 @@ class RoomLockTest extends TestCase {
     public function testOtherDatabasesLockWithForUpdateAndWriteNothing(string $platform): void {
         $this->mapper($platform)->lockForUpdate(5);
 
-        $this->assertSame(['select *', 'from pulse_rooms', 'where id', 'forUpdate', 'executeQuery'], $this->log);
+        $this->assertSame(['select *', 'from vibears_rooms', 'where id', 'forUpdate', 'executeQuery'], $this->log);
     }
 
     public function testDeletedRoomIsStillNotFoundOnSqlite(): void {

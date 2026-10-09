@@ -25,7 +25,7 @@
 //
 // Like the sim, straight to the container (Host: localhost, node:http) and with
 // the same throwaway user:
-//   PULSE_SIM_URL=http://<container-ip> PULSE_SIM_PASS="$(cat dev/design-shots/.shots-pass)" \
+//   VIBEARS_SIM_URL=http://<container-ip> VIBEARS_SIM_PASS="$(cat dev/design-shots/.shots-pass)" \
 //     node dev/sim/load.mjs
 // On the live instance only at a quiet time and only once.
 //
@@ -37,11 +37,11 @@ import http from 'node:http'
 import { performance } from 'node:perf_hooks'
 import { phoneDelay, progressDelay, windowState } from '../../src/util/pace.js'
 
-const URL_BASE = (process.env.PULSE_SIM_URL || 'http://127.0.0.1').replace(/\/$/, '')
-const HOST_HEADER = process.env.PULSE_SIM_HOST || 'localhost'
-const USER = process.env.PULSE_SIM_USER || 'pulse-shots'
-const PASS = process.env.PULSE_SIM_PASS || ''
-const BASE = URL_BASE + '/index.php/apps/pulse'
+const URL_BASE = (process.env.VIBEARS_SIM_URL || 'http://127.0.0.1').replace(/\/$/, '')
+const HOST_HEADER = process.env.VIBEARS_SIM_HOST || 'localhost'
+const USER = process.env.VIBEARS_SIM_USER || 'pulse-shots'
+const PASS = process.env.VIBEARS_SIM_PASS || ''
+const BASE = URL_BASE + '/index.php/apps/vibears'
 const AUTH = 'Basic ' + Buffer.from(USER + ':' + PASS).toString('base64')
 const PHONES = Math.max(1, Math.min(120, Number(process.env.LOAD_PHONES || 60)))
 const LOAD_SECS = Math.max(10, Number(process.env.LOAD_SECS || 90))
@@ -157,10 +157,10 @@ class Phone {
 		if (this.cookie) headers.Cookie = this.cookieName + '=' + this.cookie
 		if (body !== undefined) headers['Content-Type'] = 'application/json'
 		const r = await timed(key, BASE + '/s/' + this.code + path + query, { method, headers, body: body !== undefined ? JSON.stringify(body) : undefined })
-		// `__Host-pulse_vt` behind https (overwriteprotocol), otherwise `pulse_vt`;
+		// `__Host-vibears_vt` behind https (overwriteprotocol), otherwise `vibears_vt`;
 		// expiring a legacy cookie (Max-Age=0) is not a cookie.
 		for (const c of r.cookies) {
-			const m = /;\s*max-age=0/i.test(c) ? null : c.match(/^((?:__Host-)?pulse_vt)=([^;]+)/)
+			const m = /;\s*max-age=0/i.test(c) ? null : c.match(/^((?:__Host-)?vibears_vt)=([^;]+)/)
 			if (m) {
 				this.cookieName = m[1]
 				this.cookie = m[2]
@@ -349,7 +349,7 @@ for (const sig of ['SIGINT', 'SIGTERM']) {
 
 let exitCode = 0
 try {
-	if (!PASS) throw new Error('PULSE_SIM_PASS fehlt')
+	if (!PASS) throw new Error('VIBEARS_SIM_PASS fehlt')
 	const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ')
 	const room = await modOk('POST', '', { mode: 'quiz', title: 'LOAD Tempo ' + stamp })
 	code = room.code

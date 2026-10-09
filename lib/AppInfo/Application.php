@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\AppInfo;
+namespace OCA\Vibears\AppInfo;
 
-use OCA\Pulse\Listener\UserDeletedListener;
-use OCA\Pulse\SetupCheck\EmbedFraming;
+use OCA\Vibears\Listener\UserDeletedListener;
+use OCA\Vibears\SetupCheck\EmbedFraming;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -16,10 +16,10 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\User\Events\UserDeletedEvent;
 
 class Application extends App implements IBootstrap {
-    public const APP_ID = 'pulse';
+    public const APP_ID = 'vibears';
 
     /** Name of the anonymous voter cookie on the public participant page. */
-    public const VOTER_COOKIE = 'pulse_vt';
+    public const VOTER_COOKIE = 'vibears_vt';
 
     /**
      * Protocol number between the server and the phone/projector bundle. Bump it

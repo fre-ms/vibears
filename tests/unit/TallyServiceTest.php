@@ -5,11 +5,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\Vote;
-use OCA\Pulse\Service\TallyService;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\Vote;
+use OCA\Vibears\Service\TallyService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

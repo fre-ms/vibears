@@ -5,10 +5,10 @@
 <template>
 	<div class="pace-ds">
 		<template v-if="progress">
-			<span class="pulse-chip is-live pace-ds-chip" :title="t('pulse', '{count} participants active in the last few seconds', { count: here })"><span class="pulse-chip-dot" />{{ t('pulse', '{count} here', { count: here }) }}</span>
-			<span class="pulse-chip is-neutral pace-ds-chip"><PulseIcon name="users" size="1em" /> {{ t('pulse', '{count} joined', { count: joined }) }}</span>
+			<span class="pulse-chip is-live pace-ds-chip" :title="t('vibears', '{count} participants active in the last few seconds', { count: here })"><span class="pulse-chip-dot" />{{ t('vibears', '{count} here', { count: here }) }}</span>
+			<span class="pulse-chip is-neutral pace-ds-chip"><PulseIcon name="users" size="1em" /> {{ t('vibears', '{count} joined', { count: joined }) }}</span>
 		</template>
-		<span v-if="!online" class="pace-ds-off" role="status">{{ t('pulse', '● offline — connecting …') }}</span>
+		<span v-if="!online" class="pace-ds-off" role="status">{{ t('vibears', '● offline — connecting …') }}</span>
 	</div>
 </template>
 

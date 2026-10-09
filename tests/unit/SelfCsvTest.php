@@ -5,9 +5,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Service\PaceStateService;
+use OCA\Vibears\Service\PaceStateService;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 /**

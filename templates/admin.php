@@ -5,16 +5,16 @@
 
 /**
  * Administration settings (Settings → Administration → ARS). The values
- * arrive as initial state and js/pulse-admin.js fills the form and saves
+ * arrive as initial state and js/vibears-admin.js fills the form and saves
  * it (AdminSettingsController); without the script the form shows its
  * labels and does nothing.
  *
  * @var \OCP\IL10N $l
  */
-\OCP\Util::addScript('pulse', 'pulse-admin');
-\OCP\Util::addStyle('pulse', 'admin');
+\OCP\Util::addScript('vibears', 'vibears-admin');
+\OCP\Util::addStyle('vibears', 'admin');
 ?>
-<div id="pulse-admin" class="section">
+<div id="vibears-admin" class="section">
 	<h2>vibeARS</h2>
 	<p class="settings-hint"><?php p($l->t('Rooms — polls and quizzes with their questions, votes and nicknames — stay until their owner deletes them. The daily background job can delete rooms nobody has used for a while instead: no participant was there, and the owner did not open, edit or present the room. A deck prepared ahead of time therefore counts as used as long as its owner keeps working on it.')); ?></p>
 	<form id="pulse-retention" class="pulse-admin-form">

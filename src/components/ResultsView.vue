@@ -21,14 +21,14 @@
 					<span class="bar-label">
 						<span class="pulse-badge bar-badge">{{ row.pal.letter }}</span>
 						<span class="bar-text">{{ row.label }}</span>
-						<span v-if="isCorrect(row.id)" class="bar-flag is-correct"><PulseIcon name="check" size="1em" /> {{ t('pulse', 'correct') }}</span>
-						<span v-else-if="!hasCorrect && isWinner(row.count)" class="bar-flag is-winner"><PulseIcon name="check" size="1em" /> {{ t('pulse', 'leading') }}</span>
+						<span v-if="isCorrect(row.id)" class="bar-flag is-correct"><PulseIcon name="check" size="1em" /> {{ t('vibears', 'correct') }}</span>
+						<span v-else-if="!hasCorrect && isWinner(row.count)" class="bar-flag is-winner"><PulseIcon name="check" size="1em" /> {{ t('vibears', 'leading') }}</span>
 					</span>
 					<span class="bar-count">{{ row.count }} · {{ percent(row.count) }}%</span>
 				</div>
 				<div class="bar-track"><div class="bar-fill" :style="{ width: percent(row.count) + '%' }" /></div>
 			</div>
-			<p v-if="!wide" class="norm-note">{{ results.type === 'multi' ? t('pulse', '100% = everyone who answered · the sum can exceed 100%') : t('pulse', '100% = all votes') }}</p>
+			<p v-if="!wide" class="norm-note">{{ results.type === 'multi' ? t('vibears', '100% = everyone who answered · the sum can exceed 100%') : t('vibears', '100% = all votes') }}</p>
 		</div>
 
 		<!-- Ranking: consensus ranking. Bar = how high up on average
@@ -52,14 +52,14 @@
 						<span class="pulse-badge bar-badge">{{ i + 1 }}</span>
 						<span class="bar-text">{{ row.label }}</span>
 						<span v-if="hasRankKey" class="bar-flag" :class="rankCorrect(row.id, i) ? 'is-correct' : 'is-wrong'">
-							<PulseIcon :name="rankCorrect(row.id, i) ? 'check' : 'close'" size="1em" /> {{ t('pulse', 'place {place}', { place: rankTarget(row.id) }) }}
+							<PulseIcon :name="rankCorrect(row.id, i) ? 'check' : 'close'" size="1em" /> {{ t('vibears', 'place {place}', { place: rankTarget(row.id) }) }}
 						</span>
 					</span>
-					<span class="bar-count">{{ t('pulse', 'avg. {value}', { value: row.n ? num(row.average) : '—' }) }}<span v-if="row.first" class="rank-first"> · {{ t('pulse', '{count}× first place', { count: row.first }) }}</span></span>
+					<span class="bar-count">{{ t('vibears', 'avg. {value}', { value: row.n ? num(row.average) : '—' }) }}<span v-if="row.first" class="rank-first"> · {{ t('vibears', '{count}× first place', { count: row.first }) }}</span></span>
 				</div>
 				<div class="bar-track"><div class="bar-fill" :style="{ width: rankPct(row) + '%' }" /></div>
 			</div>
-			<p v-if="!wide" class="norm-note">{{ t('pulse', 'Sorted by average place · a full bar means top on average') }}</p>
+			<p v-if="!wide" class="norm-note">{{ t('vibears', 'Sorted by average place · a full bar means top on average') }}</p>
 		</div>
 
 		<!-- Matching: per row the distribution across the targets. In a quiz the
@@ -96,10 +96,10 @@
 						<div class="bar-track"><div class="bar-fill" :style="{ width: matchPercent(cell.count, row.n) + '%' }" /></div>
 					</div>
 				</div>
-				<p v-else class="norm-note">{{ t('pulse', 'No assignment yet.') }}</p>
+				<p v-else class="norm-note">{{ t('vibears', 'No assignment yet.') }}</p>
 			</div>
-			<p v-if="dense" class="norm-note">{{ hasMatchKey ? t('pulse', 'Segment = share per target · ring marks the correct target') : t('pulse', 'Segment = share per target') }}</p>
-			<p v-else-if="!wide" class="norm-note">{{ hasMatchKey ? t('pulse', '100% = all answers in this line · green is the correct target') : t('pulse', '100% = all answers in this line') }}</p>
+			<p v-if="dense" class="norm-note">{{ hasMatchKey ? t('vibears', 'Segment = share per target · ring marks the correct target') : t('vibears', 'Segment = share per target') }}</p>
+			<p v-else-if="!wide" class="norm-note">{{ hasMatchKey ? t('vibears', '100% = all answers in this line · green is the correct target') : t('vibears', '100% = all answers in this line') }}</p>
 		</div>
 
 		<!-- Number guess: target number + avg. + distribution of the guesses (histogram) -->
@@ -108,30 +108,30 @@
 			     a third of the stage height, which the distribution then lacked. -->
 			<div v-if="wide" class="numline">
 				<span class="numline-target">{{ numTarget }}</span>
-				<span class="numline-lbl">{{ t('pulse', 'correct number') }}{{ numTol ? ' (± ' + numTol + ')' : '' }}</span>
+				<span class="numline-lbl">{{ t('vibears', 'correct number') }}{{ numTol ? ' (± ' + numTol + ')' : '' }}</span>
 				<span class="numline-sep" aria-hidden="true">·</span>
-				<span class="numline-lbl">{{ t('pulse', '{count} correct', { count: results.correct }) }}</span>
+				<span class="numline-lbl">{{ t('vibears', '{count} correct', { count: results.correct }) }}</span>
 				<template v-if="numAvg !== null">
 					<span class="numline-sep" aria-hidden="true">·</span>
 					<span class="numline-val">Ø {{ num(numAvg) }}</span>
 				</template>
 				<template v-if="scaleMedian !== null">
 					<span class="numline-sep" aria-hidden="true">·</span>
-					<span class="numline-val">{{ t('pulse', 'median {value}', { value: num(scaleMedian) }) }}</span>
+					<span class="numline-val">{{ t('vibears', 'median {value}', { value: num(scaleMedian) }) }}</span>
 				</template>
 			</div>
 			<div v-if="!wide" class="dist-metrics">
 				<div class="metric metric--target">
 					<span class="metric-val">{{ numTarget }}</span>
-					<span class="metric-label">{{ t('pulse', 'correct number') }}{{ numTol ? ' (± ' + numTol + ')' : '' }} · {{ t('pulse', '{count} correct', { count: results.correct }) }}</span>
+					<span class="metric-label">{{ t('vibears', 'correct number') }}{{ numTol ? ' (± ' + numTol + ')' : '' }} · {{ t('vibears', '{count} correct', { count: results.correct }) }}</span>
 				</div>
 				<div v-if="numAvg !== null" class="metric">
 					<span class="metric-val metric-val--sub">{{ num(numAvg) }}</span>
-					<span class="metric-label">{{ t('pulse', 'avg. of the guesses') }}</span>
+					<span class="metric-label">{{ t('vibears', 'avg. of the guesses') }}</span>
 				</div>
 				<div v-if="scaleMedian !== null" class="metric">
 					<span class="metric-val metric-val--sub">{{ num(scaleMedian) }}</span>
-					<span class="metric-label">{{ t('pulse', 'Median') }}</span>
+					<span class="metric-label">{{ t('vibears', 'Median') }}</span>
 				</div>
 			</div>
 			<!-- On the projector the distribution of guesses also uses the row model from §2.4:
@@ -142,7 +142,7 @@
 					:label="String(row.value)" :value="row.count + '×'"
 					:pct="scalePercent(row.count)"
 					:state="numWithin(row.value) ? 'correct' : ''"
-					:flag="numWithin(row.value) ? t('pulse', 'correct') : ''" />
+					:flag="numWithin(row.value) ? t('vibears', 'correct') : ''" />
 			</div>
 			<div v-else-if="results.results.length" class="bars bars--dist">
 				<div v-for="row in results.results" :key="row.value" class="bar-row" :class="{ 'is-correct': numWithin(row.value) }">
@@ -153,7 +153,7 @@
 					<div class="bar-track"><div class="bar-fill" :style="{ width: scalePercent(row.count) + '%' }" /></div>
 				</div>
 			</div>
-			<p v-if="!wide" class="norm-note">{{ t('pulse', 'Distribution of the guesses · bars relative to the most frequent value') }}</p>
+			<p v-if="!wide" class="norm-note">{{ t('vibears', 'Distribution of the guesses · bars relative to the most frequent value') }}</p>
 		</div>
 
 		<!-- Free text: ONE shared building block — read-only variant of TextGrading -->
@@ -166,8 +166,8 @@
 				{{ row.word }}
 			</span>
 			<!-- The public tally carries the 100 most frequent words (PublicPayload). -->
-			<span v-if="cloudMore" class="cloud-more">{{ t('pulse', '+{count} more', { count: cloudMore }) }}</span>
-			<p v-if="!results.results.length" class="cloud-empty">{{ t('pulse', 'No words yet.') }}</p>
+			<span v-if="cloudMore" class="cloud-more">{{ t('vibears', '+{count} more', { count: cloudMore }) }}</span>
+			<p v-if="!results.results.length" class="cloud-empty">{{ t('vibears', 'No words yet.') }}</p>
 		</div>
 
 		<!-- Scale · Spectrum: radar (avg. outline + spread band + neutral ring + "You") — numbered spokes + figures column, SVG viewBox scales phone→projector -->
@@ -208,18 +208,18 @@
 						<li v-for="it in radarItems" :key="it.n" class="viz-item">
 							<span class="viz-num">{{ it.n }}</span>
 							<span class="viz-label">{{ it.label }}</span>
-							<span class="viz-val">{{ t('pulse', 'avg. {value}', { value: it.avg }) }}</span>
+							<span class="viz-val">{{ t('vibears', 'avg. {value}', { value: it.avg }) }}</span>
 						</li>
 					</ol>
 				</div>
 				<div class="rlegend">
-					<span><span class="rsw rsw-avg" /> {{ t('pulse', 'Average') }}</span>
-					<span><span class="rsw rsw-band" /> {{ t('pulse', 'Spread (min–max)') }}</span>
-					<span><span class="rsw rsw-neutral" /> {{ t('pulse', 'Neutral ({value})', { value: neutralLabel }) }}</span>
-					<span v-if="radar.minePoints"><span class="rsw rsw-mine" /> {{ t('pulse', 'You') }}</span>
+					<span><span class="rsw rsw-avg" /> {{ t('vibears', 'Average') }}</span>
+					<span><span class="rsw rsw-band" /> {{ t('vibears', 'Spread (min–max)') }}</span>
+					<span><span class="rsw rsw-neutral" /> {{ t('vibears', 'Neutral ({value})', { value: neutralLabel }) }}</span>
+					<span v-if="radar.minePoints"><span class="rsw rsw-mine" /> {{ t('vibears', 'You') }}</span>
 				</div>
 			</template>
-			<p v-else class="norm-note">{{ t('pulse', 'Too few aspects for a radar (at least 3).') }}</p>
+			<p v-else class="norm-note">{{ t('vibears', 'Too few aspects for a radar (at least 3).') }}</p>
 		</div>
 
 		<!-- Scale · Compass: quadrant scatter/heat map + centre of gravity + "You" — chart + figures column, SVG viewBox scales phone→projector -->
@@ -250,33 +250,33 @@
 							<text v-for="(cc, i) in compass.corners" :key="'cc' + i" :x="cc.x" :y="cc.y" :text-anchor="cc.anchor" class="fcorner"><title v-if="cc.full">{{ cc.full }}</title>{{ cc.t }}</text>
 							<template v-if="compass.centroid">
 								<polygon :points="compass.centroid.points" style="fill:var(--pulse-viz);stroke:var(--pulse-bg);stroke-width:2" />
-								<text :x="compass.centroid.x" :y="compass.centroid.ty" text-anchor="middle" class="fcorner" style="fill:var(--pulse-viz);font-weight:800">{{ t('pulse', 'Centre of gravity') }}</text>
+								<text :x="compass.centroid.x" :y="compass.centroid.ty" text-anchor="middle" class="fcorner" style="fill:var(--pulse-viz);font-weight:800">{{ t('vibears', 'Centre of gravity') }}</text>
 							</template>
 							<template v-if="compass.mine">
 								<circle :cx="compass.mine.x" :cy="compass.mine.y" r="13" style="fill:none;stroke:var(--pulse-self);stroke-width:3" />
 								<circle :cx="compass.mine.x" :cy="compass.mine.y" r="6" style="fill:var(--pulse-self);stroke:var(--pulse-bg);stroke-width:2" />
-								<text :x="compass.mine.tx" :y="compass.mine.ty" class="fdu">{{ t('pulse', 'You') }}</text>
+								<text :x="compass.mine.tx" :y="compass.mine.ty" class="fdu">{{ t('vibears', 'You') }}</text>
 							</template>
 						</svg>
 					</div>
 					<div class="viz-col compass-readout">
 						<div class="viz-kpi">
-							<span class="viz-kpi-lbl">{{ t('pulse', 'Centre of gravity') }}</span>
+							<span class="viz-kpi-lbl">{{ t('vibears', 'Centre of gravity') }}</span>
 							<span class="viz-kpi-val">{{ compassReadout.centroid }}</span>
 						</div>
 						<div v-if="compassReadout.mine" class="viz-kpi is-self">
-							<span class="viz-kpi-lbl">{{ t('pulse', 'You') }}</span>
+							<span class="viz-kpi-lbl">{{ t('vibears', 'You') }}</span>
 							<span class="viz-kpi-val">{{ compassReadout.mine }}</span>
 						</div>
 					</div>
 				</div>
 				<div class="rlegend">
-					<span><span class="rsw rsw-vote" /> {{ t('pulse', 'Vote') }}</span>
-					<span v-if="compass && compass.heatmap"><span class="rsw rsw-heat" /> {{ t('pulse', 'Density') }}</span>
-					<span><span class="rsw rsw-centroid" /> {{ t('pulse', 'Centre of gravity') }}</span>
-					<span v-if="mine"><span class="rsw rsw-du" /> {{ t('pulse', 'You') }}</span>
+					<span><span class="rsw rsw-vote" /> {{ t('vibears', 'Vote') }}</span>
+					<span v-if="compass && compass.heatmap"><span class="rsw rsw-heat" /> {{ t('vibears', 'Density') }}</span>
+					<span><span class="rsw rsw-centroid" /> {{ t('vibears', 'Centre of gravity') }}</span>
+					<span v-if="mine"><span class="rsw rsw-du" /> {{ t('vibears', 'You') }}</span>
 				</div>
-				<p v-if="!wide" class="norm-note">{{ compass && compass.heatmap ? t('pulse', 'Density (heat map) · centre of gravity = mean of all answers') : t('pulse', 'Scatter plot · centre of gravity = mean of all answers') }}</p>
+				<p v-if="!wide" class="norm-note">{{ compass && compass.heatmap ? t('vibears', 'Density (heat map) · centre of gravity = mean of all answers') : t('vibears', 'Scatter plot · centre of gravity = mean of all answers') }}</p>
 			</template>
 		</div>
 
@@ -307,11 +307,11 @@
 					<span>{{ results.minLabel }}</span>
 					<span>{{ results.maxLabel }}</span>
 				</div>
-				<p v-if="!wide" class="norm-note">{{ t('pulse', 'Distribution · column height = votes per value · scale {min}–{max}', { min: results.min, max: results.max }) }}</p>
+				<p v-if="!wide" class="norm-note">{{ t('vibears', 'Distribution · column height = votes per value · scale {min}–{max}', { min: results.min, max: results.max }) }}</p>
 			</template>
 		</div>
 
-		<p v-if="!wide && results && results.type !== 'text' && results.type !== 'words'" class="total">{{ n('pulse', '%n vote', '%n votes', total) }}</p>
+		<p v-if="!wide && results && results.type !== 'text' && results.type !== 'words'" class="total">{{ n('vibears', '%n vote', '%n votes', total) }}</p>
 		<p v-else-if="!wide && results && results.type === 'words'" class="total">{{ wordsSummary }}</p>
 	</div>
 </template>
@@ -373,7 +373,7 @@ export default {
 			const rows = (this.results && this.results.results) || []
 			const mentions = rows.reduce((sum, r) => sum + (r.count || 0), 0)
 			const distinct = rows.length
-			return this.n('pulse', '%n mention', '%n mentions', mentions) + ' · ' + this.t('pulse', '{count} different', { count: distinct })
+			return this.n('vibears', '%n mention', '%n mentions', mentions) + ' · ' + this.t('vibears', '{count} different', { count: distinct })
 		},
 		maxCount() {
 			if (!this.results || !this.results.results || !this.results.results.length) return 0
@@ -448,8 +448,8 @@ export default {
 			const min = Number(rows[0].value), N = rows.length
 			const pos = (v) => Math.max(0, Math.min(100, ((Number(v) - min) + 0.5) / N * 100))
 			const out = []
-			if (r.average !== null && r.average !== undefined) out.push({ key: 'avg', pct: Math.round(pos(r.average) * 10) / 10, label: this.t('pulse', 'avg. {value}', { value: fmtNum(r.average) }) })
-			if (this.scaleMedian !== null) out.push({ key: 'med', pct: Math.round(pos(this.scaleMedian) * 10) / 10, label: this.t('pulse', 'median {value}', { value: fmtNum(this.scaleMedian) }) })
+			if (r.average !== null && r.average !== undefined) out.push({ key: 'avg', pct: Math.round(pos(r.average) * 10) / 10, label: this.t('vibears', 'avg. {value}', { value: fmtNum(r.average) }) })
+			if (this.scaleMedian !== null) out.push({ key: 'med', pct: Math.round(pos(this.scaleMedian) * 10) / 10, label: this.t('vibears', 'median {value}', { value: fmtNum(this.scaleMedian) }) })
 			return out
 		},
 		// Spectrum on the projector: aspects with a palette, so the special case "two
@@ -468,7 +468,7 @@ export default {
 		radarAria() {
 			if (!this.results) return ''
 			const n = (this.results.results || []).length
-			return this.t('pulse', 'Radar spectrum: {aspects} aspects, scale 0 to {max}', { aspects: n, max: this.results.max })
+			return this.t('vibears', 'Radar spectrum: {aspects} aspects, scale 0 to {max}', { aspects: n, max: this.results.max })
 		},
 		radar() {
 			const rows = this.results && this.results.results
@@ -540,7 +540,7 @@ export default {
 		compassAria() {
 			if (!this.results) return ''
 			const ax = this.results.axisX || {}, ay = this.results.axisY || {}
-			return this.t('pulse', 'Compass: {total} answers, X {x}, Y {y}', { total: this.results.total, x: ax.title || '', y: ay.title || '' })
+			return this.t('vibears', 'Compass: {total} answers, X {x}, Y {y}', { total: this.results.total, x: ax.title || '', y: ay.title || '' })
 		},
 		compass() {
 			if (!this.compassMode || !this.results) return null
@@ -662,8 +662,8 @@ export default {
 			return this.hasCorrect ? 'wrong' : ''
 		},
 		choiceFlag(row) {
-			if (this.isCorrect(row.id)) return this.t('pulse', 'correct')
-			if (!this.hasCorrect && this.isWinner(row.count)) return this.t('pulse', 'leading')
+			if (this.isCorrect(row.id)) return this.t('vibears', 'correct')
+			if (!this.hasCorrect && this.isWinner(row.count)) return this.t('vibears', 'leading')
 			return ''
 		},
 		// Winner = most votes (tie -> all marked).
@@ -715,7 +715,7 @@ export default {
 		},
 		rankAria(row) {
 			const places = Array.isArray(row.places) ? row.places : []
-			const parts = places.map((count, k) => this.t('pulse', 'place {place}', { place: k + 1 }) + ': ' + count)
+			const parts = places.map((count, k) => this.t('vibears', 'place {place}', { place: k + 1 }) + ': ' + count)
 			return row.label + ' — ' + parts.join(', ')
 		},
 		// Matching: all targets of the row as segments. Targets are unordered ->
@@ -749,7 +749,7 @@ export default {
 		matchAria(row) {
 			const parts = (row.targets || []).filter((cell) => cell.count > 0)
 				.map((cell) => cell.label + ': ' + cell.count)
-			return row.label + ' — ' + (parts.length ? parts.join(', ') : this.t('pulse', 'No assignment yet.'))
+			return row.label + ' — ' + (parts.length ? parts.join(', ') : this.t('vibears', 'No assignment yet.'))
 		},
 		// Target place (1-based) of this answer according to the solution.
 		rankTarget(id) {

@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Db;
+namespace OCA\Vibears\Db;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
@@ -20,7 +20,7 @@ class RoomMapper extends QBMapper {
     public const TOUCH_INTERVAL = 3600;
 
     public function __construct(IDBConnection $db) {
-        parent::__construct($db, 'pulse_rooms', Room::class);
+        parent::__construct($db, 'vibears_rooms', Room::class);
     }
 
     /**

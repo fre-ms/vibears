@@ -7,8 +7,8 @@
 		<!-- Unknown room (§4.11) — branded, a clear message -->
 		<div v-if="!roomExists" class="scr-center">
 			<p class="scr-eyebrow">vibeARS</p>
-			<h1>{{ t('pulse', 'This room does not exist.') }}</h1>
-			<p class="scr-muted">{{ t('pulse', 'Check the code and open the projector link again.') }}</p>
+			<h1>{{ t('vibears', 'This room does not exist.') }}</h1>
+			<p class="scr-muted">{{ t('vibears', 'Check the code and open the projector link again.') }}</p>
 		</div>
 
 		<!-- Self-paced (§3): race, closed, final standings — before the lobby.
@@ -24,7 +24,7 @@
 					:board-rows="raceBoardRows" :max-rows="raceMaxRows" />
 				<!-- Released: the same final standings as at the end of a moderated quiz. -->
 				<div v-else-if="raceFinal" class="scr-final">
-					<p class="scr-final-title">{{ t('pulse', 'Final standings') }}</p>
+					<p class="scr-final-title">{{ t('vibears', 'Final standings') }}</p>
 					<Leaderboard class="scr-final-lb" :rows="leaderboard" :total="leaderboardTotal" :podium="true" :limit="5" split />
 				</div>
 				<!-- Closed: only the counter — even if the server sends a leaderboard along
@@ -37,15 +37,15 @@
 			</main>
 			<div class="scr-meta">
 				<div class="scr-meta-l">
-					<span v-if="practice" class="scr-chip is-practice"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run') }}</span>
+					<span v-if="practice" class="scr-chip is-practice"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</span>
 					<span class="scr-chip" :class="paceState === 'open' ? 'is-open' : 'is-done'">
 						<span v-if="paceState === 'open'" class="scr-chip-dot" aria-hidden="true" />
 						{{ raceChip }}
 					</span>
-					<span v-if="present > 0" class="scr-chip">{{ t('pulse', '{count} here', { count: present }) }}</span>
-					<span v-if="!online" class="scr-chip is-off">{{ t('pulse', 'Connection lost …') }}</span>
+					<span v-if="present > 0" class="scr-chip">{{ t('vibears', '{count} here', { count: present }) }}</span>
+					<span v-if="!online" class="scr-chip is-off">{{ t('vibears', 'Connection lost …') }}</span>
 				</div>
-				<span class="scr-legend">{{ paceState === 'open' ? t('pulse', '100% = everyone who joined') : '' }}</span>
+				<span class="scr-legend">{{ paceState === 'open' ? t('vibears', '100% = everyone who joined') : '' }}</span>
 				<div v-if="paceState === 'open'" class="scr-join-mini" :title="joinUrl">
 					<div class="scr-qr-mini"><QrCode :value="joinUrlFull" /></div>
 					<span class="scr-pin-mini">{{ spacedCode }}</span>
@@ -58,23 +58,23 @@
 			<p class="scr-eyebrow">vibeARS</p>
 			<h1 class="scr-lobby-title">{{ lobbyTitle }}</h1>
 			<p v-if="lobbySub" class="scr-lobby-sub">{{ lobbySub }}</p>
-			<p v-if="practice" class="scr-practice"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run') }}</p>
+			<p v-if="practice" class="scr-practice"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</p>
 			<div class="scr-join">
 				<div class="scr-qr"><QrCode :value="joinUrlFull" /></div>
 				<div class="scr-join-txt">
-					<p class="scr-join-hint">{{ t('pulse', 'Join in — point your phone camera at the code, or:') }}</p>
+					<p class="scr-join-hint">{{ t('vibears', 'Join in — point your phone camera at the code, or:') }}</p>
 					<p class="scr-pin">{{ spacedCode }}</p>
 					<p class="scr-join-url">{{ joinUrl }}</p>
 				</div>
 			</div>
 			<p v-if="present > 0" class="scr-momentum" role="status">
 				<span class="scr-momentum-dot" aria-hidden="true" />
-				<b>{{ present }}</b> {{ n('pulse', 'person is already here', 'people are already here', present) }}
+				<b>{{ present }}</b> {{ n('vibears', 'person is already here', 'people are already here', present) }}
 			</p>
 			<!-- Self-paced, open with a deadline: in the counter's row, so that the
 			     lobby does not grow past the edge even in the 1280×720 kiosk. -->
 			<p v-if="lobbyWhen" class="scr-lobby-when"><PulseIcon name="calendar" size="1em" /> {{ lobbyWhen }}</p>
-			<p v-if="!online" class="scr-conn" role="status">{{ t('pulse', 'Connection lost …') }}</p>
+			<p v-if="!online" class="scr-conn" role="status">{{ t('vibears', 'Connection lost …') }}</p>
 		</div>
 
 		<!-- Active question: head · stage · meta bar (§2.1) -->
@@ -99,7 +99,7 @@
 						<!-- The image arrives after the first paint and changes the stage height:
 						     without this second pass the shrink loop measures against
 						     an empty box (eight rows overflowed by 32 px). -->
-						<img class="scr-img" :src="imageUrl(poll)" :alt="t('pulse', 'Image for the question')" @load="fitStage(true)">
+						<img class="scr-img" :src="imageUrl(poll)" :alt="t('vibears', 'Image for the question')" @load="fitStage(true)">
 					</div>
 					<div class="scr-split-q">
 						<h1 class="scr-q">{{ poll.question }}</h1>
@@ -109,7 +109,7 @@
 
 				<!-- Final standings: a stage of its own, two columns (B1) -->
 				<div v-if="quizEnded" class="scr-final">
-					<p class="scr-final-title">{{ t('pulse', 'Final standings') }}</p>
+					<p class="scr-final-title">{{ t('vibears', 'Final standings') }}</p>
 					<Leaderboard class="scr-final-lb" :rows="leaderboard" :total="leaderboardTotal" :podium="true" :limit="5" split />
 				</div>
 
@@ -126,7 +126,7 @@
 				     chart. The stage shows what it was about and says so in words. -->
 				<div v-else-if="emptyResult" class="scr-empty">
 					<StageOpen v-if="!soloOpen" :poll="poll" />
-					<p class="scr-empty-txt">{{ t('pulse', 'No answer received') }}</p>
+					<p class="scr-empty-txt">{{ t('vibears', 'No answer received') }}</p>
 				</div>
 
 				<!-- Free text on the projector: frequency tiles (12× large … 1× small) -->
@@ -141,7 +141,7 @@
 							<span class="scr-ft-mult">{{ a.count }}×</span>
 						</span>
 					</div>
-					<p v-else class="scr-ft-empty">{{ t('pulse', 'No answers yet.') }}</p>
+					<p v-else class="scr-ft-empty">{{ t('vibears', 'No answers yet.') }}</p>
 				</div>
 
 				<!-- Reveal: result grammar (§2.4) -->
@@ -172,13 +172,13 @@
 			     right corner belongs to the content again. -->
 			<div class="scr-meta">
 				<div class="scr-meta-l">
-					<span v-if="practice" class="scr-chip is-practice"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run') }}</span>
+					<span v-if="practice" class="scr-chip is-practice"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</span>
 					<span class="scr-chip" :class="revealed ? 'is-done' : 'is-open'">
 						<span v-if="!revealed && !timeUp && !closedHidden" class="scr-chip-dot" aria-hidden="true" />
 						{{ stateText }}
 					</span>
-					<span v-if="allAnswered" class="scr-chip is-full">{{ t('pulse', 'complete') }}</span>
-					<span v-if="!online" class="scr-chip is-off">{{ t('pulse', 'Connection lost …') }}</span>
+					<span v-if="allAnswered" class="scr-chip is-full">{{ t('vibears', 'complete') }}</span>
+					<span v-if="!online" class="scr-chip is-off">{{ t('vibears', 'Connection lost …') }}</span>
 				</div>
 				<span class="scr-legend">{{ legend }}</span>
 				<div v-if="showQr" class="scr-join-mini" :title="joinUrl">
@@ -223,8 +223,8 @@ export default {
 	components: { PulseIcon, ResultsView, CountdownRing, IntakeBoard, StageOpen, Leaderboard, WordCloud, QrCode, StageRace },
 	data() {
 		return {
-			code: loadState('pulse', 'code', ''),
-			roomExists: loadState('pulse', 'roomExists', false),
+			code: loadState('vibears', 'code', ''),
+			roomExists: loadState('vibears', 'roomExists', false),
 			practice: false,
 			roomTitle: '',   // room name from publicState.room (empty = none)
 			poll: null,
@@ -300,43 +300,43 @@ export default {
 		// none — there the big screen belongs to the final standings.
 		raceHead() {
 			if (this.paceState === 'open') return this.finishedText
-			if (this.paceState === 'closed') return this.t('pulse', 'The quiz is closed.')
+			if (this.paceState === 'closed') return this.t('vibears', 'The quiz is closed.')
 			return ''
 		},
 		finishedText() {
 			const r = this.race || {}
-			return this.t('pulse', '{done} of {total} finished', { done: r.finished || 0, total: r.joined || 0 })
+			return this.t('vibears', '{done} of {total} finished', { done: r.finished || 0, total: r.joined || 0 })
 		},
 		// Centred stage without bars: closed, practice run released (no
 		// leaderboard), released without participants.
 		raceNote() {
-			if (this.paceState === 'closed') return [this.finishedText, this.t('pulse', 'Results come once your host releases them.')]
-			if (this.leaderboard === null) return [this.t('pulse', 'Quiz finished'), this.t('pulse', 'Thanks for joining in.')]
-			return [this.t('pulse', 'Final standings'), this.t('pulse', 'No points yet — nobody has played along.')]
+			if (this.paceState === 'closed') return [this.finishedText, this.t('vibears', 'Results come once your host releases them.')]
+			if (this.leaderboard === null) return [this.t('vibears', 'Quiz finished'), this.t('vibears', 'Thanks for joining in.')]
+			return [this.t('vibears', 'Final standings'), this.t('vibears', 'No points yet — nobody has played along.')]
 		},
 		raceChip() {
 			if (this.paceState === 'open') {
 				const closesAt = (this.paceWindow && this.paceWindow.closesAt) || 0
-				return closesAt > 0 ? this.t('pulse', 'Open until {time}', { time: fmtDeadline(closesAt) }) : this.t('pulse', 'Open now')
+				return closesAt > 0 ? this.t('vibears', 'Open until {time}', { time: fmtDeadline(closesAt) }) : this.t('vibears', 'Open now')
 			}
-			return this.paceState === 'closed' ? this.t('pulse', 'Quiz closed') : this.t('pulse', 'Quiz finished')
+			return this.paceState === 'closed' ? this.t('vibears', 'Quiz closed') : this.t('vibears', 'Quiz finished')
 		},
 		// Lobby texts: moderated exactly the previous ones. In draft not "Starting
 		// shortly" — a prepared homework would stand like that on the hallway screen for days.
 		lobbyTitle() {
-			if (this.paceState === 'draft') return this.roomTitle || this.t('pulse', 'Not open yet')
-			if (this.paceState === 'open') return this.roomTitle || this.t('pulse', 'The quiz is open')
-			return this.roomTitle || this.t('pulse', 'Starting shortly')
+			if (this.paceState === 'draft') return this.roomTitle || this.t('vibears', 'Not open yet')
+			if (this.paceState === 'open') return this.roomTitle || this.t('vibears', 'The quiz is open')
+			return this.roomTitle || this.t('vibears', 'Starting shortly')
 		},
 		lobbySub() {
-			if (this.paceState === 'open') return this.t('pulse', 'Join and start at your own pace.')
+			if (this.paceState === 'open') return this.t('vibears', 'Join and start at your own pace.')
 			if (!this.roomTitle) return ''
-			return this.paceState === 'draft' ? this.t('pulse', 'Not open yet') : this.t('pulse', 'Starting shortly')
+			return this.paceState === 'draft' ? this.t('vibears', 'Not open yet') : this.t('vibears', 'Starting shortly')
 		},
 		// Open with a deadline: when it ends, as an absolute time.
 		lobbyWhen() {
 			const closesAt = (this.paceState === 'open' && this.paceWindow && this.paceWindow.closesAt) || 0
-			return closesAt > 0 ? this.t('pulse', 'Open until {time}', { time: fmtDeadline(closesAt) }) : ''
+			return closesAt > 0 ? this.t('vibears', 'Open until {time}', { time: fmtDeadline(closesAt) }) : ''
 		},
 		isLive() {
 			return this.roomExists && !!this.poll
@@ -427,19 +427,19 @@ export default {
 		stateText() {
 			if (this.quizEnded) {
 				const count = Math.max(this.leaderboardTotal, Array.isArray(this.leaderboard) ? this.leaderboard.length : 0)
-				return this.t('pulse', 'Result') + ' · ' + this.n('pulse', '%n participant', '%n participants', count)
+				return this.t('vibears', 'Result') + ' · ' + this.n('vibears', '%n participant', '%n participants', count)
 			}
 			if (this.revealed) {
 				const total = (this.results && this.results.total) || 0
-				return this.t('pulse', 'Result') + ' · ' + this.n('pulse', '%n vote', '%n votes', total)
+				return this.t('vibears', 'Result') + ' · ' + this.n('vibears', '%n vote', '%n votes', total)
 			}
 			if (this.closedHidden) {
-				return this.t('pulse', 'Answers closed') + ' · ' + this.answered + ' ' + this.n('pulse', 'answer', 'answers', this.answered)
+				return this.t('vibears', 'Answers closed') + ' · ' + this.answered + ' ' + this.n('vibears', 'answer', 'answers', this.answered)
 			}
 			if (this.timeUp) {
-				return this.t('pulse', 'Time is up') + ' · ' + this.answered + ' ' + this.n('pulse', 'answer', 'answers', this.answered)
+				return this.t('vibears', 'Time is up') + ' · ' + this.answered + ' ' + this.n('vibears', 'answer', 'answers', this.answered)
 			}
-			return this.t('pulse', 'Answers coming in') + ' · ' + this.answered + ' ' + this.n('pulse', 'answer', 'answers', this.answered)
+			return this.t('vibears', 'Answers coming in') + ' · ' + this.answered + ' ' + this.n('vibears', 'answer', 'answers', this.answered)
 		},
 		// Explanatory text of the stage — today three places (footnote left, counter right,
 		// QR at the top), in future one.
@@ -449,27 +449,27 @@ export default {
 			if (this.quizEnded || !this.showResults || !r || this.emptyResult) return ''
 			switch (r.type) {
 			case 'choice':
-				return this.t('pulse', '100% = all votes')
+				return this.t('vibears', '100% = all votes')
 			case 'multi':
-				return this.t('pulse', '100% = everyone who answered · the sum can exceed 100%')
+				return this.t('vibears', '100% = everyone who answered · the sum can exceed 100%')
 			case 'rank':
 				// The row is always full; so what needs explaining is the
 				// segment, not the length (§7.5).
-				return this.t('pulse', 'Segment = share on this place · sorted by average place')
+				return this.t('vibears', 'Segment = share on this place · sorted by average place')
 			case 'match':
 				return (this.poll.answerKey && this.poll.answerKey.map)
-					? this.t('pulse', 'Segment = share per target · ring marks the correct target')
-					: this.t('pulse', 'Segment = share per target')
+					? this.t('vibears', 'Segment = share per target · ring marks the correct target')
+					: this.t('vibears', 'Segment = share per target')
 			case 'number':
-				return this.t('pulse', 'Distribution of the guesses · bars relative to the most frequent value')
+				return this.t('vibears', 'Distribution of the guesses · bars relative to the most frequent value')
 			case 'scale':
-				if (r.mode === 'compass') return this.t('pulse', 'Centre = neutral')
+				if (r.mode === 'compass') return this.t('vibears', 'Centre = neutral')
 				// The spectrum carries its legend below the radar (§7.3).
 				if (r.mode === 'spectrum') return ''
-				return this.t('pulse', 'Distribution · column height = votes per value · scale {min}–{max}', { min: r.min, max: r.max })
+				return this.t('vibears', 'Distribution · column height = votes per value · scale {min}–{max}', { min: r.min, max: r.max })
 			case 'words': {
 				const s = this.wordStats
-				return s ? s.words + ' ' + this.n('pulse', 'word', 'words', s.words) + ' · ' + this.n('pulse', '%n mention', '%n mentions', s.votes) : ''
+				return s ? s.words + ' ' + this.n('vibears', 'word', 'words', s.words) + ' · ' + this.n('vibears', '%n mention', '%n mentions', s.votes) : ''
 			}
 			default:
 				return ''
@@ -553,7 +553,7 @@ export default {
 			const total = this.results.total || 0
 			// The public tally carries the 100 most frequent groups; answersTotal counts all.
 			const distinct = this.results.answersTotal || (this.results.answers || []).length
-			return this.n('pulse', '%n mention', '%n mentions', total) + ' · ' + this.t('pulse', '{count} different', { count: distinct })
+			return this.n('vibears', '%n mention', '%n mentions', total) + ' · ' + this.t('vibears', '{count} different', { count: distinct })
 		},
 		// Frequency tiles: sorted by count descending, size ∝ frequency (em).
 		textCards() {
@@ -580,7 +580,7 @@ export default {
 	mounted() {
 		// Projector = full-screen kiosk: hide the NC chrome. The body class gates the
 		// global overrides -> the phone (Participant) stays intact.
-		document.body.classList.add('pulse-beamer')
+		document.body.classList.add('vibears-beamer')
 		window.addEventListener('resize', this.fitStage)
 		window.addEventListener('resize', this.measureMeta)
 		this.measureMeta()
@@ -597,7 +597,7 @@ export default {
 	},
 	beforeDestroy() {
 		this.pollStopped = true
-		document.body.classList.remove('pulse-beamer')
+		document.body.classList.remove('vibears-beamer')
 		window.removeEventListener('resize', this.fitStage)
 		window.removeEventListener('resize', this.measureMeta)
 		this.pollClear()
@@ -777,7 +777,7 @@ export default {
 				if (e?.response?.status === 404) {
 					// Room gone -> stop polling for good. Otherwise the projector tab keeps
 					// querying the endpoint every few seconds; every "not found"
-					// counts towards the brute-force action 'pulseRoomCode' and in the
+					// counts towards the brute-force action 'vibearsRoomCode' and in the
 					// end throttles the whole IP (429 "Too many requests").
 					this.roomExists = false
 					this.pollStopped = true

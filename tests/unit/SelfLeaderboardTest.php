@@ -5,18 +5,18 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\Progress;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\Vote;
-use OCA\Pulse\Db\VoteMapper;
-use OCA\Pulse\Service\QuizService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\Progress;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\Vote;
+use OCA\Vibears\Db\VoteMapper;
+use OCA\Vibears\Service\QuizService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -86,7 +86,7 @@ class SelfLeaderboardTest extends TestCase {
             return true;
         });
         $this->cacheFactory = $this->createMock(ICacheFactory::class);
-        $this->cacheFactory->method('createLocal')->with('pulse')->willReturn($cache);
+        $this->cacheFactory->method('createLocal')->with('vibears')->willReturn($cache);
 
         $time = $this->createMock(ITimeFactory::class);
         $time->method('getTime')->willReturnCallback(fn (): int => $this->now);

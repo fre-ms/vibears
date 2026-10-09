@@ -13,15 +13,15 @@
 // follow here.
 //
 // Called via run.sh (sets up the environment); directly:
-//   PULSE_SIM_URL=http://<container-ip> PULSE_SIM_PASS=… node dev/sim/sim.mjs
+//   VIBEARS_SIM_URL=http://<container-ip> VIBEARS_SIM_PASS=… node dev/sim/sim.mjs
 // KEEP=1 keeps the rooms.
 import http from 'node:http'
 
-const URL_BASE = (process.env.PULSE_SIM_URL || 'http://127.0.0.1').replace(/\/$/, '')
-const HOST_HEADER = process.env.PULSE_SIM_HOST || 'localhost'
-const USER = process.env.PULSE_SIM_USER || 'pulse-shots'
-const PASS = process.env.PULSE_SIM_PASS || ''
-const BASE = URL_BASE + '/index.php/apps/pulse'
+const URL_BASE = (process.env.VIBEARS_SIM_URL || 'http://127.0.0.1').replace(/\/$/, '')
+const HOST_HEADER = process.env.VIBEARS_SIM_HOST || 'localhost'
+const USER = process.env.VIBEARS_SIM_USER || 'pulse-shots'
+const PASS = process.env.VIBEARS_SIM_PASS || ''
+const BASE = URL_BASE + '/index.php/apps/vibears'
 const AUTH = 'Basic ' + Buffer.from(USER + ':' + PASS).toString('base64')
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -36,7 +36,7 @@ function request(url, opts = {}) {
 			path: u.pathname + u.search,
 			method: opts.method || 'GET',
 			// Own user agent: this is how the log scan (README) finds exactly this run's entries.
-			headers: { 'User-Agent': 'pulse-sim', ...(opts.headers || {}), Host: HOST_HEADER },
+			headers: { 'User-Agent': 'vibears-sim', ...(opts.headers || {}), Host: HOST_HEADER },
 		}, (res) => {
 			const chunks = []
 			res.on('data', (c) => chunks.push(c))
@@ -66,11 +66,11 @@ function check(cond, label, extra) {
 }
 const note = (s) => console.log('  · ' + s)
 
-// The voter cookie is `__Host-pulse_vt` when the instance counts as https with
+// The voter cookie is `__Host-vibears_vt` when the instance counts as https with
 // an empty webroot (overwriteprotocol=https — then also here, over plain http
-// to the container), otherwise `pulse_vt`. A phone sends back the name the
+// to the container), otherwise `vibears_vt`. A phone sends back the name the
 // server set. Expiring a legacy cookie (Max-Age=0) is not a cookie.
-const VOTER_COOKIE = /^((?:__Host-)?pulse_vt)=([^;]*)/
+const VOTER_COOKIE = /^((?:__Host-)?vibears_vt)=([^;]*)/
 function voterCookies(r) {
 	return r.cookies
 		.filter((c) => !/;\s*max-age=0/i.test(c))
@@ -79,7 +79,7 @@ function voterCookies(r) {
 		.map((m) => [m[1], m[2]])
 }
 let voterCookieName = '' // the name the server uses, learned from the first phone
-const vtName = () => voterCookieName || 'pulse_vt'
+const vtName = () => voterCookieName || 'vibears_vt'
 // Like @nextcloud/axios in the public bundle: a participant POST without it is 403.
 const XHR = { 'X-Requested-With': 'XMLHttpRequest' }
 
@@ -906,13 +906,13 @@ function csvRows(text) {
 
 // Preliminary probe: the self-paced routes are new. If Nextcloud still holds the
 // old route table for this host in APCu, /pace answers with the
-// HTML 404 — then only the self-paced runs are skipped (README: PULSE_SIM_HOST).
+// HTML 404 — then only the self-paced runs are skipped (README: VIBEARS_SIM_HOST).
 async function selfRoutesLoaded() {
 	console.log('\n=== Eigenes Tempo: Routen ===')
 	const { code } = await newRoom('quiz', 'SIM Self Probe')
 	const r = await pace(code, { action: 'set', pace: 'self' })
 	if (r.status === 404) {
-		check(false, 'self: neue Routen geladen (APCu-Routencache? PULSE_SIM_HOST=localhost:<freier Port>, s. README)', [r.status, r.text.slice(0, 60)])
+		check(false, 'self: neue Routen geladen (APCu-Routencache? VIBEARS_SIM_HOST=localhost:<freier Port>, s. README)', [r.status, r.text.slice(0, 60)])
 		return false
 	}
 	check(r.status === 200 && r.data.pace === 'self', 'self: /pace antwortet', [r.status, r.data.pace])
@@ -1654,7 +1654,7 @@ async function hostileInput() {
 // The participant POSTs have no CSRF token: another site must not vote in a
 // visitor's name (403 without X-Requested-With or Sec-Fetch-Site same-origin,
 // and no cookie), a cookie name sent twice (cookie tossing) counts as none,
-// and a legacy pulse_vt moves to __Host-pulse_vt. Only on a room of this sim.
+// and a legacy vibears_vt moves to __Host-vibears_vt. Only on a room of this sim.
 async function browserChecks(P, p1, pubRaw, issued, fresh, msg) {
 	const body = JSON.stringify({ value: p1.options[0].id })
 	const form = await pubRaw(P, 'POST', '/vote', { body, xhr: false })
@@ -1672,14 +1672,14 @@ async function browserChecks(P, p1, pubRaw, issued, fresh, msg) {
 	const vt = vtName()
 	const twice = await pubRaw(P, 'GET', '/state', { cookie: vt + '=' + A.cookie + '; ' + vt + '=' + B.cookie })
 	check(twice.status === 200 && fresh(twice, A.cookie) && !issued(twice).includes(B.cookie), 'Browser: Cookie-Name doppelt -> keins von beiden, neues Cookie', issued(twice))
-	if (vt === '__Host-pulse_vt') {
-		const legacy = await pubRaw(P, 'GET', '/state', { cookie: 'pulse_vt=' + A.cookie })
-		const expired = legacy.cookies.some((c) => /^pulse_vt=/.test(c) && /;\s*max-age=0/i.test(c))
-		check(legacy.status === 200 && issued(legacy).join() === A.cookie && expired, 'Browser: altes pulse_vt wird zu __Host-pulse_vt, das alte läuft ab', { status: legacy.status, cookies: legacy.cookies.map((c) => c.split(';')[0].replace(/=[A-Za-z0-9]{32}$/, '=<token>')) })
-		const tossed = await pubRaw(P, 'GET', '/state', { cookie: 'pulse_vt=' + B.cookie + '; __Host-pulse_vt=' + A.cookie })
-		check(tossed.status === 200 && !issued(tossed).includes(B.cookie) && issued(tossed).join() === A.cookie, 'Browser: untergeschobenes pulse_vt neben __Host-pulse_vt zählt nicht', issued(tossed))
+	if (vt === '__Host-vibears_vt') {
+		const legacy = await pubRaw(P, 'GET', '/state', { cookie: 'vibears_vt=' + A.cookie })
+		const expired = legacy.cookies.some((c) => /^vibears_vt=/.test(c) && /;\s*max-age=0/i.test(c))
+		check(legacy.status === 200 && issued(legacy).join() === A.cookie && expired, 'Browser: altes vibears_vt wird zu __Host-vibears_vt, das alte läuft ab', { status: legacy.status, cookies: legacy.cookies.map((c) => c.split(';')[0].replace(/=[A-Za-z0-9]{32}$/, '=<token>')) })
+		const tossed = await pubRaw(P, 'GET', '/state', { cookie: 'vibears_vt=' + B.cookie + '; __Host-vibears_vt=' + A.cookie })
+		check(tossed.status === 200 && !issued(tossed).includes(B.cookie) && issued(tossed).join() === A.cookie, 'Browser: untergeschobenes vibears_vt neben __Host-vibears_vt zählt nicht', issued(tossed))
 	} else {
-		note('Browser: Instanz ohne https/leeren Webroot — Cookie heißt pulse_vt, Übernahme-Prüfung entfällt')
+		note('Browser: Instanz ohne https/leeren Webroot — Cookie heißt vibears_vt, Übernahme-Prüfung entfällt')
 	}
 }
 
@@ -1701,7 +1701,7 @@ for (const sig of ['SIGINT', 'SIGTERM']) {
 }
 
 try {
-	if (!PASS) throw new Error('PULSE_SIM_PASS fehlt (run.sh setzt es)')
+	if (!PASS) throw new Error('VIBEARS_SIM_PASS fehlt (run.sh setzt es)')
 	await survey()
 	await quizRun({ revealAtEnd: false, practice: false, label: 'je Frage' })
 	await quizRun({ revealAtEnd: true, practice: false, label: 'am Ende' })

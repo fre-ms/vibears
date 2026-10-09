@@ -9,8 +9,8 @@
 //
 // - Golden list: the URL shapes the views use, with the HTTP verb, as the
 //   exact string the views built by hand before routes.js existed. Twice:
-//   without a webroot and without mod_rewrite (/index.php/apps/pulse/…),
-//   and below a webroot with mod_rewrite (/nextcloud/apps/pulse/…). Every
+//   without a webroot and without mod_rewrite (/index.php/apps/vibears/…),
+//   and below a webroot with mod_rewrite (/nextcloud/apps/vibears/…). Every
 //   one of those paths, with its verb, matches a route in appinfo/routes.php.
 // - Call sites: every builder call under src/, read from the source, with
 //   its path composed from the call as written and the verb of the axios
@@ -24,7 +24,7 @@
 //   src/toast.js (the `||` of the copies it replaced).
 // - Source guard: no other file under src/ builds an app URL.
 //
-// Not covered: the hand-written embed shell js/pulse-embed.js builds its
+// Not covered: the hand-written embed shell js/vibears-embed.js builds its
 // own URLs (projector page, /s/{code}/state?spectate=1).
 //
 // generateUrl() is the real one from node_modules/@nextcloud/router. It
@@ -44,7 +44,7 @@ globalThis.location = {
 	protocol: 'https:',
 	host: 'cloud.example.com:8443',
 	origin: 'https://cloud.example.com:8443',
-	pathname: '/index.php/apps/pulse/',
+	pathname: '/index.php/apps/vibears/',
 }
 globalThis.open = (...args) => { opened.push(args) }
 function setup({ webroot, rewrite }) {
@@ -83,75 +83,75 @@ const TOKEN = 'tok/en+='
 // The rows are URL shapes: each calls a builder with the arguments its call
 // sites pass and names those sites, but does not read them; the call-site
 // scan further down does. Without a webroot and without mod_rewrite. The
-// hand-built expressions were generateUrl('/apps/pulse/…' + code + …), with
+// hand-built expressions were generateUrl('/apps/vibears/…' + code + …), with
 // ?v= and the CSV query appended outside it.
 const GOLDEN = () => [
 	// Moderator.vue
-	['Moderator fetchMyRooms', 'GET', roomsApi(), '/index.php/apps/pulse/api/1.0/rooms'],
-	['Moderator startRoom', 'POST', roomsApi(), '/index.php/apps/pulse/api/1.0/rooms'],
-	['Moderator api(code) load/refresh', 'GET', roomApi(CODE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9'],
-	['Moderator api(code) delete', 'DELETE', roomApi(CODE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9'],
-	['Moderator duplicate', 'POST', roomApi(CODE, '/duplicate'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/duplicate'],
-	['Moderator rename', 'POST', roomApi(CODE, '/title'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/title'],
-	['Moderator reset room', 'POST', roomApi(CODE, '/reset'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/reset'],
-	['Moderator reveal at the end', 'POST', roomApi(CODE, '/reveal'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/reveal'],
-	['Moderator practice', 'POST', roomApi(CODE, '/practice'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/practice'],
-	['Moderator counts (self-paced)', 'GET', roomApi(CODE, '/progress'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/progress'],
-	['Moderator leaderboard', 'GET', roomApi(CODE, '/leaderboard'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/leaderboard'],
-	['Moderator summary', 'GET', roomApi(CODE, '/summary'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/summary'],
-	['Moderator pace', 'POST', roomApi(CODE, '/pace'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/pace'],
-	['Moderator add question', 'POST', roomApi(CODE, '/polls'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls'],
-	['Moderator save question', 'PUT', roomApi(CODE, '/polls/' + 42), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42'],
-	['Moderator delete question', 'DELETE', roomApi(CODE, '/polls/' + 42), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42'],
-	['Moderator deck order', 'POST', roomApi(CODE, '/deck/order'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/deck/order'],
-	['Moderator current', 'POST', roomApi(CODE, '/current'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/current'],
-	['Moderator end quiz', 'POST', roomApi(CODE, '/end'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/end'],
-	['Moderator lock', 'POST', roomApi(CODE, '/polls/' + 42 + '/' + 'lock'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/lock'],
-	['Moderator unlock', 'POST', roomApi(CODE, '/polls/' + 42 + '/' + 'unlock'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/unlock'],
-	['Moderator reset question', 'POST', roomApi(CODE, '/polls/' + 42 + '/reset'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/reset'],
-	['Moderator results', 'GET', roomApi(CODE, '/polls/' + 42 + '/results'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/results'],
-	['Moderator grade', 'POST', roomApi(CODE, '/polls/' + 42 + '/grade'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/grade'],
-	['Moderator demo votes', 'POST', roomApi(CODE, '/demo'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/demo'],
-	['Moderator remove demo votes', 'DELETE', roomApi(CODE, '/demo'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/demo'],
-	['Moderator upload image', 'POST', roomApi(CODE, '/polls/' + 42 + '/image'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/image'],
-	['Moderator remove image', 'DELETE', roomApi(CODE, '/polls/' + 42 + '/image'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/image'],
-	['Moderator modImageUrl', 'GET', pollImage(CODE, 42, IMAGE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/image?v=7f3c9a1b.png'],
-	['Moderator modImageUrl, odd file name', 'GET', pollImage(CODE, 42, ODD_IMAGE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/image?v=Image%201%2F%C3%A4%26v%3D2.png'],
-	['Moderator joinPath', 'GET', participantPage(CODE), '/index.php/apps/pulse/s/Ab3dE9'],
-	['Moderator joinBase/joinPagePath', 'GET', joinPage(), '/index.php/apps/pulse/join'],
-	['Moderator screenPath (canvas)', 'GET', screenPage(CODE), '/index.php/apps/pulse/screen/Ab3dE9'],
-	['Moderator history entry', 'GET', roomPage(CODE), '/index.php/apps/pulse/room/Ab3dE9'],
-	['Moderator goHome', 'GET', home(), '/index.php/apps/pulse/'],
-	['Moderator downloadAddin', 'GET', addinManifest(), '/index.php/apps/pulse/addin/manifest.xml'],
-	['Moderator importDeck', 'POST', importApi(), '/index.php/apps/pulse/api/1.0/import'],
+	['Moderator fetchMyRooms', 'GET', roomsApi(), '/index.php/apps/vibears/api/1.0/rooms'],
+	['Moderator startRoom', 'POST', roomsApi(), '/index.php/apps/vibears/api/1.0/rooms'],
+	['Moderator api(code) load/refresh', 'GET', roomApi(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9'],
+	['Moderator api(code) delete', 'DELETE', roomApi(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9'],
+	['Moderator duplicate', 'POST', roomApi(CODE, '/duplicate'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/duplicate'],
+	['Moderator rename', 'POST', roomApi(CODE, '/title'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/title'],
+	['Moderator reset room', 'POST', roomApi(CODE, '/reset'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/reset'],
+	['Moderator reveal at the end', 'POST', roomApi(CODE, '/reveal'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/reveal'],
+	['Moderator practice', 'POST', roomApi(CODE, '/practice'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/practice'],
+	['Moderator counts (self-paced)', 'GET', roomApi(CODE, '/progress'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/progress'],
+	['Moderator leaderboard', 'GET', roomApi(CODE, '/leaderboard'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/leaderboard'],
+	['Moderator summary', 'GET', roomApi(CODE, '/summary'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/summary'],
+	['Moderator pace', 'POST', roomApi(CODE, '/pace'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/pace'],
+	['Moderator add question', 'POST', roomApi(CODE, '/polls'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls'],
+	['Moderator save question', 'PUT', roomApi(CODE, '/polls/' + 42), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42'],
+	['Moderator delete question', 'DELETE', roomApi(CODE, '/polls/' + 42), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42'],
+	['Moderator deck order', 'POST', roomApi(CODE, '/deck/order'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/deck/order'],
+	['Moderator current', 'POST', roomApi(CODE, '/current'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/current'],
+	['Moderator end quiz', 'POST', roomApi(CODE, '/end'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/end'],
+	['Moderator lock', 'POST', roomApi(CODE, '/polls/' + 42 + '/' + 'lock'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/lock'],
+	['Moderator unlock', 'POST', roomApi(CODE, '/polls/' + 42 + '/' + 'unlock'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/unlock'],
+	['Moderator reset question', 'POST', roomApi(CODE, '/polls/' + 42 + '/reset'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/reset'],
+	['Moderator results', 'GET', roomApi(CODE, '/polls/' + 42 + '/results'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/results'],
+	['Moderator grade', 'POST', roomApi(CODE, '/polls/' + 42 + '/grade'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/grade'],
+	['Moderator demo votes', 'POST', roomApi(CODE, '/demo'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/demo'],
+	['Moderator remove demo votes', 'DELETE', roomApi(CODE, '/demo'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/demo'],
+	['Moderator upload image', 'POST', roomApi(CODE, '/polls/' + 42 + '/image'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/image'],
+	['Moderator remove image', 'DELETE', roomApi(CODE, '/polls/' + 42 + '/image'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/image'],
+	['Moderator modImageUrl', 'GET', pollImage(CODE, 42, IMAGE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/image?v=7f3c9a1b.png'],
+	['Moderator modImageUrl, odd file name', 'GET', pollImage(CODE, 42, ODD_IMAGE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/image?v=Image%201%2F%C3%A4%26v%3D2.png'],
+	['Moderator joinPath', 'GET', participantPage(CODE), '/index.php/apps/vibears/s/Ab3dE9'],
+	['Moderator joinBase/joinPagePath', 'GET', joinPage(), '/index.php/apps/vibears/join'],
+	['Moderator screenPath (canvas)', 'GET', screenPage(CODE), '/index.php/apps/vibears/screen/Ab3dE9'],
+	['Moderator history entry', 'GET', roomPage(CODE), '/index.php/apps/vibears/room/Ab3dE9'],
+	['Moderator goHome', 'GET', home(), '/index.php/apps/vibears/'],
+	['Moderator downloadAddin', 'GET', addinManifest(), '/index.php/apps/vibears/addin/manifest.xml'],
+	['Moderator importDeck', 'POST', importApi(), '/index.php/apps/vibears/api/1.0/import'],
 	// admin.js (administration settings)
-	['admin retention', 'POST', adminRetentionApi(), '/index.php/apps/pulse/api/1.0/admin/retention'],
+	['admin retention', 'POST', adminRetentionApi(), '/index.php/apps/vibears/api/1.0/admin/retention'],
 	// util/csv.js (Moderator export button, PaceRun downloads, the deck file)
-	['markdownUrl deck file', 'GET', markdownUrl(CODE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/markdown?requesttoken=tok%2Fen%2B%3D'],
-	['csvUrl results per question', 'GET', csvUrl(CODE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/export?requesttoken=tok%2Fen%2B%3D'],
-	['csvUrl players', 'GET', csvUrl(CODE, 'players'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/export?view=players&requesttoken=tok%2Fen%2B%3D'],
-	['csvUrl answers', 'GET', csvUrl(CODE, 'answers'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/export?view=answers&requesttoken=tok%2Fen%2B%3D'],
+	['markdownUrl deck file', 'GET', markdownUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/markdown?requesttoken=tok%2Fen%2B%3D'],
+	['csvUrl results per question', 'GET', csvUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?requesttoken=tok%2Fen%2B%3D'],
+	['csvUrl players', 'GET', csvUrl(CODE, 'players'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?view=players&requesttoken=tok%2Fen%2B%3D'],
+	['csvUrl answers', 'GET', csvUrl(CODE, 'answers'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?view=answers&requesttoken=tok%2Fen%2B%3D'],
 	// PaceRun.vue, PaceDeckStatus.vue, PaceOpenDialog.vue, LivePlayers.vue
-	['PaceRun screenPath (preview)', 'GET', screenPage(CODE), '/index.php/apps/pulse/screen/Ab3dE9'],
-	['PaceRun/PaceDeckStatus progressUrl', 'GET', roomApi(CODE, '/progress'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/progress'],
-	['PaceRun/PaceOpenDialog/LivePlayers pace', 'POST', roomApi(CODE, '/pace'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/pace'],
-	['PaceRun grade', 'POST', roomApi(CODE, '/polls/' + 42 + '/grade'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42/grade'],
-	['LivePlayers load', 'GET', roomApi(CODE, '/leaderboard'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/leaderboard'],
+	['PaceRun screenPath (preview)', 'GET', screenPage(CODE), '/index.php/apps/vibears/screen/Ab3dE9'],
+	['PaceRun/PaceDeckStatus progressUrl', 'GET', roomApi(CODE, '/progress'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/progress'],
+	['PaceRun/PaceOpenDialog/LivePlayers pace', 'POST', roomApi(CODE, '/pace'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/pace'],
+	['PaceRun grade', 'POST', roomApi(CODE, '/polls/' + 42 + '/grade'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42/grade'],
+	['LivePlayers load', 'GET', roomApi(CODE, '/leaderboard'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/leaderboard'],
 	// Participant.vue, mixins/pace-phone.js, Screen.vue
-	['Participant joinPagePath', 'GET', joinPage(), '/index.php/apps/pulse/join'],
-	['Participant/Screen state', 'GET', publicApi(CODE, '/state'), '/index.php/apps/pulse/s/Ab3dE9/state'],
-	['Participant summary', 'GET', publicApi(CODE, '/summary'), '/index.php/apps/pulse/s/Ab3dE9/summary'],
-	['Participant vote', 'POST', publicApi(CODE, '/vote'), '/index.php/apps/pulse/s/Ab3dE9/vote'],
-	['Participant join', 'POST', publicApi(CODE, '/join'), '/index.php/apps/pulse/s/Ab3dE9/join'],
-	['pace-phone next', 'POST', publicApi(CODE, '/next'), '/index.php/apps/pulse/s/Ab3dE9/next'],
+	['Participant joinPagePath', 'GET', joinPage(), '/index.php/apps/vibears/join'],
+	['Participant/Screen state', 'GET', publicApi(CODE, '/state'), '/index.php/apps/vibears/s/Ab3dE9/state'],
+	['Participant summary', 'GET', publicApi(CODE, '/summary'), '/index.php/apps/vibears/s/Ab3dE9/summary'],
+	['Participant vote', 'POST', publicApi(CODE, '/vote'), '/index.php/apps/vibears/s/Ab3dE9/vote'],
+	['Participant join', 'POST', publicApi(CODE, '/join'), '/index.php/apps/vibears/s/Ab3dE9/join'],
+	['pace-phone next', 'POST', publicApi(CODE, '/next'), '/index.php/apps/vibears/s/Ab3dE9/next'],
 	// The join-code check counts towards the brute-force throttle, so its URL
 	// must not change; the call-site scan below holds Participant.go() to it.
-	['Participant go: code check', 'GET', publicApi(CODE, '/state'), '/index.php/apps/pulse/s/Ab3dE9/state'],
-	['Participant go: navigate', 'GET', participantPage(CODE), '/index.php/apps/pulse/s/Ab3dE9'],
-	['Participant/Screen imageUrl', 'GET', pollImage(CODE, 42, IMAGE, { public: true }), '/index.php/apps/pulse/s/Ab3dE9/polls/42/image?v=7f3c9a1b.png'],
-	['Participant/Screen imageUrl, odd file name', 'GET', pollImage(CODE, 42, ODD_IMAGE, { public: true }), '/index.php/apps/pulse/s/Ab3dE9/polls/42/image?v=Image%201%2F%C3%A4%26v%3D2.png'],
-	['Screen joinPath', 'GET', participantPage(CODE), '/index.php/apps/pulse/s/Ab3dE9'],
-	['base() without a suffix', 'GET', publicApi(CODE), '/index.php/apps/pulse/s/Ab3dE9'],
+	['Participant go: code check', 'GET', publicApi(CODE, '/state'), '/index.php/apps/vibears/s/Ab3dE9/state'],
+	['Participant go: navigate', 'GET', participantPage(CODE), '/index.php/apps/vibears/s/Ab3dE9'],
+	['Participant/Screen imageUrl', 'GET', pollImage(CODE, 42, IMAGE, { public: true }), '/index.php/apps/vibears/s/Ab3dE9/polls/42/image?v=7f3c9a1b.png'],
+	['Participant/Screen imageUrl, odd file name', 'GET', pollImage(CODE, 42, ODD_IMAGE, { public: true }), '/index.php/apps/vibears/s/Ab3dE9/polls/42/image?v=Image%201%2F%C3%A4%26v%3D2.png'],
+	['Screen joinPath', 'GET', participantPage(CODE), '/index.php/apps/vibears/s/Ab3dE9'],
+	['base() without a suffix', 'GET', publicApi(CODE), '/index.php/apps/vibears/s/Ab3dE9'],
 ]
 
 // ── appinfo/routes.php ───────────────────────────────────────────────────
@@ -168,7 +168,7 @@ const ROUTES = (() => {
 		// The values are single-quoted PHP strings: '\d+' is the regex \d+.
 		const reqs = entry.split(/'requirements'\s*=>/)[1] || ''
 		const requirement = (ph) => (reqs.match(new RegExp("'" + ph + "'\\s*=>\\s*'([^']*)'")) || [])[1]
-		const pattern = ('/apps/pulse' + url).split(/(\{\w+\})/).map((part) => {
+		const pattern = ('/apps/vibears' + url).split(/(\{\w+\})/).map((part) => {
 			const ph = part.match(/^\{(\w+)\}$/)
 			return ph ? '(?:' + (requirement(ph[1]) || '[^/]+') + ')' : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 		}).join('')
@@ -192,11 +192,11 @@ test('routes.php: all 46 url entries parsed, each with a verb and a controller',
 	assert.deepEqual([...new Set(ROUTES.map((r) => r.controller))].sort(), ['addin', 'adminSettings', 'page', 'public', 'publicVote', 'roomApi'])
 	// the parser picked up the requirements: a 6-character code only
 	const show = ROUTES.find((r) => r.url === '/s/{code}')
-	assert.ok(show.re.test('/apps/pulse/s/Ab3dE9'))
-	assert.ok(!show.re.test('/apps/pulse/s/Ab3dE'))
+	assert.ok(show.re.test('/apps/vibears/s/Ab3dE9'))
+	assert.ok(!show.re.test('/apps/vibears/s/Ab3dE'))
 	const poll = ROUTES.find((r) => r.url === '/api/1.0/rooms/{code}/polls/{pollId}' && r.verb === 'PUT')
-	assert.ok(poll.re.test('/apps/pulse/api/1.0/rooms/Ab3dE9/polls/42'))
-	assert.ok(!poll.re.test('/apps/pulse/api/1.0/rooms/Ab3dE9/polls/x'))
+	assert.ok(poll.re.test('/apps/vibears/api/1.0/rooms/Ab3dE9/polls/42'))
+	assert.ok(!poll.re.test('/apps/vibears/api/1.0/rooms/Ab3dE9/polls/x'))
 })
 
 for (const scenario of [
@@ -209,7 +209,7 @@ for (const scenario of [
 	// The golden strings are written without a webroot; the other scenario
 	// only swaps that prefix (generateUrl: webroot, then /index.php unless
 	// mod_rewrite works).
-	const expected = (s) => s.replace('/index.php/apps/pulse/', scenario.prefix + '/apps/pulse/')
+	const expected = (s) => s.replace('/index.php/apps/vibears/', scenario.prefix + '/apps/vibears/')
 
 	test(`golden list (${scenario.label}): the same strings as the hand-built URLs`, () => {
 		for (const [site, , actual, want] of rows) assert.equal(actual, expected(want), site)
@@ -217,7 +217,7 @@ for (const scenario of [
 
 	test(`golden list (${scenario.label}): every path with its verb has a route in routes.php`, () => {
 		for (const [site, verb, actual] of rows) {
-			assert.ok(actual.startsWith(scenario.prefix + '/apps/pulse/'), site + ': ' + actual)
+			assert.ok(actual.startsWith(scenario.prefix + '/apps/vibears/'), site + ': ' + actual)
 			assert.ok(routeOf(actual, scenario.prefix, verb), `${site}: no ${verb} route for ${actual}`)
 		}
 	})
@@ -226,7 +226,7 @@ for (const scenario of [
 		opened.length = 0
 		openProjector(CODE)
 		// origin (with the scheme), where the join text uses host
-		assert.deepEqual(opened, [[expected('https://cloud.example.com:8443/index.php/apps/pulse/screen/Ab3dE9'), 'pulse-beamer-Ab3dE9']])
+		assert.deepEqual(opened, [[expected('https://cloud.example.com:8443/index.php/apps/vibears/screen/Ab3dE9'), 'vibears-beamer-Ab3dE9']])
 		const path = opened[0][0].slice(globalThis.location.origin.length)
 		assert.ok(routeOf(path, scenario.prefix, 'GET'), path)
 	})
@@ -235,20 +235,20 @@ setup({ webroot: '', rewrite: false })
 
 test('csvUrl: reads the request token at call time, never keeps it', () => {
 	globalThis._nc_auth_requestToken = 'first'
-	assert.equal(csvUrl(CODE, 'players'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/export?view=players&requesttoken=first')
+	assert.equal(csvUrl(CODE, 'players'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?view=players&requesttoken=first')
 	globalThis._nc_auth_requestToken = 'second'
-	assert.equal(csvUrl(CODE, 'players'), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/export?view=players&requesttoken=second')
+	assert.equal(csvUrl(CODE, 'players'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?view=players&requesttoken=second')
 	globalThis._nc_auth_requestToken = undefined
-	assert.equal(csvUrl(CODE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/export?requesttoken=')
+	assert.equal(csvUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?requesttoken=')
 })
 
 test('markdownUrl: the deck file with the request token read at call time', () => {
 	globalThis._nc_auth_requestToken = 'first'
-	assert.equal(markdownUrl(CODE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/markdown?requesttoken=first')
+	assert.equal(markdownUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/markdown?requesttoken=first')
 	globalThis._nc_auth_requestToken = 'second'
-	assert.equal(markdownUrl(CODE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/markdown?requesttoken=second')
+	assert.equal(markdownUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/markdown?requesttoken=second')
 	globalThis._nc_auth_requestToken = undefined
-	assert.equal(markdownUrl(CODE), '/index.php/apps/pulse/api/1.0/rooms/Ab3dE9/markdown?requesttoken=')
+	assert.equal(markdownUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/markdown?requesttoken=')
 })
 
 test('time limits: 15 s for the moderator, 10 s for phone and projector', () => {
@@ -282,7 +282,7 @@ test('src/: app URLs and generateUrl only in src/util/routes.js', () => {
 		const rel = relative(APP, file).split('\\').join('/')
 		if (rel === 'src/util/routes.js' || !/\.(js|vue|mjs)$/.test(rel)) continue
 		const text = readFileSync(file, 'utf8')
-		if (text.includes('apps/pulse/')) offenders.push(rel + ': apps/pulse/')
+		if (text.includes('apps/vibears/')) offenders.push(rel + ': apps/vibears/')
 		if (text.includes('@nextcloud/router')) offenders.push(rel + ': @nextcloud/router')
 	}
 	assert.deepEqual(offenders, [])

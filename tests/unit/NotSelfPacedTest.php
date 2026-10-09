@@ -5,27 +5,27 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\PublicVoteController;
-use OCA\Pulse\Controller\RoomApiController;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\PresenceMapper;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Db\VoteMapper;
-use OCA\Pulse\Service\CodeGenerator;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\DemoService;
-use OCA\Pulse\Service\Limits;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\PaceStateService;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\RoomService;
-use OCA\Pulse\Service\StateService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Controller\PublicVoteController;
+use OCA\Vibears\Controller\RoomApiController;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\PresenceMapper;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Db\VoteMapper;
+use OCA\Vibears\Service\CodeGenerator;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\DemoService;
+use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\PaceStateService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\RoomService;
+use OCA\Vibears\Service\StateService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
@@ -172,8 +172,8 @@ class NotSelfPacedTest extends TestCase {
             $this->time,
             $this->createMock(ILimiter::class),
             new Limits($this->createMock(IAppConfig::class)),
-            $this->createMock(\OCA\Pulse\Service\DeckMarkdown::class),
-            $this->createMock(\OCA\Pulse\Service\DeckImportService::class),
+            $this->createMock(\OCA\Vibears\Service\DeckMarkdown::class),
+            $this->createMock(\OCA\Vibears\Service\DeckImportService::class),
         );
     }
 

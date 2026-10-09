@@ -5,12 +5,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\PublicVoteController;
-use OCA\Pulse\Service\JoinLimitException;
-use OCA\Pulse\Service\Limits;
-use OCA\Pulse\Service\PaceService;
+use OCA\Vibears\Controller\PublicVoteController;
+use OCA\Vibears\Service\JoinLimitException;
+use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\PaceService;
 use OCP\AppFramework\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -38,23 +38,23 @@ use PHPUnit\Framework\Attributes\DataProvider;
 #[CoversClass(PublicVoteController::class)]
 class PublicNewTokenTest extends PublicControllerTestCase {
 
-    private const TOKEN_ID = 'pulse-token-5';
-    private const JOIN_ID = 'pulse-join-5';
-    private const PRESENCE_ID = 'pulse-presence-5';
+    private const TOKEN_ID = 'vibears-token-5';
+    private const JOIN_ID = 'vibears-join-5';
+    private const PRESENCE_ID = 'vibears-presence-5';
 
     // ── Presence ───────────────────────────────────────────────────────────
 
     public function testFirstStateIssuesACookieButNoPresence(): void {
         $response = $this->voteController()->state('ABCDEF');
 
-        $this->assertSame(self::FRESH, $this->cookiesOf($response)['__Host-pulse_vt']['value']);
+        $this->assertSame(self::FRESH, $this->cookiesOf($response)['__Host-vibears_vt']['value']);
         $this->assertSame([], $this->callsTo('heartbeat'));
         // The new phone still sees its full state (never a 204).
         $this->assertSame([[self::FRESH, false]], $this->callsTo('publicState'));
     }
 
     public function testPresenceOnceTheCookieComesBack(): void {
-        $this->sendCookies('__Host-pulse_vt=' . self::FRESH);
+        $this->sendCookies('__Host-vibears_vt=' . self::FRESH);
 
         $response = $this->voteController()->state('ABCDEF');
 
@@ -72,7 +72,7 @@ class PublicNewTokenTest extends PublicControllerTestCase {
     }
 
     public function testFirstPresenceRowCountsPerAddressAndRoom(): void {
-        $this->sendCookies('__Host-pulse_vt=' . self::FRESH);
+        $this->sendCookies('__Host-vibears_vt=' . self::FRESH);
 
         $response = $this->voteController()->state('ABCDEF');
 
@@ -86,7 +86,7 @@ class PublicNewTokenTest extends PublicControllerTestCase {
 
     public function testKnownPresenceRowCountsNothing(): void {
         $this->presenceRow = true;
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
 
         $this->voteController()->state('ABCDEF');
 
@@ -97,7 +97,7 @@ class PublicNewTokenTest extends PublicControllerTestCase {
     public function testMadeUpTokensBeyondThePresenceLimitAddNoRow(): void {
         // The review's case: a new random token on every /state.
         $this->exhausted = [self::PRESENCE_ID];
-        $this->sendCookies('__Host-pulse_vt=' . self::EVE);
+        $this->sendCookies('__Host-vibears_vt=' . self::EVE);
 
         $response = $this->voteController()->state('ABCDEF');
 
@@ -160,7 +160,7 @@ class PublicNewTokenTest extends PublicControllerTestCase {
     #[DataProvider('rooms')]
     public function testJoinWithCookieCountsOnlyTowardsTheFloodGuard(bool $self): void {
         $this->room = $self ? $this->selfRoom() : $this->liveRoom();
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['nickname' => 'Anna'];
 
         $this->voteController()->join('ABCDEF');
@@ -170,7 +170,7 @@ class PublicNewTokenTest extends PublicControllerTestCase {
 
     public function testVoteAndStateNeverCountTowardsTheFloodGuard(): void {
         $this->presenceRow = true;
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['value' => 'AA'];
 
         $this->voteController()->vote('ABCDEF');
@@ -182,7 +182,7 @@ class PublicNewTokenTest extends PublicControllerTestCase {
     #[DataProvider('rooms')]
     public function testWithCookieNoTokenLimit(bool $self): void {
         $this->room = $self ? $this->selfRoom() : $this->liveRoom();
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['nickname' => 'Anna', 'value' => 'AA'];
 
         $this->voteController()->join('ABCDEF');
@@ -213,7 +213,7 @@ class PublicNewTokenTest extends PublicControllerTestCase {
     #[DataProvider('exhaustedPosts')]
     public function testExhaustedLimitDoesNotStopPeopleWithACookie(string $method): void {
         $this->exhausted = [self::TOKEN_ID];
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['nickname' => 'Anna', 'value' => 'AA'];
 
         $response = $this->voteController()->$method('ABCDEF');
@@ -225,7 +225,7 @@ class PublicNewTokenTest extends PublicControllerTestCase {
     public function testExhaustedFloodGuardIs429BeforeTheJoin(bool $self): void {
         $this->room = $self ? $this->selfRoom() : $this->liveRoom();
         $this->exhausted = [self::JOIN_ID];
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['nickname' => 'Anna'];
 
         $response = $this->voteController()->join('ABCDEF');
@@ -244,9 +244,9 @@ class PublicNewTokenTest extends PublicControllerTestCase {
     }
 
     public function testFloodGuardGrowsWithTheInstancesPlayerCeiling(): void {
-        // occ config:app:set pulse max_players_per_room --value 1000
+        // occ config:app:set vibears max_players_per_room --value 1000
         $this->limitConfig[Limits::PLAYERS_PER_ROOM] = 1000;
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['nickname' => 'Anna'];
 
         $this->voteController()->join('ABCDEF');
@@ -256,7 +256,7 @@ class PublicNewTokenTest extends PublicControllerTestCase {
 
     public function testLowerCeilingKeepsTheFloodGuard(): void {
         $this->limitConfig[Limits::PLAYERS_PER_ROOM] = 50;
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['nickname' => 'Anna'];
 
         $this->voteController()->join('ABCDEF');

@@ -6,9 +6,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
-use OCA\Pulse\AppInfo\Application;
+use OCA\Vibears\AppInfo\Application;
 use OCP\IAppConfig;
 
 /**
@@ -25,8 +25,8 @@ use OCP\IAppConfig;
  *
  * Two app config keys, readable and writable with occ as well:
  *
- *   occ config:app:set pulse retention_enabled --value 1 --type integer
- *   occ config:app:set pulse retention_days --value 90 --type integer
+ *   occ config:app:set vibears retention_enabled --value 1 --type integer
+ *   occ config:app:set vibears retention_days --value 90 --type integer
  *
  * The number of days is clamped to MIN_DAYS..MAX_DAYS; an unreadable or
  * unset value keeps the default. "Enabled" is any value other than 0.

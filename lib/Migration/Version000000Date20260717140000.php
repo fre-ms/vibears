@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Migration;
+namespace OCA\Vibears\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -27,7 +27,7 @@ class Version000000Date20260717140000 extends SimpleMigrationStep {
         /** @var ISchemaWrapper $schema */
         $schema = $schemaClosure();
 
-        $polls = $schema->getTable('pulse_polls');
+        $polls = $schema->getTable('vibears_polls');
         if (!$polls->hasColumn('answer_key')) {
             $polls->addColumn('answer_key', Types::TEXT, ['notnull' => false, 'default' => null]);
         }

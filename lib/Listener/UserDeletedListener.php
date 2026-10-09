@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Listener;
+namespace OCA\Vibears\Listener;
 
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\RoomService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserDeletedEvent;
@@ -52,7 +52,7 @@ class UserDeletedListener implements IEventListener {
         try {
             $rooms = $this->roomMapper->findByOwner($uid);
         } catch (\Throwable $e) {
-            $this->logger->warning('Pulse: could not look up the rooms of deleted user {uid}.', [
+            $this->logger->warning('vibeARS: could not look up the rooms of deleted user {uid}.', [
                 'uid' => $uid,
                 'exception' => $e,
             ]);
@@ -64,7 +64,7 @@ class UserDeletedListener implements IEventListener {
                 $this->roomService->deleteRoom($room);
                 $deleted++;
             } catch (\Throwable $e) {
-                $this->logger->warning('Pulse: could not delete room {code} of deleted user {uid}.', [
+                $this->logger->warning('vibeARS: could not delete room {code} of deleted user {uid}.', [
                     'code' => $room->getCode(),
                     'uid' => $uid,
                     'exception' => $e,
@@ -74,7 +74,7 @@ class UserDeletedListener implements IEventListener {
         // Like the cleanup job: only a deletion is worth a line; most
         // accounts never had a room.
         if ($deleted > 0) {
-            $this->logger->info('Pulse: deleted {count} rooms of deleted user {uid}.', [
+            $this->logger->info('vibeARS: deleted {count} rooms of deleted user {uid}.', [
                 'count' => $deleted,
                 'uid' => $uid,
             ]);

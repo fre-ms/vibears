@@ -13,7 +13,7 @@ import { adminRetentionApi } from './util/routes.js'
 import { t } from './util/l10n.js'
 import { showError, showSuccess, serverMessage } from './toast.js'
 
-const state = loadState('pulse', 'retention', { enabled: false, days: 30, minDays: 1, maxDays: 3650 })
+const state = loadState('vibears', 'retention', { enabled: false, days: 30, minDays: 1, maxDays: 3650 })
 const form = document.getElementById('pulse-retention')
 const enabled = document.getElementById('pulse-retention-enabled')
 const days = document.getElementById('pulse-retention-days')
@@ -32,7 +32,7 @@ if (form && enabled && days && save) {
 		event.preventDefault()
 		const wanted = Math.round(Number(days.value))
 		if (!Number.isFinite(wanted) || wanted < state.minDays || wanted > state.maxDays) {
-			showError(t('pulse', 'Enter a number of days between {min} and {max}.', { min: state.minDays, max: state.maxDays }))
+			showError(t('vibears', 'Enter a number of days between {min} and {max}.', { min: state.minDays, max: state.maxDays }))
 			days.focus()
 			return
 		}
@@ -43,10 +43,10 @@ if (form && enabled && days && save) {
 			days.value = String(data.days)
 			reflect()
 			showSuccess(data.enabled
-				? t('pulse', 'Saved. Rooms unused for {days} days are deleted by the daily job.', { days: data.days })
-				: t('pulse', 'Saved. Rooms are kept until their owner deletes them.'))
+				? t('vibears', 'Saved. Rooms unused for {days} days are deleted by the daily job.', { days: data.days })
+				: t('vibears', 'Saved. Rooms are kept until their owner deletes them.'))
 		} catch (e) {
-			showError(serverMessage(e, t('pulse', 'Could not save.')))
+			showError(serverMessage(e, t('vibears', 'Could not save.')))
 		} finally {
 			save.disabled = false
 		}

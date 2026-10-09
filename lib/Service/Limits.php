@@ -5,9 +5,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
-use OCA\Pulse\AppInfo\Application;
+use OCA\Vibears\AppInfo\Application;
 use OCP\IAppConfig;
 
 /**
@@ -21,7 +21,7 @@ use OCP\IAppConfig;
  * Every cap has a default that suits a class or a conference and can be
  * changed per instance, for example
  *
- *   occ config:app:set pulse max_rooms_per_owner --value 500
+ *   occ config:app:set vibears max_rooms_per_owner --value 500
  *
  * Only a positive whole number overrides a default; anything else (unset,
  * 0, text) keeps it, so a typo never means "unlimited". A change takes

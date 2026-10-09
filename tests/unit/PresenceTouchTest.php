@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Presence;
-use OCA\Pulse\Db\PresenceMapper;
+use OCA\Vibears\Db\Presence;
+use OCA\Vibears\Db\PresenceMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\Entity;
 use OCP\IDBConnection;

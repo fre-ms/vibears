@@ -47,12 +47,12 @@ define('OC_CONSOLE', 1);
 require '/var/www/html/lib/versioncheck.php';
 require '/var/www/html/lib/base.php';
 
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\DemoService;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\DemoService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\RoomService;
 
 $rooms = \OCP\Server::get(RoomService::class);
 $deck = \OCP\Server::get(DeckService::class);
@@ -453,14 +453,14 @@ if ($cmd === 'fixture') {
     $poll = $pollMapper->find((int)$argv[3]);
     $kind = (string)($argv[4] ?? '');
     $arg = (int)($argv[5] ?? 0);
-    $voteMapper = \OCP\Server::get(\OCA\Pulse\Db\VoteMapper::class);
+    $voteMapper = \OCP\Server::get(\OCA\Vibears\Db\VoteMapper::class);
     $now = time();
     $i = 0;
     // Continues from the existing votes: a second call adds votes instead of
     // failing on token uniqueness (44 answers, then 46).
     $base = $voteMapper->countByPoll($poll->getId());
     $put = function (mixed $value) use ($voteMapper, $poll, $now, $base, &$i): void {
-        $vote = new \OCA\Pulse\Db\Vote();
+        $vote = new \OCA\Vibears\Db\Vote();
         $vote->setPollId($poll->getId());
         // "demo:" prefix -> the same clean-up as synthetic votes.
         $vote->setVoterToken('demo:fix-' . $poll->getId() . '-' . ($base + $i));
@@ -702,9 +702,9 @@ if ($cmd === 'store') {
 	 * with the index, so score and order are unambiguous and the podium shows
 	 * three different names without shared places.
 	 */
-	$voteMapper = \OCP\Server::get(\OCA\Pulse\Db\VoteMapper::class);
-	$playerMapper = \OCP\Server::get(\OCA\Pulse\Db\PlayerMapper::class);
-	$answers = \OCP\Server::get(\OCA\Pulse\Service\AnswerRules::class);
+	$voteMapper = \OCP\Server::get(\OCA\Vibears\Db\VoteMapper::class);
+	$playerMapper = \OCP\Server::get(\OCA\Vibears\Db\PlayerMapper::class);
+	$answers = \OCP\Server::get(\OCA\Vibears\Service\AnswerRules::class);
 	$names = ['Mira', 'Jonas', 'Aiko', 'Tomás', 'Lena', 'Omar', 'Nils', 'Fatou', 'Ida', 'Ben', 'Rosa', 'Yusuf'];
 	$sheet = ['11111', '11110', '11101', '10111', '11100', '10110',
 		'01101', '10100', '01010', '00101', '10000', '00010'];
@@ -717,7 +717,7 @@ if ($cmd === 'store') {
 			$raw = storeAnswer($poll, $sheet[$i][$q] === '1', $i + $q);
 			$normalized = $answers->normalizeValue($poll, $raw);
 			$elapsed = 2 + $i;
-			$vote = new \OCA\Pulse\Db\Vote();
+			$vote = new \OCA\Vibears\Db\Vote();
 			$vote->setPollId($poll->getId());
 			$vote->setVoterToken($token);
 			$vote->setPayload((string)json_encode($answers->quizPayload($poll, $normalized, $elapsed)));
@@ -740,7 +740,7 @@ if ($cmd === 'store') {
  * parts are `window` (timestamps written directly, an expired deadline without
  * waiting) and backdating the start and vote times in `race`.
  */
-$pace = \OCP\Server::get(\OCA\Pulse\Service\PaceService::class);
+$pace = \OCP\Server::get(\OCA\Vibears\Service\PaceService::class);
 
 /** Room by code, or abort with a message (no stack trace in the test-bench log). */
 function paceRoom(RoomMapper $roomMapper, string $code) {
@@ -754,14 +754,14 @@ function paceRoom(RoomMapper $roomMapper, string $code) {
 
 /** Window state after an action, one line of JSON. */
 function paceWindow($room, PollMapper $pollMapper): string {
-	return json_encode(\OCA\Pulse\Service\PaceService::windowView($room, time(), count($pollMapper->findByRoom($room->getId()))));
+	return json_encode(\OCA\Vibears\Service\PaceService::windowView($room, time(), count($pollMapper->findByRoom($room->getId()))));
 }
 
 /** Service call; domain errors (400/409 in the controller) as a message, exit 1. */
 function paceRun(callable $fn) {
 	try {
 		return $fn();
-	} catch (\InvalidArgumentException | \OCA\Pulse\Service\ConflictException $e) {
+	} catch (\InvalidArgumentException | \OCA\Vibears\Service\ConflictException $e) {
 		fwrite(STDERR, 'abgelehnt: ' . $e->getMessage() . "\n");
 		exit(1);
 	}
@@ -827,11 +827,11 @@ if ($cmd === 'window') {
 
 if ($cmd === 'remove') {
 	$room = paceRoom($roomMapper, (string)($argv[2] ?? ''));
-	$want = \OCA\Pulse\Service\TallyService::nameKey((string)($argv[3] ?? ''));
-	$playerMapper = \OCP\Server::get(\OCA\Pulse\Db\PlayerMapper::class);
+	$want = \OCA\Vibears\Service\TallyService::nameKey((string)($argv[3] ?? ''));
+	$playerMapper = \OCP\Server::get(\OCA\Vibears\Db\PlayerMapper::class);
 	$found = null;
 	foreach ($playerMapper->findByRoom($room->getId()) as $p) {
-		if (\OCA\Pulse\Service\TallyService::nameKey($p->getNickname()) === $want) {
+		if (\OCA\Vibears\Service\TallyService::nameKey($p->getNickname()) === $want) {
 			$found = $p;
 		}
 	}
@@ -852,10 +852,10 @@ if ($cmd === 'remove') {
  */
 if ($cmd === 'leave') {
 	$room = paceRoom($roomMapper, (string)($argv[2] ?? ''));
-	$want = \OCA\Pulse\Service\TallyService::nameKey((string)($argv[3] ?? ''));
+	$want = \OCA\Vibears\Service\TallyService::nameKey((string)($argv[3] ?? ''));
 	$found = null;
-	foreach (\OCP\Server::get(\OCA\Pulse\Db\PlayerMapper::class)->findByRoom($room->getId()) as $p) {
-		if (\OCA\Pulse\Service\TallyService::nameKey($p->getNickname()) === $want) {
+	foreach (\OCP\Server::get(\OCA\Vibears\Db\PlayerMapper::class)->findByRoom($room->getId()) as $p) {
+		if (\OCA\Vibears\Service\TallyService::nameKey($p->getNickname()) === $want) {
 			$found = $p;
 		}
 	}
@@ -864,7 +864,7 @@ if ($cmd === 'leave') {
 		fwrite(STDERR, 'Keine offene Frage bei „' . ($argv[3] ?? '') . "“ in diesem Raum\n");
 		exit(1);
 	}
-	\OCP\Server::get(\OCA\Pulse\Db\ProgressMapper::class)->closeIfOpen((int)$open->getId(), time());
+	\OCP\Server::get(\OCA\Vibears\Db\ProgressMapper::class)->closeIfOpen((int)$open->getId(), time());
 	echo 'ok verlassen: ', $found->getNickname(), ' (Frage ', $open->getSeq() + 1, ")\n";
 	exit(0);
 }
@@ -888,14 +888,14 @@ if ($cmd === 'reset') {
 if ($cmd === 'online') {
 	$room = paceRoom($roomMapper, (string)($argv[2] ?? ''));
 	$which = (string)($argv[3] ?? 'all');
-	$state = \OCP\Server::get(\OCA\Pulse\Service\PaceStateService::class)->progress($room, false);
+	$state = \OCP\Server::get(\OCA\Vibears\Service\PaceStateService::class)->progress($room, false);
 	$want = [];
 	foreach ($state['players'] as $p) {
 		if ($which === 'all' || ($which === 'finished' && $p['finished']) || ($which === 'started' && $p['started'])) {
 			$want[(int)$p['id']] = true;
 		}
 	}
-	$playerMapper = \OCP\Server::get(\OCA\Pulse\Db\PlayerMapper::class);
+	$playerMapper = \OCP\Server::get(\OCA\Vibears\Db\PlayerMapper::class);
 	$n = 0;
 	foreach ($playerMapper->findByRoom($room->getId()) as $p) {
 		if (isset($want[(int)$p->getId()])) {
@@ -987,17 +987,17 @@ function paceAnswer($poll, bool $correct, callable $rnd): mixed {
 function paceRace(string $code, int $count, int $seed): array {
 	$roomMapper = \OCP\Server::get(RoomMapper::class);
 	$pollMapper = \OCP\Server::get(PollMapper::class);
-	$pace = \OCP\Server::get(\OCA\Pulse\Service\PaceService::class);
+	$pace = \OCP\Server::get(\OCA\Vibears\Service\PaceService::class);
 	$room = paceRoom($roomMapper, $code);
 	$count = max(0, $count);
 	$rnd = paceRandom($seed);
-	$votes = \OCP\Server::get(\OCA\Pulse\Service\VoteService::class);
-	$codes = \OCP\Server::get(\OCA\Pulse\Service\CodeGenerator::class);
-	$playerMapper = \OCP\Server::get(\OCA\Pulse\Db\PlayerMapper::class);
-	$progressMapper = \OCP\Server::get(\OCA\Pulse\Db\ProgressMapper::class);
-	$voteMapper = \OCP\Server::get(\OCA\Pulse\Db\VoteMapper::class);
+	$votes = \OCP\Server::get(\OCA\Vibears\Service\VoteService::class);
+	$codes = \OCP\Server::get(\OCA\Vibears\Service\CodeGenerator::class);
+	$playerMapper = \OCP\Server::get(\OCA\Vibears\Db\PlayerMapper::class);
+	$progressMapper = \OCP\Server::get(\OCA\Vibears\Db\ProgressMapper::class);
+	$voteMapper = \OCP\Server::get(\OCA\Vibears\Db\VoteMapper::class);
 	$db = \OCP\Server::get(\OCP\IDBConnection::class);
-	if (!\OCA\Pulse\Service\PaceService::isSelf($room)) {
+	if (!\OCA\Vibears\Service\PaceService::isSelf($room)) {
 		fwrite(STDERR, "Raum läuft nicht im eigenen Tempo\n");
 		exit(1);
 	}
@@ -1008,12 +1008,12 @@ function paceRace(string $code, int $count, int $seed): array {
 		'Uwe', 'Vera', 'Wim', 'Yara', 'Zoe', 'Aiko', 'Bruno', 'Clara', 'Deniz', 'Elif'];
 	$taken = [];
 	foreach ($playerMapper->findByRoom($room->getId()) as $p) {
-		$taken[\OCA\Pulse\Service\TallyService::nameKey($p->getNickname())] = true;
+		$taken[\OCA\Vibears\Service\TallyService::nameKey($p->getNickname())] = true;
 	}
 	$people = [];
 	for ($i = 0; count($people) < $count; $i++) {
 		$name = $names[$i % count($names)] . ($i >= count($names) ? ' ' . (intdiv($i, count($names)) + 1) : '');
-		$nk = \OCA\Pulse\Service\TallyService::nameKey($name);
+		$nk = \OCA\Vibears\Service\TallyService::nameKey($name);
 		if (isset($taken[$nk])) {
 			continue;
 		}
@@ -1025,8 +1025,8 @@ function paceRace(string $code, int $count, int $seed): array {
 
 	$room = $roomMapper->findByCode($room->getCode());
 	$now = time();
-	$state = \OCA\Pulse\Service\PaceService::deriveState($room, $now);
-	$order = \OCA\Pulse\Service\PaceService::order($room);
+	$state = \OCA\Vibears\Service\PaceService::deriveState($room, $now);
+	$order = \OCA\Vibears\Service\PaceService::order($room);
 	$n = count($order);
 	$polls = [];
 	foreach ($order as $pid) {
@@ -1034,7 +1034,7 @@ function paceRace(string $code, int $count, int $seed): array {
 	}
 	$timed = (bool)$room->getTimed();
 	$openRow = function (string $token) use ($progressMapper, $room) {
-		return \OCA\Pulse\Service\PaceService::openOf($progressMapper->findByRoomAndToken($room->getId(), $token));
+		return \OCA\Vibears\Service\PaceService::openOf($progressMapper->findByRoomAndToken($room->getId(), $token));
 	};
 	// Backdate the row (raw): that way the person's clock has already been running for a while.
 	$backdate = function ($row, int $seconds) use ($progressMapper): void {
@@ -1045,7 +1045,7 @@ function paceRace(string $code, int $count, int $seed): array {
 	$expect = [];
 	$perQ = array_fill(0, $n, ['reached' => 0, 'answered' => 0, 'correct' => 0, 'pending' => 0]);
 	$skippers = 0;
-	if ($state === \OCA\Pulse\Service\PaceService::STATE_OPEN && $n > 0) {
+	if ($state === \OCA\Vibears\Service\PaceService::STATE_OPEN && $n > 0) {
 		foreach ($people as $idx => $who) {
 			$token = $who['token'];
 			$e = ['nickname' => $who['nickname'], 'k' => 0, 'started' => false, 'finished' => false,
@@ -1121,7 +1121,7 @@ function paceRace(string $code, int $count, int $seed): array {
 		// All votes of this call back by 60 s -> final (fw is 3 or 6 s).
 		foreach (array_chunk(array_column($people, 'token'), 100) as $chunk) {
 			$qb = $db->getQueryBuilder();
-			$qb->update('pulse_votes')
+			$qb->update('vibears_votes')
 				->set('created_at', $qb->createFunction('created_at - 60'))
 				->where($qb->expr()->in('poll_id', $qb->createNamedParameter($order, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_INT_ARRAY)))
 				->andWhere($qb->expr()->in('voter_token', $qb->createNamedParameter($chunk, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_STR_ARRAY)));

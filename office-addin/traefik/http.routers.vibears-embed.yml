@@ -7,11 +7,11 @@
 #
 # This router is more specific (Host + PathPrefix) and has a higher priority than the
 # router your provider creates for Nextcloud (e.g. via a Docker label), so it
-# applies ONLY to /apps/pulse/screen/… and /apps/pulse/embed (the add-in shell).
+# applies ONLY to /apps/vibears/screen/… and /apps/vibears/embed (the add-in shell).
 # All other Nextcloud paths keep SAMEORIGIN.
 # Both path forms: without "htaccess.IgnoreFrontController" Nextcloud generates
-# addresses prefixed with /index.php. Measured on 15.08.2026: /apps/pulse/embed came
-# back without the header, /index.php/apps/pulse/embed with SAMEORIGIN: the same
+# addresses prefixed with /index.php. Measured on 15.08.2026: /apps/vibears/embed came
+# back without the header, /index.php/apps/vibears/embed with SAMEORIGIN: the same
 # page, two addresses, and only one of them was unblocked.
 # Adjust: Host, `entrypoints`, `service` (your provider's Nextcloud service,
 # cross-provider with an @ suffix) and `certResolver`. Middlewares on the entrypoint
@@ -21,17 +21,17 @@ http:
   routers:
     pulse-embed-secure:
       entrypoints: websecure
-      rule: "Host(`nextcloud.example.com`) && (PathPrefix(`/apps/pulse/screen/`) || PathPrefix(`/apps/pulse/embed`) || PathPrefix(`/index.php/apps/pulse/screen/`) || PathPrefix(`/index.php/apps/pulse/embed`))"
+      rule: "Host(`nextcloud.example.com`) && (PathPrefix(`/apps/vibears/screen/`) || PathPrefix(`/apps/vibears/embed`) || PathPrefix(`/index.php/apps/vibears/screen/`) || PathPrefix(`/index.php/apps/vibears/embed`))"
       priority: 3000
       service: nextcloud@docker        # adjust
       middlewares:
-        - pulse-strip-xfo@file
+        - vibears-strip-xfo@file
       tls:
         certResolver: letsencrypt      # adjust
 
   middlewares:
     # Removes X-Frame-Options from the response (empty value = header removed).
-    pulse-strip-xfo:
+    vibears-strip-xfo:
       headers:
         customResponseHeaders:
           X-Frame-Options: ""

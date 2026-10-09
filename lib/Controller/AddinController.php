@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Controller;
+namespace OCA\Vibears\Controller;
 
-use OCA\Pulse\AppInfo\Application;
-use OCA\Pulse\Service\AddinManifest;
+use OCA\Vibears\AppInfo\Application;
+use OCA\Vibears\Service\AddinManifest;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -47,12 +47,12 @@ class AddinController extends Controller {
         // address the person is currently logged in under — if the presenting
         // laptop reaches that address, it also reaches the add-in.
         $origin = $this->manifest->origin($this->urlGenerator->getAbsoluteURL('/'));
-        $embed = $this->urlGenerator->linkToRouteAbsolute('pulse.public.embed');
+        $embed = $this->urlGenerator->linkToRouteAbsolute('vibears.public.embed');
         $version = $this->appManager->getAppVersion(Application::APP_ID);
 
         return new DataDownloadResponse(
             $this->manifest->build($origin, $embed, $version),
-            'pulse-addin.xml',
+            'vibears-addin.xml',
             'application/xml',
         );
     }

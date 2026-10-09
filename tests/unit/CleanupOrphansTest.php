@@ -5,19 +5,19 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\BackgroundJob\CleanupStaleRoomsJob;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\PresenceMapper;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Db\VoteMapper;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\Retention;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\BackgroundJob\CleanupStaleRoomsJob;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\PresenceMapper;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Db\VoteMapper;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\Retention;
+use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
 use OCP\IConfig;

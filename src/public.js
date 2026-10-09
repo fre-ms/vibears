@@ -12,14 +12,14 @@ import Participant from './Participant.vue'
 import Screen from './Screen.vue'
 
 // Translations global: t/n are available in template and script (app ID
-// "pulse"). On the public page the language comes from the browser
+// "vibears"). On the public page the language comes from the browser
 // (Accept-Language), not from an account.
 Vue.prototype.t = t
 Vue.prototype.n = n
 
 // The same bundle for two public pages: /s/{code} = participant (voting),
 // /screen/{code} = projector/audience view (display only). The controller sets the flag.
-const isScreen = loadState('pulse', 'screen', false)
+const isScreen = loadState('vibears', 'screen', false)
 
 // eslint-disable-next-line no-new
 new Vue({

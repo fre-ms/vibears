@@ -4,7 +4,7 @@
 -->
 <template>
 	<div class="pulse-lb" :class="{ 'is-animating': animate, 'is-split': split, 'is-solo': split && !listRows.length }">
-		<p v-if="!rows.length" class="lb-empty">{{ t('pulse', 'No points yet.') }}</p>
+		<p v-if="!rows.length" class="lb-empty">{{ t('vibears', 'No points yet.') }}</p>
 
 		<!-- Final standings on the projector (§4.3): two columns. This uses the wide format,
 		     halves the height needed and brings back places 4–8, which used to be
@@ -17,8 +17,8 @@
 						<div class="win-card" :class="{ 'you-ring': p.me }">
 							<span class="podium-name">
 								<span class="podium-name-txt">{{ p.nickname }}</span>
-								<span v-if="p.me" class="pulse-du lb-du">{{ t('pulse', 'You') }}</span>
-								<span v-if="p.shared" class="lb-tie">{{ t('pulse', 'shared') }}</span>
+								<span v-if="p.me" class="pulse-du lb-du">{{ t('vibears', 'You') }}</span>
+								<span v-if="p.shared" class="lb-tie">{{ t('vibears', 'shared') }}</span>
 							</span>
 							<span class="podium-score">{{ p.score }}</span>
 						</div>
@@ -31,7 +31,7 @@
 					<StageRow v-for="(r, i) in listRows" :key="'sr' + i"
 						:badge="r.rank" :label="r.nickname" :value="String(r.score)" :pct="0" />
 				</div>
-				<p v-if="restCount" class="lb-rest">{{ t('pulse', '+{count} more', { count: restCount }) }}</p>
+				<p v-if="restCount" class="lb-rest">{{ t('vibears', '+{count} more', { count: restCount }) }}</p>
 			</div>
 		</template>
 
@@ -46,8 +46,8 @@
 						<span class="medal" :class="metalCls(p.rank)" aria-hidden="true">{{ p.rank }}</span>
 						<span class="podium-name">
 							<span class="podium-name-txt">{{ p.nickname }}</span>
-							<span v-if="p.me" class="pulse-du lb-du">{{ t('pulse', 'You') }}</span>
-							<span v-if="p.shared" class="lb-tie">{{ t('pulse', 'shared') }}</span>
+							<span v-if="p.me" class="pulse-du lb-du">{{ t('vibears', 'You') }}</span>
+							<span v-if="p.shared" class="lb-tie">{{ t('vibears', 'shared') }}</span>
 						</span>
 						<span class="podium-score">{{ p.score }}</span>
 					</div>
@@ -60,8 +60,8 @@
 		<ol v-if="!split" class="lb-list">
 			<li v-for="(r, i) in listRows" :key="r.nickname + i" class="lb-row" :class="{ 'is-me': r.me }">
 				<span class="lb-rank">{{ r.rank }}</span>
-				<span class="lb-name"><span class="lb-name-txt">{{ r.nickname }}</span><span v-if="r.me" class="pulse-du lb-du">{{ t('pulse', 'You') }}</span><span v-if="r.shared" class="lb-tie">{{ t('pulse', 'shared') }}</span></span>
-				<span class="lb-correct">{{ t('pulse', '{count} correct', { count: r.correct }) }}</span>
+				<span class="lb-name"><span class="lb-name-txt">{{ r.nickname }}</span><span v-if="r.me" class="pulse-du lb-du">{{ t('vibears', 'You') }}</span><span v-if="r.shared" class="lb-tie">{{ t('vibears', 'shared') }}</span></span>
+				<span class="lb-correct">{{ t('vibears', '{count} correct', { count: r.correct }) }}</span>
 				<span class="lb-score">{{ r.score }}</span>
 			</li>
 		</ol>

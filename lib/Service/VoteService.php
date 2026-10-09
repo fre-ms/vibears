@@ -5,17 +5,17 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\Progress;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\Vote;
-use OCA\Pulse\Db\VoteMapper;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\Progress;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\Vote;
+use OCA\Vibears\Db\VoteMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
@@ -360,7 +360,7 @@ class VoteService {
         }
         try {
             $this->limiter->registerAnonRequest(
-                'pulse-player-' . $room->getId(),
+                'vibears-player-' . $room->getId(),
                 $this->limits->get(Limits::NEW_PLAYERS_PER_ADDRESS),
                 PaceService::JOIN_PERIOD,
                 $remoteAddress,
@@ -815,7 +815,7 @@ class VoteService {
     public function selfLeaderboard(Room $room, #[\SensitiveParameter] ?string $meToken, int $limit = 0, bool $cached = false): array {
         $now = $this->timeFactory->getTime();
         if ($cached) {
-            $cache = $this->cacheFactory->createLocal('pulse');
+            $cache = $this->cacheFactory->createLocal('vibears');
             $key = 'lb:' . $room->getId() . ':' . $room->getOpenedAt()
                 . ':' . PaceService::effectiveClosedAt($room, $now) . ':' . $room->getClosesAt()
                 . ':' . $room->getReleasedAt() . ':' . intdiv($now, self::LEADERBOARD_BUCKET);

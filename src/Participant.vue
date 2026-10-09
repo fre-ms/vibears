@@ -11,58 +11,58 @@
 			     moderator opens another question, it closes by itself. -->
 			<div v-if="review" class="review">
 				<div class="review-head">
-					<h1 class="review-h">{{ isPaced && reviewState !== 'released' ? t('pulse', 'Your answers') : t('pulse', 'All results') }}</h1>
-					<button class="pulse-btn is-secondary is-sm" @click="closeReview">{{ t('pulse', 'Back') }}</button>
+					<h1 class="review-h">{{ isPaced && reviewState !== 'released' ? t('vibears', 'Your answers') : t('vibears', 'All results') }}</h1>
+					<button class="pulse-btn is-secondary is-sm" @click="closeReview">{{ t('vibears', 'Back') }}</button>
 				</div>
 				<p v-if="review.title" class="review-title">{{ review.title }}</p>
-				<p v-if="review.practice" class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run · does not count') }}</p>
-				<p v-if="myRank" class="myrank review-myrank">{{ t('pulse', 'Place') }} <b>{{ myRank.rank }}</b> · {{ n('pulse', '%n point', '%n points', myRank.score) }}</p>
+				<p v-if="review.practice" class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</p>
+				<p v-if="myRank" class="myrank review-myrank">{{ t('vibears', 'Place') }} <b>{{ myRank.rank }}</b> · {{ n('vibears', '%n point', '%n points', myRank.score) }}</p>
 				<!-- Self-paced before the release: no place, but your own points (§2.8). -->
-				<p v-else-if="isPaced && review.myScore != null" class="myrank review-myrank">{{ n('pulse', '%n point', '%n points', review.myScore) }}</p>
+				<p v-else-if="isPaced && review.myScore != null" class="myrank review-myrank">{{ n('vibears', '%n point', '%n points', review.myScore) }}</p>
 				<ol class="review-list">
 					<li v-for="(it, i) in review.items" :key="it.poll.id" class="review-item">
 						<h2 class="review-q"><span class="review-num">{{ i + 1 }}</span><span class="review-q-text">{{ it.poll.question }}</span></h2>
 						<p v-if="it.mine" class="review-mine" :class="{ 'is-ok': it.mine.correct === true, 'is-no': it.mine.correct === false }">
-							<span class="review-mine-lbl">{{ t('pulse', 'Your answer:') }}</span> <b>{{ myAnswerText(it) }}</b>
+							<span class="review-mine-lbl">{{ t('vibears', 'Your answer:') }}</span> <b>{{ myAnswerText(it) }}</b>
 							<span v-if="it.mine.correct === true" class="pulse-chip is-success review-chip"><PulseIcon name="check" size="1em" /> +{{ it.mine.points }}</span>
-							<span v-else-if="it.mine.correct === false" class="pulse-chip is-error review-chip"><PulseIcon name="close" size="1em" /> {{ t('pulse', 'missed') }}</span>
+							<span v-else-if="it.mine.correct === false" class="pulse-chip is-error review-chip"><PulseIcon name="close" size="1em" /> {{ t('vibears', 'missed') }}</span>
 							<!-- Self-paced: no verdict yet (free text still open, or "At the end"). -->
-							<span v-else-if="it.mine.verdict === 'pending'" class="pulse-chip is-warning review-chip"><PulseIcon name="hourglass" size="1em" /> {{ t('pulse', 'Being checked') }}</span>
-							<span v-else-if="it.mine.verdict === 'saved'" class="pulse-chip is-neutral review-chip"><PulseIcon name="check" size="1em" /> {{ t('pulse', 'Answer saved') }}</span>
+							<span v-else-if="it.mine.verdict === 'pending'" class="pulse-chip is-warning review-chip"><PulseIcon name="hourglass" size="1em" /> {{ t('vibears', 'Being checked') }}</span>
+							<span v-else-if="it.mine.verdict === 'saved'" class="pulse-chip is-neutral review-chip"><PulseIcon name="check" size="1em" /> {{ t('vibears', 'Answer saved') }}</span>
 						</p>
-						<p v-else class="muted review-mine is-none">{{ t('pulse', 'Not answered') }}</p>
+						<p v-else class="muted review-mine is-none">{{ t('vibears', 'Not answered') }}</p>
 						<ResultsView v-if="it.revealed && it.results" :results="it.results" :correct-id="it.poll.correctOption || ''" :correct-ids="(it.poll.answerKey && it.poll.answerKey.correct) || []" :answer-key="it.poll.answerKey || null" />
-						<p v-else class="muted review-hidden">{{ t('pulse', 'Not revealed yet.') }}</p>
+						<p v-else class="muted review-hidden">{{ t('vibears', 'Not revealed yet.') }}</p>
 					</li>
 				</ol>
 				<Leaderboard v-if="review.leaderboard && review.leaderboard.length" :rows="review.leaderboard" :limit="10" :me="review.leaderboardMe || null" />
-				<button class="pulse-btn is-secondary review-back" @click="closeReview">{{ t('pulse', 'Back') }}</button>
+				<button class="pulse-btn is-secondary review-back" @click="closeReview">{{ t('vibears', 'Back') }}</button>
 			</div>
 
 			<div v-else-if="!code" class="center entry">
 				<p class="eyebrow-p">vibeARS</p>
-				<h1>{{ t('pulse', 'Enter code') }}</h1>
-				<div class="digits" role="group" :aria-label="t('pulse', 'Room code, 6 characters')">
+				<h1>{{ t('vibears', 'Enter code') }}</h1>
+				<div class="digits" role="group" :aria-label="t('vibears', 'Room code, 6 characters')">
 					<input v-for="i in 6" :key="i" ref="digits"
 						class="digit" type="text" maxlength="1"
 						autocapitalize="characters" autocomplete="off" spellcheck="false"
-						:value="digits[i - 1]" :aria-label="t('pulse', 'Character {number} of 6', { number: i })"
+						:value="digits[i - 1]" :aria-label="t('vibears', 'Character {number} of 6', { number: i })"
 						@input="onDigit(i - 1, $event)"
 						@keydown.delete="onDelete(i - 1, $event)"
 						@paste="onPaste">
 				</div>
 				<p v-if="entryError" class="entry-error">{{ entryError }}</p>
 				<button class="submit" :disabled="!entryValid || checking" @click="go">
-					{{ checking ? t('pulse', 'Checking …') : t('pulse', 'Join') }}
+					{{ checking ? t('vibears', 'Checking …') : t('vibears', 'Join') }}
 				</button>
 			</div>
 
 			<!-- Unknown room (§4.11) — no dead end: a way back to the code entry -->
 			<div v-else-if="!roomExists" class="center empty-part">
 				<p class="eyebrow-p">vibeARS</p>
-				<h1>{{ t('pulse', 'This room does not exist.') }}</h1>
-				<p class="muted">{{ t('pulse', 'That code is not right — type a new one.') }}</p>
-				<a class="pulse-btn is-primary empty-cta" :href="joinPagePath">{{ t('pulse', 'Enter a new code') }}</a>
+				<h1>{{ t('vibears', 'This room does not exist.') }}</h1>
+				<p class="muted">{{ t('vibears', 'That code is not right — type a new one.') }}</p>
+				<a class="pulse-btn is-primary empty-cta" :href="joinPagePath">{{ t('vibears', 'Enter a new code') }}</a>
 			</div>
 
 			<!-- Quiz: choose a name (§4.6). In self-paced mode only while joining is still
@@ -73,26 +73,26 @@
 				<p v-if="roomTitle" class="room-title">{{ roomTitle }}</p>
 				<p v-if="isPaced && paceNotice" class="pulse-notice is-info pace-notice" role="status">
 					<PulseIcon :name="paceNotice === 'removed' ? 'warning' : 'reset'" size="1.1em" class="pulse-notice-ico" />
-					<span>{{ paceNotice === 'removed' ? t('pulse', 'You were removed from this quiz.') : t('pulse', 'A new round has started — choose your name.') }}</span>
+					<span>{{ paceNotice === 'removed' ? t('vibears', 'You were removed from this quiz.') : t('vibears', 'A new round has started — choose your name.') }}</span>
 				</p>
 				<PulseIcon name="quiz" size="2.4em" class="nick-ico" />
-				<h1>{{ t('pulse', 'What is your name?') }}</h1>
-				<p class="muted nick-hint">{{ t('pulse', 'Your name appears on the leaderboard.') }}</p>
+				<h1>{{ t('vibears', 'What is your name?') }}</h1>
+				<p class="muted nick-hint">{{ t('vibears', 'Your name appears on the leaderboard.') }}</p>
 				<p v-if="isPaced && paceUntil" class="pace-when">
 					<PulseIcon name="calendar" size="1.1em" />
-					<span>{{ t('pulse', 'Open until {time}', { time: paceUntil }) }}</span>
-					<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('pulse', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
+					<span>{{ t('vibears', 'Open until {time}', { time: paceUntil }) }}</span>
+					<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
 				</p>
 				<label class="nick-field">
 					<input v-model="nickInput" class="nick-input" type="text" maxlength="24"
-						autocomplete="off" :placeholder="t('pulse', 'Your name')" @keyup.enter="join">
+						autocomplete="off" :placeholder="t('vibears', 'Your name')" @keyup.enter="join">
 					<span class="nick-count">{{ nickInput.length }} / 24</span>
 				</label>
 				<p v-if="nickError" class="entry-error">{{ nickError }}</p>
 				<button class="submit" :disabled="joining || !nickInput.trim()" @click="join">
-					{{ joining ? '…' : (isPaced ? t('pulse', 'Next') : t('pulse', 'Let’s go')) }}
+					{{ joining ? '…' : (isPaced ? t('vibears', 'Next') : t('vibears', 'Let’s go')) }}
 				</button>
-				<p v-if="isPaced && paceState === 'open'" class="muted pace-device">{{ t('pulse', 'Started on another device? Ask your host — you would start again from question 1.') }}</p>
+				<p v-if="isPaced && paceState === 'open'" class="muted pace-device">{{ t('vibears', 'Started on another device? Ask your host — you would start again from question 1.') }}</p>
 			</div>
 
 			<!-- ══════════ SELF-PACED: CARDS WITHOUT A QUESTION (§2.2) ══════════ -->
@@ -100,81 +100,81 @@
 			     key rebuilds every card: otherwise e.g. "See your answers" would take over
 			     the element and focus of the "Next" that was just tapped. -->
 			<div v-else-if="paceCard" :key="'pace-' + paceCard" class="center pace-card" :data-card="paceCard">
-				<p v-if="practice" class="pace-practice"><span class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run · does not count') }}</span></p>
+				<p v-if="practice" class="pace-practice"><span class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span></p>
 
 				<!-- Without a name and closed: joining is no longer possible. -->
 				<template v-if="paceCard === 'shut'">
 					<p class="code-badge">{{ spacedCode }}</p>
 					<p v-if="roomTitle" class="room-title">{{ roomTitle }}</p>
 					<PulseIcon name="lock" size="2.4em" class="state-ico" />
-					<h1 class="pace-h" tabindex="-1">{{ t('pulse', 'The quiz is closed.') }}</h1>
+					<h1 class="pace-h" tabindex="-1">{{ t('vibears', 'The quiz is closed.') }}</h1>
 				</template>
 
 				<!-- With a name, no question yet: wait (draft), start, continue. -->
 				<template v-else-if="paceCard === 'wait' || paceCard === 'start' || paceCard === 'continue'">
 					<p class="code-badge">{{ spacedCode }}</p>
 					<p v-if="roomTitle" class="room-title">{{ roomTitle }}</p>
-					<h1 class="you pace-you" tabindex="-1">{{ t('pulse', 'Ready, {name}', { name: nickname }) }}</h1>
+					<h1 class="you pace-you" tabindex="-1">{{ t('vibears', 'Ready, {name}', { name: nickname }) }}</h1>
 					<template v-if="paceCard === 'wait'">
 						<p class="wait-dot" />
-						<p class="muted pace-line">{{ t('pulse', 'The quiz has not started yet.') }}</p>
-						<p v-if="present > 0" class="muted pace-momentum"><b>{{ present }}</b> {{ n('pulse', 'person is already here', 'people are already here', present) }}</p>
+						<p class="muted pace-line">{{ t('vibears', 'The quiz has not started yet.') }}</p>
+						<p v-if="present > 0" class="muted pace-momentum"><b>{{ present }}</b> {{ n('vibears', 'person is already here', 'people are already here', present) }}</p>
 					</template>
 					<!-- Start (§2.4): only this tap starts the personal clock. -->
 					<template v-else-if="paceCard === 'start'">
-						<p class="pace-facts">{{ n('pulse', '%n question', '%n questions', paceWindow.total) }} · {{ paceWindow.timed ? t('pulse', 'with time limit') : t('pulse', 'no time limit') }} · {{ paceWindow.feedback === 'end' ? t('pulse', 'results at the end') : t('pulse', 'feedback after each question') }}</p>
+						<p class="pace-facts">{{ n('vibears', '%n question', '%n questions', paceWindow.total) }} · {{ paceWindow.timed ? t('vibears', 'with time limit') : t('vibears', 'no time limit') }} · {{ paceWindow.feedback === 'end' ? t('vibears', 'results at the end') : t('vibears', 'feedback after each question') }}</p>
 						<p v-if="paceUntil" class="pace-when">
 							<PulseIcon name="calendar" size="1.1em" />
-							<span>{{ t('pulse', 'Open until {time}', { time: paceUntil }) }}</span>
-							<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('pulse', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
+							<span>{{ t('vibears', 'Open until {time}', { time: paceUntil }) }}</span>
+							<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
 						</p>
 						<ul class="muted pace-hints">
-							<li>{{ t('pulse', 'Once started, there is no going back to earlier questions.') }}</li>
-							<li>{{ t('pulse', 'Finish on this device — your progress is saved in this browser.') }}</li>
-							<li v-if="paceWindow.timed">{{ t('pulse', 'Each question’s timer keeps running while you’re away.') }}</li>
+							<li>{{ t('vibears', 'Once started, there is no going back to earlier questions.') }}</li>
+							<li>{{ t('vibears', 'Finish on this device — your progress is saved in this browser.') }}</li>
+							<li v-if="paceWindow.timed">{{ t('vibears', 'Each question’s timer keeps running while you’re away.') }}</li>
 						</ul>
-						<button class="submit" :disabled="nextBusy" @click="nextStep">{{ nextBusy ? '…' : t('pulse', 'Start quiz') }}</button>
+						<button class="submit" :disabled="nextBusy" @click="nextStep">{{ nextBusy ? '…' : t('vibears', 'Start quiz') }}</button>
 					</template>
 					<!-- Started, but no open question (aborted between two questions): /next heals it. -->
 					<template v-else>
-						<p class="muted pace-line">{{ t('pulse', 'Your quiz continues.') }}</p>
-						<button class="submit" :disabled="nextBusy" @click="nextStep">{{ nextBusy ? '…' : t('pulse', 'Next') }}</button>
+						<p class="muted pace-line">{{ t('vibears', 'Your quiz continues.') }}</p>
+						<button class="submit" :disabled="nextBusy" @click="nextStep">{{ nextBusy ? '…' : t('vibears', 'Next') }}</button>
 					</template>
 				</template>
 
 				<!-- Through (§2.7): "done" means no question left and progress.finished. -->
 				<template v-else-if="paceCard === 'through'">
 					<PulseIcon name="flag" size="2.4em" class="pace-flag" />
-					<h1 class="pace-h" tabindex="-1">{{ t('pulse', 'You’re through!') }}</h1>
-					<p v-if="myScore !== null" class="pace-score">{{ n('pulse', '%n point', '%n points', myScore) }}</p>
-					<p v-if="myScore !== null && !practice && paceClosesAt === 0" class="muted pace-line">{{ t('pulse', 'The final standings follow when the quiz ends.') }}</p>
-					<p v-else-if="myScore !== null && !practice" class="muted pace-line">{{ t('pulse', 'The final standings follow once your host releases the results.') }}</p>
-					<p v-else class="muted pace-line">{{ t('pulse', 'Results come once your host releases them.') }}</p>
-					<button class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('pulse', 'Loading …') : t('pulse', 'See your answers') }}</button>
+					<h1 class="pace-h" tabindex="-1">{{ t('vibears', 'You’re through!') }}</h1>
+					<p v-if="myScore !== null" class="pace-score">{{ n('vibears', '%n point', '%n points', myScore) }}</p>
+					<p v-if="myScore !== null && !practice && paceClosesAt === 0" class="muted pace-line">{{ t('vibears', 'The final standings follow when the quiz ends.') }}</p>
+					<p v-else-if="myScore !== null && !practice" class="muted pace-line">{{ t('vibears', 'The final standings follow once your host releases the results.') }}</p>
+					<p v-else class="muted pace-line">{{ t('vibears', 'Results come once your host releases them.') }}</p>
+					<button class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See your answers') }}</button>
 				</template>
 
 				<!-- Closed with a name: never started -> only the heading. -->
 				<template v-else-if="paceCard === 'closed'">
 					<PulseIcon name="lock" size="2.4em" class="state-ico" />
-					<h1 class="pace-h" tabindex="-1">{{ t('pulse', 'The quiz is closed.') }}</h1>
+					<h1 class="pace-h" tabindex="-1">{{ t('vibears', 'The quiz is closed.') }}</h1>
 					<template v-if="progress && progress.started">
 						<p v-if="paceLostDraft" class="pulse-notice is-warn pace-notice" role="status">
 							<PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" />
-							<span>{{ t('pulse', 'Your last answer was not sent in time.') }}</span>
+							<span>{{ t('vibears', 'Your last answer was not sent in time.') }}</span>
 						</p>
-						<p v-if="!progress.finished" class="muted pace-line">{{ t('pulse', 'You did not finish every question — your answers so far count.') }}</p>
-						<p v-if="myScore !== null" class="pace-score">{{ n('pulse', '%n point', '%n points', myScore) }}</p>
-						<p class="muted pace-line">{{ t('pulse', 'Results come once your host releases them.') }}</p>
-						<button class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('pulse', 'Loading …') : t('pulse', 'See your answers') }}</button>
+						<p v-if="!progress.finished" class="muted pace-line">{{ t('vibears', 'You did not finish every question — your answers so far count.') }}</p>
+						<p v-if="myScore !== null" class="pace-score">{{ n('vibears', '%n point', '%n points', myScore) }}</p>
+						<p class="muted pace-line">{{ t('vibears', 'Results come once your host releases them.') }}</p>
+						<button class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See your answers') }}</button>
 					</template>
 				</template>
 
 				<!-- Released without a leaderboard (practice run, nobody joined): over. -->
 				<template v-else>
-					<h1 class="end-title pace-h" tabindex="-1">{{ t('pulse', 'Quiz finished') }}</h1>
-					<p v-if="nickname && myScore !== null" class="pace-score">{{ n('pulse', '%n point', '%n points', myScore) }}</p>
-					<p class="end-thanks">{{ t('pulse', 'Thanks for joining in.') }}<br><span class="code-badge is-inline">{{ spacedCode }}</span></p>
-					<button v-if="nickname" class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('pulse', 'Loading …') : t('pulse', 'See all results') }}</button>
+					<h1 class="end-title pace-h" tabindex="-1">{{ t('vibears', 'Quiz finished') }}</h1>
+					<p v-if="nickname && myScore !== null" class="pace-score">{{ n('vibears', '%n point', '%n points', myScore) }}</p>
+					<p class="end-thanks">{{ t('vibears', 'Thanks for joining in.') }}<br><span class="code-badge is-inline">{{ spacedCode }}</span></p>
+					<button v-if="nickname" class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See all results') }}</button>
 				</template>
 			</div>
 
@@ -182,11 +182,11 @@
 			<div v-else-if="!poll && !paceFinal" class="center">
 				<p class="code-badge">{{ spacedCode }}</p>
 				<p v-if="roomTitle" class="room-title">{{ roomTitle }}</p>
-				<p v-if="isQuiz" class="you">{{ t('pulse', 'Ready, {name}', { name: nickname }) }}</p>
+				<p v-if="isQuiz" class="you">{{ t('vibears', 'Ready, {name}', { name: nickname }) }}</p>
 				<p class="wait-dot" />
-				<p class="muted">{{ t('pulse', 'Waiting for the next question …') }}</p>
+				<p class="muted">{{ t('vibears', 'Waiting for the next question …') }}</p>
 				<button class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">
-					{{ reviewBusy ? t('pulse', 'Loading …') : t('pulse', 'See all results') }}
+					{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See all results') }}
 				</button>
 			</div>
 
@@ -195,46 +195,46 @@
 			     leaderboard excerpt. Poll: your own answer first (§8.6). -->
 			<div v-else-if="quizEnded || paceFinal" class="h-app">
 				<div class="h-scroll">
-					<p class="end-title">{{ t('pulse', 'Quiz finished') }}</p>
+					<p class="end-title">{{ t('vibears', 'Quiz finished') }}</p>
 					<div v-if="myRank" class="big-place">
 						<span class="big-place-n">{{ myRank.rank }}</span>
-						<span class="big-place-of">{{ t('pulse', 'of {total}', { total: leaderboardCount }) }} · {{ n('pulse', '%n point', '%n points', myRank.score) }}</span>
+						<span class="big-place-of">{{ t('vibears', 'of {total}', { total: leaderboardCount }) }} · {{ n('vibears', '%n point', '%n points', myRank.score) }}</span>
 					</div>
 					<!-- No podium replica: the podium is the big screen's job (§8.7). -->
 					<Leaderboard :rows="leaderboard" :limit="3" :top-only="rankContext.length > 0" :me="leaderboardMe" />
 					<template v-if="rankContext.length">
-						<p class="h-hint">{{ t('pulse', 'Around you') }}</p>
+						<p class="h-hint">{{ t('vibears', 'Around you') }}</p>
 						<Leaderboard :rows="rankContext" :limit="rankContext.length" />
 					</template>
-					<p class="end-thanks">{{ t('pulse', 'Thanks for joining in.') }}<br><span class="code-badge is-inline">{{ spacedCode }}</span></p>
+					<p class="end-thanks">{{ t('vibears', 'Thanks for joining in.') }}<br><span class="code-badge is-inline">{{ spacedCode }}</span></p>
 				</div>
 				<div class="h-submit">
 					<button class="pulse-btn is-secondary" :disabled="reviewBusy" @click="openReview">
-						{{ reviewBusy ? t('pulse', 'Loading …') : t('pulse', 'See all results') }}
+						{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See all results') }}
 					</button>
 				</div>
 			</div>
 
 			<div v-else-if="revealed" class="h-app">
 				<div class="h-scroll">
-					<span v-if="practice" class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run · does not count') }}</span>
+					<span v-if="practice" class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span>
 					<h1 class="q">{{ poll.question }}</h1>
 
 					<!-- 1. Your own result sits ABOVE the distribution — it is what
 					     people look for first (§8.6). -->
 					<div v-if="isQuiz && myResult && myResult.answered" class="verdict" :class="myResult.correct ? 'is-ok' : 'is-no'">
 						<span class="verdict-mark"><PulseIcon :name="myResult.correct ? 'check' : 'close'" size="2em" /></span>
-						<span class="verdict-text">{{ myResult.correct ? t('pulse', 'Correct!') : t('pulse', 'Not this time') }}</span>
+						<span class="verdict-text">{{ myResult.correct ? t('vibears', 'Correct!') : t('vibears', 'Not this time') }}</span>
 						<span v-if="myResult.correct" class="pulse-chip is-success verdict-points">+{{ myResult.points }}</span>
-						<span v-else class="verdict-sub">{{ t('pulse', 'No point — the correct answer is marked.') }}</span>
-						<span v-if="myRank" class="verdict-sub">{{ t('pulse', 'Place') }} <b>{{ myRank.rank }}</b> · {{ n('pulse', '%n point', '%n points', myRank.score) }}</span>
+						<span v-else class="verdict-sub">{{ t('vibears', 'No point — the correct answer is marked.') }}</span>
+						<span v-if="myRank" class="verdict-sub">{{ t('vibears', 'Place') }} <b>{{ myRank.rank }}</b> · {{ n('vibears', '%n point', '%n points', myRank.score) }}</span>
 					</div>
 					<div v-else-if="!isQuiz && voted" class="mine-box">
-						<span class="mine-k">{{ t('pulse', 'Your answer') }}</span>
+						<span class="mine-k">{{ t('vibears', 'Your answer') }}</span>
 						<span class="mine-v">{{ myPickLabel || myAnswerText({ poll, mine: { value: myValue } }) }}</span>
 						<span v-if="myPickShare" class="mine-s">{{ myPickShare }}</span>
 					</div>
-					<p v-else class="band is-mut">{{ t('pulse', 'Did not answer this round.') }}</p>
+					<p v-else class="band is-mut">{{ t('vibears', 'Did not answer this round.') }}</p>
 
 					<!-- 2. The distribution. -->
 					<ResultsView :results="results" :mine="voted ? compassMine : null" :mine-aspects="voted ? spectrumMine : null"
@@ -244,13 +244,13 @@
 
 					<!-- 3. Leaderboard excerpt: your own place plus two on either side. -->
 					<template v-if="isQuiz && rankContext.length">
-						<p class="h-hint">{{ t('pulse', 'Around you') }}</p>
+						<p class="h-hint">{{ t('vibears', 'Around you') }}</p>
 						<Leaderboard :rows="rankContext" :limit="rankContext.length" />
 					</template>
 				</div>
 				<div class="h-submit">
 					<button class="pulse-btn is-secondary" :disabled="reviewBusy" @click="openReview">
-						{{ reviewBusy ? t('pulse', 'Loading …') : t('pulse', 'See all results') }}
+						{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See all results') }}
 					</button>
 				</div>
 			</div>
@@ -261,16 +261,16 @@
 			     a silent no-op. `!busy`: an answer in the last second does not make
 			     "Time is up" flash. -->
 			<div v-else-if="isPaced && expired && !voted && !busy" class="center pace-timeup">
-				<p v-if="practice" class="pace-practice"><span class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run · does not count') }}</span></p>
+				<p v-if="practice" class="pace-practice"><span class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span></p>
 				<p v-if="progress" class="pace-pos">
-					<span>{{ t('pulse', 'Question {number} of {total}', { number: progress.k, total: progress.n }) }}<template v-if="paceUntil"> · {{ t('pulse', 'Open until {time}', { time: paceUntil }) }}</template></span>
-					<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('pulse', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
+					<span>{{ t('vibears', 'Question {number} of {total}', { number: progress.k, total: progress.n }) }}<template v-if="paceUntil"> · {{ t('vibears', 'Open until {time}', { time: paceUntil }) }}</template></span>
+					<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
 				</p>
 				<h1 class="q" tabindex="-1">{{ poll.question }}</h1>
 				<PulseIcon name="timer" size="2.4em" class="state-ico" />
-				<p class="muted pace-line" role="status">{{ paceLast ? t('pulse', 'Time is up.') : t('pulse', 'Time is up — on to the next question.') }}</p>
+				<p class="muted pace-line" role="status">{{ paceLast ? t('vibears', 'Time is up.') : t('vibears', 'Time is up — on to the next question.') }}</p>
 				<button class="submit pace-next" :disabled="!canNext" :aria-busy="nextBusy ? 'true' : 'false'" @click="nextStep">
-					{{ nextBusy ? '…' : (progress && progress.timeUp ? nextLabel : t('pulse', 'One moment …')) }}
+					{{ nextBusy ? '…' : (progress && progress.timeUp ? nextLabel : t('vibears', 'One moment …')) }}
 				</button>
 			</div>
 
@@ -278,7 +278,7 @@
 			<div v-else-if="isQuiz && !isPaced && expired && !voted" class="center">
 				<h1 class="q">{{ poll.question }}</h1>
 				<PulseIcon name="timer" size="2.4em" class="state-ico" />
-				<p class="muted">{{ t('pulse', 'Time is up — the reveal is coming.') }}</p>
+				<p class="muted">{{ t('vibears', 'Time is up — the reveal is coming.') }}</p>
 			</div>
 
 			<!-- ══════════ ANSWERING ══════════ -->
@@ -286,26 +286,26 @@
 			     submit zone sits at the bottom as its own grid row. -->
 			<div v-else class="h-app">
 				<div ref="scroll" class="h-scroll">
-					<span v-if="practice" class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('pulse', 'Practice run · does not count') }}</span>
+					<span v-if="practice" class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span>
 					<!-- Self-paced: "Question k of n" from progress (never poll.position), then
 					     the deadline; in the last quarter of an hour the chip (§2.5). -->
 					<p v-if="isPaced && progress" class="pace-pos">
-						<span>{{ t('pulse', 'Question {number} of {total}', { number: progress.k, total: progress.n }) }}<template v-if="paceUntil"> · {{ t('pulse', 'Open until {time}', { time: paceUntil }) }}</template></span>
-						<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('pulse', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
+						<span>{{ t('vibears', 'Question {number} of {total}', { number: progress.k, total: progress.n }) }}<template v-if="paceUntil"> · {{ t('vibears', 'Open until {time}', { time: paceUntil }) }}</template></span>
+						<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
 					</p>
-					<div v-if="remaining !== null" class="timer" :class="{ 'is-low': remaining <= 5 }" role="status" :aria-label="n('pulse', '%n second left', '%n seconds left', remaining)">
+					<div v-if="remaining !== null" class="timer" :class="{ 'is-low': remaining <= 5 }" role="status" :aria-label="n('vibears', '%n second left', '%n seconds left', remaining)">
 						<div class="timer-track"><div class="timer-fill" :style="{ width: timerPct + '%' }" /></div>
 						<span class="timer-num">{{ remaining }}</span>
 					</div>
 
 					<!-- Image: fixed box, flatter from five options on; tapping enlarges it. -->
 					<button v-if="poll.image" type="button" class="h-img" :class="{ 'is-small': optCount > 4 }"
-						:aria-label="t('pulse', 'Enlarge image')" @click="zoom = true">
-						<img :src="imageUrl(poll)" :alt="t('pulse', 'Image for the question')">
+						:aria-label="t('vibears', 'Enlarge image')" @click="zoom = true">
+						<img :src="imageUrl(poll)" :alt="t('vibears', 'Image for the question')">
 					</button>
 
 					<h1 class="q" :tabindex="isPaced ? -1 : null">{{ poll.question }}</h1>
-					<p v-if="showTapHint" class="h-hint">{{ t('pulse', 'Tapping sends right away — you can change it just after.') }}</p>
+					<p v-if="showTapHint" class="h-hint">{{ t('vibears', 'Tapping sends right away — you can change it just after.') }}</p>
 
 					<!-- Choice and True/False: in the quiz the tap submits immediately (§8.0). -->
 					<div v-if="poll.type === 'choice' || poll.type === 'truefalse'" class="choices">
@@ -332,23 +332,23 @@
 					<!-- Estimation question / free text -->
 					<div v-else-if="poll.type === 'number'" class="free-vote">
 						<input v-model="numInput" class="pulse-input is-lg" type="number" inputmode="decimal"
-							:disabled="locked" :placeholder="t('pulse', 'Your number')" @keyup.enter="doSubmit">
+							:disabled="locked" :placeholder="t('vibears', 'Your number')" @keyup.enter="doSubmit">
 					</div>
 					<div v-else-if="poll.type === 'text'" class="free-vote">
 						<input v-model="textInput" class="pulse-input is-lg" type="text" maxlength="100"
-							autocomplete="off" :disabled="locked" :placeholder="t('pulse', 'Your answer')" @keyup.enter="doSubmit">
+							autocomplete="off" :disabled="locked" :placeholder="t('vibears', 'Your answer')" @keyup.enter="doSubmit">
 					</div>
 
 					<!-- Ordering: ↑/↓ instead of drag — keyboard-proof and accurate -->
 					<div v-else-if="poll.type === 'rank'" class="rank-field">
-						<p class="h-hint">{{ t('pulse', 'Put the answers into your order — place 1 goes on top.') }}</p>
+						<p class="h-hint">{{ t('vibears', 'Put the answers into your order — place 1 goes on top.') }}</p>
 						<ol ref="rankList" class="rank-list">
 							<li v-for="(o, i) in rankOrder" :key="o.id" class="rank-item" :data-rank-id="o.id">
 								<span class="rank-pos">{{ i + 1 }}</span>
 								<span class="rank-label">{{ o.label }}</span>
 								<span class="rank-move">
-									<button class="pulse-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === 0" :aria-label="t('pulse', '{answer} up', { answer: o.label })" @click="moveRank(i, -1)"><PulseIcon name="arrow-up" size="1.1em" /></button>
-									<button class="pulse-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === rankOrder.length - 1" :aria-label="t('pulse', '{answer} down', { answer: o.label })" @click="moveRank(i, 1)"><PulseIcon name="arrow-down" size="1.1em" /></button>
+									<button class="pulse-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === 0" :aria-label="t('vibears', '{answer} up', { answer: o.label })" @click="moveRank(i, -1)"><PulseIcon name="arrow-up" size="1.1em" /></button>
+									<button class="pulse-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === rankOrder.length - 1" :aria-label="t('vibears', '{answer} down', { answer: o.label })" @click="moveRank(i, 1)"><PulseIcon name="arrow-down" size="1.1em" /></button>
 								</span>
 							</li>
 						</ol>
@@ -356,13 +356,13 @@
 
 					<!-- Matching: a row plus a picker sheet instead of bare select fields (§8.3) -->
 					<div v-else-if="poll.type === 'match'" class="match-field">
-						<p class="h-hint">{{ t('pulse', 'Assign the fitting answer to every line.') }}</p>
+						<p class="h-hint">{{ t('vibears', 'Assign the fitting answer to every line.') }}</p>
 						<ul class="mrow-list">
 							<li v-for="item in matchItems" :key="item.id">
 								<button type="button" class="mrow" :disabled="busy || locked" @click="openSheet(item.id)">
 									<span class="mrow-cat">{{ item.label }}</span>
 									<span class="mrow-chip" :class="[matchPickPal(item.id), { 'is-set': matchPick[item.id] }]">
-										{{ matchPick[item.id] ? matchLabelOf(matchPick[item.id]) : t('pulse', 'Choose') }}
+										{{ matchPick[item.id] ? matchLabelOf(matchPick[item.id]) : t('vibears', 'Choose') }}
 									</span>
 								</button>
 							</li>
@@ -374,7 +374,7 @@
 						<div class="val-readout" :class="{ 'is-empty': scaleVal === null }" aria-hidden="true">
 							<span class="val-num">{{ scaleVal === null ? '–' : scaleVal }}</span><span class="val-unit">/ {{ poll.scale.max }}</span>
 						</div>
-						<input class="scale-range is-uni" type="range" :min="poll.scale.min" :max="poll.scale.max" step="1" :value="scaleVal === null ? poll.scale.min : scaleVal" :disabled="busy || locked" :aria-label="scaleAria" :aria-valuetext="scaleVal === null ? t('pulse', 'not chosen yet') : String(scaleVal)" :style="{ '--pct': scalePct + '%' }" @input="onScaleInput" @pointerdown="onScaleInput">
+						<input class="scale-range is-uni" type="range" :min="poll.scale.min" :max="poll.scale.max" step="1" :value="scaleVal === null ? poll.scale.min : scaleVal" :disabled="busy || locked" :aria-label="scaleAria" :aria-valuetext="scaleVal === null ? t('vibears', 'not chosen yet') : String(scaleVal)" :style="{ '--pct': scalePct + '%' }" @input="onScaleInput" @pointerdown="onScaleInput">
 						<div class="scale-ends">
 							<span>{{ poll.scale.min }}<template v-if="poll.scale.minLabel"> · {{ poll.scale.minLabel }}</template></span>
 							<span>{{ poll.scale.max }}<template v-if="poll.scale.maxLabel"> · {{ poll.scale.maxLabel }}</template></span>
@@ -383,7 +383,7 @@
 
 					<!-- Spectrum: bipolar sliders -->
 					<div v-else-if="poll.type === 'scale' && scaleMode === 'spectrum'" class="spectrum-field">
-						<p class="h-hint">{{ t('pulse', 'The sliders sit neutral on the middle mark — move only what differs for you.') }}</p>
+						<p class="h-hint">{{ t('vibears', 'The sliders sit neutral on the middle mark — move only what differs for you.') }}</p>
 						<div v-for="asp in poll.scale.aspects" :key="asp.id" class="aspect">
 							<div class="aspect-head">
 								<span class="aspect-name">{{ asp.label }}</span>
@@ -430,11 +430,11 @@
 
 					<!-- Word cloud -->
 					<div v-else class="words">
-						<p class="h-hint">{{ n('pulse', 'Up to %n word — one per field.', 'Up to %n words — one per field.', poll.maxWords) }}</p>
+						<p class="h-hint">{{ n('vibears', 'Up to %n word — one per field.', 'Up to %n words — one per field.', poll.maxWords) }}</p>
 						<label v-for="i in poll.maxWords" :key="i" class="word-field">
 							<input v-model="wordInputs[i - 1]" class="pulse-input" type="text" maxlength="40"
-								:disabled="locked" :aria-label="t('pulse', 'Word {number}', { number: i })"
-								:placeholder="i === 1 ? t('pulse', 'Your word …') : t('pulse', 'Another word (optional)')">
+								:disabled="locked" :aria-label="t('vibears', 'Word {number}', { number: i })"
+								:placeholder="i === 1 ? t('vibears', 'Your word …') : t('vibears', 'Another word (optional)')">
 							<span class="word-count">{{ (wordInputs[i - 1] || '').length }} / 40</span>
 						</label>
 					</div>
@@ -445,7 +445,7 @@
 					     after every new question (skipArmed). No confirmation. -->
 					<button v-if="isPaced && poll.timeLimit === 0 && !voted && !busy" type="button" class="pulse-btn is-tertiary is-sm pace-skip"
 						:disabled="!skipArmed || !canNext" @click="nextStep">
-						{{ paceLast ? t('pulse', 'Skip and finish') : t('pulse', 'Skip question') }}
+						{{ paceLast ? t('vibears', 'Skip and finish') : t('vibears', 'Skip question') }}
 					</button>
 				</div>
 
@@ -456,8 +456,8 @@
 					     countdown (§8.0). -->
 					<div v-if="fixOpen" class="fix-bar" role="status">
 						<PulseIcon name="check" size="1.2em" />
-						<span>{{ t('pulse', 'Answer sent') }}</span>
-						<button class="fix-btn" @click="startChange">{{ t('pulse', 'Change') }}</button>
+						<span>{{ t('vibears', 'Answer sent') }}</span>
+						<button class="fix-btn" @click="startChange">{{ t('vibears', 'Change') }}</button>
 						<span class="fix-line" :style="{ width: fixPct + '%' }" aria-hidden="true" />
 					</div>
 					<!-- Self-paced (§2.5): verdict band and Next. Neutral before the final
@@ -474,9 +474,9 @@
 						</button>
 					</template>
 					<template v-else-if="sent">
-						<p class="band is-ok" role="status"><PulseIcon name="check" size="1.1em" /> {{ t('pulse', 'Answer sent') }}</p>
+						<p class="band is-ok" role="status"><PulseIcon name="check" size="1.1em" /> {{ t('vibears', 'Answer sent') }}</p>
 						<p v-if="intakeText" class="h-note">{{ intakeText }}</p>
-						<button v-if="canChange" class="pulse-btn is-secondary" @click="startChange">{{ t('pulse', 'Change answer') }}</button>
+						<button v-if="canChange" class="pulse-btn is-secondary" @click="startChange">{{ t('vibears', 'Change answer') }}</button>
 					</template>
 					<template v-else>
 						<p v-if="submitNote" class="h-note">{{ submitNote }}</p>
@@ -491,7 +491,7 @@
 			     not inside it: a sheet inside the scroll container would be clipped. -->
 			<template v-if="sheetFor">
 				<div class="scrim" @click="closeSheet" />
-				<div class="msheet" role="dialog" aria-modal="true" :aria-label="t('pulse', 'Choose an answer')">
+				<div class="msheet" role="dialog" aria-modal="true" :aria-label="t('vibears', 'Choose an answer')">
 					<h2 class="msheet-h">{{ matchLabelOfItem(sheetFor) }}</h2>
 					<div class="msheet-opts">
 						<button v-for="(target, i) in matchTargets" :key="target.id" type="button"
@@ -499,20 +499,20 @@
 							@click="chooseTarget(target.id)">
 							<span class="pulse-badge msheet-badge">{{ optPal(i).letter }}</span>
 							<span>{{ target.label }}</span>
-							<small v-if="usedTarget(target.id, sheetFor)">{{ t('pulse', 'already used') }}</small>
+							<small v-if="usedTarget(target.id, sheetFor)">{{ t('vibears', 'already used') }}</small>
 						</button>
 					</div>
-					<button class="pulse-btn is-secondary msheet-x" @click="closeSheet">{{ t('pulse', 'Back') }}</button>
+					<button class="pulse-btn is-secondary msheet-x" @click="closeSheet">{{ t('vibears', 'Back') }}</button>
 				</div>
 			</template>
 
 			<!-- Full-screen image (§8.1) -->
 			<div v-if="zoom" class="h-zoom" @click="zoom = false">
-				<img :src="imageUrl(poll)" :alt="t('pulse', 'Image for the question')">
-				<button class="h-zoom-x" :aria-label="t('pulse', 'Close')" @click.stop="zoom = false"><PulseIcon name="close" size="1.4em" /></button>
+				<img :src="imageUrl(poll)" :alt="t('vibears', 'Image for the question')">
+				<button class="h-zoom-x" :aria-label="t('vibears', 'Close')" @click.stop="zoom = false"><PulseIcon name="close" size="1.4em" /></button>
 			</div>
 			<!-- Connection status -->
-			<p v-if="code && roomExists && !online" class="conn-off" role="status">{{ t('pulse', 'Connection lost — trying again …') }}</p>
+			<p v-if="code && roomExists && !online" class="conn-off" role="status">{{ t('vibears', 'Connection lost — trying again …') }}</p>
 			<!-- Self-paced: announcement for screen readers on card and question changes (§2.11) -->
 			<p v-if="isPaced" class="pace-sr" aria-live="polite">{{ paceAnnounce }}</p>
 		</div>
@@ -546,8 +546,8 @@ export default {
 	components: { PulseIcon, ResultsView, Leaderboard },
 	data() {
 		return {
-			code: loadState('pulse', 'code', ''),
-			roomExists: loadState('pulse', 'roomExists', false),
+			code: loadState('vibears', 'code', ''),
+			roomExists: loadState('vibears', 'roomExists', false),
 			mode: '',
 			roomTitle: '',   // room name from publicState.room (empty = none)
 			review: null,       // loaded overall summary (null = live view)
@@ -647,7 +647,7 @@ export default {
 			const sc = this.poll.scale
 			const lo = sc.minLabel ? ` (${sc.minLabel})` : ''
 			const hi = sc.maxLabel ? ` (${sc.maxLabel})` : ''
-			return this.t('pulse', '{question} – scale from {min}{low} to {max}{high}', { question: this.poll.question, min: sc.min, low: lo, max: sc.max, high: hi })
+			return this.t('vibears', '{question} – scale from {min}{low} to {max}{high}', { question: this.poll.question, min: sc.min, low: lo, max: sc.max, high: hi })
 		},
 		scaleMode() {
 			return this.poll && this.poll.scale ? (this.poll.scale.mode || 'single') : 'single'
@@ -681,7 +681,7 @@ export default {
 		compassAria() {
 			if (!this.poll || !this.poll.scale || !this.poll.scale.axisX) return ''
 			const sc = this.poll.scale
-			return this.t('pulse', '2D field: X {x}, Y {y}; drag the dot or use the sliders', { x: sc.axisX.title, y: sc.axisY.title })
+			return this.t('vibears', '2D field: X {x}, Y {y}; drag the dot or use the sliders', { x: sc.axisX.title, y: sc.axisY.title })
 		},
 		// Choice/multi options with a stable palette assignment (letter + colour A–H).
 		// The same index -> the same colour on the phone, the projector and in the result bar.
@@ -778,8 +778,8 @@ export default {
 			// without a cap, after a break it would say "42 of 25".
 			const total = Math.max(this.present, this.answered)
 			return total > this.answered
-				? this.t('pulse', '{count} of {total} have answered', { count: this.answered, total })
-				: this.answered + ' ' + this.n('pulse', 'answer', 'answers', this.answered)
+				? this.t('vibears', '{count} of {total} have answered', { count: this.answered, total })
+				: this.answered + ' ' + this.n('vibears', 'answer', 'answers', this.answered)
 		},
 		// Which types need a submit button? Not choice and True/False in the
 		// quiz — there the tap submits (§8.0).
@@ -814,23 +814,23 @@ export default {
 		},
 		submitLabel() {
 			if (this.poll && this.poll.type === 'multi' && this.multiPick.length) {
-				return this.t('pulse', '{count} selected · submit', { count: this.multiPick.length })
+				return this.t('vibears', '{count} selected · submit', { count: this.multiPick.length })
 			}
-			return this.t('pulse', 'Submit')
+			return this.t('vibears', 'Submit')
 		},
 		// The reason why "Submit" does not work (yet) sits above the button.
 		submitNote() {
 			if (!this.poll) return ''
 			if (this.poll.type === 'match') {
-				return this.t('pulse', '{count} of {total} assigned', { count: this.matchDone, total: this.matchItems.length })
+				return this.t('vibears', '{count} of {total} assigned', { count: this.matchDone, total: this.matchItems.length })
 			}
 			if (this.poll.type === 'scale' && this.scaleMode === 'single') {
 				return this.scaleVal === null
-					? this.t('pulse', 'Drag the slider to your value. Nothing chosen yet.')
-					: this.t('pulse', 'Your value — you can still move it.')
+					? this.t('vibears', 'Drag the slider to your value. Nothing chosen yet.')
+					: this.t('vibears', 'Your value — you can still move it.')
 			}
 			if (this.poll.type === 'scale' && this.scaleMode === 'compass') {
-				return this.t('pulse', 'Drag the dot or use the sliders. Centre = neutral (counts).')
+				return this.t('vibears', 'Drag the dot or use the sliders. Centre = neutral (counts).')
 			}
 			return ''
 		},
@@ -853,7 +853,7 @@ export default {
 			const rows = (this.results && this.results.results) || []
 			const hit = rows.find((r) => r.id === this.myValue)
 			if (!hit || !this.results.total) return ''
-			return this.t('pulse', '{count} of {total} chose the same', { count: hit.count, total: this.results.total })
+			return this.t('vibears', '{count} of {total} chose the same', { count: hit.count, total: this.results.total })
 		},
 	},
 	mounted() {
@@ -947,7 +947,7 @@ export default {
 			try {
 				const { data } = await axios.get(this.base('/summary'), this.isPaced ? { timeout: PHONE_TIMEOUT } : undefined)
 				if (!data.available) {
-					showError(t('pulse', 'The results have not been released yet.'))
+					showError(t('vibears', 'The results have not been released yet.'))
 					return
 				}
 				this.reviewAt = this.poll ? this.poll.id : 0
@@ -956,7 +956,7 @@ export default {
 				this.review = data
 				this.toTop()
 			} catch (e) {
-				showError(t('pulse', 'Could not load the results.'))
+				showError(t('vibears', 'Could not load the results.'))
 				if (this.isPaced && !e?.response) this.online = false
 			} finally {
 				this.reviewBusy = false
@@ -991,14 +991,14 @@ export default {
 					for (const target of match.targets || []) labelById[target.id] = target.label
 					const rows = (match.items || [])
 						.filter((it) => v[it.id])
-						.map((it) => this.t('pulse', '{item} → {target}', { item: it.label, target: labelById[v[it.id]] || '?' }))
-					return rows.length ? rows.join(' · ') : this.t('pulse', 'submitted')
+						.map((it) => this.t('vibears', '{item} → {target}', { item: it.label, target: labelById[v[it.id]] || '?' }))
+					return rows.length ? rows.join(' · ') : this.t('vibears', 'submitted')
 				}
 				// Compass: coordinates; spectrum: one value per aspect.
 				if ('x' in v && 'y' in v) return `${v.x} / ${v.y}`
 				const aspects = (item.poll.scale && item.poll.scale.aspects) || []
 				const parts = aspects.filter((a) => a.id in v).map((a) => `${a.label}: ${v[a.id]}`)
-				return parts.length ? parts.join(' · ') : this.t('pulse', 'submitted')
+				return parts.length ? parts.join(' · ') : this.t('vibears', 'submitted')
 			}
 			return String(v)
 		},
@@ -1156,7 +1156,7 @@ export default {
 				if (e?.response?.status === 404) {
 					// Room gone -> stop polling for good. Otherwise the tab keeps hammering the
 					// endpoint; every "not found" counts towards the brute-force
-					// action 'pulseRoomCode' and in the end throttles the whole IP (429).
+					// action 'vibearsRoomCode' and in the end throttles the whole IP (429).
 					this.roomExists = false
 					this.pollStopped = true
 				} else {
@@ -1195,7 +1195,7 @@ export default {
 					this.hintShown = true
 				}
 			} catch (e) {
-				showError(serverMessage(e, t('pulse', 'Your vote could not be saved.')))
+				showError(serverMessage(e, t('vibears', 'Your vote could not be saved.')))
 				// Self-paced: a rejected correction (window shut, time up) does not leave
 				// the correction mode open (§2.1 c) — the polling catches up.
 				const status = e?.response?.status || 0
@@ -1297,11 +1297,11 @@ export default {
 			const ax = axis === 'x' ? this.poll.scale.axisX : this.poll.scale.axisY
 			const range = this.compassRange || 1
 			const share = value / range
-			if (Math.abs(share) < 0.15) return this.t('pulse', 'neutral') + ' (0)'
+			if (Math.abs(share) < 0.15) return this.t('vibears', 'neutral') + ' (0)'
 			const pole = share > 0 ? (ax.poleHigh || '') : (ax.poleLow || '')
 			const word = Math.abs(share) >= 0.6
-				? this.t('pulse', 'strongly {pole}', { pole })
-				: this.t('pulse', 'rather {pole}', { pole })
+				? this.t('vibears', 'strongly {pole}', { pole })
+				: this.t('vibears', 'rather {pole}', { pole })
 			return word + ' (' + this.signed(value) + ')'
 		},
 		submitWords() {
@@ -1363,7 +1363,7 @@ export default {
 			const sc = this.poll.scale
 			const lo = asp.poleLow ? ` (${asp.poleLow})` : ''
 			const hi = asp.poleHigh ? ` (${asp.poleHigh})` : ''
-			return this.t('pulse', '{aspect} – scale from {min}{low} to {max}{high}', { aspect: asp.label, min: sc.min, low: lo, max: sc.max, high: hi })
+			return this.t('vibears', '{aspect} – scale from {min}{low} to {max}{high}', { aspect: asp.label, min: sc.min, low: lo, max: sc.max, high: hi })
 		},
 		// ── Compass: 2D pad ↔ synchronised X/Y sliders ──────────────────────
 		onPadDown(e) {
@@ -1402,7 +1402,7 @@ export default {
 		axisAria(which) {
 			const sc = this.poll.scale
 			const a = which === 'y' ? sc.axisY : sc.axisX
-			return this.t('pulse', '{title}: {low} (−{range}) to {high} (+{range})', { title: a.title, low: a.poleLow, high: a.poleHigh, range: sc.range })
+			return this.t('vibears', '{title}: {low} (−{range}) to {high} (+{range})', { title: a.title, low: a.poleLow, high: a.poleHigh, range: sc.range })
 		},
 		submitCompass() {
 			this.compassMine = { x: this.compassX, y: this.compassY }
@@ -1440,7 +1440,7 @@ export default {
 				// Self-paced: focus on the heading of the new card (§2.11).
 				if (this.isPaced) this.paceFocusNext = true
 			} catch (e) {
-				this.nickError = serverMessage(e, t('pulse', 'Joining failed.'))
+				this.nickError = serverMessage(e, t('vibears', 'Joining failed.'))
 				if (this.isPaced && !e?.response) this.online = false
 			} finally {
 				this.submitSeq++
@@ -1483,7 +1483,7 @@ export default {
 				await axios.get(publicApi(this.entryCode, '/state'))
 				window.location.href = participantPage(this.entryCode)
 			} catch (e) {
-				this.entryError = t('pulse', 'That code does not exist.')
+				this.entryError = t('vibears', 'That code does not exist.')
 				this.checking = false
 			}
 		},

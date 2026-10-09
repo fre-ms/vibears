@@ -2,16 +2,16 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 #
 # For installs that run from a git checkout inside the web root (README,
-# "From the repository"): Apache serves static files below apps/pulse/
+# "From the repository"): Apache serves static files below apps/vibears/
 # directly, so without this the development tree would be public — the
 # screenshot harness output, node_modules with its demo pages, sources and
 # local test scripts. The release archive (build/package.sh) ships only the
 # runtime folders and does not need this file.
 #
 # mod_alias on purpose: a RewriteEngine here would replace Nextcloud's own
-# rewrite rules for every request below apps/pulse/.
+# rewrite rules for every request below apps/vibears/.
 <IfModule mod_alias.c>
-	RedirectMatch 404 "^/(?:[^/]+/)*?pulse/(?:\.git|node_modules|dev|build|tests|src|tools|docs)(?:/|$)"
-	RedirectMatch 404 "^/(?:[^/]+/)*?pulse/_[^/]*\.php(?:/|$)"
-	RedirectMatch 404 "^/(?:[^/]+/)*?pulse/(?:package(?:-lock)?\.json|webpack\.config\.js|\.[^/]+)$"
+	RedirectMatch 404 "^/(?:[^/]+/)*?vibears/(?:\.git|node_modules|dev|build|tests|src|tools|docs)(?:/|$)"
+	RedirectMatch 404 "^/(?:[^/]+/)*?vibears/_[^/]*\.php(?:/|$)"
+	RedirectMatch 404 "^/(?:[^/]+/)*?vibears/(?:package(?:-lock)?\.json|webpack\.config\.js|\.[^/]+)$"
 </IfModule>

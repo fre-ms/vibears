@@ -17,8 +17,8 @@ set -eu
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"
 CONTAINER="${CONTAINER:-nextcloud-nextcloud-1}"
-APP_IN_CONTAINER="${APP_IN_CONTAINER:-/var/www/html/apps/pulse}"
-UID_SHOTS="${PULSE_SHOTS_UID:-pulse-shots}"
+APP_IN_CONTAINER="${APP_IN_CONTAINER:-/var/www/html/apps/vibears}"
+UID_SHOTS="${VIBEARS_SHOTS_UID:-pulse-shots}"
 OUT_ENV="${OUT:-}"
 OUT="${OUT:-$HERE/out}"
 MODE="${1:-}"
@@ -34,20 +34,20 @@ if [ "$MODE" = "clean" ]; then
 	exit 0
 fi
 
-# Against which instance? PULSE_HOST beats everything, otherwise one line in .host
+# Against which instance? VIBEARS_HOST beats everything, otherwise one line in .host
 # (store run: .store-host, which must contain the public name). Neither
 # file is in the repository. Deliberately without a default: a foreign address
 # as a fallback would send the throwaway user's login to an instance on which
 # it does not even exist.
 if [ "$MODE" = "store" ]; then HOST_FILE="$HERE/.store-host"; else HOST_FILE="$HERE/.host"; fi
-if [ -z "${PULSE_HOST:-}" ] && [ -f "$HOST_FILE" ]; then
-	PULSE_HOST="$(tr -d '[:space:]' < "$HOST_FILE")"
+if [ -z "${VIBEARS_HOST:-}" ] && [ -f "$HOST_FILE" ]; then
+	VIBEARS_HOST="$(tr -d '[:space:]' < "$HOST_FILE")"
 fi
-[ -n "${PULSE_HOST:-}" ] || {
-	echo "PULSE_HOST setzen oder $HOST_FILE anlegen (eine Zeile, z. B. https://nextcloud.example.com)" >&2
+[ -n "${VIBEARS_HOST:-}" ] || {
+	echo "VIBEARS_HOST setzen oder $HOST_FILE anlegen (eine Zeile, z. B. https://nextcloud.example.com)" >&2
 	exit 1
 }
-export PULSE_HOST
+export VIBEARS_HOST
 
 [ -x "$ROOT/tools/geckodriver" ] || {
 	echo "tools/geckodriver fehlt. Holen:" >&2
@@ -85,9 +85,9 @@ if [ "$MODE" = "store" ]; then
 	probe destroy "$UID_SHOTS" >/dev/null 2>&1 || true
 	probe store "$UID_SHOTS" > "$HERE/store.json"
 
-	echo "==> Aufnehmen ($PULSE_HOST)"
+	echo "==> Aufnehmen ($VIBEARS_HOST)"
 	rm -rf "$OUT"
-	PULSE_SHOTS_ONLY=store node "$HERE/shoot.mjs" "$HERE/store.json" "$OUT" || SHOT_FAILED=1
+	VIBEARS_SHOTS_ONLY=store node "$HERE/shoot.mjs" "$HERE/store.json" "$OUT" || SHOT_FAILED=1
 else
 	echo "==> Probe-Räume bauen"
 	probe destroy "$UID_SHOTS" >/dev/null 2>&1 || true
@@ -96,12 +96,12 @@ else
 	# embed shell (a race inside the frame) or the full run: `race 300`
 	# alone takes a while, and the other runs do not need them.
 	# Otherwise an old pace.json would name deleted rooms.
-	case "${PULSE_SHOTS_ONLY:-}" in
+	case "${VIBEARS_SHOTS_ONLY:-}" in
 		''|pace*|embed) probe pace-create "$UID_SHOTS" > "$HERE/pace.json" ;;
 		*) rm -f "$HERE/pace.json" ;;
 	esac
 
-	echo "==> Aufnehmen ($PULSE_HOST)"
+	echo "==> Aufnehmen ($VIBEARS_HOST)"
 	rm -rf "$OUT"
 	node "$HERE/shoot.mjs" "$HERE/probe.json" "$OUT" || SHOT_FAILED=1
 fi

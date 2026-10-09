@@ -5,14 +5,14 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\RoomApiController;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\Controller\RoomApiController;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 use OCP\IUserSession;
@@ -83,7 +83,7 @@ class PollParamsTest extends TestCase {
         $deckService->method($method === 'addPoll' ? 'addPoll' : 'updatePoll')
             ->willReturnCallback(function (...$args) use (&$captured) {
                 $captured = end($args);
-                return new \OCA\Pulse\Db\Poll();
+                return new \OCA\Vibears\Db\Poll();
             });
         $deckService->method('ownerPoll')->willReturn([]);
 

@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Db;
+namespace OCA\Vibears\Db;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\Entity;
@@ -16,7 +16,7 @@ use OCP\IDBConnection;
 use OCP\IMemcache;
 
 /**
- * Every write to `pulse_votes` goes through this mapper — the plain entity
+ * Every write to `vibears_votes` goes through this mapper — the plain entity
  * writes (insert, update, delete, insertOrUpdate) as well as the bulk
  * deletes below. Each of them invalidates the change generation of the
  * questions it touched (see changeStamp), so the cheap version stamp cannot
@@ -49,7 +49,7 @@ class VoteMapper extends QBMapper {
         IDBConnection $db,
         private ICacheFactory $cacheFactory,
     ) {
-        parent::__construct($db, 'pulse_votes', Vote::class);
+        parent::__construct($db, 'vibears_votes', Vote::class);
     }
 
     /**
@@ -187,7 +187,7 @@ class VoteMapper extends QBMapper {
             $this->stampCache = false;
             try {
                 if ($this->cacheFactory->isAvailable()) {
-                    $cache = $this->cacheFactory->createDistributed('pulse-votes/');
+                    $cache = $this->cacheFactory->createDistributed('vibears-votes/');
                     if ($cache instanceof IMemcache) {
                         $this->stampCache = $cache;
                     }

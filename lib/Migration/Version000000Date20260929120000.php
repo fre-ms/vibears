@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Migration;
+namespace OCA\Vibears\Migration;
 
 use Closure;
-use OCA\Pulse\BackgroundJob\CleanupStaleRoomsJob;
+use OCA\Vibears\BackgroundJob\CleanupStaleRoomsJob;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -55,12 +55,12 @@ class Version000000Date20260929120000 extends SimpleMigrationStep {
             return;
         }
         $qb = $this->db->getQueryBuilder();
-        $qb->update('pulse_rooms')
+        $qb->update('vibears_rooms')
             ->set('touched_at', $qb->createNamedParameter($this->timeFactory->getTime(), IQueryBuilder::PARAM_INT))
             ->where($qb->expr()->eq('touched_at', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
         $rooms = $qb->executeStatement();
         if ($rooms > 0) {
-            $output->info("Pulse: $rooms existing rooms count as used today, so the room clean-up deletes none of them in the next 30 days.");
+            $output->info("vibeARS: $rooms existing rooms count as used today, so the room clean-up deletes none of them in the next 30 days.");
         }
     }
 

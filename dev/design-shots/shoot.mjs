@@ -28,7 +28,7 @@ import { fileURLToPath } from 'node:url'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 /**
- * Which instance to run against. PULSE_HOST beats everything; otherwise
+ * Which instance to run against. VIBEARS_HOST beats everything; otherwise
  * dev/design-shots/.host may hold a name (the file is not in the repo: an
  * internal hostname does not belong in a public repository). Deliberately no
  * default: a foreign address as a fallback would send the throwaway user's
@@ -38,16 +38,16 @@ function hostFromFile() {
 	const f = join(HERE, '.host')
 	return existsSync(f) ? readFileSync(f, 'utf8').trim() : ''
 }
-const HOST = process.env.PULSE_HOST || hostFromFile()
+const HOST = process.env.VIBEARS_HOST || hostFromFile()
 if (!HOST) {
-	console.error('PULSE_HOST setzen oder dev/design-shots/.host anlegen (eine Zeile, z. B. https://nextcloud.example.com)')
+	console.error('VIBEARS_HOST setzen oder dev/design-shots/.host anlegen (eine Zeile, z. B. https://nextcloud.example.com)')
 	process.exit(1)
 }
 const CONTAINER = process.env.CONTAINER || 'nextcloud-nextcloud-1'
-const APP_IN_CONTAINER = process.env.APP_IN_CONTAINER || '/var/www/html/apps/pulse'
-const UID = process.env.PULSE_SHOTS_UID || 'pulse-shots'
-const LANG = process.env.PULSE_SHOTS_LANG || 'en-US, en'
-const PORT = Number(process.env.PULSE_SHOTS_PORT || 4444)
+const APP_IN_CONTAINER = process.env.APP_IN_CONTAINER || '/var/www/html/apps/vibears'
+const UID = process.env.VIBEARS_SHOTS_UID || 'pulse-shots'
+const LANG = process.env.VIBEARS_SHOTS_LANG || 'en-US, en'
+const PORT = Number(process.env.VIBEARS_SHOTS_PORT || 4444)
 const BASE = `http://127.0.0.1:${PORT}`
 
 const DESKTOP = [1920, 1080]
@@ -134,13 +134,13 @@ async function newSession(dark, extraPrefs = {}) {
 		cookie: (name) => call('GET', `/session/${id}/cookie/${name}`),
 		dropCookie: (name) => call('DELETE', `/session/${id}/cookie/${name}`),
 		addCookie: (cookie) => call('POST', `/session/${id}/cookie`, { cookie }),
-		// The voter cookie is __Host-pulse_vt on https with Nextcloud at the
-		// domain root and pulse_vt elsewhere (PublicVoteController::voterCookie).
+		// The voter cookie is __Host-vibears_vt on https with Nextcloud at the
+		// domain root and vibears_vt elsewhere (PublicVoteController::voterCookie).
 		voterCookie: async () => {
 			try {
-				return await s.cookie('__Host-pulse_vt')
+				return await s.cookie('__Host-vibears_vt')
 			} catch (e) {
-				return s.cookie('pulse_vt')
+				return s.cookie('vibears_vt')
 			}
 		},
 		// Put a voter cookie back (on the page of its host). Without `domain`:
@@ -152,8 +152,8 @@ async function newSession(dark, extraPrefs = {}) {
 		},
 		// Deleting a cookie that is not there is no error in WebDriver.
 		dropVoterCookie: async () => {
-			await s.dropCookie('__Host-pulse_vt')
-			await s.dropCookie('pulse_vt')
+			await s.dropCookie('__Host-vibears_vt')
+			await s.dropCookie('vibears_vt')
 		},
 		// Pointer into the corner: otherwise the hover of the last clicked button stays in the picture.
 		// Two steps: the input source remembers its position, so a second (1,1) would not be a move.
@@ -444,13 +444,13 @@ async function publicPass(s, dark) {
 	const tag = dark ? 'dark-' : ''
 
 	await shot(s, {
-		name: `${tag}join`, url: '/apps/pulse/join', size: PHONE,
+		name: `${tag}join`, url: '/apps/vibears/join', size: PHONE,
 		waitSel: '.pulse-part', note: 'Beitritt (Handy)',
 	})
 	// Lobby: no cursor -> the projector shows the code and QR.
 	probe('state', poll.code, '0', 'open')
 	await shot(s, {
-		name: `${tag}screen-lobby`, url: `/apps/pulse/screen/${poll.code}`, size: DESKTOP,
+		name: `${tag}screen-lobby`, url: `/apps/vibears/screen/${poll.code}`, size: DESKTOP,
 		waitSel: '.scr-lobby', note: 'Beamer Lobby (QR + Code)',
 	})
 
@@ -461,7 +461,7 @@ async function publicPass(s, dark) {
 			// voter cookie, which is enough for all following captures.
 			probe('state', room.code, String(room.polls[0].id), 'open')
 			await shot(s, {
-				name: `${tag}phone-quiz-nickname`, url: `/apps/pulse/s/${room.code}`, size: PHONE,
+				name: `${tag}phone-quiz-nickname`, url: `/apps/vibears/s/${room.code}`, size: PHONE,
 				waitSel: '.nick-input', note: 'Handy: Name eingeben (Quiz)',
 			})
 			await shot(s, {
@@ -477,23 +477,23 @@ async function publicPass(s, dark) {
 			// Fake presence: otherwise the intake display shows "0 of 0".
 			probe('present', room.code, '24')
 			await shot(s, {
-				name: `${tag}screen-${mode}-${p.label}-open`, url: `/apps/pulse/screen/${room.code}`, size: DESKTOP,
+				name: `${tag}screen-${mode}-${p.label}-open`, url: `/apps/vibears/screen/${room.code}`, size: DESKTOP,
 				waitSel: '.scr-stage', note: `Beamer ${mode}/${p.label}, offen mit 24 Stimmen`,
 			})
 			if (!dark) {
 				await shot(s, {
-					name: `phone-${mode}-${p.label}-vote`, url: `/apps/pulse/s/${room.code}`, size: PHONE,
+					name: `phone-${mode}-${p.label}-vote`, url: `/apps/vibears/s/${room.code}`, size: PHONE,
 					waitSel: '.pulse-part', note: `Handy ${mode}/${p.label}, Abstimm-Ansicht`,
 				})
 			}
 			probe('state', room.code, String(p.id), 'locked')
 			await shot(s, {
-				name: `${tag}screen-${mode}-${p.label}-locked`, url: `/apps/pulse/screen/${room.code}`, size: DESKTOP,
+				name: `${tag}screen-${mode}-${p.label}-locked`, url: `/apps/vibears/screen/${room.code}`, size: DESKTOP,
 				waitSel: '.scr-stage', note: `Beamer ${mode}/${p.label}, aufgelöst`,
 			})
 			if (!dark && p.label === 'choice') {
 				await shot(s, {
-					name: `phone-${mode}-${p.label}-result`, url: `/apps/pulse/s/${room.code}`, size: PHONE,
+					name: `phone-${mode}-${p.label}-result`, url: `/apps/vibears/s/${room.code}`, size: PHONE,
 					waitSel: '.pulse-part', note: `Handy ${mode}/${p.label}, Auflösung`,
 				})
 			}
@@ -503,13 +503,13 @@ async function publicPass(s, dark) {
 	// End the quiz -> final standings stage + phone wrap-up.
 	probe('end', quiz.code)
 	await shot(s, {
-		name: `${tag}screen-quiz-final`, url: `/apps/pulse/screen/${quiz.code}`, size: DESKTOP,
+		name: `${tag}screen-quiz-final`, url: `/apps/vibears/screen/${quiz.code}`, size: DESKTOP,
 		waitSel: '.scr-final', note: 'Beamer: Endstand am Quiz-Ende',
 		settle: 5000,
 	})
 	if (!dark) {
 		await shot(s, {
-			name: 'phone-quiz-ended', url: `/apps/pulse/s/${quiz.code}`, size: PHONE,
+			name: 'phone-quiz-ended', url: `/apps/vibears/s/${quiz.code}`, size: PHONE,
 			waitSel: '.pulse-part', note: 'Handy: Quiz beendet',
 		})
 	}
@@ -531,18 +531,18 @@ async function edgePass(s) {
 		probe('state', edge.code, String(first.id), 'open')
 		probe('present', edge.code, '24')
 		await shot(s, {
-			name: 'screen-edge-intake-empty', url: `/apps/pulse/screen/${edge.code}`, size: DESKTOP,
+			name: 'screen-edge-intake-empty', url: `/apps/vibears/screen/${edge.code}`, size: DESKTOP,
 			waitSel: '.scr-stage', note: 'Beamer offen: 0 von 24 geantwortet',
 		})
 		probe('seed', edge.code, '24')
 		probe('present', edge.code, '24')
 		await shot(s, {
-			name: 'screen-edge-intake-full', url: `/apps/pulse/screen/${edge.code}`, size: DESKTOP,
+			name: 'screen-edge-intake-full', url: `/apps/vibears/screen/${edge.code}`, size: DESKTOP,
 			waitSel: '.scr-stage', note: 'Beamer offen: alle haben geantwortet',
 		})
 		probe('present', edge.code, '240')
 		await shot(s, {
-			name: 'screen-edge-intake-240', url: `/apps/pulse/screen/${edge.code}`, size: DESKTOP,
+			name: 'screen-edge-intake-240', url: `/apps/vibears/screen/${edge.code}`, size: DESKTOP,
 			waitSel: '.scr-stage', note: 'Beamer offen: 240 Verbundene (Balkenstufe)',
 		})
 	}
@@ -554,13 +554,13 @@ async function edgePass(s) {
 			probe('seed', edge.code, '24')
 			if (p.label === 'long-label') {
 				await shot(s, {
-					name: `screen-edge-${p.label}-open`, url: `/apps/pulse/screen/${edge.code}`, size: DESKTOP,
+					name: `screen-edge-${p.label}-open`, url: `/apps/vibears/screen/${edge.code}`, size: DESKTOP,
 					waitSel: '.scr-stage', note: `Beamer Grenzfall ${p.label}, offen`,
 				})
 			}
 			probe('state', edge.code, String(p.id), 'locked')
 			await shot(s, {
-				name: `screen-edge-${p.label}-locked`, url: `/apps/pulse/screen/${edge.code}`, size: DESKTOP,
+				name: `screen-edge-${p.label}-locked`, url: `/apps/vibears/screen/${edge.code}`, size: DESKTOP,
 				waitSel: '.scr-stage', note: `Beamer Grenzfall ${p.label}, aufgelöst`,
 			})
 		}
@@ -571,7 +571,7 @@ async function edgePass(s) {
 	probe('present', quiz.code, '24')
 	probe('countdown', quiz.code, String(quizFirst.id), '9')
 	await shot(s, {
-		name: 'screen-edge-countdown-9', url: `/apps/pulse/screen/${quiz.code}`, size: DESKTOP,
+		name: 'screen-edge-countdown-9', url: `/apps/vibears/screen/${quiz.code}`, size: DESKTOP,
 		waitSel: '.scr-stage', note: 'Beamer: Countdown bei 9 s (dringlich)',
 		settle: 600,
 	})
@@ -581,7 +581,7 @@ async function edgePass(s) {
 		probe('seed', room.code, String(room.players))
 		probe('end', room.code)
 		await shot(s, {
-			name: `screen-edge-${label}`, url: `/apps/pulse/screen/${room.code}`, size: DESKTOP,
+			name: `screen-edge-${label}`, url: `/apps/vibears/screen/${room.code}`, size: DESKTOP,
 			waitSel: '.scr-final', note: `Beamer Endstand mit ${room.players} Teilnehmenden`,
 			settle: 5000,
 		})
@@ -763,7 +763,7 @@ async function typePass(s) {
 	const byLabel = Object.fromEntries(types.polls.map((p) => [p.label, p]))
 	const stage = async (label, note, opts = {}) => {
 		await shot(s, {
-			name: `screen-type-${label}`, url: `/apps/pulse/screen/${types.code}`, size: DESKTOP,
+			name: `screen-type-${label}`, url: `/apps/vibears/screen/${types.code}`, size: DESKTOP,
 			waitSel: '.scr-stage', note, ...opts,
 		})
 	}
@@ -865,7 +865,7 @@ async function phonePass(s) {
 	probe('seed', poll.code, '17')
 	probe('present', poll.code, '24')
 	await shot(s, {
-		name: 'phone-poll-choice-picked', url: `/apps/pulse/s/${poll.code}`, size: PHONE,
+		name: 'phone-poll-choice-picked', url: `/apps/vibears/s/${poll.code}`, size: PHONE,
 		waitSel: '.choice', actions: [{ click: '.choice' }, { sleep: 400 }],
 		note: 'Handy Umfrage: ausgewählt, noch nicht gesendet',
 	})
@@ -876,7 +876,7 @@ async function phonePass(s) {
 	})
 	probe('state', poll.code, String(first.id), 'locked')
 	await shot(s, {
-		name: 'phone-poll-choice-revealed', url: `/apps/pulse/s/${poll.code}`, size: PHONE,
+		name: 'phone-poll-choice-revealed', url: `/apps/vibears/s/${poll.code}`, size: PHONE,
 		waitSel: '.mine-box', note: 'Handy Umfrage aufgelöst: eigene Antwort über der Verteilung',
 	})
 
@@ -886,11 +886,11 @@ async function phonePass(s) {
 		const two = edge.polls[0]
 		probe('state', edge.code, String(two.id), 'open')
 		await shot(s, {
-			name: 'phone-narrow-320', url: `/apps/pulse/s/${edge.code}`, size: NARROW,
+			name: 'phone-narrow-320', url: `/apps/vibears/s/${edge.code}`, size: NARROW,
 			waitSel: '.choice', note: 'Handy 320 px breit: Karten ≥ 64 px, Schrift ≥ 17 px',
 		})
 		await shot(s, {
-			name: 'phone-landscape', url: `/apps/pulse/s/${edge.code}`, size: LANDSCAPE,
+			name: 'phone-landscape', url: `/apps/vibears/s/${edge.code}`, size: LANDSCAPE,
 			waitSel: '.choice', note: 'Handy quer 844 × 390: zwei Spalten, Absende-Leiste unten',
 		})
 	}
@@ -900,13 +900,13 @@ async function phonePass(s) {
 		const many = edge.polls.find((p) => p.label === 'opts-8')
 		probe('state', edge.code, String(many.id), 'open')
 		await shot(s, {
-			name: 'phone-edge-opts-8', url: `/apps/pulse/s/${edge.code}`, size: PHONE,
+			name: 'phone-edge-opts-8', url: `/apps/vibears/s/${edge.code}`, size: PHONE,
 			waitSel: '.choice', note: 'Handy: 8 Optionen mit Bild, Antwortbereich scrollt',
 		})
 		const long = edge.polls.find((p) => p.label === 'long-label')
 		probe('state', edge.code, String(long.id), 'open')
 		await shot(s, {
-			name: 'phone-edge-long-label', url: `/apps/pulse/s/${edge.code}`, size: PHONE,
+			name: 'phone-edge-long-label', url: `/apps/vibears/s/${edge.code}`, size: PHONE,
 			waitSel: '.choice', note: 'Handy: langes Label, Karten gleich hoch, Unterlängen ganz',
 		})
 	}
@@ -915,7 +915,7 @@ async function phonePass(s) {
 	const quizFirst = quiz.polls[0]
 	probe('state', quiz.code, String(quizFirst.id), 'open')
 	await shot(s, {
-		name: 'phone-quiz-tap', url: `/apps/pulse/s/${quiz.code}`, size: PHONE,
+		name: 'phone-quiz-tap', url: `/apps/vibears/s/${quiz.code}`, size: PHONE,
 		waitSel: '.nick-input',
 		actions: joinQuiz('Alex', 1800),
 		note: 'Handy Quiz: Karten, Hinweis „Tippen sendet sofort"',
@@ -931,12 +931,12 @@ async function phonePass(s) {
 	})
 	probe('state', quiz.code, String(quizFirst.id), 'locked')
 	await shot(s, {
-		name: 'phone-quiz-revealed', url: `/apps/pulse/s/${quiz.code}`, size: PHONE,
+		name: 'phone-quiz-revealed', url: `/apps/vibears/s/${quiz.code}`, size: PHONE,
 		waitSel: '.verdict, .band', note: 'Handy Quiz aufgelöst: eigenes Ergebnis über der Verteilung',
 	})
 	probe('end', quiz.code)
 	await shot(s, {
-		name: 'phone-quiz-ended-place', url: `/apps/pulse/s/${quiz.code}`, size: PHONE,
+		name: 'phone-quiz-ended-place', url: `/apps/vibears/s/${quiz.code}`, size: PHONE,
 		waitSel: '.big-place', settle: 2000, note: 'Handy Quiz-Ende: eigener Platz oben',
 	})
 
@@ -949,7 +949,7 @@ async function phonePass(s) {
 		const long = JSON.parse(probe('add-words', types.code, 'words-long-phone', '3'))
 		probe('state', types.code, String(long.id), 'open')
 		await shot(s, {
-			name: 'phone-words-long-typed', url: `/apps/pulse/s/${types.code}`, size: PHONE,
+			name: 'phone-words-long-typed', url: `/apps/vibears/s/${types.code}`, size: PHONE,
 			waitSel: '.word-field input', actions: [{ type: ['.word-field input', LONG_WORD + 'X'] }, { sleep: 400 }],
 			note: 'Handy Wortwolke: 41 Zeichen getippt, das Feld nimmt 40', measure: WORD_FIELD,
 		})
@@ -963,7 +963,7 @@ async function phonePass(s) {
 		probe('fixture', types.code, String(long.id), 'words-long', '7', LONG_WORD)
 		probe('state', types.code, String(long.id), 'locked')
 		await shot(s, {
-			name: 'phone-words-long-revealed', url: `/apps/pulse/s/${types.code}`, size: PHONE,
+			name: 'phone-words-long-revealed', url: `/apps/vibears/s/${types.code}`, size: PHONE,
 			waitSel: '.mine-box', measure: PHONE_LONG,
 			note: 'Handy Wortwolke aufgelöst: eigenes Wort mit 40 Zeichen, in der Wolke das größte (8 Nennungen)',
 		})
@@ -986,7 +986,7 @@ async function phonePass(s) {
 			if (mine && window.__rankFocus.log.length < 4) { a.click() }
 		` }
 		await shot(s, {
-			name: 'phone-rank-keyboard', url: `/apps/pulse/s/${poll.code}`, size: PHONE,
+			name: 'phone-rank-keyboard', url: `/apps/vibears/s/${poll.code}`, size: PHONE,
 			waitSel: '.rank-item',
 			actions: [
 				{ js: `
@@ -1022,7 +1022,7 @@ async function phonePass(s) {
 		probe('fixture', types.code, String(corners.id), 'compass', '44')
 		probe('state', types.code, String(corners.id), 'locked')
 		await shot(s, {
-			name: 'phone-compass-corners-long', url: `/apps/pulse/s/${types.code}`, size: PHONE,
+			name: 'phone-compass-corners-long', url: `/apps/vibears/s/${types.code}`, size: PHONE,
 			waitSel: '.compass-wrap svg', measure: CORNERS_PHONE,
 			note: 'Handy Kompass aufgelöst: vier Eckbeschriftungen mit 40 Zeichen',
 		})
@@ -1065,11 +1065,11 @@ async function moderatorPass(s) {
 	// Start screen: two columns (laptop) and one column (§9.5). Both times
 	// the bottom edge of the first room card is measured.
 	await shot(s, {
-		name: 'mod-start', url: '/apps/pulse/', size: LAPTOP,
+		name: 'mod-start', url: '/apps/vibears/', size: LAPTOP,
 		waitSel: '.pulse-mod', note: 'Moderator: Startbildschirm (zweispaltig ab 1200 px)',
 	})
 	await shot(s, {
-		name: 'mod-start-narrow', url: '/apps/pulse/', size: [1024, 800],
+		name: 'mod-start-narrow', url: '/apps/vibears/', size: [1024, 800],
 		waitSel: '.pulse-mod', note: 'Moderator: Startbildschirm einspaltig (1024 px)',
 	})
 
@@ -1081,13 +1081,13 @@ async function moderatorPass(s) {
 	probe('seed', quiz.code, '17')
 	probe('present', quiz.code, '24')
 	await shot(s, {
-		name: 'mod-flow-1-open', url: `/apps/pulse/room/${quiz.code}`, size: LAPTOP,
+		name: 'mod-flow-1-open', url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
 		waitSel: '.mod-bar', settle: 2500, note: 'Moderator 1/4: Frage offen -> „Auflösen"',
 	})
 	probe('state', quiz.code, String(first.id), 'locked')
 	probe('present', quiz.code, '24')
 	await shot(s, {
-		name: 'mod-flow-2-revealed', url: `/apps/pulse/room/${quiz.code}`, size: LAPTOP,
+		name: 'mod-flow-2-revealed', url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
 		waitSel: '.mod-bar', settle: 2500, note: 'Moderator 2/4: aufgelöst, weitere folgen -> „Nächste Frage"',
 	})
 	probe('state', quiz.code, String(last.id), 'open')
@@ -1095,7 +1095,7 @@ async function moderatorPass(s) {
 	probe('state', quiz.code, String(last.id), 'locked')
 	probe('present', quiz.code, '24')
 	await shot(s, {
-		name: 'mod-flow-3-last', url: `/apps/pulse/room/${quiz.code}`, size: LAPTOP,
+		name: 'mod-flow-3-last', url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
 		waitSel: '.mod-bar', settle: 2500, note: 'Moderator 3/4: letzte Frage aufgelöst -> „Endstand zeigen"',
 	})
 	await shot(s, {
@@ -1111,7 +1111,7 @@ async function moderatorPass(s) {
 	probe('state', quiz.code, String(first.id), 'open')
 	probe('present', quiz.code, '24')
 	await shot(s, {
-		name: 'mod-fullscreen', url: `/apps/pulse/room/${quiz.code}`, size: LAPTOP,
+		name: 'mod-fullscreen', url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
 		waitSel: '.mod-bar', settle: 2000,
 		actions: [{ click: '.pulse-menu > .pulse-btn' }, { sleep: 300 }, { js: 'document.querySelector(\'.pulse-menu-item[data-key="fs"]\').click()' }, { sleep: 1500 }],
 		note: 'Moderator: Vollbild — nur die Leinwand, kein privates Panel',
@@ -1125,7 +1125,7 @@ async function moderatorPass(s) {
 	const pollFirst = poll.polls[0]
 	probe('state', poll.code, String(pollFirst.id), 'open')
 	await shot(s, {
-		name: 'mod-join-open', url: `/apps/pulse/room/${poll.code}`, size: LAPTOP,
+		name: 'mod-join-open', url: `/apps/vibears/room/${poll.code}`, size: LAPTOP,
 		waitSel: '.mod-bar', settle: 3000, note: 'Moderator: niemand verbunden -> Beitritts-Panel offen',
 	})
 
@@ -1133,14 +1133,14 @@ async function moderatorPass(s) {
 	const empty = probeData.empty
 	if (empty) {
 		await shot(s, {
-			name: 'mod-empty-deck', url: `/apps/pulse/room/${empty.code}`, size: LAPTOP,
+			name: 'mod-empty-deck', url: `/apps/vibears/room/${empty.code}`, size: LAPTOP,
 			waitSel: '.mod-bar', settle: 1500, note: 'Moderator: Deck ohne Fragen -> „Frage anlegen"',
 		})
 	}
 
 	// Deck editor (stays unchanged, §9.6), as proof that it still works.
 	await shot(s, {
-		name: 'mod-deck', url: `/apps/pulse/room/${poll.code}`, size: LAPTOP,
+		name: 'mod-deck', url: `/apps/vibears/room/${poll.code}`, size: LAPTOP,
 		waitSel: '.pulse-mod', settle: 1500,
 		actions: [{ click: '.pulse-menu > .pulse-btn' }, { sleep: 300 }, { js: 'document.querySelector(\'.pulse-menu-item[data-key="deck"]\').click()' }, { wait: '.deck-list' }, { sleep: 800 }],
 		note: 'Moderator: Deck-Liste',
@@ -1156,7 +1156,7 @@ async function moderatorPass(s) {
 async function embedPass(s, dark) {
 	const tag = dark ? 'dark-' : ''
 	await shot(s, {
-		name: `${tag}embed-form`, url: '/apps/pulse/embed', size: [1280, 720],
+		name: `${tag}embed-form`, url: '/apps/vibears/embed', size: [1280, 720],
 		waitSel: '.pulse-embed-cell', note: `Einbett-Shell: Code-Eingabe (${dark ? 'dunkel' : 'hell'})`,
 	})
 	if (dark) { return }
@@ -1169,7 +1169,7 @@ async function embedPass(s, dark) {
 	})
 	// Valid code: the canvas fills the frame.
 	await shot(s, {
-		name: 'embed-live', url: `/apps/pulse/embed?code=${poll.code}`, size: [1280, 720],
+		name: 'embed-live', url: `/apps/vibears/embed?code=${poll.code}`, size: [1280, 720],
 		waitSel: '.pulse-embed-frame', settle: 4000, note: 'Einbett-Shell: Leinwand im Rahmen',
 	})
 	// Self-paced (§5.2 step 4.5): the same shell with a running
@@ -1177,7 +1177,7 @@ async function embedPass(s, dark) {
 	if (paceData) {
 		const embedPace = async (name, code, note) => {
 			await shot(s, {
-				name, url: `/apps/pulse/embed?code=${code}`, size: [1280, 720],
+				name, url: `/apps/vibears/embed?code=${code}`, size: [1280, 720],
 				waitSel: '.pulse-embed-frame', settle: 2500, measure: EMBED_PACE,
 				actions: [{ until: '(() => { const f = document.querySelector(".pulse-embed-frame"); const d = f && f.contentDocument; return d && d.querySelector(".scr.is-race .pace-race") })()', timeout: 12000 }],
 				note,
@@ -1269,7 +1269,7 @@ async function storePass(s) {
 	// 1. What the audience sees before it starts: code and QR, large on the wall.
 	probe('state', p.code, '0', 'open')
 	await shot(s, {
-		name: 'lobby', url: `/apps/pulse/screen/${p.code}`, size: box(STORE),
+		name: 'lobby', url: `/apps/vibears/screen/${p.code}`, size: box(STORE),
 		waitSel: '.scr-lobby', note: 'Store: Lobby — Beitritt per Code und QR',
 	})
 
@@ -1283,7 +1283,7 @@ async function storePass(s) {
 	// 30" instead of "complete"; that is what a running question looks like.
 	probe('present', p.code, '50')
 	await shot(s, {
-		name: 'live-words', url: `/apps/pulse/screen/${p.code}`, size: box(STORE),
+		name: 'live-words', url: `/apps/vibears/screen/${p.code}`, size: box(STORE),
 		waitSel: '.scr-stage', note: 'Store: Wortwolke, Antworten laufen ein',
 	})
 
@@ -1292,7 +1292,7 @@ async function storePass(s) {
 	const choice = byLabel(p, 'choice')
 	probe('state', p.code, String(choice.id), 'open')
 	await shot(s, {
-		name: 'phone-vote', url: `/apps/pulse/s/${p.code}`, size: box(PHONE),
+		name: 'phone-vote', url: `/apps/vibears/s/${p.code}`, size: box(PHONE),
 		waitSel: '.choices .choice',
 		// One option is tapped: only then is the submit button active. Without a
 		// selection the image shows a greyed-out button and looks broken.
@@ -1303,7 +1303,7 @@ async function storePass(s) {
 	probe('present', p.code, '30')
 	probe('state', p.code, String(choice.id), 'locked')
 	await shot(s, {
-		name: 'results', url: `/apps/pulse/screen/${p.code}`, size: box(STORE),
+		name: 'results', url: `/apps/vibears/screen/${p.code}`, size: box(STORE),
 		waitSel: '.scr-stage', note: 'Store: aufgelöstes Ergebnis auf der Wand',
 	})
 
@@ -1314,14 +1314,14 @@ async function storePass(s) {
 	probe('state', q.code, String(first.id), 'open')
 	probe('present', q.code, '15')
 	await shot(s, {
-		name: 'moderator', url: `/apps/pulse/room/${q.code}`, size: box(STORE_MOD),
+		name: 'moderator', url: `/apps/vibears/room/${q.code}`, size: box(STORE_MOD),
 		waitSel: '.mod-bar', settle: 2500, note: 'Store: Moderationsansicht im Quiz',
 	})
 
 	// 6. End of the quiz: podium and leaderboard.
 	probe('end', q.code)
 	await shot(s, {
-		name: 'standings', url: `/apps/pulse/screen/${q.code}`, size: box(STORE),
+		name: 'standings', url: `/apps/vibears/screen/${q.code}`, size: box(STORE),
 		waitSel: '.scr-final', settle: 5000, note: 'Store: Endstand des Quiz',
 	})
 }
@@ -1348,7 +1348,7 @@ async function overviewPass(s, dark) {
 
 	for (const [w, h] of [DESKTOP, LAPTOP, [1024, 800]]) {
 		await shot(s, {
-			name: `ov-start-${w}${tag}`, url: '/apps/pulse/', size: [w, h],
+			name: `ov-start-${w}${tag}`, url: '/apps/vibears/', size: [w, h],
 			waitSel: '.pulse-mod', settle: 1500,
 			note: `Übersicht: Startbildschirm + Raumliste bei ${w} px${dark ? ', dunkel' : ''}`,
 		})
@@ -1367,7 +1367,7 @@ async function overviewPass(s, dark) {
 	for (const [label, room] of [['umfrage', poll], ['quiz', quiz]]) {
 		for (const [w, h] of [DESKTOP, LAPTOP, [1024, 800]]) {
 			await shot(s, {
-				name: `ov-deck-${label}-${w}${tag}`, url: `/apps/pulse/room/${room.code}`, size: [w, h],
+				name: `ov-deck-${label}-${w}${tag}`, url: `/apps/vibears/room/${room.code}`, size: [w, h],
 				waitSel: '.pulse-mod', settle: 1500,
 				actions: openDeck,
 				note: `Übersicht: Deck ${label} bei ${w} px${dark ? ', dunkel' : ''}`,
@@ -1377,7 +1377,7 @@ async function overviewPass(s, dark) {
 
 	// The open menu: fixed text plus check mark (R3), red items last (R4).
 	await shot(s, {
-		name: `ov-deck-menu-quiz${tag}`, url: `/apps/pulse/room/${quiz.code}`, size: LAPTOP,
+		name: `ov-deck-menu-quiz${tag}`, url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
 		waitSel: '.pulse-mod', settle: 1200,
 		actions: [...openDeck, { js: 'document.querySelector(".deck-head .pulse-menu > .pulse-btn").click()' }, { sleep: 500 }],
 		note: `Übersicht: Deck-Menü offen${dark ? ', dunkel' : ''}`,
@@ -1385,7 +1385,7 @@ async function overviewPass(s, dark) {
 
 	// Escape closes and returns the focus to the trigger (acceptance #10).
 	await shot(s, {
-		name: `ov-deck-menu-keyboard${tag}`, url: `/apps/pulse/room/${quiz.code}`, size: LAPTOP,
+		name: `ov-deck-menu-keyboard${tag}`, url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
 		waitSel: '.pulse-mod', settle: 1200,
 		actions: [...openDeck,
 			{ js: 'document.querySelector(".deck-head .pulse-menu > .pulse-btn").click()' }, { sleep: 400 },
@@ -1397,7 +1397,7 @@ async function overviewPass(s, dark) {
 	// Composer open: the header stays in place, and the second button
 	// layer is added below it.
 	await shot(s, {
-		name: `ov-composer${tag}`, url: `/apps/pulse/room/${quiz.code}`, size: LAPTOP,
+		name: `ov-composer${tag}`, url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
 		waitSel: '.pulse-mod', settle: 1500,
 		actions: [...openDeck,
 			{ js: 'document.querySelector(\'.add-btn\').click()' }, { wait: '.composer' }, { sleep: 900 }],
@@ -1423,13 +1423,13 @@ async function matchPass(s, dark) {
 			probe('state', types.code, String(p.id), 'open')
 			probe('present', types.code, '24')
 			await shot(s, {
-				name: `${tag}screen-match8-poll-open`, url: `/apps/pulse/screen/${types.code}`, size: DESKTOP,
+				name: `${tag}screen-match8-poll-open`, url: `/apps/vibears/screen/${types.code}`, size: DESKTOP,
 				waitSel: '.scr-stage', note: 'Beamer Zuordnung 8 Paare, Umfrage, offen',
 			})
 			probe('seed', types.code, '24')
 			probe('state', types.code, String(p.id), 'locked')
 			await shot(s, {
-				name: `${tag}screen-match8-poll-locked`, url: `/apps/pulse/screen/${types.code}`, size: DESKTOP,
+				name: `${tag}screen-match8-poll-locked`, url: `/apps/vibears/screen/${types.code}`, size: DESKTOP,
 				waitSel: '.scr-stage', note: 'Beamer Zuordnung 8 Paare, Umfrage, aufgelöst',
 			})
 		}
@@ -1442,13 +1442,13 @@ async function matchPass(s, dark) {
 		probe('state', match.code, String(p.id), 'open')
 		probe('present', match.code, '24')
 		await shot(s, {
-			name: `${tag}screen-${label}-quiz-open`, url: `/apps/pulse/screen/${match.code}`, size: DESKTOP,
+			name: `${tag}screen-${label}-quiz-open`, url: `/apps/vibears/screen/${match.code}`, size: DESKTOP,
 			waitSel: '.scr-stage', note: `Beamer Zuordnung ${note}, Quiz, offen`,
 		})
 		probe('seed', match.code, '24')
 		probe('state', match.code, String(p.id), 'locked')
 		await shot(s, {
-			name: `${tag}screen-${label}-quiz-locked`, url: `/apps/pulse/screen/${match.code}`, size: DESKTOP,
+			name: `${tag}screen-${label}-quiz-locked`, url: `/apps/vibears/screen/${match.code}`, size: DESKTOP,
 			waitSel: '.scr-stage', note: `Beamer Zuordnung ${note}, Quiz, aufgelöst`,
 		})
 	}
@@ -1458,7 +1458,7 @@ async function matchPass(s, dark) {
 	const phone8 = match.polls.find((q) => q.label === 'match-8')
 	probe('state', match.code, String(phone8.id), 'open')
 	await shot(s, {
-		name: `${tag}phone-match8-vote`, url: `/apps/pulse/s/${match.code}`, size: PHONE,
+		name: `${tag}phone-match8-vote`, url: `/apps/vibears/s/${match.code}`, size: PHONE,
 		waitSel: '.nick-input', settle: 1500,
 		actions: joinQuiz('Alex', 1800),
 		note: 'Handy Zuordnung 8 Paare, Abstimm-Ansicht',
@@ -1478,13 +1478,13 @@ async function matchPass(s, dark) {
 		probe('state', match.code, String(eight.id), 'open')
 		probe('present', match.code, '24')
 		await shot(s, {
-			name: `${tag}mod-match8-open-${tagSize}`, url: `/apps/pulse/room/${match.code}`, size,
+			name: `${tag}mod-match8-open-${tagSize}`, url: `/apps/vibears/room/${match.code}`, size,
 			waitSel: '.mod-bar', settle: 3000, note: `Moderator Zuordnung 8 Paare, offen (${tagSize} px)`,
 		})
 		probe('state', match.code, String(eight.id), 'locked')
 		probe('present', match.code, '24')
 		await shot(s, {
-			name: `${tag}mod-match8-locked-${tagSize}`, url: `/apps/pulse/room/${match.code}`, size,
+			name: `${tag}mod-match8-locked-${tagSize}`, url: `/apps/vibears/room/${match.code}`, size,
 			waitSel: '.mod-bar', settle: 3000, note: `Moderator Zuordnung 8 Paare, aufgelöst (${tagSize} px)`,
 		})
 	}
@@ -1608,7 +1608,7 @@ async function toDeck(s, url) {
  */
 async function paceModPass(s) {
 	const P = paceData
-	const deck = (code) => `/apps/pulse/room/${code}`
+	const deck = (code) => `/apps/vibears/room/${code}`
 	const openMenu = { js: 'document.querySelector(".deck-head .pulse-menu > .pulse-btn").click()' }
 	const escape = { js: 'document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))' }
 	// As with the keyboard: focus on the trigger, then trigger it; only this way
@@ -1734,7 +1734,7 @@ async function paceModPass(s) {
 		restore.push(() => probe('window', P.wide.code, 'closedAt=0', 'releasedAt=0'))
 		probe('window', P.wide.code, 'closedAt=now', 'releasedAt=now')
 		await shot(s, {
-			name: 'pace-rooms', url: '/apps/pulse/', size: [1440, 2000],
+			name: 'pace-rooms', url: '/apps/vibears/', size: [1440, 2000],
 			waitSel: '.myroom', settle: 1500, measure: PACE_ROOMS,
 			note: 'Raumliste: Zustands-Chips Entwurf / offen / offen mit Frist / geschlossen / freigegeben',
 		})
@@ -1748,7 +1748,7 @@ async function paceModPass(s) {
 /** Dark: deck in draft, homework dialog (date field!) and locked deck. */
 async function paceModDark(s) {
 	const P = paceData
-	const deck = (code) => `/apps/pulse/room/${code}`
+	const deck = (code) => `/apps/vibears/room/${code}`
 	await login(s)
 	probe('present', P.draft.code, '4')
 	await shot(s, {
@@ -1966,7 +1966,7 @@ const PACE_WATCH = `
 async function roomRow(s, code) {
 	return s.async(`
 		const done = arguments[arguments.length - 1]
-		fetch(OC.generateUrl('/apps/pulse/api/1.0/rooms'), { credentials: 'same-origin', headers: { requesttoken: document.head.dataset.requesttoken } })
+		fetch(OC.generateUrl('/apps/vibears/api/1.0/rooms'), { credentials: 'same-origin', headers: { requesttoken: document.head.dataset.requesttoken } })
 			.then((r) => r.json()).then((rows) => done(rows.find((r) => r.code === arguments[0]) || null))
 			.catch((e) => done({ error: String(e) }))
 	`, [code])
@@ -1983,7 +1983,7 @@ async function pageGet(s, path) {
 
 /** Answer key of the free-text question (the owner's room JSON). */
 async function textKey(s, code) {
-	const room = await pageGet(s, `/apps/pulse/api/1.0/rooms/${code}`)
+	const room = await pageGet(s, `/apps/vibears/api/1.0/rooms/${code}`)
 	const p = ((room && room.polls) || []).find((x) => x.type === 'text')
 	const key = (p && p.answerKey) || {}
 	return { accepted: key.accepted || [], rejected: key.rejected || [] }
@@ -1991,7 +1991,7 @@ async function textKey(s, code) {
 
 /** State from /progress: names and pending free texts (sum of the groups). */
 async function progressOf(s, code) {
-	const p = await pageGet(s, `/apps/pulse/api/1.0/rooms/${code}/progress`)
+	const p = await pageGet(s, `/apps/vibears/api/1.0/rooms/${code}/progress`)
 	const players = (p && p.players) || []
 	return { names: players.map((x) => x.nickname), pending: ((p && p.pendingAnswers) || []).reduce((a, x) => a + x.count, 0) }
 }
@@ -2039,7 +2039,7 @@ function downloadPrefs(dir) {
 async function paceRunPass(s, dark) {
 	const P = paceData
 	const tag = dark ? 'dark-' : ''
-	const run = (code) => `/apps/pulse/room/${code}`
+	const run = (code) => `/apps/vibears/room/${code}`
 	const ready = '.pace-run .pace-table, .pace-run .pace-empty'
 	// The preview is an iframe: only once the projector page is up there (open
 	// with starters: the race) is the picture honest.
@@ -2242,7 +2242,7 @@ async function paceRunPass(s, dark) {
 async function paceRunClicks(s, dl) {
 	const P = paceData
 	const code = P.click.code
-	const run = (c) => `/apps/pulse/room/${c}`
+	const run = (c) => `/apps/vibears/room/${c}`
 	const ready = '.pace-run .pace-table, .pace-run .pace-empty'
 	const menu = 'document.querySelector(".pace-top .pulse-menu > .pulse-btn").click()'
 	const item = (key) => `document.querySelector('.pace-top .pulse-menu-item[data-key="${key}"]').click()`
@@ -2289,7 +2289,7 @@ async function paceRunClicks(s, dl) {
 	// answers" and the free-text sentence occur along the sequence.
 	await s.go(HOST + run(code))
 	await waitFor(s, ready)
-	const groupsNow = async () => ((await pageGet(s, `/apps/pulse/api/1.0/rooms/${code}/progress`)).pendingAnswers || []).length
+	const groupsNow = async () => ((await pageGet(s, `/apps/vibears/api/1.0/rooms/${code}/progress`)).pendingAnswers || []).length
 	let groups = await groupsNow()
 	for (let seed = 101; groups < 2 && seed < 106; seed++) {
 		probe('race', code, '6', String(seed))
@@ -2353,7 +2353,7 @@ async function paceRunClicks(s, dl) {
 	await openItem('lock')
 	await waitForText(s, '.pace-top-row', /Joining locked/)
 	await s.script(escape)
-	const room4 = await pageGet(s, `/apps/pulse/api/1.0/rooms/${code}`)
+	const room4 = await pageGet(s, `/apps/vibears/api/1.0/rooms/${code}`)
 	note(`Sperren: Chip „Joining locked"; Server: joinsLocked ${room4.joinsLocked}`)
 	if (room4.joinsLocked !== true) { overflow.push('Sperren: joinsLocked nicht gesetzt') }
 
@@ -2458,7 +2458,7 @@ async function paceRunClicks(s, dl) {
 		const done = arguments[arguments.length - 1]
 		const code = arguments[0]
 		const tok = document.head.dataset.requesttoken
-		const url = (view, withToken) => OC.generateUrl('/apps/pulse/api/1.0/rooms/' + code + '/export') + '?view=' + view
+		const url = (view, withToken) => OC.generateUrl('/apps/vibears/api/1.0/rooms/' + code + '/export') + '?view=' + view
 			+ (withToken ? '&requesttoken=' + encodeURIComponent(tok) : '')
 		const get = (u) => fetch(u, { credentials: 'same-origin' }).then(async (r) => ({ status: r.status, type: r.headers.get('content-type') || '',
 			disp: (r.headers.get('content-disposition') || '').replace(/[A-Z0-9]{6}/, '<CODE>'), head: (await r.text()).replace(/^\\uFEFF/, '').split('\\n')[0].slice(0, 70) }))
@@ -2763,7 +2763,7 @@ async function stateCadence(s, ms) {
 const frameWin = ([w, h]) => Object.assign([450, h + 90], { css: w + '×' + h })
 async function phoneAt(s, path, [w, h]) {
 	await s.size(frameWin([w, h]))
-	await s.go(HOST + '/apps/pulse/join')
+	await s.go(HOST + '/apps/vibears/join')
 	await waitFor(s, '.pulse-part')
 	await s.script(`
 		const back = document.createElement('div')
@@ -2803,7 +2803,7 @@ async function phoneAt(s, path, [w, h]) {
 async function pacePhonePass(s, dark) {
 	const P = paceData
 	const tag = dark ? 'dark-' : ''
-	const url = (code) => `/apps/pulse/s/${code}`
+	const url = (code) => `/apps/vibears/s/${code}`
 	const card = (name) => `.pace-card[data-card="${name}"]`
 	const note = (text) => index.push(`| (Messung${dark ? ', dunkel' : ''}) | | ${url('<CODE>')} | ${text} |`)
 	// A check that fails goes into the index AND into the anomalies.
@@ -2888,7 +2888,7 @@ async function pacePhonePass(s, dark) {
 		const cad = await stateCadence(s, 11000)
 		note('Takt auf der Startkarte: ' + cad.n + ' Abrufe in 11 s, Abstände ' + (cad.gaps.join(' / ') || '—') + ' ms (Soll 5000)')
 		// Removed, then reloaded: the remembered name (localStorage) carries the hint.
-		const stored = await s.script('return window.localStorage.getItem("pulse-pace:" + arguments[0])', [P.race.code])
+		const stored = await s.script('return window.localStorage.getItem("vibears-pace:" + arguments[0])', [P.race.code])
 		probe('remove', P.race.code, racer)
 		await phone({
 			name: 'pace-phone-removed', url: url(P.race.code), waitSel: '.nick .pace-notice',
@@ -3357,7 +3357,7 @@ const PACE_SCREEN = `
  */
 async function paceScreenPass() {
 	const P = paceData
-	const url = (code) => `/apps/pulse/screen/${code}`
+	const url = (code) => `/apps/vibears/screen/${code}`
 	// A session with real inner dimensions of 1280×720 and 1920×1080: measure
 	// the window chrome once and add it on.
 	const open = async (dark) => {
@@ -3457,8 +3457,8 @@ async function paceScreenPass() {
 let failed = false
 try {
 	await waitForDriver()
-	// When touching up a single pass: PULSE_SHOTS_ONLY=moderator
-	const only = process.env.PULSE_SHOTS_ONLY || ''
+	// When touching up a single pass: VIBEARS_SHOTS_ONLY=moderator
+	const only = process.env.VIBEARS_SHOTS_ONLY || ''
 	const wanted = (part) => !only || only === part || (only === 'pace' && part.startsWith('pace-'))
 
 	let s
@@ -3511,23 +3511,23 @@ try {
 	try {
 		// Only the meaningful stages; shooting everything twice gains nothing.
 		await shot(s, {
-			name: 'dark-screen-lobby', url: `/apps/pulse/screen/${poll.code}`, size: DESKTOP,
+			name: 'dark-screen-lobby', url: `/apps/vibears/screen/${poll.code}`, size: DESKTOP,
 			waitSel: '.scr', note: 'Beamer Lobby, dunkel',
 		})
 		probe('state', poll.code, String(poll.polls[0].id), 'open')
 		await shot(s, {
-			name: 'dark-screen-poll-choice-open', url: `/apps/pulse/screen/${poll.code}`, size: DESKTOP,
+			name: 'dark-screen-poll-choice-open', url: `/apps/vibears/screen/${poll.code}`, size: DESKTOP,
 			waitSel: '.scr-stage', note: 'Beamer Multiple Choice offen, dunkel',
 		})
 		// Revealed in the dark: this is where the percentages sit whose contrast
 		// D10 is about (acceptance §5.11).
 		probe('state', poll.code, String(poll.polls[0].id), 'locked')
 		await shot(s, {
-			name: 'dark-screen-poll-choice-locked', url: `/apps/pulse/screen/${poll.code}`, size: DESKTOP,
+			name: 'dark-screen-poll-choice-locked', url: `/apps/vibears/screen/${poll.code}`, size: DESKTOP,
 			waitSel: '.scr-stage', note: 'Beamer Multiple Choice aufgelöst, dunkel',
 		})
 		await shot(s, {
-			name: 'dark-phone-poll-choice', url: `/apps/pulse/s/${poll.code}`, size: PHONE,
+			name: 'dark-phone-poll-choice', url: `/apps/vibears/s/${poll.code}`, size: PHONE,
 			waitSel: '.pulse-part', note: 'Handy Abstimmen, dunkel',
 		})
 		// The lightness scale mixes against the stage background (§7.0), so in the
@@ -3544,7 +3544,7 @@ try {
 			]) {
 				probe('state', types.code, String(byLabel[label].id), 'locked')
 				await shot(s, {
-					name: `dark-screen-type-${label}`, url: `/apps/pulse/screen/${types.code}`, size: DESKTOP,
+					name: `dark-screen-type-${label}`, url: `/apps/vibears/screen/${types.code}`, size: DESKTOP,
 					waitSel: '.scr-stage', note,
 				})
 			}

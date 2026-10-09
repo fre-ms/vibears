@@ -8,7 +8,7 @@ const webpackConfig = require('@nextcloud/webpack-vue-config')
 // Four entry points: main = moderator, public = participant, styles = only the
 // token layer + design system for pages without Vue (the embed shell), admin =
 // the administration settings form (no Vue either).
-// webpack-vue-config prefixes the app name -> js/pulse-main.js, js/pulse-public.js
+// webpack-vue-config prefixes the app name -> js/vibears-main.js, js/vibears-public.js
 webpackConfig.entry = {
 	main: { import: path.join(__dirname, 'src', 'main.js') },
 	public: { import: path.join(__dirname, 'src', 'public.js') },
@@ -17,8 +17,8 @@ webpackConfig.entry = {
 }
 
 // clean:true (from the NC config) empties js/ before every build and would take the
-// hand-written js/pulse-embed.js (not a webpack entry) with it -> keep it.
-webpackConfig.output.clean = { keep: (asset) => asset.includes('pulse-embed') }
+// hand-written js/vibears-embed.js (not a webpack entry) with it -> keep it.
+webpackConfig.output.clean = { keep: (asset) => asset.includes('vibears-embed') }
 
 // css-loader takes its sourceMap default from devtool, which the NC config also sets
 // for production -> every <style> block landed in the bundle a second time, as an

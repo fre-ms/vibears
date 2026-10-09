@@ -5,11 +5,11 @@
 # Builds the release archive for the Nextcloud App Store.
 #
 #   build/package.sh                  # build + pack (unsigned)
-#   PULSE_KEY=~/pulse.key PULSE_CRT=~/pulse.crt build/package.sh   # + sign
+#   VIBEARS_KEY=~/vibears.key VIBEARS_CRT=~/vibears.crt build/package.sh   # + sign
 #   SKIP_BUILD=1 build/package.sh     # leave js/ as it is
 #   ALLOW_UNRELEASED=1 build/package.sh   # test archive of an unreleased state
 #
-# Result: build/pulse-<version>.tar.gz with exactly one folder `pulse/` inside —
+# Result: build/vibears-<version>.tar.gz with exactly one folder `vibears/` inside —
 # that is what the store expects. Sources (src/, node_modules/, docs/, tests/) stay
 # out; what ships is the finished bundle in js/. Directories and executables are
 # packed as 755, all other files as 644, owned by 0:0, whatever the umask of
@@ -114,14 +114,14 @@ trap 'exit 143' TERM
 
 VERSION="$(sed -n 's/.*<version>\(.*\)<\/version>.*/\1/p' "$ROOT/appinfo/info.xml" | head -n1)"
 [ -n "$VERSION" ] || die "cannot read the version from appinfo/info.xml"
-ARCHIVE="$ROOT/build/pulse-$VERSION.tar.gz"
+ARCHIVE="$ROOT/build/vibears-$VERSION.tar.gz"
 
 SIGN=""
-if [ -n "${PULSE_KEY:-}" ] || [ -n "${PULSE_CRT:-}" ]; then
-	[ -n "${PULSE_KEY:-}" ] && [ -n "${PULSE_CRT:-}" ] \
-		|| die "set both PULSE_KEY and PULSE_CRT to sign, or neither"
-	[ -r "$PULSE_KEY" ] || die "private key not readable: $PULSE_KEY"
-	[ -r "$PULSE_CRT" ] || die "certificate not readable: $PULSE_CRT"
+if [ -n "${VIBEARS_KEY:-}" ] || [ -n "${VIBEARS_CRT:-}" ]; then
+	[ -n "${VIBEARS_KEY:-}" ] && [ -n "${VIBEARS_CRT:-}" ] \
+		|| die "set both VIBEARS_KEY and VIBEARS_CRT to sign, or neither"
+	[ -r "$VIBEARS_KEY" ] || die "private key not readable: $VIBEARS_KEY"
+	[ -r "$VIBEARS_CRT" ] || die "certificate not readable: $VIBEARS_CRT"
 	SIGN=1
 fi
 
@@ -153,14 +153,14 @@ if [ -z "$RELEASED" ]; then
 	fi
 fi
 
-TMP="$(mktemp -d "${TMPDIR:-/tmp}/pulse-package.XXXXXX")"
-STAGE="$TMP/pulse"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/vibears-package.XXXXXX")"
+STAGE="$TMP/vibears"
 
 if [ -z "${SKIP_BUILD:-}" ]; then
 	echo "==> npm run build"
 	(cd "$ROOT" && npm run --silent build >/dev/null)
 fi
-[ -f "$ROOT/js/pulse-main.js" ] || die "js/pulse-main.js is missing — build first"
+[ -f "$ROOT/js/vibears-main.js" ] || die "js/vibears-main.js is missing — build first"
 
 echo "==> Checking translations"
 (cd "$ROOT" && npm run --silent l10n:check)
@@ -218,14 +218,14 @@ if [ -n "$SIGN" ]; then
 	command -v docker >/dev/null 2>&1 || die "docker not found — signing needs a Nextcloud image"
 	# occ signs with any certificate; a wrong one only shows up when an
 	# instance refuses to install the release. So check it here.
-	CRT_PUB="$(openssl x509 -in "$PULSE_CRT" -noout -pubkey)" \
-		|| die "cannot read the certificate $PULSE_CRT"
-	KEY_PUB="$(openssl pkey -in "$PULSE_KEY" -pubout)" \
-		|| die "cannot read the private key $PULSE_KEY"
-	[ "$CRT_PUB" = "$KEY_PUB" ] || die "$PULSE_CRT does not belong to $PULSE_KEY"
-	openssl x509 -in "$PULSE_CRT" -noout -subject -nameopt RFC2253 \
-		| sed -n 's/^subject= *//p' | tr ',' '\n' | grep -qx 'CN=pulse' \
-		|| die "the certificate is not issued for CN=pulse"
+	CRT_PUB="$(openssl x509 -in "$VIBEARS_CRT" -noout -pubkey)" \
+		|| die "cannot read the certificate $VIBEARS_CRT"
+	KEY_PUB="$(openssl pkey -in "$VIBEARS_KEY" -pubout)" \
+		|| die "cannot read the private key $VIBEARS_KEY"
+	[ "$CRT_PUB" = "$KEY_PUB" ] || die "$VIBEARS_CRT does not belong to $VIBEARS_KEY"
+	openssl x509 -in "$VIBEARS_CRT" -noout -subject -nameopt RFC2253 \
+		| sed -n 's/^subject= *//p' | tr ',' '\n' | grep -qx 'CN=vibears' \
+		|| die "the certificate is not issued for CN=vibears"
 fi
 
 if [ -n "$SIGN" ] && [ -z "$CONTAINER" ]; then
@@ -237,22 +237,22 @@ if [ -n "$SIGN" ] && [ -z "$CONTAINER" ]; then
 	# Nothing of the image's entrypoint runs (it would install Nextcloud): only
 	# php with occ, as root — the only user that may write the source's config
 	# directory, which occ insists on even for this command.
-	SIGN_CT="pulse-sign-$$-$(od -An -N4 -tx4 /dev/urandom | tr -d ' ')"
+	SIGN_CT="vibears-sign-$$-$(od -An -N4 -tx4 /dev/urandom | tr -d ' ')"
 	docker create --name "$SIGN_CT" --network none --entrypoint php "$SIGN_IMAGE" \
 		"$OCC" integrity:sign-app \
-		--path=/sign/pulse \
+		--path=/sign/vibears \
 		--privateKey=/sign/sign.key \
 		--certificate=/sign/sign.crt >/dev/null \
 		|| die "cannot create a signing container from $SIGN_IMAGE"
 	mkdir "$TMP/sign"
 	docker cp "$TMP/sign" "$SIGN_CT:/sign" >/dev/null
-	docker cp "$STAGE" "$SIGN_CT:/sign/pulse" >/dev/null
-	docker cp -L "$PULSE_KEY" "$SIGN_CT:/sign/sign.key" >/dev/null
-	docker cp -L "$PULSE_CRT" "$SIGN_CT:/sign/sign.crt" >/dev/null
+	docker cp "$STAGE" "$SIGN_CT:/sign/vibears" >/dev/null
+	docker cp -L "$VIBEARS_KEY" "$SIGN_CT:/sign/sign.key" >/dev/null
+	docker cp -L "$VIBEARS_CRT" "$SIGN_CT:/sign/sign.crt" >/dev/null
 	docker start -a "$SIGN_CT" || die "occ integrity:sign-app failed"
 	# occ reports some failures (such as an unwritable config directory) and still
 	# exits 0 — only the file tells.
-	docker cp "$SIGN_CT:/sign/pulse/appinfo/signature.json" "$STAGE/appinfo/signature.json" >/dev/null 2>&1 \
+	docker cp "$SIGN_CT:/sign/vibears/appinfo/signature.json" "$STAGE/appinfo/signature.json" >/dev/null 2>&1 \
 		|| die "occ did not write appinfo/signature.json"
 	cleanup_signer
 	[ -z "$SIGN_CT" ] || die "the signing container could not be removed"
@@ -260,25 +260,25 @@ if [ -n "$SIGN" ] && [ -z "$CONTAINER" ]; then
 	chmod 644 "$STAGE/appinfo/signature.json"
 elif [ -n "$SIGN" ]; then
 	echo "==> Signing (occ integrity:sign-app in the running container $CONTAINER — CONTAINER is set)"
-	CT_TMP="$(docker exec "$CONTAINER" mktemp -d /tmp/pulse-sign.XXXXXX)" \
+	CT_TMP="$(docker exec "$CONTAINER" mktemp -d /tmp/vibears-sign.XXXXXX)" \
 		|| die "cannot create a temporary directory in container $CONTAINER"
-	docker cp "$STAGE" "$CONTAINER:$CT_TMP/pulse"
+	docker cp "$STAGE" "$CONTAINER:$CT_TMP/vibears"
 	docker exec "$CONTAINER" chown -R www-data:www-data "$CT_TMP"
 	# Key and certificate go in through stdin, so they are created with mode 600
 	# inside the private directory and never exist with looser permissions.
-	docker exec -i -u www-data "$CONTAINER" sh -c 'umask 077 && cat > "$1"' sh "$CT_TMP/sign.key" < "$PULSE_KEY"
-	docker exec -i -u www-data "$CONTAINER" sh -c 'umask 077 && cat > "$1"' sh "$CT_TMP/sign.crt" < "$PULSE_CRT"
+	docker exec -i -u www-data "$CONTAINER" sh -c 'umask 077 && cat > "$1"' sh "$CT_TMP/sign.key" < "$VIBEARS_KEY"
+	docker exec -i -u www-data "$CONTAINER" sh -c 'umask 077 && cat > "$1"' sh "$CT_TMP/sign.crt" < "$VIBEARS_CRT"
 	docker exec -u www-data "$CONTAINER" php "$OCC" integrity:sign-app \
-		--path="$CT_TMP/pulse" \
+		--path="$CT_TMP/vibears" \
 		--privateKey="$CT_TMP/sign.key" \
 		--certificate="$CT_TMP/sign.crt"
-	docker cp "$CONTAINER:$CT_TMP/pulse/appinfo/signature.json" "$STAGE/appinfo/signature.json"
+	docker cp "$CONTAINER:$CT_TMP/vibears/appinfo/signature.json" "$STAGE/appinfo/signature.json"
 	cleanup_container
 	[ -z "$CT_TMP" ] || die "the signing directory could not be removed from the container"
 	[ -s "$STAGE/appinfo/signature.json" ] || die "occ did not write appinfo/signature.json"
 	chmod 644 "$STAGE/appinfo/signature.json"
 else
-	echo "==> Not signing (PULSE_KEY/PULSE_CRT not set)"
+	echo "==> Not signing (VIBEARS_KEY/VIBEARS_CRT not set)"
 	echo "    The App Store only accepts signed releases — see docs/APPSTORE.md"
 fi
 
@@ -288,7 +288,7 @@ rm -f "$ARCHIVE"
 tar -czf "$ARCHIVE" -C "$TMP" \
 	--owner=0 --group=0 --numeric-owner --sort=name \
 	${MTIME:+--mtime="$MTIME"} \
-	pulse
+	vibears
 
 echo
 echo "Archive: $ARCHIVE"
@@ -296,6 +296,6 @@ echo "Size:    $(ls -lh "$ARCHIVE" | awk '{print $5}')"
 echo "SHA256:  $(sha256sum "$ARCHIVE" | cut -d' ' -f1)"
 if [ -n "$SIGN" ]; then
 	echo "Signature for the store API (base64, SHA-512 over the archive):"
-	openssl dgst -sha512 -sign "$PULSE_KEY" "$ARCHIVE" | openssl base64 -A
+	openssl dgst -sha512 -sign "$VIBEARS_KEY" "$ARCHIVE" | openssl base64 -A
 	echo
 fi

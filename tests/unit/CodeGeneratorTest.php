@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\CodeGenerator;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\CodeGenerator;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;

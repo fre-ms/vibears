@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Migration;
+namespace OCA\Vibears\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -23,13 +23,13 @@ class Version000000Date20260716120000 extends SimpleMigrationStep {
         /** @var ISchemaWrapper $schema */
         $schema = $schemaClosure();
 
-        if ($schema->hasTable('pulse_polls')) {
-            $table = $schema->getTable('pulse_polls');
+        if ($schema->hasTable('vibears_polls')) {
+            $table = $schema->getTable('vibears_polls');
             if (!$table->hasColumn('position')) {
                 $table->addColumn('position', Types::INTEGER, ['notnull' => true, 'default' => 0]);
             }
-            if (!$table->hasIndex('pulse_polls_pos_idx')) {
-                $table->addIndex(['room_id', 'position'], 'pulse_polls_pos_idx');
+            if (!$table->hasIndex('vibears_polls_pos_idx')) {
+                $table->addIndex(['room_id', 'position'], 'vibears_polls_pos_idx');
             }
         }
 

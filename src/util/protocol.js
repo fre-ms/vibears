@@ -13,7 +13,7 @@
 export const PROTOCOL = 3
 
 // Marker per tab: for which server protocol a reload has already happened.
-const MARK_KEY = 'pulse-protocol-reload'
+const MARK_KEY = 'vibears-protocol-reload'
 
 /**
  * true = the page is being reloaded. At most once per server protocol and tab

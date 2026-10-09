@@ -5,9 +5,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
-use OCA\Pulse\Db\Player;
+use OCA\Vibears\Db\Player;
 
 /**
  * Speed-weighted quiz scoring: a correct answer earns points, a faster one more.

@@ -6,11 +6,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\BackgroundJob;
+namespace OCA\Vibears\BackgroundJob;
 
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\Retention;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\Retention;
+use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCP\IConfig;
@@ -77,19 +77,19 @@ class CleanupStaleRoomsJob extends TimedJob {
             }
             $deleted = $this->roomService->cleanupStaleRooms($this->retention->maxAgeSeconds());
             if ($deleted > 0) {
-                $this->logger->info('Pulse: cleaned up {count} stale rooms.', ['count' => $deleted]);
+                $this->logger->info('vibeARS: cleaned up {count} stale rooms.', ['count' => $deleted]);
             }
         });
         $this->step('rooms of deleted accounts', function (): void {
             $deleted = $this->roomService->cleanupOrphanedRooms(fn (string $uid): bool => $this->ownerGone($uid));
             if ($deleted > 0) {
-                $this->logger->info('Pulse: deleted {count} rooms of accounts that no longer exist.', ['count' => $deleted]);
+                $this->logger->info('vibeARS: deleted {count} rooms of accounts that no longer exist.', ['count' => $deleted]);
             }
         });
         $this->step('orphaned images', function (): void {
             $deleted = $this->imageService->sweepOrphans(self::ORPHAN_FILE_MIN_AGE);
             if ($deleted > 0) {
-                $this->logger->info('Pulse: removed {count} unreferenced question images.', ['count' => $deleted]);
+                $this->logger->info('vibeARS: removed {count} unreferenced question images.', ['count' => $deleted]);
             }
         });
     }
@@ -116,7 +116,7 @@ class CleanupStaleRoomsJob extends TimedJob {
         try {
             $fn();
         } catch (\Throwable $e) {
-            $this->logger->warning('Pulse: cleanup step "{step}" failed.', ['step' => $name, 'exception' => $e]);
+            $this->logger->warning('vibeARS: cleanup step "{step}" failed.', ['step' => $name, 'exception' => $e]);
         }
     }
 }

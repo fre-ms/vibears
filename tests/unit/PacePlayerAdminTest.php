@@ -5,20 +5,20 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\PresenceMapper;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Db\VoteMapper;
-use OCA\Pulse\Service\ConflictException;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\PresenceMapper;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Db\VoteMapper;
+use OCA\Vibears\Service\ConflictException;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\IL10N;

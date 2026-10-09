@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Service;
+namespace OCA\Vibears\Service;
 
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\Vote;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\Vote;
 
 /**
  * Counts votes. Pure calculation logic, taken over 1:1 from the prototype artifact —

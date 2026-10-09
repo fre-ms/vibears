@@ -5,17 +5,17 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\Progress;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\VoteMapper;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\Progress;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\VoteMapper;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\ICacheFactory;
 use OCP\IL10N;
@@ -86,7 +86,7 @@ class SelfJoinTest extends TestCase {
             'timeFactory' => $time,
             'l10n' => $l10n,
             'paceService' => $this->pace,
-            'limits' => new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            'limits' => new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
             'progressMapper' => $progress,
             'cacheFactory' => $this->createMock(ICacheFactory::class),
         ] as $name => $value) {

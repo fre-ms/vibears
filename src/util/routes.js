@@ -6,7 +6,7 @@
 /*
  * Pulse — every URL the Vue frontend (src/) requests or links to, and the
  * time limits of its requests, in one place. The embed shell
- * js/pulse-embed.js is hand-written and builds its own URLs (projector page,
+ * js/vibears-embed.js is hand-written and builds its own URLs (projector page,
  * /s/{code}/state); nothing here covers those.
  *
  * Each builder returns exactly the string the views used to put together by
@@ -37,7 +37,7 @@ export const PHONE_TIMEOUT = 10000
  * @return {string} URL
  */
 export function roomsApi() {
-	return generateUrl('/apps/pulse/api/1.0/rooms')
+	return generateUrl('/apps/vibears/api/1.0/rooms')
 }
 
 /**
@@ -47,7 +47,7 @@ export function roomsApi() {
  * @return {string} URL
  */
 export function roomApi(code, suffix = '') {
-	return generateUrl('/apps/pulse/api/1.0/rooms/' + code + suffix)
+	return generateUrl('/apps/vibears/api/1.0/rooms/' + code + suffix)
 }
 
 /**
@@ -56,7 +56,7 @@ export function roomApi(code, suffix = '') {
  * @return {string} URL
  */
 export function roomMarkdown(code) {
-	return generateUrl('/apps/pulse/api/1.0/rooms/' + code + '/markdown')
+	return generateUrl('/apps/vibears/api/1.0/rooms/' + code + '/markdown')
 }
 
 /**
@@ -64,7 +64,7 @@ export function roomMarkdown(code) {
  * @return {string} URL
  */
 export function importApi() {
-	return generateUrl('/apps/pulse/api/1.0/import')
+	return generateUrl('/apps/vibears/api/1.0/import')
 }
 
 /**
@@ -72,7 +72,7 @@ export function importApi() {
  * @return {string} URL
  */
 export function adminRetentionApi() {
-	return generateUrl('/apps/pulse/api/1.0/admin/retention')
+	return generateUrl('/apps/vibears/api/1.0/admin/retention')
 }
 
 /**
@@ -82,7 +82,7 @@ export function adminRetentionApi() {
  * @return {string} URL
  */
 export function publicApi(code, suffix = '') {
-	return generateUrl('/apps/pulse/s/' + code + suffix)
+	return generateUrl('/apps/vibears/s/' + code + suffix)
 }
 
 /**
@@ -106,7 +106,7 @@ export function pollImage(code, pollId, image, { public: isPublic = false } = {}
  * @return {string} URL
  */
 export function participantPage(code) {
-	return generateUrl('/apps/pulse/s/' + code)
+	return generateUrl('/apps/vibears/s/' + code)
 }
 
 /**
@@ -114,7 +114,7 @@ export function participantPage(code) {
  * @return {string} URL
  */
 export function joinPage() {
-	return generateUrl('/apps/pulse/join')
+	return generateUrl('/apps/vibears/join')
 }
 
 /**
@@ -123,7 +123,7 @@ export function joinPage() {
  * @return {string} URL
  */
 export function screenPage(code) {
-	return generateUrl('/apps/pulse/screen/' + code)
+	return generateUrl('/apps/vibears/screen/' + code)
 }
 
 /**
@@ -132,7 +132,7 @@ export function screenPage(code) {
  * @return {string} URL
  */
 export function roomPage(code) {
-	return generateUrl('/apps/pulse/room/' + code)
+	return generateUrl('/apps/vibears/room/' + code)
 }
 
 /**
@@ -140,7 +140,7 @@ export function roomPage(code) {
  * @return {string} URL
  */
 export function home() {
-	return generateUrl('/apps/pulse/')
+	return generateUrl('/apps/vibears/')
 }
 
 /**
@@ -148,7 +148,7 @@ export function home() {
  * @return {string} URL
  */
 export function addinManifest() {
-	return generateUrl('/apps/pulse/addin/manifest.xml')
+	return generateUrl('/apps/vibears/addin/manifest.xml')
 }
 
 /**
@@ -157,5 +157,5 @@ export function addinManifest() {
  * @param {string} code room code
  */
 export function openProjector(code) {
-	window.open(window.location.origin + screenPage(code), 'pulse-beamer-' + code)
+	window.open(window.location.origin + screenPage(code), 'vibears-beamer-' + code)
 }

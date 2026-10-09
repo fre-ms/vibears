@@ -5,10 +5,10 @@
 <template>
 	<div class="text-grading">
 		<div v-if="!keyless && acceptedList.length" class="tg-accepted">
-			<span class="tg-accepted-label">{{ t('pulse', 'Accepted:') }}</span>
+			<span class="tg-accepted-label">{{ t('vibears', 'Accepted:') }}</span>
 			<span v-for="a in acceptedList" :key="a" class="pulse-chip is-success tg-chip">{{ a }}</span>
 		</div>
-		<p v-if="!readonly" class="tg-hint">{{ t('pulse', 'Approve (tick) or reject (cross) answers that are not obvious — identical spellings count along automatically.') }}</p>
+		<p v-if="!readonly" class="tg-hint">{{ t('vibears', 'Approve (tick) or reject (cross) answers that are not obvious — identical spellings count along automatically.') }}</p>
 		<ul v-if="results.answers.length" class="tg-list">
 			<li v-for="a in results.answers" :key="a.norm" class="tg-row" :class="'is-' + a.status">
 				<span class="tg-count">{{ a.count }}×</span>
@@ -16,20 +16,20 @@
 
 				<!-- interactive: grade (correct/wrong), 44 px, shape+colour+text -->
 				<span v-if="!readonly" class="tg-actions">
-					<button class="tg-btn tg-ok" :class="{ 'is-on': a.status === 'accepted' }" :disabled="busy" :title="t('pulse', 'Mark as correct')" :aria-label="t('pulse', 'Mark as correct')" @click="$emit('grade', a.sample, true)"><PulseIcon name="check" size="1.15em" /></button>
-					<button class="tg-btn tg-no" :class="{ 'is-on': a.status === 'rejected' }" :disabled="busy" :title="t('pulse', 'Mark as wrong')" :aria-label="t('pulse', 'Mark as wrong')" @click="$emit('grade', a.sample, false)"><PulseIcon name="close" size="1.15em" /></button>
+					<button class="tg-btn tg-ok" :class="{ 'is-on': a.status === 'accepted' }" :disabled="busy" :title="t('vibears', 'Mark as correct')" :aria-label="t('vibears', 'Mark as correct')" @click="$emit('grade', a.sample, true)"><PulseIcon name="check" size="1.15em" /></button>
+					<button class="tg-btn tg-no" :class="{ 'is-on': a.status === 'rejected' }" :disabled="busy" :title="t('vibears', 'Mark as wrong')" :aria-label="t('vibears', 'Mark as wrong')" @click="$emit('grade', a.sample, false)"><PulseIcon name="close" size="1.15em" /></button>
 				</span>
 				<!-- read-only: status as a badge (shape+colour+text), openly visible -->
 				<span v-else class="tg-status" :class="'is-' + a.status">
-					<template v-if="a.status === 'accepted'"><PulseIcon name="check" size="1em" /> {{ t('pulse', 'correct') }}</template>
-					<template v-else-if="a.status === 'rejected'"><PulseIcon name="close" size="1em" /> {{ t('pulse', 'wrong') }}</template>
-					<template v-else>{{ t('pulse', 'open') }}</template>
+					<template v-if="a.status === 'accepted'"><PulseIcon name="check" size="1em" /> {{ t('vibears', 'correct') }}</template>
+					<template v-else-if="a.status === 'rejected'"><PulseIcon name="close" size="1em" /> {{ t('vibears', 'wrong') }}</template>
+					<template v-else>{{ t('vibears', 'open') }}</template>
 				</span>
 			</li>
 		</ul>
-		<p v-else class="tg-empty">{{ t('pulse', 'No answers yet.') }}</p>
-		<p v-if="moreCount" class="tg-more">{{ t('pulse', '+{count} more', { count: moreCount }) }}</p>
-		<p class="tg-total">{{ n('pulse', '%n mention', '%n mentions', results.total) }}<span v-if="results.answers.length"> · {{ t('pulse', '{count} different', { count: distinctCount }) }}</span></p>
+		<p v-else class="tg-empty">{{ t('vibears', 'No answers yet.') }}</p>
+		<p v-if="moreCount" class="tg-more">{{ t('vibears', '+{count} more', { count: moreCount }) }}</p>
+		<p class="tg-total">{{ n('vibears', '%n mention', '%n mentions', results.total) }}<span v-if="results.answers.length"> · {{ t('vibears', '{count} different', { count: distinctCount }) }}</span></p>
 	</div>
 </template>
 

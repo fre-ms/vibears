@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\PublicController;
-use OCA\Pulse\Controller\PublicVoteController;
+use OCA\Vibears\Controller\PublicController;
+use OCA\Vibears\Controller\PublicVoteController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\JSONResponse;
@@ -19,7 +19,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Brute-force protection for room codes: ONLY an unknown code consults the
- * throttler (action 'pulseRoomCode'), and from the eleventh miss the answer
+ * throttler (action 'vibearsRoomCode'), and from the eleventh miss the answer
  * is 429. A request for an existing code never touches it — with
  * #[BruteForceProtection] Nextcloud checked the throttle before every
  * request, so ten wrong codes from a school NAT locked every phone behind it
@@ -53,14 +53,14 @@ class PublicCodeThrottleTest extends PublicControllerTestCase {
     #[DataProvider('endpoints')]
     public function testUnknownCodeIsAFailedAttemptAnd404(string $method, array $args): void {
         $this->room = null;
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
 
         $response = $this->voteController()->$method(...$args);
 
         $this->assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
         $this->assertSame(['message' => 'Room not found.'], $response->getData());
-        $this->assertSame([['pulseRoomCode', self::IP]], $this->callsTo('registerAttempt'));
-        $this->assertSame([[self::IP, 'pulseRoomCode'], [self::IP, 'pulseRoomCode']], $this->callsTo('sleepDelayOrThrowOnMax'));
+        $this->assertSame([['vibearsRoomCode', self::IP]], $this->callsTo('registerAttempt'));
+        $this->assertSame([[self::IP, 'vibearsRoomCode'], [self::IP, 'vibearsRoomCode']], $this->callsTo('sleepDelayOrThrowOnMax'));
         $this->assertThrottleOrder();
         $this->assertNoCookies($response);
         // No longer marked for the middleware: without the attribute it would only log.
@@ -103,7 +103,7 @@ class PublicCodeThrottleTest extends PublicControllerTestCase {
     public function testExistingCodeNeverConsultsTheThrottler(string $method, array $args): void {
         // Even while the address is "blocked" for misses.
         $this->blocked = true;
-        $this->sendCookies('__Host-pulse_vt=' . self::ANNA);
+        $this->sendCookies('__Host-vibears_vt=' . self::ANNA);
         $this->params = ['after' => 0, 'nickname' => 'Anna', 'value' => 'AA'];
         if ($method === 'next') {
             $this->room = $this->selfRoom();
@@ -150,7 +150,7 @@ class PublicCodeThrottleTest extends PublicControllerTestCase {
         // The SPA shows "room not found" itself (roomExists = false).
         $this->assertInstanceOf(TemplateResponse::class, $response);
         $this->assertContains(['roomExists', false], $this->callsTo('initialState'));
-        $this->assertSame([['pulseRoomCode', self::IP]], $this->callsTo('registerAttempt'));
+        $this->assertSame([['vibearsRoomCode', self::IP]], $this->callsTo('registerAttempt'));
         $this->assertThrottleOrder();
     }
 

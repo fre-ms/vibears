@@ -5,24 +5,24 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\RoomApiController;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\DeckImportService;
-use OCA\Pulse\Service\DeckMarkdown;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\DemoService;
-use OCA\Pulse\Service\Limits;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\PaceStateService;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\PollNotFoundException;
-use OCA\Pulse\Service\RoomService;
-use OCA\Pulse\Service\StateService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Controller\RoomApiController;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\DeckImportService;
+use OCA\Vibears\Service\DeckMarkdown;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\DemoService;
+use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\PaceStateService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\PollNotFoundException;
+use OCA\Vibears\Service\RoomService;
+use OCA\Vibears\Service\StateService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;

@@ -5,13 +5,13 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Service\ConflictException;
-use OCA\Pulse\Service\Limits;
-use OCA\Pulse\Service\PollImageService;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Service\ConflictException;
+use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\PollImageService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
 use OCP\IL10N;

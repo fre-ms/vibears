@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Db;
+namespace OCA\Vibears\Db;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class PlayerMapper extends QBMapper {
     public function __construct(IDBConnection $db) {
-        parent::__construct($db, 'pulse_players', Player::class);
+        parent::__construct($db, 'vibears_players', Player::class);
     }
 
     /**

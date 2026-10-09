@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\AddinController;
-use OCA\Pulse\Service\AddinManifest;
+use OCA\Vibears\Controller\AddinController;
+use OCA\Vibears\Service\AddinManifest;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -66,7 +66,7 @@ class AddinManifestTest extends TestCase {
     public function testManifestIsWellFormedXml(): void {
         $xml = $this->manifest->build(
             'https://cloud.example.com',
-            'https://cloud.example.com/apps/pulse/embed',
+            'https://cloud.example.com/apps/vibears/embed',
             '0.18.0',
         );
 
@@ -85,7 +85,7 @@ class AddinManifestTest extends TestCase {
     public function testManifestCarriesTheGivenAddresses(): void {
         $xml = $this->manifest->build(
             'https://cloud.example.org',
-            'https://cloud.example.org/nextcloud/apps/pulse/embed',
+            'https://cloud.example.org/nextcloud/apps/vibears/embed',
             '0.18.0',
         );
 
@@ -94,7 +94,7 @@ class AddinManifestTest extends TestCase {
             $xml,
         );
         $this->assertStringContainsString(
-            '<SourceLocation DefaultValue="https://cloud.example.org/nextcloud/apps/pulse/embed"/>',
+            '<SourceLocation DefaultValue="https://cloud.example.org/nextcloud/apps/vibears/embed"/>',
             $xml,
         );
         $this->assertStringContainsString('<Version>0.18.0.0</Version>', $xml);
@@ -112,7 +112,7 @@ class AddinManifestTest extends TestCase {
      * language in which someone downloaded the manifest.
      */
     public function testDefaultLocaleIsTheSourceLanguage(): void {
-        $xml = $this->manifest->build('https://x.example', 'https://x.example/apps/pulse/embed', '0.18.0');
+        $xml = $this->manifest->build('https://x.example', 'https://x.example/apps/vibears/embed', '0.18.0');
 
         $this->assertStringContainsString('<DefaultLocale>en-US</DefaultLocale>', $xml);
         $this->assertStringContainsString('<Override Locale="de-de" Value="vibeARS Live-Umfrage"/>', $xml);
@@ -120,23 +120,25 @@ class AddinManifestTest extends TestCase {
 
     /**
      * The add-in asks for the lowest permission level (security review, L11).
-     * js/pulse-embed.js only uses the Settings API (the room code stored in
+     * js/vibears-embed.js only uses the Settings API (the room code stored in
      * the .pptx), which Restricted covers; ReadWriteDocument would let script
      * that gets into /embed or /screen read and rewrite the whole deck. The
-     * ID stays, so Office still updates the add-in in place.
+     * ID stays across releases, so Office updates the add-in in place; it is
+     * vibeARS's own, not Pulse's, so both add-ins can be registered side by side.
      */
     public function testManifestAsksForRestrictedOnly(): void {
-        $xml = $this->manifest->build('https://x.example', 'https://x.example/apps/pulse/embed', '0.18.0');
+        $xml = $this->manifest->build('https://x.example', 'https://x.example/apps/vibears/embed', '0.18.0');
         $doc = simplexml_load_string($xml);
         $this->assertNotFalse($doc);
         $doc->registerXPathNamespace('o', 'http://schemas.microsoft.com/office/appforoffice/1.1');
 
         $this->assertSame(['Restricted'], array_map('strval', $doc->xpath('/o:OfficeApp/o:Permissions')));
-        $this->assertSame('c941db89-f0ae-45c6-b685-e94eecc47c91', AddinManifest::ADDIN_ID);
+        $this->assertSame('cfc0b20f-1f63-4937-98d6-510256657bc4', AddinManifest::ADDIN_ID);
+        $this->assertNotSame('c941db89-f0ae-45c6-b685-e94eecc47c91', AddinManifest::ADDIN_ID, 'not Pulse\'s add-in ID');
 
         // What the embed shell calls must stay within Restricted: the
         // Settings methods get/set/saveAsync — no handlers, no host APIs.
-        $embed = (string)file_get_contents(dirname(__DIR__, 2) . '/js/pulse-embed.js');
+        $embed = (string)file_get_contents(dirname(__DIR__, 2) . '/js/vibears-embed.js');
         $this->assertStringContainsString('settingsApi.saveAsync', $embed);
         foreach (['addHandlerAsync', 'PowerPoint.run', 'getFileAsync', 'getSelectedDataAsync', 'setSelectedDataAsync', 'customXmlParts', 'bindings'] as $api) {
             $this->assertStringNotContainsString($api, $embed, $api . ' needs more than Restricted — raise <Permissions> with it');
@@ -150,7 +152,7 @@ class AddinManifestTest extends TestCase {
     public function testAddressesAreXmlEscaped(): void {
         $xml = $this->manifest->build(
             'https://cloud.example.com',
-            'https://cloud.example.com/apps/pulse/embed?a=1&b=2',
+            'https://cloud.example.com/apps/vibears/embed?a=1&b=2',
             '0.18.0',
         );
 

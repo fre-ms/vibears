@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Settings;
+namespace OCA\Vibears\Settings;
 
-use OCA\Pulse\AppInfo\Application;
-use OCA\Pulse\Service\Retention;
+use OCA\Vibears\AppInfo\Application;
+use OCA\Vibears\Service\Retention;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Settings\ISettings;
@@ -16,7 +16,7 @@ use OCP\Settings\ISettings;
 /**
  * The administration form (templates/admin.php): whether unused rooms are
  * deleted automatically and after how many days. The current values go to
- * the page as initial state; the template loads js/pulse-admin.js
+ * the page as initial state; the template loads js/vibears-admin.js
  * (src/admin.js), which saves them through AdminSettingsController. Script
  * and style are added by the template, like the other pages do, so this
  * class stays testable without a booted server.

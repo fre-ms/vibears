@@ -20,16 +20,16 @@
 				     final standings without a leaderboard. -->
 				<div v-if="practice && !extend" class="pulse-notice is-warn pod-practice">
 					<PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" />
-					<span class="pod-practice-txt">{{ t('pulse', 'This is a practice run — nothing counts.') }}</span>
-					<button type="button" class="pulse-btn is-secondary is-sm pod-practice-end" :disabled="busy" @click="$emit('end-practice')">{{ t('pulse', 'End practice run') }}</button>
+					<span class="pod-practice-txt">{{ t('vibears', 'This is a practice run — nothing counts.') }}</span>
+					<button type="button" class="pulse-btn is-secondary is-sm pod-practice-end" :disabled="busy" @click="$emit('end-practice')">{{ t('vibears', 'End practice run') }}</button>
 				</div>
 
 				<section class="pod-group">
 					<!-- When extending, the title already asks this question. -->
-					<h3 v-if="!extend" class="pod-label">{{ t('pulse', 'When does the quiz end?') }}</h3>
-					<PulseSegmented :value="end" :options="endOptions" :label="t('pulse', 'When does the quiz end?')" @input="setEnd" />
+					<h3 v-if="!extend" class="pod-label">{{ t('vibears', 'When does the quiz end?') }}</h3>
+					<PulseSegmented :value="end" :options="endOptions" :label="t('vibears', 'When does the quiz end?')" @input="setEnd" />
 					<div v-if="end === 'deadline'" class="pod-deadline">
-						<label class="pod-sublabel" for="pace-open-deadline">{{ t('pulse', 'Deadline') }}</label>
+						<label class="pod-sublabel" for="pace-open-deadline">{{ t('vibears', 'Deadline') }}</label>
 						<!-- A preset only fills the field — the field stays the source of truth. -->
 						<div class="pod-presets">
 							<button v-for="p in presets"
@@ -57,12 +57,12 @@
 						</p>
 						<!-- The old deadline had passed or was too close: tomorrow is prefilled,
 						     with the old one below for comparison. -->
-						<p v-if="wasAt" class="pod-help pod-was">{{ t('pulse', 'Was: {time}', { time: wasText }) }}</p>
-						<p v-if="!extend" class="pod-help">{{ t('pulse', 'Participants must finish on the same device.') }}</p>
+						<p v-if="wasAt" class="pod-help pod-was">{{ t('vibears', 'Was: {time}', { time: wasText }) }}</p>
+						<p v-if="!extend" class="pod-help">{{ t('vibears', 'Participants must finish on the same device.') }}</p>
 					</div>
 					<template v-if="extend">
-						<p v-if="end === 'manual'" class="pod-help">{{ t('pulse', 'Closing will then also release the results.') }}</p>
-						<p v-if="reopen" class="pod-help">{{ t('pulse', 'People continue where they stopped; on timed questions their time may already be up.') }}</p>
+						<p v-if="end === 'manual'" class="pod-help">{{ t('vibears', 'Closing will then also release the results.') }}</p>
+						<p v-if="reopen" class="pod-help">{{ t('vibears', 'People continue where they stopped; on timed questions their time may already be up.') }}</p>
 					</template>
 				</section>
 
@@ -70,19 +70,19 @@
 				     when extending, only the end is in question. -->
 				<template v-if="!extend">
 					<section class="pod-group">
-						<h3 class="pod-label">{{ t('pulse', 'Timer and speed points') }}</h3>
-						<PulseSegmented v-model="timed" :options="timerOptions" :label="t('pulse', 'Timer and speed points')" />
-						<p class="pod-help">{{ timed ? t('pulse', 'Each question has its time limit; faster correct answers earn more points.') : t('pulse', 'No time pressure — every correct answer earns 1000 points.') }}</p>
+						<h3 class="pod-label">{{ t('vibears', 'Timer and speed points') }}</h3>
+						<PulseSegmented v-model="timed" :options="timerOptions" :label="t('vibears', 'Timer and speed points')" />
+						<p class="pod-help">{{ timed ? t('vibears', 'Each question has its time limit; faster correct answers earn more points.') : t('vibears', 'No time pressure — every correct answer earns 1000 points.') }}</p>
 					</section>
 
 					<section class="pod-group">
-						<h3 class="pod-label">{{ t('pulse', 'When do people see if they’re right?') }}</h3>
-						<PulseSegmented :value="practice ? 'each' : feedback" :options="feedbackOptions" :disabled="practice" :label="t('pulse', 'When do people see if they’re right?')" @input="feedback = $event" />
-						<p v-if="practice" class="pod-help">{{ t('pulse', 'Practice run: always after each question.') }}</p>
-						<p v-else class="pod-help">{{ feedback === 'each' ? t('pulse', 'Participants see right or wrong after every answer.') : t('pulse', 'Participants only see that their answer was saved. Results come when you release them.') }}</p>
+						<h3 class="pod-label">{{ t('vibears', 'When do people see if they’re right?') }}</h3>
+						<PulseSegmented :value="practice ? 'each' : feedback" :options="feedbackOptions" :disabled="practice" :label="t('vibears', 'When do people see if they’re right?')" @input="feedback = $event" />
+						<p v-if="practice" class="pod-help">{{ t('vibears', 'Practice run: always after each question.') }}</p>
+						<p v-else class="pod-help">{{ feedback === 'each' ? t('vibears', 'Participants see right or wrong after every answer.') : t('vibears', 'Participants only see that their answer was saved. Results come when you release them.') }}</p>
 						<p v-if="end === 'deadline' && feedback === 'each' && !practice" class="pulse-notice is-warn pod-warn">
 							<PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" />
-							<span>{{ t('pulse', 'Feedback after each question lets people pass on the right answers — for grades, choose “At the end”.') }}</span>
+							<span>{{ t('vibears', 'Feedback after each question lets people pass on the right answers — for grades, choose “At the end”.') }}</span>
 						</p>
 					</section>
 				</template>
@@ -91,15 +91,15 @@
 			<div class="pod-foot">
 				<p v-if="!extend" class="pulse-notice is-info pod-lock">
 					<PulseIcon name="lock" size="1.1em" class="pulse-notice-ico" />
-					<span>{{ t('pulse', 'Everyone starts on their own phone, with their own clock. From now on the questions are locked until you reset the room.') }}</span>
+					<span>{{ t('vibears', 'Everyone starts on their own phone, with their own clock. From now on the questions are locked until you reset the room.') }}</span>
 				</p>
 				<p v-if="serverError" class="pulse-notice is-warn pod-error" role="alert">
 					<PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" />
 					<span>{{ serverError }}</span>
 				</p>
 				<div class="pod-actions">
-					<span v-if="!extend" class="pod-sum">{{ n('pulse', '%n question', '%n questions', total) }}</span>
-					<button ref="cancel" type="button" class="pulse-btn is-secondary" :disabled="busy" @click="cancel">{{ t('pulse', 'Cancel') }}</button>
+					<span v-if="!extend" class="pod-sum">{{ n('vibears', '%n question', '%n questions', total) }}</span>
+					<button ref="cancel" type="button" class="pulse-btn is-secondary" :disabled="busy" @click="cancel">{{ t('vibears', 'Cancel') }}</button>
 					<button type="button" class="pulse-btn is-primary pod-submit" :disabled="busy" @click="submit">{{ busy ? '…' : submitLabel }}</button>
 				</div>
 			</div>
@@ -201,12 +201,12 @@ export default {
 			return !!this.room.practice
 		},
 		title() {
-			if (this.extend) return t('pulse', 'When does the quiz end?')
-			return this.practice ? t('pulse', 'Open practice run') : t('pulse', 'Open quiz')
+			if (this.extend) return t('vibears', 'When does the quiz end?')
+			return this.practice ? t('vibears', 'Open practice run') : t('vibears', 'Open quiz')
 		},
 		submitLabel() {
-			if (this.extend) return this.reopen ? t('pulse', 'Reopen') : t('pulse', 'Save')
-			return this.practice ? t('pulse', 'Open practice run') : t('pulse', 'Open quiz')
+			if (this.extend) return this.reopen ? t('vibears', 'Reopen') : t('vibears', 'Save')
+			return this.practice ? t('vibears', 'Open practice run') : t('vibears', 'Open quiz')
 		},
 		total() {
 			const w = this.room.window
@@ -214,28 +214,28 @@ export default {
 		},
 		endOptions() {
 			return [
-				{ value: 'manual', label: t('pulse', 'When I close it') },
-				{ value: 'deadline', label: t('pulse', 'At a set time') },
+				{ value: 'manual', label: t('vibears', 'When I close it') },
+				{ value: 'deadline', label: t('vibears', 'At a set time') },
 			]
 		},
 		timerOptions() {
 			return [
-				{ value: true, label: t('pulse', 'Timer on') },
-				{ value: false, label: t('pulse', 'Timer off') },
+				{ value: true, label: t('vibears', 'Timer on') },
+				{ value: false, label: t('vibears', 'Timer off') },
 			]
 		},
 		feedbackOptions() {
 			return [
-				{ value: 'each', label: t('pulse', 'After each question') },
-				{ value: 'end', label: t('pulse', 'At the end') },
+				{ value: 'each', label: t('vibears', 'After each question') },
+				{ value: 'end', label: t('vibears', 'At the end') },
 			]
 		},
 		presets() {
 			const label = {
-				'15m': t('pulse', 'In 15 min'),
-				'1h': t('pulse', 'In 1 hour'),
-				tomorrow8: t('pulse', 'Tomorrow 08:00'),
-				'1w': t('pulse', 'In 1 week'),
+				'15m': t('vibears', 'In 15 min'),
+				'1h': t('vibears', 'In 1 hour'),
+				tomorrow8: t('vibears', 'Tomorrow 08:00'),
+				'1w': t('vibears', 'In 1 week'),
 			}
 			return deadlinePresets(this.now).map((p) => ({ ...p, label: label[p.key] }))
 		},
@@ -253,11 +253,11 @@ export default {
 		// the server's sentence, so a 400 from a slow request reads the same.
 		deadlineError() {
 			if (this.end !== 'deadline' || deadlineInRange(this.closesAt, this.now)) return ''
-			return t('pulse', 'The deadline must be between one minute and 30 days from now.')
+			return t('vibears', 'The deadline must be between one minute and 30 days from now.')
 		},
 		relLine() {
 			if (this.end !== 'deadline' || this.deadlineError) return ''
-			return t('pulse', 'Closes in {duration} — {time}', { duration: fmtDuration(this.closesAt - this.now), time: fmtDeadline(this.closesAt) })
+			return t('vibears', 'Closes in {duration} — {time}', { duration: fmtDuration(this.closesAt - this.now), time: fmtDeadline(this.closesAt) })
 		},
 		wasText() {
 			return fmtDeadline(this.wasAt)
@@ -305,7 +305,7 @@ export default {
 				return
 			}
 			this.busy = true
-			const fallback = this.extend ? t('pulse', 'Could not change the end.') : t('pulse', 'Could not open the quiz.')
+			const fallback = this.extend ? t('vibears', 'Could not change the end.') : t('vibears', 'Could not open the quiz.')
 			try {
 				// Extending sends only the end — timer and feedback stay (server).
 				const body = this.extend

@@ -5,22 +5,22 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\PublicVoteController;
-use OCA\Pulse\Controller\RoomApiController;
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\CodeGenerator;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\DemoService;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\PaceStateService;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\RoomService;
-use OCA\Pulse\Service\StateService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Controller\PublicVoteController;
+use OCA\Vibears\Controller\RoomApiController;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\CodeGenerator;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\DemoService;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\PaceStateService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\RoomService;
+use OCA\Vibears\Service\StateService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
@@ -453,8 +453,8 @@ class ControllerInputTest extends TestCase {
 
     public static function brokenCookies(): array {
         return [
-            'object (pulse_vt[x][]=y)' => [self::HOSTILE],
-            'list (pulse_vt[]=a)' => [['a']],
+            'object (vibears_vt[x][]=y)' => [self::HOSTILE],
+            'list (vibears_vt[]=a)' => [['a']],
             'too long' => [str_repeat('A', 33)],
             'foreign format' => ['abc'],
             'trailing newline' => [str_repeat('A', 32) . "\n"],
@@ -473,7 +473,7 @@ class ControllerInputTest extends TestCase {
         $response = $this->public()->state('ABCDEF');
         $this->assertSame(Http::STATUS_OK, $response->getStatus());
         $this->assertSame([], $this->callsTo('heartbeat'));
-        $this->assertSame(self::FRESH, $response->getCookies()['pulse_vt']['value'] ?? null);
+        $this->assertSame(self::FRESH, $response->getCookies()['vibears_vt']['value'] ?? null);
 
         // /summary reads without a cookie.
         $this->public()->summary('ABCDEF');
@@ -573,9 +573,9 @@ class ControllerInputTest extends TestCase {
             $this->createMock(RoomMapper::class),
             $this->time,
             $this->createMock(ILimiter::class),
-            new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
-            $this->createMock(\OCA\Pulse\Service\DeckMarkdown::class),
-            $this->createMock(\OCA\Pulse\Service\DeckImportService::class),
+            new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            $this->createMock(\OCA\Vibears\Service\DeckMarkdown::class),
+            $this->createMock(\OCA\Vibears\Service\DeckImportService::class),
         );
     }
 
@@ -598,7 +598,7 @@ class ControllerInputTest extends TestCase {
             $this->createMock(\OCP\Security\Bruteforce\IThrottler::class),
             $this->createMock(\OCP\IURLGenerator::class),
             $this->createMock(\OCP\IAppConfig::class),
-            new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
         );
     }
 

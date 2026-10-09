@@ -5,17 +5,17 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
- * The PowerPoint embed shell (js/pulse-embed.js, hand-written, no bundle)
+ * The PowerPoint embed shell (js/vibears-embed.js, hand-written, no bundle)
  * frames only a real room code (security review I2). The saved code comes
  * from the document settings, which travel with a .pptx, from ?code= or
  * from localStorage; '..' used to reach the iframe unchecked, and
- * /apps/pulse/screen/.. resolves to /apps/pulse/ — the moderator page or the
+ * /apps/vibears/screen/.. resolves to /apps/vibears/ — the moderator page or the
  * login page inside the slide.
  *
  * The container has no JavaScript runtime, so this is a guard on the source:
@@ -30,7 +30,7 @@ class EmbedShellTest extends TestCase {
     private string $js;
 
     protected function setUp(): void {
-        $this->js = (string)file_get_contents(dirname(__DIR__, 2) . '/js/pulse-embed.js');
+        $this->js = (string)file_get_contents(dirname(__DIR__, 2) . '/js/vibears-embed.js');
     }
 
     public function testStartFramesOnlyAnUpperCasedRoomCode(): void {

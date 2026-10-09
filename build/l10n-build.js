@@ -22,7 +22,7 @@ for (const file of files) {
 	const lang = file.replace(/\.json$/, '')
 	const data = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'))
 	const body = JSON.stringify(data.translations, null, 4).replace(/\n/g, '\n    ')
-	const js = 'OC.L10N.register(\n    "pulse",\n    ' + body
+	const js = 'OC.L10N.register(\n    "vibears",\n    ' + body
 		+ ',\n"' + data.pluralForm + '");\n'
 	fs.writeFileSync(path.join(dir, lang + '.js'), js)
 	console.log(lang + '.js  ' + Object.keys(data.translations).length + ' Strings')

@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Controller\PublicVoteController;
-use OCA\Pulse\Controller\RoomApiController;
+use OCA\Vibears\Controller\PublicVoteController;
+use OCA\Vibears\Controller\RoomApiController;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

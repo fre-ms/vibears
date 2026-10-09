@@ -51,10 +51,10 @@ export default {
 	name: 'PulseConfirm',
 	components: { PulseIcon },
 	props: {
-		title: { type: String, default: t('pulse', 'Are you sure?') },
+		title: { type: String, default: t('vibears', 'Are you sure?') },
 		text: { type: String, default: '' },
 		confirmLabel: { type: String, default: 'OK' },
-		cancelLabel: { type: String, default: t('pulse', 'Cancel') },
+		cancelLabel: { type: String, default: t('vibears', 'Cancel') },
 		danger: { type: Boolean, default: false },
 		altLabel: { type: String, default: '' },
 	},

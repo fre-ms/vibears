@@ -5,18 +5,18 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\VoteMapper;
-use OCA\Pulse\Service\AnswerRules;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\QuizService;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\VoteMapper;
+use OCA\Vibears\Service\AnswerRules;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\QuizService;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -74,7 +74,7 @@ class WordVoteBoundsTest extends TestCase {
             'pollMapper' => $polls,
             'voteMapper' => $this->createMock(VoteMapper::class),
             'paceService' => $pace,
-            'limits' => new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            'limits' => new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
         ] as $name => $value) {
             (new ReflectionProperty(VoteService::class, $name))->setValue($this->service, $value);
         }

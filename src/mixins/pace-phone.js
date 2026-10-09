@@ -23,7 +23,7 @@ import { PHONE_TIMEOUT } from '../util/routes.js'
 // Remembered name per room: {nick, openedAt}. Survives a reload and a
 // discarded background tab — only this way can the phone tell "removed" from
 // "new round" when the server only reports `nickname: null`.
-const STORE_PREFIX = 'pulse-pace:'
+const STORE_PREFIX = 'vibears-pace:'
 
 // Lock on answer taps after every new question (ms). Covers the second tap
 // of a double tap on "Next question", even when /next is back faster
@@ -114,7 +114,7 @@ export default {
 			})
 		},
 		nextLabel() {
-			return this.paceLast ? t('pulse', 'I’m done') : t('pulse', 'Next question')
+			return this.paceLast ? t('vibears', 'I’m done') : t('vibears', 'Next question')
 		},
 		// Verdict band of the submit zone (§2.5): class, icon, word — never colour alone.
 		// Neutral before the final verdict (no green flash); "At the end" already
@@ -122,16 +122,16 @@ export default {
 		paceBand() {
 			switch (this.paceVerdict) {
 			case 'correct':
-				return { cls: 'is-ok', icon: 'check', text: t('pulse', 'Correct!') }
+				return { cls: 'is-ok', icon: 'check', text: t('vibears', 'Correct!') }
 			case 'wrong':
-				return { cls: 'is-no', icon: 'close', text: t('pulse', 'Not this time') }
+				return { cls: 'is-no', icon: 'close', text: t('vibears', 'Not this time') }
 			case 'pending':
-				return { cls: 'is-mut', icon: 'hourglass', text: t('pulse', 'Being checked') }
+				return { cls: 'is-mut', icon: 'hourglass', text: t('vibears', 'Being checked') }
 			case 'saved':
-				return { cls: 'is-mut', icon: 'check', text: t('pulse', 'Answer saved') }
+				return { cls: 'is-mut', icon: 'check', text: t('vibears', 'Answer saved') }
 			}
 			const end = !!this.paceWindow && this.paceWindow.feedback === 'end'
-			return { cls: 'is-mut', icon: 'check', text: end ? t('pulse', 'Answer saved') : t('pulse', 'Answer sent') }
+			return { cls: 'is-mut', icon: 'check', text: end ? t('vibears', 'Answer saved') : t('vibears', 'Answer sent') }
 		},
 		/*
 		 * What the announcement region says (§2.11): the heading of the new card or
@@ -145,22 +145,22 @@ export default {
 			switch (this.paceCard) {
 			case 'shut':
 			case 'closed':
-				return t('pulse', 'The quiz is closed.')
+				return t('vibears', 'The quiz is closed.')
 			case 'over':
-				return t('pulse', 'Quiz finished')
+				return t('vibears', 'Quiz finished')
 			case 'wait':
-				return t('pulse', 'The quiz has not started yet.')
+				return t('vibears', 'The quiz has not started yet.')
 			case 'start':
-				return t('pulse', 'Ready, {name}', { name: this.nickname })
+				return t('vibears', 'Ready, {name}', { name: this.nickname })
 			case 'continue':
-				return t('pulse', 'Your quiz continues.')
+				return t('vibears', 'Your quiz continues.')
 			case 'through':
-				return t('pulse', 'You’re through!')
+				return t('vibears', 'You’re through!')
 			}
-			if (this.paceFinal) return t('pulse', 'Quiz finished')
-			if (this.poll && this.progress) return t('pulse', 'Question {number} of {total}', { number: this.progress.k, total: this.progress.n })
-			if (!this.nickname && this.paceNotice === 'removed') return t('pulse', 'You were removed from this quiz.')
-			if (!this.nickname && this.paceNotice === 'newRound') return t('pulse', 'A new round has started — choose your name.')
+			if (this.paceFinal) return t('vibears', 'Quiz finished')
+			if (this.poll && this.progress) return t('vibears', 'Question {number} of {total}', { number: this.progress.k, total: this.progress.n })
+			if (!this.nickname && this.paceNotice === 'removed') return t('vibears', 'You were removed from this quiz.')
+			if (!this.nickname && this.paceNotice === 'newRound') return t('vibears', 'A new round has started — choose your name.')
 			return ''
 		},
 		paceClosesAt() {
@@ -336,7 +336,7 @@ export default {
 					return
 				}
 				if (!e?.response) this.online = false // timeout/network: the button becomes free again
-				else showError(serverMessage(e, t('pulse', 'Could not load the next question.')))
+				else showError(serverMessage(e, t('vibears', 'Could not load the next question.')))
 			} finally {
 				this.submitSeq++
 				this.nextBusy = false

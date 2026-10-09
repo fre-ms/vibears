@@ -5,23 +5,23 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
 use Doctrine\DBAL\Driver\AbstractException;
 use Doctrine\DBAL\Exception\DeadlockException;
 use OC\DB\Exceptions\DbalException;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\PresenceMapper;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Db\VoteMapper;
-use OCA\Pulse\Service\CodeGenerator;
-use OCA\Pulse\Service\DemoService;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\PresenceMapper;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Db\VoteMapper;
+use OCA\Vibears\Service\CodeGenerator;
+use OCA\Vibears\Service\DemoService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception as DbException;
 use OCP\IDBConnection;
@@ -93,7 +93,7 @@ class RoomPaceLifecycleTest extends TestCase {
             'timeFactory' => $time,
             'l10n' => $l10n,
             'db' => $db,
-            'limits' => new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            'limits' => new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
         ] as $name => $value) {
             (new ReflectionProperty(RoomService::class, $name))->setValue($this->service, $value);
         }

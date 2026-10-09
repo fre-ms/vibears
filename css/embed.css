@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /* Embed shell for the Office/PowerPoint add-in. Full-bleed, no NC chrome.
-   Colors come from the token layer (js/pulse-styles.js loads it), buttons
+   Colors come from the token layer (js/vibears-styles.js loads it), buttons
    from the ONE button system .pulse-btn — the shell used to have its own
    hex values and its own button (B3).
    Section references (§…) and review IDs (B3) point to the design notes of the

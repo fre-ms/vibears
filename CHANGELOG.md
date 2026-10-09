@@ -10,8 +10,10 @@ notes of a version from its section here, so every version needs an entry.
 
 ## [0.20.0] - 2026-10-09
 
-The first release of the fork. The app ID stays `pulse`, so this version
-installs in Pulse's place and takes over its rooms.
+The first release of the fork, with an app ID of its own: `vibears`
+installs alongside Pulse, with its own tables (`vibears_*`), voter cookie
+(`vibears_vt`), routes (`/apps/vibears/…`), app data, settings and a
+PowerPoint add-in of its own; Pulse's rooms stay in Pulse.
 
 ### Added
 - **Decks as files.** "Export as Markdown" in a room's menu (in the deck and

@@ -1,9 +1,9 @@
 # Publishing Pulse in the Nextcloud App Store
 
 > **vibeARS note.** This document describes the way Pulse took into the
-> Nextcloud App Store. vibeARS is not published there — the app ID `pulse`
-> belongs to Pulse — and this fork installs from its repository (README,
-> "Installation"). The document is kept unchanged for reference.
+> Nextcloud App Store. vibeARS (app ID `vibears`) is not published there and
+> installs from its repository (README, "Installation"). The document is kept
+> unchanged for reference; the same steps would apply to `vibears`.
 
 
 What the store requires, what the repository already has in place for it, and

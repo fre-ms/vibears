@@ -27,7 +27,7 @@ import { HEATMAP_THRESHOLD } from './format.js'
 export function keptOptions(draft, body, fail) {
 	const kept = []
 	draft.options.forEach((o, i) => { if (o.trim() !== '') kept.push(i) })
-	if (kept.length < 2) { fail(t('pulse', 'Please provide at least two options.')); return null }
+	if (kept.length < 2) { fail(t('vibears', 'Please provide at least two options.')); return null }
 	body.options = kept.map((i) => draft.options[i].trim())
 	return kept
 }
@@ -41,13 +41,13 @@ export const QUESTION_TYPES = {
 		toBody(draft, body, isQuiz, fail) {
 			if (!isQuiz) {
 				body.options = draft.options.map((o) => o.trim()).filter(Boolean)
-				if (body.options.length < 2) fail(t('pulse', 'Please provide at least two options.'))
+				if (body.options.length < 2) fail(t('vibears', 'Please provide at least two options.'))
 				return
 			}
 			const kept = keptOptions(draft, body, fail)
 			if (!kept) return
 			const ci = kept.indexOf(draft.correctIndex)
-			if (ci < 0) { fail(t('pulse', 'Please mark the correct answer.')); return }
+			if (ci < 0) { fail(t('vibears', 'Please mark the correct answer.')); return }
 			body.correctIndex = ci
 		},
 	},
@@ -58,7 +58,7 @@ export const QUESTION_TYPES = {
 		},
 		toBody(draft, body, isQuiz, fail) {
 			body.options = draft.options.map((o) => o.trim()).filter(Boolean)
-			if (body.options.length < 2) fail(t('pulse', 'Please provide at least two answers.'))
+			if (body.options.length < 2) fail(t('vibears', 'Please provide at least two answers.'))
 		},
 	},
 	match: {
@@ -81,11 +81,11 @@ export const QUESTION_TYPES = {
 				.map((pair) => ({ left: (pair.left || '').trim(), right: (pair.right || '').trim() }))
 				.filter((pair) => pair.left !== '' || pair.right !== '')
 			if (pairs.some((pair) => pair.left === '' || pair.right === '')) {
-				fail(t('pulse', 'Please fill in both sides of every pair.'))
+				fail(t('vibears', 'Please fill in both sides of every pair.'))
 				return
 			}
 			if (pairs.length < 2) {
-				fail(t('pulse', 'Please provide at least two pairs.'))
+				fail(t('vibears', 'Please provide at least two pairs.'))
 				return
 			}
 			body.pairs = pairs
@@ -101,7 +101,7 @@ export const QUESTION_TYPES = {
 			const kept = keptOptions(draft, body, fail)
 			if (!kept) return
 			const idx = kept.map((orig, pos) => (draft.correctIndexes.includes(orig) ? pos : -1)).filter((pp) => pp >= 0)
-			if (!idx.length) { fail(t('pulse', 'Please mark at least one correct answer.')); return }
+			if (!idx.length) { fail(t('vibears', 'Please mark at least one correct answer.')); return }
 			body.correctIndexes = idx
 		},
 	},
@@ -120,7 +120,7 @@ export const QUESTION_TYPES = {
 			d.tolerance = key.tolerance !== undefined ? key.tolerance : 0
 		},
 		toBody(draft, body, isQuiz, fail) {
-			if (draft.target === '' || draft.target === null || isNaN(Number(draft.target))) { fail(t('pulse', 'Please enter a target number.')); return }
+			if (draft.target === '' || draft.target === null || isNaN(Number(draft.target))) { fail(t('vibears', 'Please enter a target number.')); return }
 			body.target = Number(draft.target)
 			body.tolerance = draft.tolerance === '' ? 0 : Math.abs(Number(draft.tolerance)) || 0
 		},
@@ -131,7 +131,7 @@ export const QUESTION_TYPES = {
 		},
 		toBody(draft, body, isQuiz, fail) {
 			body.answers = draft.answers.map((a) => a.trim()).filter(Boolean)
-			if (!body.answers.length) fail(t('pulse', 'Please provide at least one correct answer.'))
+			if (!body.answers.length) fail(t('vibears', 'Please provide at least one correct answer.'))
 		},
 	},
 	scale: {
@@ -161,14 +161,14 @@ export const QUESTION_TYPES = {
 				const aspects = draft.aspects
 					.map((a) => ({ label: (a.label || '').trim(), poleLow: (a.poleLow || '').trim(), poleHigh: (a.poleHigh || '').trim() }))
 					.filter((a) => a.label !== '')
-				if (aspects.length < 3) { fail(t('pulse', 'Please name at least three aspects.')); return }
+				if (aspects.length < 3) { fail(t('vibears', 'Please name at least three aspects.')); return }
 				body.aspects = aspects.slice(0, 8)
 			} else if (draft.scaleMode === 'compass') {
 				const ax = (a) => ({ title: (a.title || '').trim(), poleLow: (a.poleLow || '').trim(), poleHigh: (a.poleHigh || '').trim() })
 				const axisX = ax(draft.axisX)
 				const axisY = ax(draft.axisY)
 				if (!axisX.title || !axisX.poleLow || !axisX.poleHigh || !axisY.title || !axisY.poleLow || !axisY.poleHigh) {
-					fail(t('pulse', 'Please give both axes a title and two pole labels each.')); return
+					fail(t('vibears', 'Please give both axes a title and two pole labels each.')); return
 				}
 				body.range = draft.range
 				body.axisX = axisX
@@ -200,43 +200,43 @@ export function emptyDraft() {
 export function typeOptionsFor(isQuiz) {
 	return isQuiz
 		? [
-			{ value: 'choice', label: t('pulse', 'Multiple choice') },
-			{ value: 'truefalse', label: t('pulse', 'True/False') },
-			{ value: 'multi', label: t('pulse', 'Multiple answers') },
-			{ value: 'number', label: t('pulse', 'Number guess') },
-			{ value: 'text', label: t('pulse', 'Free text') },
-			{ value: 'rank', label: t('pulse', 'Ranking') },
-			{ value: 'match', label: t('pulse', 'Matching') },
+			{ value: 'choice', label: t('vibears', 'Multiple choice') },
+			{ value: 'truefalse', label: t('vibears', 'True/False') },
+			{ value: 'multi', label: t('vibears', 'Multiple answers') },
+			{ value: 'number', label: t('vibears', 'Number guess') },
+			{ value: 'text', label: t('vibears', 'Free text') },
+			{ value: 'rank', label: t('vibears', 'Ranking') },
+			{ value: 'match', label: t('vibears', 'Matching') },
 		]
 		: [
-			{ value: 'choice', label: t('pulse', 'Multiple choice') },
-			{ value: 'words', label: t('pulse', 'Word cloud') },
-			{ value: 'scale', label: t('pulse', 'Scale') },
-			{ value: 'rank', label: t('pulse', 'Ranking') },
-			{ value: 'match', label: t('pulse', 'Matching') },
+			{ value: 'choice', label: t('vibears', 'Multiple choice') },
+			{ value: 'words', label: t('vibears', 'Word cloud') },
+			{ value: 'scale', label: t('vibears', 'Scale') },
+			{ value: 'rank', label: t('vibears', 'Ranking') },
+			{ value: 'match', label: t('vibears', 'Matching') },
 		]
 }
 
 // Short tag + color class for the deck icon (SC = the scale family, in the "you" magenta).
 export function typeTag(type) {
 	return ({
-		choice: { t: t('pulse', 'MC'), c: 'mc' }, words: { t: t('pulse', 'WC'), c: 'wc' }, scale: { t: t('pulse', 'SC'), c: 'sc' },
-		truefalse: { t: t('pulse', 'TF'), c: 'wf' }, multi: { t: t('pulse', 'MA'), c: 'ma' }, number: { t: '#', c: 'nu' }, text: { t: t('pulse', 'Tx'), c: 'tx' },
-		rank: { t: '1-2-3', c: 'rk' }, match: { t: t('pulse', 'MT'), c: 'mt' },
-	})[type] || { t: t('pulse', 'MC'), c: 'mc' }
+		choice: { t: t('vibears', 'MC'), c: 'mc' }, words: { t: t('vibears', 'WC'), c: 'wc' }, scale: { t: t('vibears', 'SC'), c: 'sc' },
+		truefalse: { t: t('vibears', 'TF'), c: 'wf' }, multi: { t: t('vibears', 'MA'), c: 'ma' }, number: { t: '#', c: 'nu' }, text: { t: t('vibears', 'Tx'), c: 'tx' },
+		rank: { t: '1-2-3', c: 'rk' }, match: { t: t('vibears', 'MT'), c: 'mt' },
+	})[type] || { t: t('vibears', 'MC'), c: 'mc' }
 }
 
 // Scale submode for the deck subtitle.
 export function scaleModeLabel(p) {
 	const m = (p.scale && p.scale.mode) || 'single'
-	return m === 'spectrum' ? t('pulse', 'Spectrum') : m === 'compass' ? t('pulse', 'Compass') : t('pulse', 'Single')
+	return m === 'spectrum' ? t('vibears', 'Spectrum') : m === 'compass' ? t('vibears', 'Compass') : t('vibears', 'Single')
 }
 
 export function typeLabel(type) {
 	return {
-		words: t('pulse', 'Word cloud'), scale: t('pulse', 'Scale'), truefalse: t('pulse', 'True/False'), rank: t('pulse', 'Ranking'), match: t('pulse', 'Matching'),
-		multi: t('pulse', 'Multiple answers'), number: t('pulse', 'Number guess'), text: t('pulse', 'Free text'),
-	}[type] || t('pulse', 'Multiple choice')
+		words: t('vibears', 'Word cloud'), scale: t('vibears', 'Scale'), truefalse: t('vibears', 'True/False'), rank: t('vibears', 'Ranking'), match: t('vibears', 'Matching'),
+		multi: t('vibears', 'Multiple answers'), number: t('vibears', 'Number guess'), text: t('vibears', 'Free text'),
+	}[type] || t('vibears', 'Multiple choice')
 }
 
 // Short answer hint per quiz question in the deck list.
@@ -245,16 +245,16 @@ export function answerHint(poll) {
 		const o = (poll.options || []).find((x) => x.id === poll.correctOption)
 		return o ? o.label : '—'
 	}
-	if (poll.type === 'choice') return t('pulse', 'Answer {letter}', { letter: correctLetter(poll) })
-	if (poll.type === 'multi') return n('pulse', '%n correct', '%n correct', ((poll.answerKey || {}).correct || []).length)
+	if (poll.type === 'choice') return t('vibears', 'Answer {letter}', { letter: correctLetter(poll) })
+	if (poll.type === 'multi') return n('vibears', '%n correct', '%n correct', ((poll.answerKey || {}).correct || []).length)
 	if (poll.type === 'number') {
 		const k = poll.answerKey || {}
 		return '= ' + (k.target ?? '?') + (k.tolerance ? ' ±' + k.tolerance : '')
 	}
-	if (poll.type === 'text') return t('pulse', 'Free text')
+	if (poll.type === 'text') return t('vibears', 'Free text')
 	// Ranking: the solution is the option order — a count instead of a list.
-	if (poll.type === 'rank') return n('pulse', '%n in order', '%n in order', (poll.options || []).length)
-	if (poll.type === 'match') return n('pulse', '%n pair', '%n pairs', ((poll.match || {}).items || []).length)
+	if (poll.type === 'rank') return n('vibears', '%n in order', '%n in order', (poll.options || []).length)
+	if (poll.type === 'match') return n('vibears', '%n pair', '%n pairs', ((poll.match || {}).items || []).length)
 	return ''
 }
 
@@ -274,12 +274,12 @@ export function lossText(counts, state) {
 	if (!counts || !counts.joined) return ''
 	if (state === 'closed' || state === 'released') {
 		const vars = {
-			participants: n('pulse', '%n participant', '%n participants', counts.joined),
-			answers: n('pulse', '%n answer', '%n answers', counts.answers || 0),
+			participants: n('vibears', '%n participant', '%n participants', counts.joined),
+			answers: n('vibears', '%n answer', '%n answers', counts.answers || 0),
 		}
 		return state === 'closed'
-			? t('pulse', '{participants} and {answers} will be deleted. The results have not been released yet — download “Participants as CSV” first if you need them.', vars)
-			: t('pulse', '{participants} and {answers} will be deleted. Download “Participants as CSV” first if you still need them.', vars)
+			? t('vibears', '{participants} and {answers} will be deleted. The results have not been released yet — download “Participants as CSV” first if you need them.', vars)
+			: t('vibears', '{participants} and {answers} will be deleted. Download “Participants as CSV” first if you still need them.', vars)
 	}
-	return n('pulse', '%n person who already joined will have to join again.', '%n people who already joined will have to join again.', counts.joined)
+	return n('vibears', '%n person who already joined will have to join again.', '%n people who already joined will have to join again.', counts.joined)
 }

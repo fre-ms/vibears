@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\BackgroundJob\CleanupStaleRoomsJob;
-use OCA\Pulse\Migration\Version000000Date20260929120000;
+use OCA\Vibears\BackgroundJob\CleanupStaleRoomsJob;
+use OCA\Vibears\Migration\Version000000Date20260929120000;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\IJobList;
@@ -43,7 +43,7 @@ class RetentionGraceMigrationTest extends TestCase {
         $this->migrate([], changed: 4);
 
         $this->assertSame([
-            'update(pulse_rooms)',
+            'update(vibears_rooms)',
             'set(touched_at, ' . self::NOW . ' int)',
             'where(touched_at = 0 int)',
             'executeStatement',

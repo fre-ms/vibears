@@ -5,13 +5,13 @@
 <template>
 	<div class="intake" :class="{ 'is-frozen': frozen, 'is-compact': compact }">
 		<p class="intake-num">{{ shownAnswered }}</p>
-		<p v-if="slots" class="intake-ref">{{ t('pulse', 'of {total} here', { total: slots }) }}</p>
-		<p v-else class="intake-ref">{{ n('pulse', 'answer', 'answers', shownAnswered) }}</p>
+		<p v-if="slots" class="intake-ref">{{ t('vibears', 'of {total} here', { total: slots }) }}</p>
+		<p v-else class="intake-ref">{{ n('vibears', 'answer', 'answers', shownAnswered) }}</p>
 
 		<!-- Above 200 connected people the grid turns into a texture that says
 		     nothing; then a row in the stage grammar carries the same message. -->
 		<div v-if="asBar" class="srows intake-bar">
-			<StageRow :label="t('pulse', 'Answers')" :value="shownAnswered + ' / ' + slots" :pct="barPct" />
+			<StageRow :label="t('vibears', 'Answers')" :value="shownAnswered + ' / ' + slots" :pct="barPct" />
 		</div>
 		<div v-else class="intake-grid" :class="{ 'is-dense': dense }" role="img" :aria-label="ariaLabel">
 			<span v-for="i in gridSlots" :key="i" class="intake-slot" :data-on="i <= shownAnswered ? '' : null" />
@@ -84,8 +84,8 @@ export default {
 		},
 		ariaLabel() {
 			return this.slots
-				? this.t('pulse', '{count} of {total} have answered', { count: this.shownAnswered, total: this.slots })
-				: this.shownAnswered + ' ' + this.n('pulse', 'answer', 'answers', this.shownAnswered)
+				? this.t('vibears', '{count} of {total} have answered', { count: this.shownAnswered, total: this.slots })
+				: this.shownAnswered + ' ' + this.n('vibears', 'answer', 'answers', this.shownAnswered)
 		},
 	},
 	watch: {

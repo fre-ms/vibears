@@ -5,24 +5,24 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
 use Doctrine\DBAL\Platforms\MySQL84Platform;
 use Doctrine\DBAL\Schema\Schema;
 use OC\DB\Connection;
 use OC\DB\SchemaWrapper;
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\Presence;
-use OCA\Pulse\Db\Progress;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Db\Vote;
-use OCA\Pulse\Service\CodeGenerator;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\Presence;
+use OCA\Vibears\Db\Progress;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Db\Vote;
+use OCA\Vibears\Service\CodeGenerator;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\ISchemaWrapper;
@@ -39,7 +39,7 @@ use ReflectionProperty;
  * The schema is the app's own: every migration's changeSchema() is replayed
  * offline, and MySQL 8.4's DBAL platform decides which declared defaults
  * survive. Doctrine drops the default of TEXT/BLOB columns on MySQL (MariaDB,
- * PostgreSQL and SQLite keep it), so `pulse_polls.options`
+ * PostgreSQL and SQLite keep it), so `vibears_polls.options`
  * (TEXT NOT NULL DEFAULT '[]') has none there. The generic entity setter skips
  * a value equal to the current one; a new word cloud, number or free-text
  * question, and a copied room containing one, left `options` out of the
@@ -59,12 +59,12 @@ class InsertColumnsTest extends TestCase {
 
     /** Table -> entity class. Every table the migrations create must be listed. */
     private const ENTITIES = [
-        'pulse_rooms' => Room::class,
-        'pulse_polls' => Poll::class,
-        'pulse_votes' => Vote::class,
-        'pulse_presence' => Presence::class,
-        'pulse_players' => Player::class,
-        'pulse_progress' => Progress::class,
+        'vibears_rooms' => Room::class,
+        'vibears_polls' => Poll::class,
+        'vibears_votes' => Vote::class,
+        'vibears_presence' => Presence::class,
+        'vibears_players' => Player::class,
+        'vibears_progress' => Progress::class,
     ];
 
     private static ?Schema $schema = null;
@@ -81,7 +81,7 @@ class InsertColumnsTest extends TestCase {
 
     public function testMysqlDropsExactlyTheDefaultOfOptions(): void {
         // The audit result, and a check that the replay is not vacuous.
-        $this->assertSame(['pulse_polls' => ['options' => '[]']], $this->droppedDefaults());
+        $this->assertSame(['vibears_polls' => ['options' => '[]']], $this->droppedDefaults());
     }
 
     // ── Entities ────────────────────────────────────────────────────────────
@@ -159,13 +159,13 @@ class InsertColumnsTest extends TestCase {
             'codeGenerator' => $this->codes(),
             'timeFactory' => $this->clock(),
             'l10n' => $this->l10n(),
-            'limits' => new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            'limits' => new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
         ]);
 
         $service->addPoll($this->room($mode), $data + ['question' => 'Q']);
 
         $this->assertCount(1, $inserted);
-        $this->assertInsertCarries('pulse_polls', $inserted[0]);
+        $this->assertInsertCarries('vibears_polls', $inserted[0]);
     }
 
     public function testDuplicateRoomWritesEveryColumnWithoutMysqlDefault(): void {
@@ -203,16 +203,16 @@ class InsertColumnsTest extends TestCase {
             'imageService' => $this->createMock(PollImageService::class),
             'timeFactory' => $this->clock(),
             'l10n' => $this->l10n(),
-            'limits' => new \OCA\Pulse\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            'limits' => new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
         ]);
 
         $service->duplicateRoom($this->room('quiz'), 'alice');
 
         $this->assertCount(1, $insertedRooms);
-        $this->assertInsertCarries('pulse_rooms', $insertedRooms[0]);
+        $this->assertInsertCarries('vibears_rooms', $insertedRooms[0]);
         $this->assertCount(3, $insertedPolls);
         foreach ($insertedPolls as $i => $copy) {
-            $this->assertInsertCarries('pulse_polls', $copy);
+            $this->assertInsertCarries('vibears_polls', $copy);
             $this->assertSame(99, $copy->getRoomId());
             $this->assertSame($source[$i]->getOptions(), $copy->getOptions());
         }
@@ -299,7 +299,7 @@ class InsertColumnsTest extends TestCase {
         $this->assertNotEmpty($files);
         $output = $this->createMock(IOutput::class);
         foreach ($files as $file) {
-            $class = 'OCA\\Pulse\\Migration\\' . basename($file, '.php');
+            $class = 'OCA\\Vibears\\Migration\\' . basename($file, '.php');
             // Constructor dependencies only serve pre/postSchemaChange.
             $step = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
             $step->changeSchema($output, static fn (): ISchemaWrapper => $wrapper, []);

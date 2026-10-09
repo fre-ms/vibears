@@ -5,17 +5,17 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Service\CodeGenerator;
-use OCA\Pulse\Service\DeckService;
-use OCA\Pulse\Service\Limits;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\CodeGenerator;
+use OCA\Vibears\Service\DeckService;
+use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
 use OCP\IDBConnection;
@@ -464,10 +464,10 @@ class OwnerCapsTest extends TestCase {
         return $this->build(RoomService::class, [
             'roomMapper' => $rooms,
             'pollMapper' => $polls,
-            'voteMapper' => $this->createMock(\OCA\Pulse\Db\VoteMapper::class),
-            'presenceMapper' => $this->createMock(\OCA\Pulse\Db\PresenceMapper::class),
-            'playerMapper' => $this->createMock(\OCA\Pulse\Db\PlayerMapper::class),
-            'progressMapper' => $this->createMock(\OCA\Pulse\Db\ProgressMapper::class),
+            'voteMapper' => $this->createMock(\OCA\Vibears\Db\VoteMapper::class),
+            'presenceMapper' => $this->createMock(\OCA\Vibears\Db\PresenceMapper::class),
+            'playerMapper' => $this->createMock(\OCA\Vibears\Db\PlayerMapper::class),
+            'progressMapper' => $this->createMock(\OCA\Vibears\Db\ProgressMapper::class),
             'codeGenerator' => $this->codes(),
             'imageService' => $images ?? $this->createMock(PollImageService::class),
             'timeFactory' => $this->clock(),

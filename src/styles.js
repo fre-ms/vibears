@@ -4,7 +4,7 @@
  */
 /*
  * Pure style entry point: bundles the token layer and the design system for
- * pages WITHOUT a Vue bundle — currently the embed shell (js/pulse-embed.js).
+ * pages WITHOUT a Vue bundle — currently the embed shell (js/vibears-embed.js).
  *
  * Why a separate entry and not a copy in css/embed.css: the shell should use
  * the same roles and the same ONE button (.pulse-btn) as the rest

@@ -5,18 +5,18 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\Db\Player;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\Vote;
-use OCA\Pulse\Db\VoteMapper;
-use OCA\Pulse\Service\PaceService;
-use OCA\Pulse\Service\RoomGoneException;
-use OCA\Pulse\Service\VoteService;
+use OCA\Vibears\Db\Player;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\Vote;
+use OCA\Vibears\Db\VoteMapper;
+use OCA\Vibears\Service\PaceService;
+use OCA\Vibears\Service\RoomGoneException;
+use OCA\Vibears\Service\VoteService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
 use OCP\Security\RateLimiting\ILimiter;
@@ -294,8 +294,8 @@ class LiveQuizJoinTest extends TestCase {
     }
 
     public function testCapFollowsTheAppConfig(): void {
-        // occ config:app:set pulse max_players_per_room --value 3
-        $this->limitConfig[\OCA\Pulse\Service\Limits::PLAYERS_PER_ROOM] = 3;
+        // occ config:app:set vibears max_players_per_room --value 3
+        $this->limitConfig[\OCA\Vibears\Service\Limits::PLAYERS_PER_ROOM] = 3;
         $this->roster = $this->manyPlayers(3);
 
         $this->assertRejected('This quiz is full.', 'tok-neu', 'Cem');
@@ -303,7 +303,7 @@ class LiveQuizJoinTest extends TestCase {
 
     public function testHigherCapLetsInMoreThanSixHundred(): void {
         // A keynote: the instance raised the ceiling.
-        $this->limitConfig[\OCA\Pulse\Service\Limits::PLAYERS_PER_ROOM] = 1000;
+        $this->limitConfig[\OCA\Vibears\Service\Limits::PLAYERS_PER_ROOM] = 1000;
         $this->roster = $this->manyPlayers(PaceService::MAX_JOINED);
         $this->expectRegister('tok-neu', 'Cem');
 
@@ -371,11 +371,11 @@ class LiveQuizJoinTest extends TestCase {
         return $player;
     }
 
-    private function limits(): \OCA\Pulse\Service\Limits {
+    private function limits(): \OCA\Vibears\Service\Limits {
         $config = $this->createMock(\OCP\IAppConfig::class);
         $config->method('getValueInt')->willReturnCallback(
             fn (string $app, string $key, int $default = 0): int => $this->limitConfig[$key] ?? $default
         );
-        return new \OCA\Pulse\Service\Limits($config);
+        return new \OCA\Vibears\Service\Limits($config);
     }
 }

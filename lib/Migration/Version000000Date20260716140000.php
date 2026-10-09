@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Migration;
+namespace OCA\Vibears\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -27,16 +27,16 @@ class Version000000Date20260716140000 extends SimpleMigrationStep {
         /** @var ISchemaWrapper $schema */
         $schema = $schemaClosure();
 
-        if (!$schema->hasTable('pulse_presence')) {
-            $table = $schema->createTable('pulse_presence');
+        if (!$schema->hasTable('vibears_presence')) {
+            $table = $schema->createTable('vibears_presence');
             $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true]);
             $table->addColumn('room_id', Types::BIGINT, ['notnull' => true]);
             $table->addColumn('voter_token', Types::STRING, ['notnull' => true, 'length' => 32]);
             $table->addColumn('last_seen', Types::BIGINT, ['notnull' => true]);
             $table->setPrimaryKey(['id']);
-            $table->addUniqueIndex(['room_id', 'voter_token'], 'pulse_presence_unique_idx');
+            $table->addUniqueIndex(['room_id', 'voter_token'], 'vibears_presence_unique_idx');
             // Count query: WHERE room_id = ? AND last_seen >= ?
-            $table->addIndex(['room_id', 'last_seen'], 'pulse_presence_active_idx');
+            $table->addIndex(['room_id', 'last_seen'], 'vibears_presence_active_idx');
         }
 
         return $schema;

@@ -46,7 +46,7 @@ those passes.
 | Self-paced: stop without releasing | `close {release:false}` in one call: closed, deadline 0, not released, vote immediately final, phone/projector without final standings; invalid `release` is 400 without effect; `close` on a closed window is a no-op (also with `release`); the old two-step path (deadline in 120 s, then `close`) works as before; `release: "false"` as a string; `release: true` releases with a deadline |
 | Self-paced: race conditions | truly parallel, with the phone's delay swept across the measured runtime difference moderator − phone: removing against `/vote` and `/next`, grading against an answer and against its correction |
 | Hostile input | lists/objects instead of text or a number in moderator and phone parameters (JSON and form), 1e100/1e999, NUL, broken UTF-8, foreign voter cookies (list, overlong, broken): never 500, but 400 with the usual message, the default or a new cookie; a free-text answer with NUL stays gradable |
-| Browser checks | a participant POST without `X-Requested-With` or with `Sec-Fetch-Site: cross-site`/`same-site` is 403 without a cookie, `same-origin` goes through; a cookie name sent twice counts as none (new cookie); on https with an empty webroot a legacy `pulse_vt` moves to `__Host-pulse_vt` (the old one expires) and a planted `pulse_vt` next to `__Host-pulse_vt` is ignored; a phone's first `/state` issues the cookie but only its second one counts it as present |
+| Browser checks | a participant POST without `X-Requested-With` or with `Sec-Fetch-Site: cross-site`/`same-site` is 403 without a cookie, `same-origin` goes through; a cookie name sent twice counts as none (new cookie); on https with an empty webroot a legacy `vibears_vt` moves to `__Host-vibears_vt` (the old one expires) and a planted `vibears_vt` next to `__Host-vibears_vt` is ignored; a phone's first `/state` issues the cookie but only its second one counts it as present |
 
 ## What is checked
 
@@ -111,9 +111,9 @@ Additionally for self-paced:
   in `dev/design-shots`, password in `dev/design-shots/.shots-pass`),
   determines the container IP and starts `sim.mjs`.
 - The moderator talks to the API with Basic auth + `OCS-APIRequest: true` (no
-  CSRF token needed); every phone keeps its own voter cookie — `__Host-pulse_vt`
+  CSRF token needed); every phone keeps its own voter cookie — `__Host-vibears_vt`
   when the instance counts as https with an empty webroot (`overwriteprotocol`
-  applies to the direct container requests too), otherwise `pulse_vt` — and,
+  applies to the direct container requests too), otherwise `vibears_vt` — and,
   like the public bundle (`@nextcloud/axios`), sends
   `X-Requested-With: XMLHttpRequest`: participant POSTs without it are 403.
 - The requests go directly to the container, not through the proxy. The IP is
@@ -127,7 +127,7 @@ Additionally for self-paced:
   response, never from this machine's clock.
 - Messages and CSV cells ("yes"/"no") are compared in English: `pulse-shots`
   has the language `en`, and the phones send no `Accept-Language`.
-- Every request carries the user agent `pulse-sim`. After the run, a log scan
+- Every request carries the user agent `vibears-sim`. After the run, a log scan
   shows whether any of them wrote a warning or an error to the Nextcloud log —
   expected: no line:
 
@@ -135,7 +135,7 @@ Additionally for self-paced:
   LOG=/var/log/nextcloud/nextcloud.log
   OFF=$(docker exec nextcloud-nextcloud-1 stat -c %s $LOG)
   dev/sim/run.sh
-  docker exec nextcloud-nextcloud-1 tail -c +$((OFF + 1)) $LOG | grep -a '"userAgent":"pulse-sim"' | grep -a -E '"level":[234]'
+  docker exec nextcloud-nextcloud-1 tail -c +$((OFF + 1)) $LOG | grep -a '"userAgent":"vibears-sim"' | grep -a -E '"level":[234]'
   ```
 
 **Never in parallel** with `dev/design-shots/run.sh` or a second sim run:
@@ -144,12 +144,12 @@ that user with `probe destroy pulse-shots` — including the ones the sim is
 using right now. The next phone request to a deleted code counts as a
 brute-force attempt by the sim IP.
 
-Settings: `CONTAINER`, `PULSE_SIM_URL`, `PULSE_SIM_HOST`, `PULSE_SIM_USER`
-(then also `PULSE_SIM_PASS` — `.shots-pass` belongs to `pulse-shots`). If
+Settings: `CONTAINER`, `VIBEARS_SIM_URL`, `VIBEARS_SIM_HOST`, `VIBEARS_SIM_USER`
+(then also `VIBEARS_SIM_PASS` — `.shots-pass` belongs to `pulse-shots`). If
 `occ` does not answer, `run.sh` aborts instead of overwriting the shared
 password.
 
-`PULSE_SIM_HOST` (default `localhost`) is also the way out of the route cache:
+`VIBEARS_SIM_HOST` (default `localhost`) is also the way out of the route cache:
 Nextcloud stores the routes per Host header in APCu for one hour
 (`lib/private/Route/CachingRouter.php`, key Host + base URL). Until then, a
 newly added route answers with 404 for a host that is already cached — the
@@ -157,7 +157,7 @@ HTML error page, not the controller's JSON (401/403/400/405 means: route
 loaded). A port gives a fresh key, and the `trusted_domains` check ignores it:
 
 ```sh
-PULSE_SIM_HOST=localhost:34071 dev/sim/run.sh
+VIBEARS_SIM_HOST=localhost:34071 dev/sim/run.sh
 ```
 
 The self-paced passes check this up front: if `/pace` answers with 404, the
@@ -177,7 +177,7 @@ requests per second as Markdown. Like the sim it talks directly to the
 container and uses the same throwaway user:
 
 ```sh
-PULSE_SIM_URL=http://<container-ip> PULSE_SIM_PASS="$(cat dev/design-shots/.shots-pass)" \
+VIBEARS_SIM_URL=http://<container-ip> VIBEARS_SIM_PASS="$(cat dev/design-shots/.shots-pass)" \
   node dev/sim/load.mjs
 ```
 

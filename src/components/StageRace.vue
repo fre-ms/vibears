@@ -10,7 +10,7 @@
 		<div ref="bars" class="srows pace-race-rows">
 			<StageRow v-if="idle"
 				class="pace-race-row is-idle"
-				:label="t('pulse', 'Not started')"
+				:label="t('vibears', 'Not started')"
 				:value="num(idle.value)"
 				:pct="pct(idle.value)" />
 			<div v-if="layout.cols === 2" class="pace-race-grid" :style="{ '--rows': layout.perCol }">
@@ -30,7 +30,7 @@
 					:pct="pct(row.value)" />
 			</template>
 			<StageRow class="pace-race-row is-done"
-				:label="t('pulse', 'Finished')"
+				:label="t('vibears', 'Finished')"
 				:value="num(finished)"
 				:pct="pct(finished)" />
 		</div>
@@ -51,7 +51,7 @@
 		</aside>
 		<aside v-else-if="side === 'board'" ref="side" class="pace-race-side pace-race-board">
 			<p class="pace-race-side-head">
-				{{ t('pulse', 'Leaderboard') }}
+				{{ t('vibears', 'Leaderboard') }}
 			</p>
 			<Leaderboard :rows="board" :limit="boardRows" />
 		</aside>
@@ -138,8 +138,8 @@ export default {
 		// A group of one (the last one, 22 of 22 in threes) reads as a question.
 		labelOf(row) {
 			return row.kind === 'group' && row.to > row.from
-				? this.t('pulse', 'Questions {from}–{to}', { from: row.from, to: row.to })
-				: this.t('pulse', 'Question {number}', { number: row.kind === 'group' ? row.from : row.k })
+				? this.t('vibears', 'Questions {from}–{to}', { from: row.from, to: row.to })
+				: this.t('vibears', 'Question {number}', { number: row.kind === 'group' ? row.from : row.k })
 		},
 		num(v) {
 			return fmtNum(v, 0)

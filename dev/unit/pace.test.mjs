@@ -227,7 +227,7 @@ test('Frist-Satz: Dialog und Server sagen denselben, und er nennt DEADLINE_MIN/M
 	const err = /\n\t\tdeadlineError\(\) \{\n([\s\S]*?)\n\t\t\},/.exec(vue)
 	assert.ok(err, 'computed deadlineError not found')
 	assert.match(err[1], /deadlineInRange\(this\.closesAt, this\.now\)/)
-	const said = [...err[1].matchAll(/t\('pulse', '([^']+)'\)/g)].map((m) => m[1])
+	const said = [...err[1].matchAll(/t\('vibears', '([^']+)'\)/g)].map((m) => m[1])
 	assert.equal(said.length, 1, 'deadlineError says one sentence')
 	const sentence = said[0]
 	assert.match(vue, /minInput\(\) \{\n\t\t\treturn toLocalInput\(deadlineInputRange\(this\.now\)\.min\)/)

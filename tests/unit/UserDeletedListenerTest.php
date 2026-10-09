@@ -5,20 +5,20 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Tests\Unit;
+namespace OCA\Vibears\Tests\Unit;
 
-use OCA\Pulse\AppInfo\Application;
-use OCA\Pulse\Db\PlayerMapper;
-use OCA\Pulse\Db\Poll;
-use OCA\Pulse\Db\PollMapper;
-use OCA\Pulse\Db\PresenceMapper;
-use OCA\Pulse\Db\ProgressMapper;
-use OCA\Pulse\Db\Room;
-use OCA\Pulse\Db\RoomMapper;
-use OCA\Pulse\Db\VoteMapper;
-use OCA\Pulse\Listener\UserDeletedListener;
-use OCA\Pulse\Service\PollImageService;
-use OCA\Pulse\Service\RoomService;
+use OCA\Vibears\AppInfo\Application;
+use OCA\Vibears\Db\PlayerMapper;
+use OCA\Vibears\Db\Poll;
+use OCA\Vibears\Db\PollMapper;
+use OCA\Vibears\Db\PresenceMapper;
+use OCA\Vibears\Db\ProgressMapper;
+use OCA\Vibears\Db\Room;
+use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Db\VoteMapper;
+use OCA\Vibears\Listener\UserDeletedListener;
+use OCA\Vibears\Service\PollImageService;
+use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\EventDispatcher\Event;
 use OCP\IDBConnection;
@@ -60,7 +60,7 @@ class UserDeletedListenerTest extends TestCase {
         $this->assertSame(['anna'], $this->lookedUp);
         $this->assertSame(['AAAAAA', 'BBBBBB'], $this->deleted, 'only the deleted account\'s rooms');
         $this->assertSame([
-            ['info', 'Pulse: deleted {count} rooms of deleted user {uid}.', ['count' => 2, 'uid' => 'anna']],
+            ['info', 'vibeARS: deleted {count} rooms of deleted user {uid}.', ['count' => 2, 'uid' => 'anna']],
         ], $this->log);
     }
 
@@ -154,10 +154,10 @@ class UserDeletedListenerTest extends TestCase {
         $this->assertCount(2, $this->log);
         [$level, $message, $context] = $this->log[0];
         $this->assertSame('warning', $level);
-        $this->assertSame('Pulse: could not delete room {code} of deleted user {uid}.', $message);
+        $this->assertSame('vibeARS: could not delete room {code} of deleted user {uid}.', $message);
         $this->assertSame('BBBBBB', $context['code']);
         $this->assertInstanceOf(\RuntimeException::class, $context['exception']);
-        $this->assertSame(['info', 'Pulse: deleted {count} rooms of deleted user {uid}.', ['count' => 2, 'uid' => 'anna']], $this->log[1]);
+        $this->assertSame(['info', 'vibeARS: deleted {count} rooms of deleted user {uid}.', ['count' => 2, 'uid' => 'anna']], $this->log[1]);
     }
 
     public function testLookupFailsWithoutAnException(): void {

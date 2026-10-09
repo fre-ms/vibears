@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Db;
+namespace OCA\Vibears\Db;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
@@ -17,7 +17,7 @@ use OCP\IDBConnection;
  */
 class PollMapper extends QBMapper {
     public function __construct(IDBConnection $db) {
-        parent::__construct($db, 'pulse_polls', Poll::class);
+        parent::__construct($db, 'vibears_polls', Poll::class);
     }
 
     /**

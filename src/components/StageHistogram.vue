@@ -7,7 +7,7 @@
 		<!-- Band 1: the median sits ABOVE the columns … -->
 		<div class="shist-med">
 			<span v-if="medPct !== null" class="shist-med-lbl" :data-flip="medPct > 88 ? '' : null" :style="{ left: medPct + '%' }">
-				{{ t('pulse', 'median {value}', { value: num(median) }) }}
+				{{ t('vibears', 'median {value}', { value: num(median) }) }}
 			</span>
 		</div>
 

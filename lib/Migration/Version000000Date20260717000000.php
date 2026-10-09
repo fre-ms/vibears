@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\Pulse\Migration;
+namespace OCA\Vibears\Migration;
 
 use Closure;
-use OCA\Pulse\BackgroundJob\CleanupStaleRoomsJob;
+use OCA\Vibears\BackgroundJob\CleanupStaleRoomsJob;
 use OCP\BackgroundJob\IJobList;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
