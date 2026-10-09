@@ -138,17 +138,17 @@ export default {
    both, and that is exactly what it did (the hint lay in the first box, the
    chips in the second to last). Here the height comes from the flex layout. */
 .sopen > .srows, .sopen-match > .srows { height: auto; }
-.sopen-hint { flex: 0 0 auto; margin: 0; color: var(--pulse-meta); font-weight: 600; font-size: 0.6em; }
+.sopen-hint { flex: 0 0 auto; margin: 0; color: var(--vibears-meta); font-weight: 600; font-size: 0.6em; }
 
 /* Single scale: axis with values and both poles. */
 .sopen-scale { display: flex; flex-direction: column; justify-content: center; gap: 0.5em; }
 .sopen-ticks {
 	list-style: none; margin: 0; padding: 0.4em 0 0;
 	display: flex; justify-content: space-between; align-items: center;
-	border-top: 0.08em solid var(--pulse-border-strong);
+	border-top: 0.08em solid var(--vibears-border-strong);
 }
 .sopen-tick { font-weight: 700; font-variant-numeric: tabular-nums; }
-.sopen-poles { display: flex; justify-content: space-between; gap: 1em; color: var(--pulse-meta); font-weight: 600; }
+.sopen-poles { display: flex; justify-content: space-between; gap: 1em; color: var(--vibears-meta); font-weight: 600; }
 .sopen-poles span { max-width: 45%; }
 .sopen-poles span:last-child { text-align: right; }
 
@@ -159,7 +159,7 @@ export default {
 	grid-template-rows: auto 1fr auto;
 	gap: 0.3em;
 }
-.cp-pole { color: var(--pulse-text); font-weight: 700; text-align: center; }
+.cp-pole { color: var(--vibears-text); font-weight: 700; text-align: center; }
 .cp-top { grid-column: 2; grid-row: 1; }
 .cp-left { grid-column: 1; grid-row: 2; }
 .cp-right { grid-column: 3; grid-row: 2; }
@@ -167,9 +167,9 @@ export default {
 .cp-field {
 	grid-column: 2; grid-row: 2;
 	position: relative; aspect-ratio: 1 / 1; height: 100%; max-width: 100%;
-	border: 0.06em solid var(--pulse-border-strong); border-radius: 0.2em;
+	border: 0.06em solid var(--vibears-border-strong); border-radius: 0.2em;
 }
-.cp-field::before, .cp-field::after { content: ''; position: absolute; background: var(--pulse-border-strong); }
+.cp-field::before, .cp-field::after { content: ''; position: absolute; background: var(--vibears-border-strong); }
 .cp-field::before { left: 0; right: 0; top: 50%; height: 0.05em; transform: translateY(-50%); }
 .cp-field::after { top: 0; bottom: 0; left: 50%; width: 0.05em; transform: translateX(-50%); }
 
@@ -192,5 +192,5 @@ export default {
    into their gaps. */
 .sopen-match > .srows.is-cols > .srow { min-height: 0; max-height: none; }
 .sopen-chips { flex: 0 0 auto; list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.35em; }
-.sopen-chip { background: var(--pulse-bar-track); color: var(--pulse-text); border-radius: 999px; padding: 0.2em 0.7em; font-weight: 700; font-size: 0.8em; }
+.sopen-chip { background: var(--vibears-bar-track); color: var(--vibears-text); border-radius: 999px; padding: 0.2em 0.7em; font-weight: 700; font-size: 0.8em; }
 </style>

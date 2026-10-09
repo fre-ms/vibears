@@ -18,16 +18,16 @@
 				<!-- Practice run: reset and "Reset quiz" keep it (server) — anyone who
 				     wants to open "for real" now has to see it here, not only at the
 				     final standings without a leaderboard. -->
-				<div v-if="practice && !extend" class="pulse-notice is-warn pod-practice">
-					<PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" />
+				<div v-if="practice && !extend" class="vibears-notice is-warn pod-practice">
+					<VibearsIcon name="warning" size="1.1em" class="vibears-notice-ico" />
 					<span class="pod-practice-txt">{{ t('vibears', 'This is a practice run — nothing counts.') }}</span>
-					<button type="button" class="pulse-btn is-secondary is-sm pod-practice-end" :disabled="busy" @click="$emit('end-practice')">{{ t('vibears', 'End practice run') }}</button>
+					<button type="button" class="vibears-btn is-secondary is-sm pod-practice-end" :disabled="busy" @click="$emit('end-practice')">{{ t('vibears', 'End practice run') }}</button>
 				</div>
 
 				<section class="pod-group">
 					<!-- When extending, the title already asks this question. -->
 					<h3 v-if="!extend" class="pod-label">{{ t('vibears', 'When does the quiz end?') }}</h3>
-					<PulseSegmented :value="end" :options="endOptions" :label="t('vibears', 'When does the quiz end?')" @input="setEnd" />
+					<VibearsSegmented :value="end" :options="endOptions" :label="t('vibears', 'When does the quiz end?')" @input="setEnd" />
 					<div v-if="end === 'deadline'" class="pod-deadline">
 						<label class="pod-sublabel" for="pace-open-deadline">{{ t('vibears', 'Deadline') }}</label>
 						<!-- A preset only fills the field — the field stays the source of truth. -->
@@ -35,7 +35,7 @@
 							<button v-for="p in presets"
 								:key="p.key"
 								type="button"
-								class="pulse-btn is-secondary is-sm"
+								class="vibears-btn is-secondary is-sm"
 								:data-preset="p.key"
 								@click="usePreset(p)">
 								{{ p.label }}
@@ -71,17 +71,17 @@
 				<template v-if="!extend">
 					<section class="pod-group">
 						<h3 class="pod-label">{{ t('vibears', 'Timer and speed points') }}</h3>
-						<PulseSegmented v-model="timed" :options="timerOptions" :label="t('vibears', 'Timer and speed points')" />
+						<VibearsSegmented v-model="timed" :options="timerOptions" :label="t('vibears', 'Timer and speed points')" />
 						<p class="pod-help">{{ timed ? t('vibears', 'Each question has its time limit; faster correct answers earn more points.') : t('vibears', 'No time pressure — every correct answer earns 1000 points.') }}</p>
 					</section>
 
 					<section class="pod-group">
 						<h3 class="pod-label">{{ t('vibears', 'When do people see if they’re right?') }}</h3>
-						<PulseSegmented :value="practice ? 'each' : feedback" :options="feedbackOptions" :disabled="practice" :label="t('vibears', 'When do people see if they’re right?')" @input="feedback = $event" />
+						<VibearsSegmented :value="practice ? 'each' : feedback" :options="feedbackOptions" :disabled="practice" :label="t('vibears', 'When do people see if they’re right?')" @input="feedback = $event" />
 						<p v-if="practice" class="pod-help">{{ t('vibears', 'Practice run: always after each question.') }}</p>
 						<p v-else class="pod-help">{{ feedback === 'each' ? t('vibears', 'Participants see right or wrong after every answer.') : t('vibears', 'Participants only see that their answer was saved. Results come when you release them.') }}</p>
-						<p v-if="end === 'deadline' && feedback === 'each' && !practice" class="pulse-notice is-warn pod-warn">
-							<PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" />
+						<p v-if="end === 'deadline' && feedback === 'each' && !practice" class="vibears-notice is-warn pod-warn">
+							<VibearsIcon name="warning" size="1.1em" class="vibears-notice-ico" />
 							<span>{{ t('vibears', 'Feedback after each question lets people pass on the right answers — for grades, choose “At the end”.') }}</span>
 						</p>
 					</section>
@@ -89,18 +89,18 @@
 			</div>
 
 			<div class="pod-foot">
-				<p v-if="!extend" class="pulse-notice is-info pod-lock">
-					<PulseIcon name="lock" size="1.1em" class="pulse-notice-ico" />
+				<p v-if="!extend" class="vibears-notice is-info pod-lock">
+					<VibearsIcon name="lock" size="1.1em" class="vibears-notice-ico" />
 					<span>{{ t('vibears', 'Everyone starts on their own phone, with their own clock. From now on the questions are locked until you reset the room.') }}</span>
 				</p>
-				<p v-if="serverError" class="pulse-notice is-warn pod-error" role="alert">
-					<PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" />
+				<p v-if="serverError" class="vibears-notice is-warn pod-error" role="alert">
+					<VibearsIcon name="warning" size="1.1em" class="vibears-notice-ico" />
 					<span>{{ serverError }}</span>
 				</p>
 				<div class="pod-actions">
 					<span v-if="!extend" class="pod-sum">{{ n('vibears', '%n question', '%n questions', total) }}</span>
-					<button ref="cancel" type="button" class="pulse-btn is-secondary" :disabled="busy" @click="cancel">{{ t('vibears', 'Cancel') }}</button>
-					<button type="button" class="pulse-btn is-primary pod-submit" :disabled="busy" @click="submit">{{ busy ? '…' : submitLabel }}</button>
+					<button ref="cancel" type="button" class="vibears-btn is-secondary" :disabled="busy" @click="cancel">{{ t('vibears', 'Cancel') }}</button>
+					<button type="button" class="vibears-btn is-primary pod-submit" :disabled="busy" @click="submit">{{ busy ? '…' : submitLabel }}</button>
 				</div>
 			</div>
 		</div>
@@ -112,7 +112,7 @@
  * Open a self-paced quiz (spec §1.5, not in the public repository; mode `open`) and change
  * its end or reopen it (mode `extend`, from the run view).
  *
- * A form dialog in the look of PulseConfirm — pulseConfirm itself has
+ * A form dialog in the look of VibearsConfirm — vibearsConfirm itself has
  * no fields. On opening there are three questions, each one a choice: When does it end?
  * With a timer? When does everyone see if they are right? The end sets the defaults of the
  * other two (no deadline means a race: timer on, feedback after each question; with a
@@ -141,8 +141,8 @@ import { t, n } from '../util/l10n.js'
 import { serverMessage } from '../toast.js'
 import { fmtDeadline, fmtDuration } from '../util/format.js'
 import { DEADLINE_MIN, deadlineInRange, deadlineInputRange, toLocalInput, fromLocalInput, defaultDeadline, deadlinePresets, stopDeadline, windowState } from '../util/pace.js'
-import PulseIcon from './ui/PulseIcon.vue'
-import PulseSegmented from './ui/PulseSegmented.vue'
+import VibearsIcon from './ui/VibearsIcon.vue'
+import VibearsSegmented from './ui/VibearsSegmented.vue'
 
 const serverNow = (skew) => Math.floor(Date.now() / 1000) + (Number(skew) || 0)
 
@@ -168,7 +168,7 @@ function extendStart(win, now) {
 
 export default {
 	name: 'PaceOpenDialog',
-	components: { PulseIcon, PulseSegmented },
+	components: { VibearsIcon, VibearsSegmented },
 	props: {
 		room: { type: Object, required: true },
 		// 'open' (deck, draft) | 'extend' (run view: change the end / reopen)
@@ -370,11 +370,11 @@ export default {
 	max-height: calc(100vh - var(--header-height, 50px) - 24px);
 	display: flex;
 	flex-direction: column;
-	background: var(--pulse-bg);
-	color: var(--pulse-text);
-	border: 1px solid var(--pulse-border);
-	border-radius: var(--pulse-r-card);
-	box-shadow: var(--pulse-shadow-pop);
+	background: var(--vibears-bg);
+	color: var(--vibears-text);
+	border: 1px solid var(--vibears-border);
+	border-radius: var(--vibears-r-card);
+	box-shadow: var(--vibears-shadow-pop);
 	box-sizing: border-box;
 }
 .pod:focus { outline: none; }
@@ -382,30 +382,30 @@ export default {
 .pod-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 8px 22px 6px; display: flex; flex-direction: column; gap: 16px; }
 .pod-group { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .pod-label { margin: 0; font-size: var(--t-body); font-weight: 800; }
-.pod-sublabel { font-size: var(--t-sm); font-weight: 700; color: var(--pulse-text-2); }
-.pod-help { margin: 0; font-size: var(--t-sm); color: var(--pulse-text-2); line-height: 1.45; }
+.pod-sublabel { font-size: var(--t-sm); font-weight: 700; color: var(--vibears-text-2); }
+.pod-help { margin: 0; font-size: var(--t-sm); color: var(--vibears-text-2); line-height: 1.45; }
 .pod-deadline { align-self: stretch; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 6px; }
 .pod-presets { display: flex; flex-wrap: wrap; gap: 8px; }
-.pod-rel { margin: 0; font-size: var(--t-sm); color: var(--pulse-text-2); font-variant-numeric: tabular-nums; }
-.pod-rel.is-error { color: var(--pulse-error); font-weight: 700; }
+.pod-rel { margin: 0; font-size: var(--t-sm); color: var(--vibears-text-2); font-variant-numeric: tabular-nums; }
+.pod-rel.is-error { color: var(--vibears-error); font-weight: 700; }
 .pod-was { font-variant-numeric: tabular-nums; }
 .pod-practice { align-items: center; flex-wrap: wrap; }
 .pod-practice-txt { flex: 1 1 12em; font-weight: 600; }
 .pod-warn, .pod-error { margin: 4px 0 0; align-self: stretch; }
-.pod-foot { padding: 12px 22px 16px; border-block-start: 1px solid var(--pulse-border); display: flex; flex-direction: column; gap: 10px; }
+.pod-foot { padding: 12px 22px 16px; border-block-start: 1px solid var(--vibears-border); display: flex; flex-direction: column; gap: 10px; }
 .pod-lock { margin: 0; }
 .pod-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
-.pod-sum { flex: 1 1 auto; font-size: var(--t-sm); font-weight: 700; color: var(--pulse-text-2); font-variant-numeric: tabular-nums; }
+.pod-sum { flex: 1 1 auto; font-size: var(--t-sm); font-weight: 700; color: var(--vibears-text-2); font-variant-numeric: tabular-nums; }
 .pod-submit { min-width: 150px; }
 
 /* Date + time: the same rules as .pinput in the moderator (border, focus,
-   Pulse tokens), 16 px font — anything smaller makes iOS zoom on tap. NC styles
+   vibeARS tokens), 16 px font — anything smaller makes iOS zoom on tap. NC styles
    inputs globally via element selectors, hence the !important resets. */
 .pace-input {
-	background: var(--pulse-bg) !important;
-	color: var(--pulse-text) !important;
-	border: 2px solid var(--pulse-border-strong) !important;
-	border-radius: var(--pulse-r-el) !important;
+	background: var(--vibears-bg) !important;
+	color: var(--vibears-text) !important;
+	border: 2px solid var(--vibears-border-strong) !important;
+	border-radius: var(--vibears-r-el) !important;
 	padding: 9px 12px !important;
 	font: inherit;
 	font-size: 16px !important;
@@ -417,9 +417,9 @@ export default {
 	box-sizing: border-box;
 	font-variant-numeric: tabular-nums;
 }
-.pace-input:focus { border-color: var(--pulse-primary) !important; }
-.pace-input:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 1px; }
-.pace-input[aria-invalid="true"] { border-color: var(--pulse-error) !important; }
+.pace-input:focus { border-color: var(--vibears-primary) !important; }
+.pace-input:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 1px; }
+.pace-input[aria-invalid="true"] { border-color: var(--vibears-error) !important; }
 
 @media (max-width: 480px) {
 	.pod-title { padding-inline: 16px; }

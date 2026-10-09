@@ -36,7 +36,7 @@ use Psr\Log\LoggerInterface;
  *
  * Two more sweeps in the same run:
  * - rooms of accounts that no longer exist (ownerGone), whatever their
- *   presence says — left behind when an account was deleted while Pulse was
+ *   presence says — left behind when an account was deleted while the app was
  *   disabled, and otherwise inherited by a new account with the same user ID;
  * - image files that no question references (PollImageService::sweepOrphans).
  * Each step runs on its own: one that fails is logged and the next one

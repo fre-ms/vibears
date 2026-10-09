@@ -39,10 +39,10 @@ export default {
 	gap: 0.35em;
 	min-height: 7em;
 	padding: 1.5em 1em;
-	border: 1.5px dashed var(--pulse-border-strong);
-	border-radius: var(--pulse-r-card);
+	border: 1.5px dashed var(--vibears-border-strong);
+	border-radius: var(--vibears-r-card);
 	text-align: center;
 }
-.viz-empty-line { font-size: 1em; font-weight: 700; color: var(--pulse-text-2); }
-.viz-empty-hint { font-size: 0.8em; color: var(--pulse-text-2); }
+.viz-empty-line { font-size: 1em; font-weight: 700; color: var(--vibears-text-2); }
+.viz-empty-hint { font-size: 0.8em; color: var(--vibears-text-2); }
 </style>

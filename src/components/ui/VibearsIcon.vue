@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<svg class="pulse-icon"
+	<svg class="vibears-icon"
 		viewBox="0 0 24 24"
 		fill="none"
 		stroke="currentColor"
@@ -20,7 +20,7 @@
 
 <script>
 /*
- * PulseIcon — ONE consistent SVG stroke set (close to Material), replaces the
+ * VibearsIcon — ONE consistent SVG stroke set (close to Material), replaces the
  * emoji/Unicode mix (✓/🎉/★/🥇/⛶/👁). stroke:currentColor -> inherits the
  * text colour of its context. Size via `size` (em preferred, so it scales along).
  * Icons that carry meaning get a `label` (role=img); decorative ones are
@@ -70,7 +70,7 @@ const ICONS = {
 }
 
 export default {
-	name: 'PulseIcon',
+	name: 'VibearsIcon',
 	props: {
 		name: { type: String, required: true },
 		size: { type: [Number, String], default: '1.25em' },
@@ -81,7 +81,7 @@ export default {
 			if (!ICONS[this.name] && this.name && process.env.NODE_ENV !== 'production') {
 				// Only conspicuous in dev, never crash (optimised away in the prod bundle).
 				// eslint-disable-next-line no-console
-				console.warn('[PulseIcon] unbekanntes Icon:', this.name)
+				console.warn('[VibearsIcon] unbekanntes Icon:', this.name)
 			}
 			return ICONS[this.name] || ''
 		},
@@ -93,7 +93,7 @@ export default {
 </script>
 
 <style scoped>
-.pulse-icon {
+.vibears-icon {
 	display: inline-block;
 	vertical-align: -0.15em;
 	flex: 0 0 auto;

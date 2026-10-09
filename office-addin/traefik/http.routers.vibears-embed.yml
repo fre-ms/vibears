@@ -1,4 +1,4 @@
-# Make the Pulse projector/audience view embeddable in presentations.
+# Make the vibeARS projector/audience view embeddable in presentations.
 #
 # Nextcloud blocks framing on TWO levels:
 #   1. CSP frame-ancestors  -> solved in the app (PublicController::screen, '*')
@@ -19,7 +19,7 @@
 # is needed here, add it under `middlewares`.
 http:
   routers:
-    pulse-embed-secure:
+    vibears-embed-secure:
       entrypoints: websecure
       rule: "Host(`nextcloud.example.com`) && (PathPrefix(`/apps/vibears/screen/`) || PathPrefix(`/apps/vibears/embed`) || PathPrefix(`/index.php/apps/vibears/screen/`) || PathPrefix(`/index.php/apps/vibears/embed`))"
       priority: 3000

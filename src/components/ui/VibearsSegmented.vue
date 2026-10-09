@@ -19,7 +19,7 @@
 			:class="['pseg-item', { 'is-active': value === opt.value }]"
 			:disabled="disabled"
 			@click="select(opt.value)">
-			<PulseIcon v-if="opt.icon" :name="opt.icon" size="1.1em" />
+			<VibearsIcon v-if="opt.icon" :name="opt.icon" size="1.1em" />
 			<span>{{ opt.label }}</span>
 		</button>
 	</div>
@@ -27,7 +27,7 @@
 
 <script>
 /*
- * PulseSegmented — segmented control for mode/type choice (design notes §4.5, not in the public repository).
+ * VibearsSegmented — segmented control for mode/type choice (design notes §4.5, not in the public repository).
  * v-model (Vue2: prop `value` + event `input`).
  * options: [{ value, label, icon? }].
  * disabled: the whole group is fixed (e.g. the feedback choice in a practice run) —
@@ -42,11 +42,11 @@
  * a choice at all. That is why the role is radiogroup/radio (not tablist): you
  * choose, you do not page, and arrow keys switch.
  */
-import PulseIcon from './PulseIcon.vue'
+import VibearsIcon from './VibearsIcon.vue'
 
 export default {
-	name: 'PulseSegmented',
-	components: { PulseIcon },
+	name: 'VibearsSegmented',
+	components: { VibearsIcon },
 	props: {
 		value: { type: [String, Number, Boolean], default: null },
 		options: { type: Array, required: true },
@@ -89,9 +89,9 @@ export default {
 	gap: 4px;
 	row-gap: 4px;
 	padding: 4px;
-	border: 1px solid var(--pulse-border);
-	border-radius: 12px; /* moderate, NOT --pulse-r-pill (wrap trap §4.5) */
-	background: var(--pulse-fill);
+	border: 1px solid var(--vibears-border);
+	border-radius: 12px; /* moderate, NOT --vibears-r-pill (wrap trap §4.5) */
+	background: var(--vibears-fill);
 }
 .pseg-item {
 	font-family: inherit;
@@ -103,25 +103,25 @@ export default {
 	gap: 6px;
 	min-height: 44px;
 	padding: 0 14px;
-	/* The inactive side had --pulse-text-2 on --pulse-fill (3.1:1) and read
+	/* The inactive side had --vibears-text-2 on --vibears-fill (3.1:1) and read
 	   as "disabled" instead of "selectable" (§9.5). Now: full
 	   text contrast plus its own border, so it is recognisable as a choice. */
-	border: 1px solid var(--pulse-border-strong);
+	border: 1px solid var(--vibears-border-strong);
 	border-radius: 9px;
 	background: transparent;
-	color: var(--pulse-text);
+	color: var(--vibears-text);
 	cursor: pointer;
 	-webkit-appearance: none;
 	appearance: none;
 	transition: background .12s, color .12s;
 }
 .pseg-item.is-active {
-	background: var(--pulse-primary);
-	border-color: var(--pulse-primary);
-	color: var(--pulse-on-primary);
-	box-shadow: var(--pulse-shadow-card);
+	background: var(--vibears-primary);
+	border-color: var(--vibears-primary);
+	color: var(--vibears-on-primary);
+	box-shadow: var(--vibears-shadow-card);
 }
-.pseg-item:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 2px; }
+.pseg-item:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 2px; }
 /* Fixed choice: dimmed, but readable — the active side stays recognisable. */
 .pseg.is-disabled { opacity: .55; }
 /* Nextcloud greys out every disabled <button> and halves its
@@ -131,13 +131,13 @@ export default {
 	opacity: 1;
 	cursor: default;
 	background: transparent;
-	border-color: var(--pulse-border-strong);
-	color: var(--pulse-text);
+	border-color: var(--vibears-border-strong);
+	color: var(--vibears-text);
 }
 .pseg.is-disabled .pseg-item.is-active:disabled {
-	background: var(--pulse-primary);
-	border-color: var(--pulse-primary);
-	color: var(--pulse-on-primary);
+	background: var(--vibears-primary);
+	border-color: var(--vibears-primary);
+	color: var(--vibears-on-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {

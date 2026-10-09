@@ -146,7 +146,7 @@ class PublicSpoilerTest extends TestCase {
         $this->assertSame($items, $match['items'], 'items keep their order');
         $this->assertIsPermutation($targets, $match['targets']);
         $this->assertSame(self::hashOrder(7, $targets, $this->secret), $match['targets']);
-        $this->assertSame(['TA01', 'TB02', 'TC03'], array_column($match['targets'], 'id'), 'not the solution order here');
+        $this->assertSame(['TC03', 'TB02', 'TA01'], array_column($match['targets'], 'id'), 'not the solution order here');
     }
 
     public function testQuizMatchingUnchangedAfterReveal(): void {
@@ -187,11 +187,11 @@ class PublicSpoilerTest extends TestCase {
         $room7 = $this->room('quiz', active: 7);
         $room8 = $this->room('quiz', active: 8);
 
-        $this->assertSame(['AB12', 'M3K0', 'ZZ9A'], $this->servedIds($room7, $this->rankPoll('active')));
-        $this->assertSame(['M3K0', 'ZZ9A', 'AB12'], $this->servedIds($room8, $this->poll(8, 'rank', 'active', 900, self::RANK)), 'another question');
+        $this->assertSame(['ZZ9A', 'AB12', 'M3K0'], $this->servedIds($room7, $this->rankPoll('active')));
+        $this->assertSame(['AB12', 'M3K0', 'ZZ9A'], $this->servedIds($room8, $this->poll(8, 'rank', 'active', 900, self::RANK)), 'another question');
 
         $this->secret = 'anderes-geheimnis';
-        $this->assertSame(['M3K0', 'ZZ9A', 'AB12'], $this->servedIds($room7, $this->rankPoll('active')), 'another secret');
+        $this->assertSame(['AB12', 'M3K0', 'ZZ9A'], $this->servedIds($room7, $this->rankPoll('active')), 'another secret');
     }
 
     // ── Overall summary: only questions that were shown ────────────────────
@@ -276,7 +276,7 @@ class PublicSpoilerTest extends TestCase {
 
     /**
      * Expected shuffle, recomputed independently of the service: ascending
-     * by HMAC-SHA256 over "questionID:optionID", key "pulse-order:"
+     * by HMAC-SHA256 over "questionID:optionID", key "vibears-order:"
      * + instance secret. The stored order plays no part.
      *
      * @param list<array{id:string,label:string}> $list
@@ -284,8 +284,8 @@ class PublicSpoilerTest extends TestCase {
      */
     private static function hashOrder(int $pollId, array $list, string $secret): array {
         usort($list, static fn (array $a, array $b): int => strcmp(
-            hash_hmac('sha256', $pollId . ':' . $a['id'], 'pulse-order:' . $secret),
-            hash_hmac('sha256', $pollId . ':' . $b['id'], 'pulse-order:' . $secret),
+            hash_hmac('sha256', $pollId . ':' . $a['id'], 'vibears-order:' . $secret),
+            hash_hmac('sha256', $pollId . ':' . $b['id'], 'vibears-order:' . $secret),
         ));
         return $list;
     }

@@ -84,7 +84,7 @@ class ImageStorageTest extends TestCase {
         // Header intact, pixel data cut off: GD would fail on it ("could not be
         // read") — so the budget message proves GD never ran.
         $truncated = substr($this->png(64), 0, 40);
-        $file = tempnam(sys_get_temp_dir(), 'pulse-img');
+        $file = tempnam(sys_get_temp_dir(), 'vibears-img');
         file_put_contents($file, $truncated);
         $this->tmp[] = $file;
 
@@ -399,7 +399,7 @@ class ImageStorageTest extends TestCase {
 
     /** A $_FILES entry with a real (tiny) PNG. */
     private function upload(int $edge = 8): array {
-        $file = tempnam(sys_get_temp_dir(), 'pulse-img');
+        $file = tempnam(sys_get_temp_dir(), 'vibears-img');
         file_put_contents($file, $this->png($edge));
         $this->tmp[] = $file;
         return ['tmp_name' => $file, 'size' => filesize($file), 'error' => UPLOAD_ERR_OK];

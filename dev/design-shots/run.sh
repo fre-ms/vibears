@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 hotochan123
 # SPDX-License-Identifier: AGPL-3.0-or-later
 #
-# Screenshots of all Pulse views — the test bench for design passes.
+# Screenshots of all vibeARS views — the test bench for design passes.
 #
 #   dev/design-shots/run.sh            # capture (rooms removed afterwards)
 #   dev/design-shots/run.sh keep       # leave the probe rooms in place
@@ -18,7 +18,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"
 CONTAINER="${CONTAINER:-nextcloud-nextcloud-1}"
 APP_IN_CONTAINER="${APP_IN_CONTAINER:-/var/www/html/apps/vibears}"
-UID_SHOTS="${VIBEARS_SHOTS_UID:-pulse-shots}"
+UID_SHOTS="${VIBEARS_SHOTS_UID:-vibears-shots}"
 OUT_ENV="${OUT:-}"
 OUT="${OUT:-$HERE/out}"
 MODE="${1:-}"
@@ -63,7 +63,7 @@ if ! occ user:info "$UID_SHOTS" >/dev/null 2>&1; then
 	chmod 600 "$HERE/.shots-pass"
 	OC_PASS="$(cat "$HERE/.shots-pass")" docker exec -u www-data -e OC_PASS \
 		"$CONTAINER" php /var/www/html/occ user:add --password-from-env \
-		--display-name="Pulse Shots" "$UID_SHOTS"
+		--display-name="vibeARS Shots" "$UID_SHOTS"
 fi
 
 # Without this, Nextcloud's welcome dialog covers the first

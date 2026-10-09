@@ -6,21 +6,21 @@
 	<div class="splot-wrap">
 		<div class="splot">
 			<svg viewBox="0 0 100 100" role="img" :aria-label="ariaLabel" preserveAspectRatio="xMidYMid meet">
-				<rect width="100" height="100" fill="var(--pulse-bar-track)" opacity=".45" />
+				<rect width="100" height="100" fill="var(--vibears-bar-track)" opacity=".45" />
 				<template v-if="heatmap">
 					<rect v-for="(c, i) in cells" :key="'c' + i" :x="c.x" :y="c.y" :width="c.w" :height="c.w"
-						fill="var(--pulse-primary)" :opacity="c.op" />
+						fill="var(--vibears-primary)" :opacity="c.op" />
 				</template>
 				<template v-else>
 					<circle v-for="(d, i) in dots" :key="'d' + i" :cx="d.x" :cy="d.y" r="1.5"
-						fill="var(--pulse-primary)" opacity=".55" />
+						fill="var(--vibears-primary)" opacity=".55" />
 				</template>
-				<line x1="50" y1="0" x2="50" y2="100" stroke="var(--pulse-text)" stroke-width=".3" opacity=".45" />
-				<line x1="0" y1="50" x2="100" y2="50" stroke="var(--pulse-text)" stroke-width=".3" opacity=".45" />
+				<line x1="50" y1="0" x2="50" y2="100" stroke="var(--vibears-text)" stroke-width=".3" opacity=".45" />
+				<line x1="0" y1="50" x2="100" y2="50" stroke="var(--vibears-text)" stroke-width=".3" opacity=".45" />
 				<template v-if="centre">
-					<line :x1="centre.x" :y1="centre.y - 5" :x2="centre.x" :y2="centre.y + 5" stroke="var(--pulse-text)" stroke-width=".4" />
-					<line :x1="centre.x - 5" :y1="centre.y" :x2="centre.x + 5" :y2="centre.y" stroke="var(--pulse-text)" stroke-width=".4" />
-					<circle :cx="centre.x" :cy="centre.y" r="2.6" fill="var(--pulse-text)" />
+					<line :x1="centre.x" :y1="centre.y - 5" :x2="centre.x" :y2="centre.y + 5" stroke="var(--vibears-text)" stroke-width=".4" />
+					<line :x1="centre.x - 5" :y1="centre.y" :x2="centre.x + 5" :y2="centre.y" stroke="var(--vibears-text)" stroke-width=".4" />
+					<circle :cx="centre.x" :cy="centre.y" r="2.6" fill="var(--vibears-text)" />
 				</template>
 			</svg>
 			<span v-if="axisY.poleHigh" class="splot-spoke splot-pole splot-pole--top">{{ axisY.poleHigh }}</span>
@@ -146,7 +146,7 @@ export default {
 }
 .splot { position: relative; flex: 1 1 auto; min-height: 0; align-self: center; aspect-ratio: 1; margin-bottom: 1.4em; }
 .splot svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.splot-spoke { position: absolute; font-weight: 700; white-space: nowrap; line-height: 1.15; padding-block: 0.14em; color: var(--pulse-text); }
+.splot-spoke { position: absolute; font-weight: 700; white-space: nowrap; line-height: 1.15; padding-block: 0.14em; color: var(--vibears-text); }
 .splot-pole--top { left: 50%; top: -0.2em; transform: translate(-50%, -100%); }
 .splot-pole--bottom { left: 50%; bottom: -0.2em; transform: translate(-50%, 100%); }
 .splot-pole--left { left: -0.4em; top: 50%; transform: translate(-100%, -50%); }
@@ -160,7 +160,7 @@ export default {
    (the tail of the "y" in "Steady"); the inline padding gives it room, and
    the negative margin keeps the text in place. */
 .splot-corner {
-	position: absolute; font-size: 0.55em; font-weight: 700; color: var(--pulse-meta);
+	position: absolute; font-size: 0.55em; font-weight: 700; color: var(--vibears-meta);
 	max-width: calc(50% - 0.8em); overflow-wrap: anywhere;
 	overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
 	padding-inline: 0.1em; margin-inline: -0.1em;
@@ -171,9 +171,9 @@ export default {
 .splot-corner--br { right: 0.4em; bottom: 0.3em; text-align: right; }
 /* The centre of gravity carries its name — a shape alone would be a sign without
    a legend, and the legend sits at the bottom edge of the stage. */
-.splot-centre { position: absolute; font-weight: 800; white-space: nowrap; color: var(--pulse-text); font-size: 0.7em; }
-.splot-legend { flex: 0 0 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2em; padding-top: 0.3em; font-size: 0.55em; color: var(--pulse-meta); }
+.splot-centre { position: absolute; font-weight: 800; white-space: nowrap; color: var(--vibears-text); font-size: 0.7em; }
+.splot-legend { flex: 0 0 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2em; padding-top: 0.3em; font-size: 0.55em; color: var(--vibears-meta); }
 .splot-legend span { display: inline-flex; align-items: center; gap: 0.4em; }
 .splot-sw { width: 1.1em; height: 0.6em; border-radius: 0.12em; }
-.splot-sw--dot { width: 0.8em; height: 0.8em; border-radius: 50%; background: var(--pulse-text); }
+.splot-sw--dot { width: 0.8em; height: 0.8em; border-radius: 50%; background: var(--vibears-text); }
 </style>

@@ -139,7 +139,7 @@ class StateVersionTest extends TestCase {
         $this->assertStringNotContainsString($this->stamp, $version, 'no vote stamp');
         $this->assertStringNotContainsString(':', $version);
         $this->assertNotSame(substr(hash('sha256', $raw), 0, 24), $version, 'no unkeyed hash');
-        $this->assertNotSame(substr(hash_hmac('sha256', $raw, 'pulse-state:'), 0, 24), $version,
+        $this->assertNotSame(substr(hash_hmac('sha256', $raw, 'vibears-state:'), 0, 24), $version,
             'not recomputable without the instance secret');
     }
 

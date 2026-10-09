@@ -14,9 +14,9 @@
 // and is translated the same way as the bundle.
 \OCP\Util::addTranslations(\OCA\Vibears\AppInfo\Application::APP_ID);
 // Token layer + design system (own style entry point, no Vue bundle):
-// the shell uses the same roles and the same .pulse-btn as the app.
+// the shell uses the same roles and the same .vibears-btn as the app.
 \OCP\Util::addScript('vibears', 'vibears-styles');
 \OCP\Util::addStyle('vibears', 'embed');
 \OCP\Util::addScript('vibears', 'vibears-embed');
 ?>
-<div id="pulse-embed-root" class="pulse-embed-loading">vibeARS …</div>
+<div id="vibears-embed-root" class="vibears-embed-loading">vibeARS …</div>

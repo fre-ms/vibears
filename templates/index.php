@@ -7,4 +7,4 @@
 \OCP\Util::addScript('vibears', 'vibears-main');
 // CSS is injected by the JS bundle (vue-style-loader), so there is no separate css/.
 ?>
-<div id="pulse-app"></div>
+<div id="vibears-app"></div>

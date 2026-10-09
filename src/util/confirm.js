@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * pulseConfirm — promise-based replacement for window.confirm().
- * Mounts PulseConfirm imperatively on <body> and cleans up afterwards.
+ * vibearsConfirm — promise-based replacement for window.confirm().
+ * Mounts VibearsConfirm imperatively on <body> and cleans up afterwards.
  *
- *   if (!await pulseConfirm({ title: 'Delete room?', text: '…', danger: true,
+ *   if (!await vibearsConfirm({ title: 'Delete room?', text: '…', danger: true,
  *                            confirmLabel: 'Delete permanently' })) return
  *
  * With altLabel there is a third outcome: the promise then resolves to 'alt'.
  */
 import Vue from 'vue'
-import PulseConfirm from '../components/ui/PulseConfirm.vue'
+import VibearsConfirm from '../components/ui/VibearsConfirm.vue'
 
 /**
  * @param {object} [options] title, text, confirmLabel, cancelLabel, danger, altLabel
  * @return {Promise<boolean|string>} true = confirmed, false = cancelled,
  *   'alt' = third button (only with altLabel)
  */
-export function pulseConfirm(options = {}) {
+export function vibearsConfirm(options = {}) {
 	return new Promise((resolve) => {
 		const mount = document.createElement('div')
 		document.body.appendChild(mount)
@@ -36,7 +36,7 @@ export function pulseConfirm(options = {}) {
 		}
 
 		const vm = new Vue({
-			render: (h) => h(PulseConfirm, {
+			render: (h) => h(VibearsConfirm, {
 				props: { ...options },
 				on: {
 					confirm: () => finish(true),

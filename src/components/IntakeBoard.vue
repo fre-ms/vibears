@@ -115,7 +115,7 @@ export default {
 /* Everything in em of the stage (§2.3): the shrink loop takes the intake along. */
 .intake { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1em; min-height: 0; text-align: center; }
 .intake-num { margin: 0; font-size: 1.6em; font-weight: 900; line-height: 1.05; font-variant-numeric: tabular-nums; }
-.intake-ref { margin: 0 0 0.6em; color: var(--pulse-meta); font-weight: 600; }
+.intake-ref { margin: 0 0 0.6em; color: var(--vibears-meta); font-weight: 600; }
 
 .intake-grid {
 	display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
@@ -127,13 +127,13 @@ export default {
 .intake-grid.is-dense { gap: 0.22em; }
 .intake-slot {
 	width: 0.9em; height: 0.9em; border-radius: 50%;
-	box-shadow: inset 0 0 0 0.07em var(--pulse-border);
+	box-shadow: inset 0 0 0 0.07em var(--vibears-border);
 	transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
-.is-dense .intake-slot { width: 0.5em; height: 0.5em; box-shadow: inset 0 0 0 0.05em var(--pulse-border); }
-.intake-slot[data-on] { background: var(--pulse-primary); box-shadow: none; }
+.is-dense .intake-slot { width: 0.5em; height: 0.5em; box-shadow: inset 0 0 0 0.05em var(--vibears-border); }
+.intake-slot[data-on] { background: var(--vibears-primary); box-shadow: none; }
 .intake-bar { width: 100%; }
-.is-frozen .intake-num { color: var(--pulse-meta); }
+.is-frozen .intake-num { color: var(--vibears-meta); }
 
 /* Narrow form (§7.1): one row of number, reference and grid. */
 .intake.is-compact { flex-direction: row; align-items: center; justify-content: flex-start; gap: 0.5em; text-align: left; }

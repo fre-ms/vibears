@@ -400,7 +400,7 @@ class RoomService {
     /**
      * Delete the rooms of accounts that no longer exist — whatever their
      * presence says. UserDeletedListener does this when an account is
-     * deleted, but only while Pulse is enabled: an account deleted while the
+     * deleted, but only while vibeARS is enabled: an account deleted while the
      * app was disabled (say, during a Nextcloud upgrade) left its rooms
      * behind, and a new account that later got the same user ID took them
      * over, answers, nicknames and CSV export included.

@@ -6,13 +6,13 @@
 	<div class="splot-wrap">
 		<div class="splot" :class="{ 'is-two-line': twoLine }">
 			<svg viewBox="0 0 100 100" role="img" :aria-label="ariaLabel" preserveAspectRatio="xMidYMid meet">
-				<polygon v-for="(ring, i) in rings" :key="'r' + i" :points="ring" fill="none" stroke="var(--pulse-border)" stroke-width=".25" />
-				<line v-for="(sp, i) in spokes" :key="'s' + i" x1="50" y1="50" :x2="sp[0]" :y2="sp[1]" stroke="var(--pulse-border)" stroke-width=".2" />
-				<polygon :points="spread" fill="var(--pulse-primary)" opacity=".16" fill-rule="evenodd" />
-				<polygon :points="neutralRing" fill="none" stroke="var(--pulse-meta)" stroke-width=".3" stroke-dasharray="1.2 1" />
-				<polygon :points="avgPoly" fill="var(--pulse-primary)" opacity=".3" />
-				<polygon :points="avgPoly" fill="none" stroke="var(--pulse-primary)" stroke-width=".7" />
-				<circle v-for="(d, i) in avgDots" :key="'d' + i" :cx="d[0]" :cy="d[1]" r=".9" fill="var(--pulse-primary)" />
+				<polygon v-for="(ring, i) in rings" :key="'r' + i" :points="ring" fill="none" stroke="var(--vibears-border)" stroke-width=".25" />
+				<line v-for="(sp, i) in spokes" :key="'s' + i" x1="50" y1="50" :x2="sp[0]" :y2="sp[1]" stroke="var(--vibears-border)" stroke-width=".2" />
+				<polygon :points="spread" fill="var(--vibears-primary)" opacity=".16" fill-rule="evenodd" />
+				<polygon :points="neutralRing" fill="none" stroke="var(--vibears-meta)" stroke-width=".3" stroke-dasharray="1.2 1" />
+				<polygon :points="avgPoly" fill="var(--vibears-primary)" opacity=".3" />
+				<polygon :points="avgPoly" fill="none" stroke="var(--vibears-primary)" stroke-width=".7" />
+				<circle v-for="(d, i) in avgDots" :key="'d' + i" :cx="d[0]" :cy="d[1]" r=".9" fill="var(--vibears-primary)" />
 			</svg>
 			<!-- Name AND value at the spoke: the detour via number badges and
 			     a list at the other edge of the stage is gone (§7.3). -->
@@ -21,8 +21,8 @@
 			</span>
 		</div>
 		<div class="splot-legend">
-			<span><i class="splot-sw" style="background: var(--pulse-primary)" />{{ t('vibears', 'Average') }}</span>
-			<span><i class="splot-sw" style="background: var(--pulse-primary); opacity: .25" />{{ t('vibears', 'Spread (min–max)') }}</span>
+			<span><i class="splot-sw" style="background: var(--vibears-primary)" />{{ t('vibears', 'Average') }}</span>
+			<span><i class="splot-sw" style="background: var(--vibears-primary); opacity: .25" />{{ t('vibears', 'Spread (min–max)') }}</span>
 			<span><i class="splot-sw splot-sw--neutral" />{{ t('vibears', 'Neutral ({value})', { value: neutralLabel }) }}</span>
 		</div>
 	</div>
@@ -139,13 +139,13 @@ export default {
 .splot svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .splot-spoke {
 	position: absolute; font-weight: 700; white-space: nowrap; line-height: 1.15;
-	padding-block: 0.14em; color: var(--pulse-text);
+	padding-block: 0.14em; color: var(--vibears-text);
 }
 .splot.is-two-line .splot-spoke { white-space: normal; max-width: 4.6em; }
-.splot-spoke i { font-style: normal; color: var(--pulse-primary); font-variant-numeric: tabular-nums; }
+.splot-spoke i { font-style: normal; color: var(--vibears-primary); font-variant-numeric: tabular-nums; }
 /* Legend directly below the radar, class C — not at the edge of the stage. */
-.splot-legend { flex: 0 0 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2em; padding-top: 0.3em; font-size: 0.55em; color: var(--pulse-meta); }
+.splot-legend { flex: 0 0 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2em; padding-top: 0.3em; font-size: 0.55em; color: var(--vibears-meta); }
 .splot-legend span { display: inline-flex; align-items: center; gap: 0.4em; }
 .splot-sw { width: 1.1em; height: 0.6em; border-radius: 0.12em; }
-.splot-sw--neutral { border: 0.12em dashed var(--pulse-meta); height: 0; }
+.splot-sw--neutral { border: 0.12em dashed var(--vibears-meta); height: 0; }
 </style>

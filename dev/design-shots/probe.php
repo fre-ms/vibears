@@ -102,7 +102,7 @@ function add(DeckService $deck, $room, array $data, string $label): array {
 }
 
 if ($cmd === 'create') {
-	$uid = $argv[2] ?? 'pulse-shots';
+	$uid = $argv[2] ?? 'vibears-shots';
 
 	// Poll room: every type without a solution.
 	$pollRoom = $rooms->createRoom($uid, 'poll', 'Design check · poll');
@@ -191,7 +191,7 @@ if ($cmd === 'create') {
 		], 'multi'),
 		add($deck, $quizRoom, [
 			'type' => 'number',
-			'question' => 'How many question types does Pulse offer?',
+			'question' => 'How many question types does vibeARS offer?',
 			'target' => 9,
 			'tolerance' => 1,
 			'timeLimit' => 30,
@@ -626,7 +626,7 @@ function storeAnswer($poll, bool $correct, int $seed): string {
  * fixed token answer every question here.
  */
 if ($cmd === 'store') {
-	$uid = $argv[2] ?? 'pulse-shots';
+	$uid = $argv[2] ?? 'vibears-shots';
 
 	// Poll room: the three types you understand at a glance.
 	$pollRoom = $rooms->createRoom($uid, 'poll', 'Team workshop');
@@ -666,7 +666,7 @@ if ($cmd === 'store') {
 		], 'choice'),
 		add($deck, $quizRoom, [
 			'type' => 'truefalse',
-			'question' => 'Voting in Pulse needs a Nextcloud account.',
+			'question' => 'Voting in vibeARS needs a Nextcloud account.',
 			'correctIndex' => 1,
 			'timeLimit' => 20,
 		], 'truefalse'),
@@ -1164,7 +1164,7 @@ function paceDeck(DeckService $deck, $room, int $limit): array {
 			'correctIndex' => 1, 'timeLimit' => $limit], 'truefalse'),
 		add($deck, $room, ['type' => 'multi', 'question' => 'Which of these are databases?',
 			'options' => ['Postgres', 'Redis', 'Traefik', 'MariaDB'], 'correctIndexes' => [0, 3], 'timeLimit' => $limit], 'multi'),
-		add($deck, $room, ['type' => 'number', 'question' => 'How many question types does Pulse offer?',
+		add($deck, $room, ['type' => 'number', 'question' => 'How many question types does vibeARS offer?',
 			'target' => 9, 'tolerance' => 1, 'timeLimit' => $limit], 'number'),
 		add($deck, $room, ['type' => 'text', 'question' => 'Which header blocks framing?',
 			'answers' => ['X-Frame-Options'], 'timeLimit' => $limit], 'text'),
@@ -1200,7 +1200,7 @@ function paceChoices(DeckService $deck, $room, int $count, int $limit): array {
  * is given in the spec (not in the public repository); `click` exists only for click-through runs.
  */
 if ($cmd === 'pace-create') {
-	$uid = $argv[2] ?? 'pulse-shots';
+	$uid = $argv[2] ?? 'vibears-shots';
 	$raceProbe = function ($room, int $count, int $seed): array {
 		$r = paceRace($room->getCode(), $count, $seed);
 		return ['joined' => $r['joined'], 'started' => $r['started'], 'finished' => $r['finished']];
@@ -1242,7 +1242,7 @@ if ($cmd === 'pace-create') {
 	[$room, $polls] = $make('e2e', fn ($r) => [
 		add($deck, $r, ['type' => 'choice', 'question' => 'Which port does HTTPS use by default?',
 			'options' => ['80', '443', '8080', '22'], 'correctIndex' => 1, 'timeLimit' => 20], 'choice'),
-		add($deck, $r, ['type' => 'number', 'question' => 'How many question types does Pulse offer?',
+		add($deck, $r, ['type' => 'number', 'question' => 'How many question types does vibeARS offer?',
 			'target' => 9, 'tolerance' => 1, 'timeLimit' => 20], 'number'),
 		add($deck, $r, ['type' => 'text', 'question' => 'Which header blocks framing?',
 			'answers' => ['X-Frame-Options'], 'timeLimit' => 20], 'text'),
@@ -1292,7 +1292,7 @@ if ($cmd === 'pace-create') {
 }
 
 if ($cmd === 'destroy') {
-	$uid = $argv[2] ?? 'pulse-shots';
+	$uid = $argv[2] ?? 'vibears-shots';
 	$n = 0;
 	foreach ($roomMapper->findByOwner($uid) as $room) {
 		$rooms->deleteRoom($room);

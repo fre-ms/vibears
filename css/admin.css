@@ -3,5 +3,5 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /* Administration settings form (templates/admin.php). */
-#vibears-admin .pulse-admin-form p { margin: 8px 0; }
-#vibears-admin .pulse-admin-days { width: 6em; margin: 0 6px; }
+#vibears-admin .vibears-admin-form p { margin: 8px 0; }
+#vibears-admin .vibears-admin-days { width: 6em; margin: 0 6px; }

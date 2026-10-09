@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Translation for Pulse — a thin wrapper around @nextcloud/l10n.
+ * Translation for vibeARS — a thin wrapper around @nextcloud/l10n.
  *
  * The only difference: escape/sanitize are OFF. Vue escapes by itself — both
  * `{{ … }}` and bound attributes. With the default, a question text

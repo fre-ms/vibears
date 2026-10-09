@@ -5,17 +5,17 @@
 <template>
 	<details class="live-players" :open="open" @toggle="onToggle">
 		<summary class="live-players-sum">
-			<PulseIcon name="users" size="1em" />
+			<VibearsIcon name="users" size="1em" />
 			<span>{{ t('vibears', 'Participants') }}</span>
-			<span v-if="loaded" class="pulse-chip is-neutral live-players-chip">{{ t('vibears', '{count} joined', { count: players.length }) }}</span>
-			<span v-if="joinsLocked" class="pulse-chip is-locked live-players-chip"><PulseIcon name="lock" size="1em" /> {{ t('vibears', 'Joining locked') }}</span>
+			<span v-if="loaded" class="vibears-chip is-neutral live-players-chip">{{ t('vibears', '{count} joined', { count: players.length }) }}</span>
+			<span v-if="joinsLocked" class="vibears-chip is-locked live-players-chip"><VibearsIcon name="lock" size="1em" /> {{ t('vibears', 'Joining locked') }}</span>
 		</summary>
 		<p class="live-players-hint">{{ t('vibears', 'Remove names that do not belong in the quiz. Once everyone is in, lock joining in the menu.') }}</p>
 		<ul v-if="players.length" class="live-players-list">
 			<li v-for="p in players" :key="p.playerId" class="live-players-row">
 				<span class="live-players-name">{{ p.nickname }}</span>
 				<!-- Exactly one entry, and it is red — the same as in the self-paced run view. -->
-				<PulseMenu :items="rowMenu(p)" :label="t('vibears', 'Actions for {name}', { name: p.nickname })" small />
+				<VibearsMenu :items="rowMenu(p)" :label="t('vibears', 'Actions for {name}', { name: p.nickname })" small />
 			</li>
 		</ul>
 		<p v-else-if="loaded" class="live-players-empty">{{ t('vibears', 'Nobody has joined yet — share the code.') }}</p>
@@ -45,15 +45,15 @@ import axios from '@nextcloud/axios'
 import { MOD_TIMEOUT, roomApi } from '../util/routes.js'
 import { t } from '../util/l10n.js'
 import { showError, serverMessage } from '../toast.js'
-import { pulseConfirm } from '../util/confirm.js'
-import PulseIcon from './ui/PulseIcon.vue'
-import PulseMenu from './ui/PulseMenu.vue'
+import { vibearsConfirm } from '../util/confirm.js'
+import VibearsIcon from './ui/VibearsIcon.vue'
+import VibearsMenu from './ui/VibearsMenu.vue'
 
 const REFRESH = 5000
 
 export default {
 	name: 'LivePlayers',
-	components: { PulseIcon, PulseMenu },
+	components: { VibearsIcon, VibearsMenu },
 	props: {
 		code: { type: String, required: true },
 		joinsLocked: { type: Boolean, default: false },
@@ -137,7 +137,7 @@ export default {
 		// The name becomes free; the answers and points go with it.
 		async confirmRemove(p) {
 			if (this.busy) return
-			if (!await pulseConfirm({
+			if (!await vibearsConfirm({
 				title: t('vibears', 'Remove {name}?', { name: p.nickname }),
 				text: t('vibears', 'The answers of {name} are deleted and the name becomes free. They can join again, but start from zero points — unless joining is locked.', { name: p.nickname }),
 				confirmLabel: t('vibears', 'Remove person'),
@@ -163,14 +163,14 @@ export default {
 </script>
 
 <style scoped>
-.live-players { margin-block-start: 8px; padding-block-start: 8px; border-block-start: 1px solid var(--pulse-border); font-size: 14px; }
-.live-players-sum { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; padding: 6px 0; font-weight: 700; color: var(--pulse-text-2); cursor: pointer; }
-.live-players-sum:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 2px; }
+.live-players { margin-block-start: 8px; padding-block-start: 8px; border-block-start: 1px solid var(--vibears-border); font-size: 14px; }
+.live-players-sum { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; padding: 6px 0; font-weight: 700; color: var(--vibears-text-2); cursor: pointer; }
+.live-players-sum:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 2px; }
 .live-players-chip { font-weight: 600; }
-.live-players-hint { margin: 2px 0 8px; font-size: 12px; color: var(--pulse-text-2); }
+.live-players-hint { margin: 2px 0 8px; font-size: 12px; color: var(--vibears-text-2); }
 .live-players-list { list-style: none; margin: 0; padding: 0; max-height: 240px; overflow-y: auto; }
-.live-players-row { display: flex; align-items: center; gap: 8px; min-height: 36px; padding-inline-start: 4px; border-block-end: 1px solid var(--pulse-border); }
+.live-players-row { display: flex; align-items: center; gap: 8px; min-height: 36px; padding-inline-start: 4px; border-block-end: 1px solid var(--vibears-border); }
 .live-players-row:last-child { border-block-end: 0; }
 .live-players-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
-.live-players-empty { margin: 0; color: var(--pulse-text-2); }
+.live-players-empty { margin: 0; color: var(--vibears-text-2); }
 </style>

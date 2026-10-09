@@ -56,18 +56,18 @@ export default {
 <style scoped>
 /* Diameter 1.9 em of the question size — the parent row sets font-size to
    --scr-q-fs so that ring and question scale together. */
-.cdr { position: relative; width: 1.9em; height: 1.9em; flex: 0 0 auto; display: grid; place-items: center; color: var(--pulse-meta); }
+.cdr { position: relative; width: 1.9em; height: 1.9em; flex: 0 0 auto; display: grid; place-items: center; color: var(--vibears-meta); }
 .cdr svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
 .cdr circle { fill: none; stroke-width: 5.3; }
-.cdr-track { stroke: var(--pulse-border); }
+.cdr-track { stroke: var(--vibears-border); }
 .cdr-run { stroke: currentColor; transition: stroke-dashoffset 1s linear; }
 /* Smaller than the question — two digits fit into the ring without bursting it. */
-.cdr-num { position: relative; font-size: 0.85em; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; color: var(--pulse-text); }
-.cdr.is-urgent { color: var(--pulse-countdown-urgent); }
-.cdr.is-urgent .cdr-num { color: var(--pulse-countdown-urgent); }
+.cdr-num { position: relative; font-size: 0.85em; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; color: var(--vibears-text); }
+.cdr.is-urgent { color: var(--vibears-countdown-urgent); }
+.cdr.is-urgent .cdr-num { color: var(--vibears-countdown-urgent); }
 /* Below 10 seconds the ring pulses once per second. */
 .cdr.is-urgent svg { animation: cdr-beat 1s ease-in-out infinite; }
-.cdr.is-done { color: var(--pulse-meta); }
+.cdr.is-done { color: var(--vibears-meta); }
 @keyframes cdr-beat { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 
 @media (prefers-reduced-motion: reduce) {

@@ -37,7 +37,7 @@
 			</main>
 			<div class="scr-meta">
 				<div class="scr-meta-l">
-					<span v-if="practice" class="scr-chip is-practice"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</span>
+					<span v-if="practice" class="scr-chip is-practice"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</span>
 					<span class="scr-chip" :class="paceState === 'open' ? 'is-open' : 'is-done'">
 						<span v-if="paceState === 'open'" class="scr-chip-dot" aria-hidden="true" />
 						{{ raceChip }}
@@ -58,7 +58,7 @@
 			<p class="scr-eyebrow">vibeARS</p>
 			<h1 class="scr-lobby-title">{{ lobbyTitle }}</h1>
 			<p v-if="lobbySub" class="scr-lobby-sub">{{ lobbySub }}</p>
-			<p v-if="practice" class="scr-practice"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</p>
+			<p v-if="practice" class="scr-practice"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</p>
 			<div class="scr-join">
 				<div class="scr-qr"><QrCode :value="joinUrlFull" /></div>
 				<div class="scr-join-txt">
@@ -73,7 +73,7 @@
 			</p>
 			<!-- Self-paced, open with a deadline: in the counter's row, so that the
 			     lobby does not grow past the edge even in the 1280×720 kiosk. -->
-			<p v-if="lobbyWhen" class="scr-lobby-when"><PulseIcon name="calendar" size="1em" /> {{ lobbyWhen }}</p>
+			<p v-if="lobbyWhen" class="scr-lobby-when"><VibearsIcon name="calendar" size="1em" /> {{ lobbyWhen }}</p>
 			<p v-if="!online" class="scr-conn" role="status">{{ t('vibears', 'Connection lost …') }}</p>
 		</div>
 
@@ -132,7 +132,7 @@
 				<!-- Free text on the projector: frequency tiles (12× large … 1× small) -->
 				<div v-else-if="showResults && results.type === 'text'" class="scr-ftcards">
 					<div class="scr-ft-head">
-						<span v-if="acceptedList.length" class="pulse-chip is-success scr-ft-accept"><PulseIcon name="check" size="1em" /> {{ acceptedList.join(' · ') }}</span>
+						<span v-if="acceptedList.length" class="vibears-chip is-success scr-ft-accept"><VibearsIcon name="check" size="1em" /> {{ acceptedList.join(' · ') }}</span>
 						<span class="scr-ft-sum">{{ textSummary }}</span>
 					</div>
 					<div v-if="textCards.length" class="scr-ft-cloud">
@@ -172,7 +172,7 @@
 			     right corner belongs to the content again. -->
 			<div class="scr-meta">
 				<div class="scr-meta-l">
-					<span v-if="practice" class="scr-chip is-practice"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</span>
+					<span v-if="practice" class="scr-chip is-practice"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</span>
 					<span class="scr-chip" :class="revealed ? 'is-done' : 'is-open'">
 						<span v-if="!revealed && !timeUp && !closedHidden" class="scr-chip-dot" aria-hidden="true" />
 						{{ stateText }}
@@ -203,7 +203,7 @@ import { formatCode, remainingSecs, fmtDeadline } from './util/format.js'
 import { windowState, trimRaceBoard, fitRaceRows, RACE_BOARD_ROWS } from './util/pace.js'
 import { reloadOnProtocolMismatch } from './util/protocol.js'
 import pollingMixin from './mixins/polling.js'
-import PulseIcon from './components/ui/PulseIcon.vue'
+import VibearsIcon from './components/ui/VibearsIcon.vue'
 import ResultsView from './components/ResultsView.vue'
 import CountdownRing from './components/CountdownRing.vue'
 import IntakeBoard from './components/IntakeBoard.vue'
@@ -220,7 +220,7 @@ const FIT_FLOOR_PX = 24
 export default {
 	name: 'Screen',
 	mixins: [pollingMixin],
-	components: { PulseIcon, ResultsView, CountdownRing, IntakeBoard, StageOpen, Leaderboard, WordCloud, QrCode, StageRace },
+	components: { VibearsIcon, ResultsView, CountdownRing, IntakeBoard, StageOpen, Leaderboard, WordCloud, QrCode, StageRace },
 	data() {
 		return {
 			code: loadState('vibears', 'code', ''),
@@ -804,8 +804,8 @@ export default {
 	overflow: hidden;
 	box-sizing: border-box;
 	padding: var(--scr-pad);
-	background: var(--pulse-screen-bg);
-	color: var(--pulse-text);
+	background: var(--vibears-screen-bg);
+	color: var(--vibears-text);
 	font-family: var(--font-face, system-ui, -apple-system, sans-serif);
 }
 .scr.is-live, .scr.is-race { grid-template-rows: auto 1fr auto; }
@@ -817,7 +817,7 @@ export default {
 .scr.is-live[data-image] { grid-template-rows: 1fr auto; }
 .scr[data-image] .scr-stage { grid-row: 1; }
 .scr[data-image] .scr-meta { grid-row: 2; }
-.scr-muted { color: var(--pulse-text-2); }
+.scr-muted { color: var(--vibears-text-2); }
 
 /* ── Error ─────────────────────────────────────────────────────── */
 .scr-center { margin: auto; text-align: center; }
@@ -825,27 +825,27 @@ export default {
 
 /* ── Lobby ─────────────────────────────────────────────────────── */
 .scr-lobby { margin: auto; text-align: center; max-width: 1100px; }
-.scr-eyebrow { color: var(--pulse-primary); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 800; font-size: clamp(14px, 1.4vw, 20px); margin: 0 0 12px; }
+.scr-eyebrow { color: var(--vibears-primary); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 800; font-size: clamp(14px, 1.4vw, 20px); margin: 0 0 12px; }
 .scr-lobby-title { font-size: clamp(36px, 6vw, 84px); margin: 0 0 32px; line-height: 1.05; }
 .scr-join { display: flex; align-items: center; justify-content: center; gap: clamp(24px, 5vw, 72px); flex-wrap: wrap; }
 /* QR card: white background (scannability) + theme-independent border, even on a dark projector. */
-.scr-qr { width: clamp(200px, 26vw, 380px); background: #fff; padding: 16px; border: 3px solid var(--pulse-border-strong); border-radius: var(--pulse-r-card); box-shadow: var(--pulse-shadow-pop); }
+.scr-qr { width: clamp(200px, 26vw, 380px); background: #fff; padding: 16px; border: 3px solid var(--vibears-border-strong); border-radius: var(--vibears-r-card); box-shadow: var(--vibears-shadow-pop); }
 .scr-join-txt { text-align: left; }
-.scr-join-hint { font-size: clamp(16px, 1.8vw, 24px); color: var(--pulse-text-2); margin: 0 0 12px; max-width: 12em; }
+.scr-join-hint { font-size: clamp(16px, 1.8vw, 24px); color: var(--vibears-text-2); margin: 0 0 12px; max-width: 12em; }
 .scr-pin {
-	display: inline-block; background: var(--pulse-primary); color: var(--pulse-on-primary);
+	display: inline-block; background: var(--vibears-primary); color: var(--vibears-on-primary);
 	font-weight: 900; font-size: clamp(40px, 6vw, 84px); letter-spacing: 0.12em;
-	padding: 8px 28px; border-radius: var(--pulse-r-card); margin: 0 0 12px; font-variant-numeric: tabular-nums;
+	padding: 8px 28px; border-radius: var(--vibears-r-card); margin: 0 0 12px; font-variant-numeric: tabular-nums;
 }
-.scr-join-url { font-size: clamp(15px, 1.5vw, 22px); color: var(--pulse-readout); font-weight: 700; margin: 0; word-break: break-all; }
-.scr-lobby-sub { font-size: clamp(18px, 2.4vw, 30px); color: var(--pulse-text-2); margin: -4px 0 4px; }
+.scr-join-url { font-size: clamp(15px, 1.5vw, 22px); color: var(--vibears-readout); font-weight: 700; margin: 0; word-break: break-all; }
+.scr-lobby-sub { font-size: clamp(18px, 2.4vw, 30px); color: var(--vibears-text-2); margin: -4px 0 4px; }
 /* Self-paced, open with a deadline: when it ends (absolute) — as a second
    pill next to the momentum counter, same height, neutral. */
 .scr-lobby-when {
 	display: inline-flex; align-items: center; gap: 12px;
 	margin: clamp(20px, 3vw, 40px) 8px 0; padding: 10px 22px;
-	border-radius: var(--pulse-r-pill);
-	background: var(--pulse-bar-track); color: var(--pulse-text);
+	border-radius: var(--vibears-r-pill);
+	background: var(--vibears-bar-track); color: var(--vibears-text);
 	font-size: clamp(16px, 1.8vw, 26px); font-weight: 700;
 }
 
@@ -853,17 +853,17 @@ export default {
 .scr-momentum {
 	display: inline-flex; align-items: center; gap: 12px; align-self: center;
 	margin: clamp(20px, 3vw, 40px) 0 0; padding: 10px 22px;
-	border-radius: var(--pulse-r-pill);
-	background: var(--pulse-success-soft); color: var(--pulse-text);
+	border-radius: var(--vibears-r-pill);
+	background: var(--vibears-success-soft); color: var(--vibears-text);
 	font-size: clamp(16px, 1.8vw, 26px); font-weight: 700;
 }
 .scr-momentum b { font-size: 1.15em; font-weight: 900; font-variant-numeric: tabular-nums; }
-.scr-momentum-dot { width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--pulse-success); animation: scr-beat 1.4s ease-in-out infinite; }
+.scr-momentum-dot { width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--vibears-success); animation: scr-beat 1.4s ease-in-out infinite; }
 @keyframes scr-beat { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
 .scr-practice {
-	display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: var(--pulse-r-pill); font-weight: 800;
+	display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: var(--vibears-r-pill); font-weight: 800;
 	font-size: clamp(14px, 1.4vw, 20px);
-	color: var(--pulse-warning); background: var(--pulse-warning-soft);
+	color: var(--vibears-warning); background: var(--vibears-warning-soft);
 }
 
 /* ── Head (class A) ────────────────────────────────────────────── */
@@ -911,15 +911,15 @@ export default {
 	   below the stage height (padding, head and meta bar subtracted). */
 	max-width: 46vw;
 	padding: 0.4em; border-radius: 0.2em;
-	background: var(--pulse-image-mat); border: 1px solid var(--pulse-border);
+	background: var(--vibears-image-mat); border: 1px solid var(--vibears-border);
 }
 /* The filter is `none` in light mode; in dark mode it takes the glare off white image
    backgrounds without distorting colours (§7.8). */
-.scr-img { display: block; max-width: 44vw; max-height: 68vh; object-fit: contain; filter: var(--pulse-image-filter); }
+.scr-img { display: block; max-width: 44vw; max-height: 68vh; object-fit: contain; filter: var(--vibears-image-filter); }
 
 /* Revealed without votes (§7.9) */
 .scr-empty { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 0.6em; }
-.scr-empty-txt { margin: 0; text-align: center; font-weight: 700; color: var(--pulse-meta); }
+.scr-empty-txt { margin: 0; text-align: center; font-weight: 700; color: var(--vibears-meta); }
 /* Ring on the question axis: it sizes itself by the question size (§6.5). */
 .scr-cd { font-size: var(--scr-q-fs); }
 .scr-q {
@@ -955,33 +955,33 @@ export default {
 /* The results root fills the remaining height as a flex column, so that the
    height-bound square charts (radar/compass — .is-wide in ResultsView) inherit a
    defined height. */
-.scr-results :deep(.pulse-results) { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.scr-results :deep(.vibears-results) { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
 
 /* Free text on the projector: frequency tiles. Everything em -> scales with fitStage. */
 .scr-ftcards { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
 .scr-ft-head { display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; margin-bottom: 0.4em; }
 .scr-ft-accept { font-size: 0.55em; }
-.scr-ft-sum { margin-left: auto; font-size: 0.55em; font-weight: 700; color: var(--pulse-meta); }
+.scr-ft-sum { margin-left: auto; font-size: 0.55em; font-weight: 700; color: var(--vibears-meta); }
 .scr-ft-cloud { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0.4em; }
 .scr-ft-card {
 	display: inline-flex; align-items: center; gap: 0.5em;
-	padding: 0.35em 0.7em; border-radius: var(--pulse-r-el);
-	background: var(--pulse-bar-track); border: 2px solid var(--pulse-border);
+	padding: 0.35em 0.7em; border-radius: var(--vibears-r-el);
+	background: var(--vibears-bar-track); border: 2px solid var(--vibears-border);
 	font-weight: 700; line-height: 1.1;
 }
-.scr-ft-card.is-accepted { background: var(--pulse-success-soft); border-color: var(--pulse-success); color: var(--pulse-success); }
+.scr-ft-card.is-accepted { background: var(--vibears-success-soft); border-color: var(--vibears-success); color: var(--vibears-success); }
 .scr-ft-card.is-rejected { opacity: 0.5; text-decoration: line-through; }
 .scr-ft-card.is-open { border-style: dashed; }
 .scr-ft-txt { min-width: 0; }
-.scr-ft-mult { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 0.72em; color: var(--pulse-meta); background: var(--pulse-screen-bg); padding: 0.1em 0.45em; border-radius: var(--pulse-r-pill); }
-.scr-ft-card.is-accepted .scr-ft-mult { color: var(--pulse-success); }
-.scr-ft-empty { color: var(--pulse-text-2); }
+.scr-ft-mult { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 0.72em; color: var(--vibears-meta); background: var(--vibears-screen-bg); padding: 0.1em 0.45em; border-radius: var(--vibears-r-pill); }
+.scr-ft-card.is-accepted .scr-ft-mult { color: var(--vibears-success); }
+.scr-ft-empty { color: var(--vibears-text-2); }
 
 /* Self-paced without bars (§3.2): closed shows the counter, released without
    a leaderboard the closing note — centred, large, in em of the stage. */
 .scr-race-note { margin: auto; max-width: 22em; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.5em; }
 .scr-race-note-big { margin: 0; font-size: 1.6em; font-weight: 800; line-height: 1.1; padding-bottom: 0.08em; font-variant-numeric: tabular-nums; text-wrap: balance; }
-.scr-race-note-sub { margin: 0; font-size: 0.8em; font-weight: 600; line-height: 1.25; color: var(--pulse-text-2); text-wrap: balance; }
+.scr-race-note-sub { margin: 0; font-size: 0.8em; font-weight: 600; line-height: 1.25; color: var(--vibears-text-2); text-wrap: balance; }
 
 /* Final standings: one heading, below it podium + places 4–8 (§4.3). */
 .scr-final { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 0.5em; }
@@ -1000,38 +1000,38 @@ export default {
 	gap: 1em;
 	margin-top: clamp(12px, 1.4vw, 24px);
 	padding-top: 0.75em;
-	border-top: 1px solid var(--pulse-border);
+	border-top: 1px solid var(--vibears-border);
 	font-size: var(--scr-meta-fs);
-	color: var(--pulse-meta);
+	color: var(--vibears-meta);
 }
 .scr-meta-l { display: flex; align-items: center; gap: 0.6em; }
 .scr-chip {
 	display: inline-flex; align-items: center; gap: 0.45em;
-	padding: 0.25em 0.8em; border-radius: var(--pulse-r-pill);
+	padding: 0.25em 0.8em; border-radius: var(--vibears-r-pill);
 	font-weight: 700; white-space: nowrap;
-	background: var(--pulse-bar-track); color: var(--pulse-text);
+	background: var(--vibears-bar-track); color: var(--vibears-text);
 }
-.scr-chip.is-open { color: var(--pulse-state-open); background: var(--pulse-success-soft); }
-.scr-chip.is-done { color: var(--pulse-state-done); }
-.scr-chip.is-practice { color: var(--pulse-warning); background: var(--pulse-warning-soft); }
-.scr-chip.is-off { color: var(--pulse-error); background: var(--pulse-error-soft); }
-.scr-chip.is-full { color: var(--pulse-primary); background: var(--pulse-primary-soft); }
+.scr-chip.is-open { color: var(--vibears-state-open); background: var(--vibears-success-soft); }
+.scr-chip.is-done { color: var(--vibears-state-done); }
+.scr-chip.is-practice { color: var(--vibears-warning); background: var(--vibears-warning-soft); }
+.scr-chip.is-off { color: var(--vibears-error); background: var(--vibears-error-soft); }
+.scr-chip.is-full { color: var(--vibears-primary); background: var(--vibears-primary-soft); }
 /* Self-paced: the public page carries data-themes="" — the fixed
-   dark values from pulse-tokens.css do not apply there, --pulse-meta and
-   --pulse-state-done stayed #33465e on a dark background. The new frames
+   dark values from vibears-tokens.css do not apply there, --vibears-meta and
+   --vibears-state-done stayed #33465e on a dark background. The new frames
    therefore use roles that follow the NC theme (moderated unchanged). */
-.scr.is-race .scr-meta { color: var(--pulse-text-2); }
-.scr.is-race .scr-chip.is-done { color: var(--pulse-text); }
-.scr-lobby.is-paced .scr-join-url { color: var(--pulse-text-2); }
+.scr.is-race .scr-meta { color: var(--vibears-text-2); }
+.scr.is-race .scr-chip.is-done { color: var(--vibears-text); }
+.scr-lobby.is-paced .scr-join-url { color: var(--vibears-text-2); }
 .scr-chip-dot { width: 0.55em; height: 0.55em; border-radius: 50%; background: currentColor; animation: scr-beat 1.6s ease-in-out infinite; }
 .scr-legend { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* QR + code: the code stays in class B — from the back row it is the
    actual way to join; scanning a QR from 12 m does not work. */
 .scr-join-mini { display: flex; align-items: center; gap: 0.6em; flex: 0 0 auto; }
-.scr-qr-mini { width: 88px; background: #fff; padding: 4px; border: 2px solid var(--pulse-border-strong); border-radius: var(--pulse-r-el); }
-.scr-pin-mini { font-weight: 800; font-size: var(--scr-stage-fs); letter-spacing: 0.08em; color: var(--pulse-text); font-variant-numeric: tabular-nums; }
+.scr-qr-mini { width: 88px; background: #fff; padding: 4px; border: 2px solid var(--vibears-border-strong); border-radius: var(--vibears-r-el); }
+.scr-pin-mini { font-weight: 800; font-size: var(--scr-stage-fs); letter-spacing: 0.08em; color: var(--vibears-text); font-variant-numeric: tabular-nums; }
 
-.scr-conn { margin-top: 24px; color: var(--pulse-error); font-size: 16px; }
+.scr-conn { margin-top: 24px; color: var(--vibears-error); font-size: 16px; }
 
 @media (prefers-reduced-motion: reduce) {
 	.scr-momentum-dot, .scr-chip-dot { animation: none; }
@@ -1040,7 +1040,7 @@ export default {
 
 <!--
 	Un-scoped + gated by a body class: applies ONLY on the projector (Screen.vue
-	sets `body.pulse-beamer`), not on the phone.
+	sets `body.vibears-beamer`), not on the phone.
 
 	The projector is a kiosk (D3): no NC header bar, no blue border, no
 	white card inside it. The stage itself sits `position: fixed` above everything; here
@@ -1048,12 +1048,12 @@ export default {
 	guest footer, page background).
 -->
 <style>
-body.pulse-beamer #header { display: none !important; }
-body.pulse-beamer footer.guest-box { display: none !important; }
-body.pulse-beamer #content {
+body.vibears-beamer #header { display: none !important; }
+body.vibears-beamer footer.guest-box { display: none !important; }
+body.vibears-beamer #content {
 	margin: 0 !important;
 	padding: 0 !important;
 	border-radius: 0 !important;
-	background: var(--pulse-screen-bg) !important;
+	background: var(--vibears-screen-bg) !important;
 }
 </style>

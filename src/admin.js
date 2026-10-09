@@ -14,10 +14,10 @@ import { t } from './util/l10n.js'
 import { showError, showSuccess, serverMessage } from './toast.js'
 
 const state = loadState('vibears', 'retention', { enabled: false, days: 30, minDays: 1, maxDays: 3650 })
-const form = document.getElementById('pulse-retention')
-const enabled = document.getElementById('pulse-retention-enabled')
-const days = document.getElementById('pulse-retention-days')
-const save = document.getElementById('pulse-retention-save')
+const form = document.getElementById('vibears-retention')
+const enabled = document.getElementById('vibears-retention-enabled')
+const days = document.getElementById('vibears-retention-days')
+const save = document.getElementById('vibears-retention-save')
 
 if (form && enabled && days && save) {
 	enabled.checked = !!state.enabled

@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<div class="pulse-part">
+	<div class="vibears-part">
 		<div class="sheet">
 			<!-- Join: enter the 6-character code (§4.6 — its own step, unchanged here) -->
 			<!-- Overall summary: all questions with the result + your own answer.
@@ -12,10 +12,10 @@
 			<div v-if="review" class="review">
 				<div class="review-head">
 					<h1 class="review-h">{{ isPaced && reviewState !== 'released' ? t('vibears', 'Your answers') : t('vibears', 'All results') }}</h1>
-					<button class="pulse-btn is-secondary is-sm" @click="closeReview">{{ t('vibears', 'Back') }}</button>
+					<button class="vibears-btn is-secondary is-sm" @click="closeReview">{{ t('vibears', 'Back') }}</button>
 				</div>
 				<p v-if="review.title" class="review-title">{{ review.title }}</p>
-				<p v-if="review.practice" class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</p>
+				<p v-if="review.practice" class="vibears-chip is-warning practice-chip"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</p>
 				<p v-if="myRank" class="myrank review-myrank">{{ t('vibears', 'Place') }} <b>{{ myRank.rank }}</b> · {{ n('vibears', '%n point', '%n points', myRank.score) }}</p>
 				<!-- Self-paced before the release: no place, but your own points (§2.8). -->
 				<p v-else-if="isPaced && review.myScore != null" class="myrank review-myrank">{{ n('vibears', '%n point', '%n points', review.myScore) }}</p>
@@ -24,11 +24,11 @@
 						<h2 class="review-q"><span class="review-num">{{ i + 1 }}</span><span class="review-q-text">{{ it.poll.question }}</span></h2>
 						<p v-if="it.mine" class="review-mine" :class="{ 'is-ok': it.mine.correct === true, 'is-no': it.mine.correct === false }">
 							<span class="review-mine-lbl">{{ t('vibears', 'Your answer:') }}</span> <b>{{ myAnswerText(it) }}</b>
-							<span v-if="it.mine.correct === true" class="pulse-chip is-success review-chip"><PulseIcon name="check" size="1em" /> +{{ it.mine.points }}</span>
-							<span v-else-if="it.mine.correct === false" class="pulse-chip is-error review-chip"><PulseIcon name="close" size="1em" /> {{ t('vibears', 'missed') }}</span>
+							<span v-if="it.mine.correct === true" class="vibears-chip is-success review-chip"><VibearsIcon name="check" size="1em" /> +{{ it.mine.points }}</span>
+							<span v-else-if="it.mine.correct === false" class="vibears-chip is-error review-chip"><VibearsIcon name="close" size="1em" /> {{ t('vibears', 'missed') }}</span>
 							<!-- Self-paced: no verdict yet (free text still open, or "At the end"). -->
-							<span v-else-if="it.mine.verdict === 'pending'" class="pulse-chip is-warning review-chip"><PulseIcon name="hourglass" size="1em" /> {{ t('vibears', 'Being checked') }}</span>
-							<span v-else-if="it.mine.verdict === 'saved'" class="pulse-chip is-neutral review-chip"><PulseIcon name="check" size="1em" /> {{ t('vibears', 'Answer saved') }}</span>
+							<span v-else-if="it.mine.verdict === 'pending'" class="vibears-chip is-warning review-chip"><VibearsIcon name="hourglass" size="1em" /> {{ t('vibears', 'Being checked') }}</span>
+							<span v-else-if="it.mine.verdict === 'saved'" class="vibears-chip is-neutral review-chip"><VibearsIcon name="check" size="1em" /> {{ t('vibears', 'Answer saved') }}</span>
 						</p>
 						<p v-else class="muted review-mine is-none">{{ t('vibears', 'Not answered') }}</p>
 						<ResultsView v-if="it.revealed && it.results" :results="it.results" :correct-id="it.poll.correctOption || ''" :correct-ids="(it.poll.answerKey && it.poll.answerKey.correct) || []" :answer-key="it.poll.answerKey || null" />
@@ -36,7 +36,7 @@
 					</li>
 				</ol>
 				<Leaderboard v-if="review.leaderboard && review.leaderboard.length" :rows="review.leaderboard" :limit="10" :me="review.leaderboardMe || null" />
-				<button class="pulse-btn is-secondary review-back" @click="closeReview">{{ t('vibears', 'Back') }}</button>
+				<button class="vibears-btn is-secondary review-back" @click="closeReview">{{ t('vibears', 'Back') }}</button>
 			</div>
 
 			<div v-else-if="!code" class="center entry">
@@ -62,7 +62,7 @@
 				<p class="eyebrow-p">vibeARS</p>
 				<h1>{{ t('vibears', 'This room does not exist.') }}</h1>
 				<p class="muted">{{ t('vibears', 'That code is not right — type a new one.') }}</p>
-				<a class="pulse-btn is-primary empty-cta" :href="joinPagePath">{{ t('vibears', 'Enter a new code') }}</a>
+				<a class="vibears-btn is-primary empty-cta" :href="joinPagePath">{{ t('vibears', 'Enter a new code') }}</a>
 			</div>
 
 			<!-- Quiz: choose a name (§4.6). In self-paced mode only while joining is still
@@ -71,17 +71,17 @@
 			<div v-else-if="isQuiz && !nickname && !paceNoJoin" class="center nick">
 				<p class="code-badge">{{ spacedCode }}</p>
 				<p v-if="roomTitle" class="room-title">{{ roomTitle }}</p>
-				<p v-if="isPaced && paceNotice" class="pulse-notice is-info pace-notice" role="status">
-					<PulseIcon :name="paceNotice === 'removed' ? 'warning' : 'reset'" size="1.1em" class="pulse-notice-ico" />
+				<p v-if="isPaced && paceNotice" class="vibears-notice is-info pace-notice" role="status">
+					<VibearsIcon :name="paceNotice === 'removed' ? 'warning' : 'reset'" size="1.1em" class="vibears-notice-ico" />
 					<span>{{ paceNotice === 'removed' ? t('vibears', 'You were removed from this quiz.') : t('vibears', 'A new round has started — choose your name.') }}</span>
 				</p>
-				<PulseIcon name="quiz" size="2.4em" class="nick-ico" />
+				<VibearsIcon name="quiz" size="2.4em" class="nick-ico" />
 				<h1>{{ t('vibears', 'What is your name?') }}</h1>
 				<p class="muted nick-hint">{{ t('vibears', 'Your name appears on the leaderboard.') }}</p>
 				<p v-if="isPaced && paceUntil" class="pace-when">
-					<PulseIcon name="calendar" size="1.1em" />
+					<VibearsIcon name="calendar" size="1.1em" />
 					<span>{{ t('vibears', 'Open until {time}', { time: paceUntil }) }}</span>
-					<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
+					<span v-if="closesInMin" class="vibears-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
 				</p>
 				<label class="nick-field">
 					<input v-model="nickInput" class="nick-input" type="text" maxlength="24"
@@ -100,13 +100,13 @@
 			     key rebuilds every card: otherwise e.g. "See your answers" would take over
 			     the element and focus of the "Next" that was just tapped. -->
 			<div v-else-if="paceCard" :key="'pace-' + paceCard" class="center pace-card" :data-card="paceCard">
-				<p v-if="practice" class="pace-practice"><span class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span></p>
+				<p v-if="practice" class="pace-practice"><span class="vibears-chip is-warning practice-chip"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span></p>
 
 				<!-- Without a name and closed: joining is no longer possible. -->
 				<template v-if="paceCard === 'shut'">
 					<p class="code-badge">{{ spacedCode }}</p>
 					<p v-if="roomTitle" class="room-title">{{ roomTitle }}</p>
-					<PulseIcon name="lock" size="2.4em" class="state-ico" />
+					<VibearsIcon name="lock" size="2.4em" class="state-ico" />
 					<h1 class="pace-h" tabindex="-1">{{ t('vibears', 'The quiz is closed.') }}</h1>
 				</template>
 
@@ -124,9 +124,9 @@
 					<template v-else-if="paceCard === 'start'">
 						<p class="pace-facts">{{ n('vibears', '%n question', '%n questions', paceWindow.total) }} · {{ paceWindow.timed ? t('vibears', 'with time limit') : t('vibears', 'no time limit') }} · {{ paceWindow.feedback === 'end' ? t('vibears', 'results at the end') : t('vibears', 'feedback after each question') }}</p>
 						<p v-if="paceUntil" class="pace-when">
-							<PulseIcon name="calendar" size="1.1em" />
+							<VibearsIcon name="calendar" size="1.1em" />
 							<span>{{ t('vibears', 'Open until {time}', { time: paceUntil }) }}</span>
-							<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
+							<span v-if="closesInMin" class="vibears-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
 						</p>
 						<ul class="muted pace-hints">
 							<li>{{ t('vibears', 'Once started, there is no going back to earlier questions.') }}</li>
@@ -144,28 +144,28 @@
 
 				<!-- Through (§2.7): "done" means no question left and progress.finished. -->
 				<template v-else-if="paceCard === 'through'">
-					<PulseIcon name="flag" size="2.4em" class="pace-flag" />
+					<VibearsIcon name="flag" size="2.4em" class="pace-flag" />
 					<h1 class="pace-h" tabindex="-1">{{ t('vibears', 'You’re through!') }}</h1>
 					<p v-if="myScore !== null" class="pace-score">{{ n('vibears', '%n point', '%n points', myScore) }}</p>
 					<p v-if="myScore !== null && !practice && paceClosesAt === 0" class="muted pace-line">{{ t('vibears', 'The final standings follow when the quiz ends.') }}</p>
 					<p v-else-if="myScore !== null && !practice" class="muted pace-line">{{ t('vibears', 'The final standings follow once your host releases the results.') }}</p>
 					<p v-else class="muted pace-line">{{ t('vibears', 'Results come once your host releases them.') }}</p>
-					<button class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See your answers') }}</button>
+					<button class="vibears-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See your answers') }}</button>
 				</template>
 
 				<!-- Closed with a name: never started -> only the heading. -->
 				<template v-else-if="paceCard === 'closed'">
-					<PulseIcon name="lock" size="2.4em" class="state-ico" />
+					<VibearsIcon name="lock" size="2.4em" class="state-ico" />
 					<h1 class="pace-h" tabindex="-1">{{ t('vibears', 'The quiz is closed.') }}</h1>
 					<template v-if="progress && progress.started">
-						<p v-if="paceLostDraft" class="pulse-notice is-warn pace-notice" role="status">
-							<PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" />
+						<p v-if="paceLostDraft" class="vibears-notice is-warn pace-notice" role="status">
+							<VibearsIcon name="warning" size="1.1em" class="vibears-notice-ico" />
 							<span>{{ t('vibears', 'Your last answer was not sent in time.') }}</span>
 						</p>
 						<p v-if="!progress.finished" class="muted pace-line">{{ t('vibears', 'You did not finish every question — your answers so far count.') }}</p>
 						<p v-if="myScore !== null" class="pace-score">{{ n('vibears', '%n point', '%n points', myScore) }}</p>
 						<p class="muted pace-line">{{ t('vibears', 'Results come once your host releases them.') }}</p>
-						<button class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See your answers') }}</button>
+						<button class="vibears-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See your answers') }}</button>
 					</template>
 				</template>
 
@@ -174,7 +174,7 @@
 					<h1 class="end-title pace-h" tabindex="-1">{{ t('vibears', 'Quiz finished') }}</h1>
 					<p v-if="nickname && myScore !== null" class="pace-score">{{ n('vibears', '%n point', '%n points', myScore) }}</p>
 					<p class="end-thanks">{{ t('vibears', 'Thanks for joining in.') }}<br><span class="code-badge is-inline">{{ spacedCode }}</span></p>
-					<button v-if="nickname" class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See all results') }}</button>
+					<button v-if="nickname" class="vibears-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See all results') }}</button>
 				</template>
 			</div>
 
@@ -185,7 +185,7 @@
 				<p v-if="isQuiz" class="you">{{ t('vibears', 'Ready, {name}', { name: nickname }) }}</p>
 				<p class="wait-dot" />
 				<p class="muted">{{ t('vibears', 'Waiting for the next question …') }}</p>
-				<button class="pulse-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">
+				<button class="vibears-btn is-secondary review-cta" :disabled="reviewBusy" @click="openReview">
 					{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See all results') }}
 				</button>
 			</div>
@@ -209,7 +209,7 @@
 					<p class="end-thanks">{{ t('vibears', 'Thanks for joining in.') }}<br><span class="code-badge is-inline">{{ spacedCode }}</span></p>
 				</div>
 				<div class="h-submit">
-					<button class="pulse-btn is-secondary" :disabled="reviewBusy" @click="openReview">
+					<button class="vibears-btn is-secondary" :disabled="reviewBusy" @click="openReview">
 						{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See all results') }}
 					</button>
 				</div>
@@ -217,15 +217,15 @@
 
 			<div v-else-if="revealed" class="h-app">
 				<div class="h-scroll">
-					<span v-if="practice" class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span>
+					<span v-if="practice" class="vibears-chip is-warning practice-chip"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span>
 					<h1 class="q">{{ poll.question }}</h1>
 
 					<!-- 1. Your own result sits ABOVE the distribution — it is what
 					     people look for first (§8.6). -->
 					<div v-if="isQuiz && myResult && myResult.answered" class="verdict" :class="myResult.correct ? 'is-ok' : 'is-no'">
-						<span class="verdict-mark"><PulseIcon :name="myResult.correct ? 'check' : 'close'" size="2em" /></span>
+						<span class="verdict-mark"><VibearsIcon :name="myResult.correct ? 'check' : 'close'" size="2em" /></span>
 						<span class="verdict-text">{{ myResult.correct ? t('vibears', 'Correct!') : t('vibears', 'Not this time') }}</span>
-						<span v-if="myResult.correct" class="pulse-chip is-success verdict-points">+{{ myResult.points }}</span>
+						<span v-if="myResult.correct" class="vibears-chip is-success verdict-points">+{{ myResult.points }}</span>
 						<span v-else class="verdict-sub">{{ t('vibears', 'No point — the correct answer is marked.') }}</span>
 						<span v-if="myRank" class="verdict-sub">{{ t('vibears', 'Place') }} <b>{{ myRank.rank }}</b> · {{ n('vibears', '%n point', '%n points', myRank.score) }}</span>
 					</div>
@@ -249,7 +249,7 @@
 					</template>
 				</div>
 				<div class="h-submit">
-					<button class="pulse-btn is-secondary" :disabled="reviewBusy" @click="openReview">
+					<button class="vibears-btn is-secondary" :disabled="reviewBusy" @click="openReview">
 						{{ reviewBusy ? t('vibears', 'Loading …') : t('vibears', 'See all results') }}
 					</button>
 				</div>
@@ -261,13 +261,13 @@
 			     a silent no-op. `!busy`: an answer in the last second does not make
 			     "Time is up" flash. -->
 			<div v-else-if="isPaced && expired && !voted && !busy" class="center pace-timeup">
-				<p v-if="practice" class="pace-practice"><span class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span></p>
+				<p v-if="practice" class="pace-practice"><span class="vibears-chip is-warning practice-chip"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span></p>
 				<p v-if="progress" class="pace-pos">
 					<span>{{ t('vibears', 'Question {number} of {total}', { number: progress.k, total: progress.n }) }}<template v-if="paceUntil"> · {{ t('vibears', 'Open until {time}', { time: paceUntil }) }}</template></span>
-					<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
+					<span v-if="closesInMin" class="vibears-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
 				</p>
 				<h1 class="q" tabindex="-1">{{ poll.question }}</h1>
-				<PulseIcon name="timer" size="2.4em" class="state-ico" />
+				<VibearsIcon name="timer" size="2.4em" class="state-ico" />
 				<p class="muted pace-line" role="status">{{ paceLast ? t('vibears', 'Time is up.') : t('vibears', 'Time is up — on to the next question.') }}</p>
 				<button class="submit pace-next" :disabled="!canNext" :aria-busy="nextBusy ? 'true' : 'false'" @click="nextStep">
 					{{ nextBusy ? '…' : (progress && progress.timeUp ? nextLabel : t('vibears', 'One moment …')) }}
@@ -277,7 +277,7 @@
 			<!-- Time is up, nothing submitted (quiz only, moderated) -->
 			<div v-else-if="isQuiz && !isPaced && expired && !voted" class="center">
 				<h1 class="q">{{ poll.question }}</h1>
-				<PulseIcon name="timer" size="2.4em" class="state-ico" />
+				<VibearsIcon name="timer" size="2.4em" class="state-ico" />
 				<p class="muted">{{ t('vibears', 'Time is up — the reveal is coming.') }}</p>
 			</div>
 
@@ -286,12 +286,12 @@
 			     submit zone sits at the bottom as its own grid row. -->
 			<div v-else class="h-app">
 				<div ref="scroll" class="h-scroll">
-					<span v-if="practice" class="pulse-chip is-warning practice-chip"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span>
+					<span v-if="practice" class="vibears-chip is-warning practice-chip"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span>
 					<!-- Self-paced: "Question k of n" from progress (never poll.position), then
 					     the deadline; in the last quarter of an hour the chip (§2.5). -->
 					<p v-if="isPaced && progress" class="pace-pos">
 						<span>{{ t('vibears', 'Question {number} of {total}', { number: progress.k, total: progress.n }) }}<template v-if="paceUntil"> · {{ t('vibears', 'Open until {time}', { time: paceUntil }) }}</template></span>
-						<span v-if="closesInMin" class="pulse-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
+						<span v-if="closesInMin" class="vibears-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
 					</p>
 					<div v-if="remaining !== null" class="timer" :class="{ 'is-low': remaining <= 5 }" role="status" :aria-label="n('vibears', '%n second left', '%n seconds left', remaining)">
 						<div class="timer-track"><div class="timer-fill" :style="{ width: timerPct + '%' }" /></div>
@@ -312,9 +312,9 @@
 						<button v-for="o in optList" :key="o.id"
 							class="choice" :class="[o.pal.cls, { 'is-quiz': isQuiz, 'is-picked': isPicked(o.id), 'is-dim': sent && !isPicked(o.id) }]"
 							:aria-checked="isPicked(o.id)" role="radio" :disabled="busy || locked || paceHold" @click="pickOne(o.id, $event)">
-							<span class="pulse-badge choice-badge">{{ o.pal.letter }}</span>
+							<span class="vibears-badge choice-badge">{{ o.pal.letter }}</span>
 							<span class="choice-label">{{ o.label }}</span>
-							<PulseIcon v-if="isPicked(o.id)" name="check" size="1.2em" class="choice-tick" />
+							<VibearsIcon v-if="isPicked(o.id)" name="check" size="1.2em" class="choice-tick" />
 						</button>
 					</div>
 
@@ -323,19 +323,19 @@
 						<button v-for="o in optList" :key="o.id"
 							class="choice" :class="[o.pal.cls, { 'is-quiz': isQuiz, 'is-picked': multiPick.includes(o.id), 'is-dim': sent && !multiPick.includes(o.id) }]"
 							:aria-checked="multiPick.includes(o.id)" role="checkbox" :disabled="busy || locked || paceHold" @click="toggleMulti(o.id)">
-							<span class="pulse-badge choice-badge">{{ o.pal.letter }}</span>
+							<span class="vibears-badge choice-badge">{{ o.pal.letter }}</span>
 							<span class="choice-label">{{ o.label }}</span>
-							<PulseIcon v-if="multiPick.includes(o.id)" name="check" size="1.2em" class="choice-tick" />
+							<VibearsIcon v-if="multiPick.includes(o.id)" name="check" size="1.2em" class="choice-tick" />
 						</button>
 					</div>
 
 					<!-- Estimation question / free text -->
 					<div v-else-if="poll.type === 'number'" class="free-vote">
-						<input v-model="numInput" class="pulse-input is-lg" type="number" inputmode="decimal"
+						<input v-model="numInput" class="vibears-input is-lg" type="number" inputmode="decimal"
 							:disabled="locked" :placeholder="t('vibears', 'Your number')" @keyup.enter="doSubmit">
 					</div>
 					<div v-else-if="poll.type === 'text'" class="free-vote">
-						<input v-model="textInput" class="pulse-input is-lg" type="text" maxlength="100"
+						<input v-model="textInput" class="vibears-input is-lg" type="text" maxlength="100"
 							autocomplete="off" :disabled="locked" :placeholder="t('vibears', 'Your answer')" @keyup.enter="doSubmit">
 					</div>
 
@@ -347,8 +347,8 @@
 								<span class="rank-pos">{{ i + 1 }}</span>
 								<span class="rank-label">{{ o.label }}</span>
 								<span class="rank-move">
-									<button class="pulse-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === 0" :aria-label="t('vibears', '{answer} up', { answer: o.label })" @click="moveRank(i, -1)"><PulseIcon name="arrow-up" size="1.1em" /></button>
-									<button class="pulse-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === rankOrder.length - 1" :aria-label="t('vibears', '{answer} down', { answer: o.label })" @click="moveRank(i, 1)"><PulseIcon name="arrow-down" size="1.1em" /></button>
+									<button class="vibears-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === 0" :aria-label="t('vibears', '{answer} up', { answer: o.label })" @click="moveRank(i, -1)"><VibearsIcon name="arrow-up" size="1.1em" /></button>
+									<button class="vibears-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === rankOrder.length - 1" :aria-label="t('vibears', '{answer} down', { answer: o.label })" @click="moveRank(i, 1)"><VibearsIcon name="arrow-down" size="1.1em" /></button>
 								</span>
 							</li>
 						</ol>
@@ -432,7 +432,7 @@
 					<div v-else class="words">
 						<p class="h-hint">{{ n('vibears', 'Up to %n word — one per field.', 'Up to %n words — one per field.', poll.maxWords) }}</p>
 						<label v-for="i in poll.maxWords" :key="i" class="word-field">
-							<input v-model="wordInputs[i - 1]" class="pulse-input" type="text" maxlength="40"
+							<input v-model="wordInputs[i - 1]" class="vibears-input" type="text" maxlength="40"
 								:disabled="locked" :aria-label="t('vibears', 'Word {number}', { number: i })"
 								:placeholder="i === 1 ? t('vibears', 'Your word …') : t('vibears', 'Another word (optional)')">
 							<span class="word-count">{{ (wordInputs[i - 1] || '').length }} / 40</span>
@@ -443,7 +443,7 @@
 					     not in the submit zone — "Next question" was there a moment ago, and a
 					     double tap would have skipped the new question unanswered. Only armed 1.5 s
 					     after every new question (skipArmed). No confirmation. -->
-					<button v-if="isPaced && poll.timeLimit === 0 && !voted && !busy" type="button" class="pulse-btn is-tertiary is-sm pace-skip"
+					<button v-if="isPaced && poll.timeLimit === 0 && !voted && !busy" type="button" class="vibears-btn is-tertiary is-sm pace-skip"
 						:disabled="!skipArmed || !canNext" @click="nextStep">
 						{{ paceLast ? t('vibears', 'Skip and finish') : t('vibears', 'Skip question') }}
 					</button>
@@ -455,7 +455,7 @@
 					     hairline. No second number — it would compete with the question's
 					     countdown (§8.0). -->
 					<div v-if="fixOpen" class="fix-bar" role="status">
-						<PulseIcon name="check" size="1.2em" />
+						<VibearsIcon name="check" size="1.2em" />
 						<span>{{ t('vibears', 'Answer sent') }}</span>
 						<button class="fix-btn" @click="startChange">{{ t('vibears', 'Change') }}</button>
 						<span class="fix-line" :style="{ width: fixPct + '%' }" aria-hidden="true" />
@@ -466,21 +466,21 @@
 					     yet); never colour alone: icon + word. -->
 					<template v-else-if="sent && isPaced">
 						<p class="band pace-verdict" :class="paceBand.cls" role="status" :data-verdict="paceVerdict || 'none'">
-							<PulseIcon :name="paceBand.icon" size="1.1em" /> {{ paceBand.text }}
-							<span v-if="paceVerdict === 'correct'" class="pulse-chip is-success pace-points">+{{ myResult.points }}</span>
+							<VibearsIcon :name="paceBand.icon" size="1.1em" /> {{ paceBand.text }}
+							<span v-if="paceVerdict === 'correct'" class="vibears-chip is-success pace-points">+{{ myResult.points }}</span>
 						</p>
-						<button class="pulse-btn is-primary submit-btn pace-next" :disabled="!canNext" :aria-busy="nextBusy ? 'true' : 'false'" @click="nextStep">
+						<button class="vibears-btn is-primary submit-btn pace-next" :disabled="!canNext" :aria-busy="nextBusy ? 'true' : 'false'" @click="nextStep">
 							{{ nextBusy ? '…' : nextLabel }}
 						</button>
 					</template>
 					<template v-else-if="sent">
-						<p class="band is-ok" role="status"><PulseIcon name="check" size="1.1em" /> {{ t('vibears', 'Answer sent') }}</p>
+						<p class="band is-ok" role="status"><VibearsIcon name="check" size="1.1em" /> {{ t('vibears', 'Answer sent') }}</p>
 						<p v-if="intakeText" class="h-note">{{ intakeText }}</p>
-						<button v-if="canChange" class="pulse-btn is-secondary" @click="startChange">{{ t('vibears', 'Change answer') }}</button>
+						<button v-if="canChange" class="vibears-btn is-secondary" @click="startChange">{{ t('vibears', 'Change answer') }}</button>
 					</template>
 					<template v-else>
 						<p v-if="submitNote" class="h-note">{{ submitNote }}</p>
-						<button v-if="needsSubmit" class="pulse-btn is-primary submit-btn" :disabled="busy || locked || paceHold || !submitReady" @click="doSubmit">
+						<button v-if="needsSubmit" class="vibears-btn is-primary submit-btn" :disabled="busy || locked || paceHold || !submitReady" @click="doSubmit">
 							{{ busy ? '…' : submitLabel }}
 						</button>
 					</template>
@@ -497,19 +497,19 @@
 						<button v-for="(target, i) in matchTargets" :key="target.id" type="button"
 							class="msheet-opt" :class="[optPal(i).cls, { 'is-used': usedTarget(target.id, sheetFor) }]"
 							@click="chooseTarget(target.id)">
-							<span class="pulse-badge msheet-badge">{{ optPal(i).letter }}</span>
+							<span class="vibears-badge msheet-badge">{{ optPal(i).letter }}</span>
 							<span>{{ target.label }}</span>
 							<small v-if="usedTarget(target.id, sheetFor)">{{ t('vibears', 'already used') }}</small>
 						</button>
 					</div>
-					<button class="pulse-btn is-secondary msheet-x" @click="closeSheet">{{ t('vibears', 'Back') }}</button>
+					<button class="vibears-btn is-secondary msheet-x" @click="closeSheet">{{ t('vibears', 'Back') }}</button>
 				</div>
 			</template>
 
 			<!-- Full-screen image (§8.1) -->
 			<div v-if="zoom" class="h-zoom" @click="zoom = false">
 				<img :src="imageUrl(poll)" :alt="t('vibears', 'Image for the question')">
-				<button class="h-zoom-x" :aria-label="t('vibears', 'Close')" @click.stop="zoom = false"><PulseIcon name="close" size="1.4em" /></button>
+				<button class="h-zoom-x" :aria-label="t('vibears', 'Close')" @click.stop="zoom = false"><VibearsIcon name="close" size="1.4em" /></button>
 			</div>
 			<!-- Connection status -->
 			<p v-if="code && roomExists && !online" class="conn-off" role="status">{{ t('vibears', 'Connection lost — trying again …') }}</p>
@@ -536,14 +536,14 @@ import { reloadOnProtocolMismatch } from './util/protocol.js'
 import pollingMixin from './mixins/polling.js'
 import pacePhone from './mixins/pace-phone.js'
 import { phoneDelay } from './util/pace.js'
-import PulseIcon from './components/ui/PulseIcon.vue'
+import VibearsIcon from './components/ui/VibearsIcon.vue'
 import ResultsView from './components/ResultsView.vue'
 import Leaderboard from './components/Leaderboard.vue'
 
 export default {
 	name: 'Participant',
 	mixins: [pollingMixin, pacePhone],
-	components: { PulseIcon, ResultsView, Leaderboard },
+	components: { VibearsIcon, ResultsView, Leaderboard },
 	data() {
 		return {
 			code: loadState('vibears', 'code', ''),
@@ -966,7 +966,7 @@ export default {
 			this.review = null
 			this.toTop()
 		},
-		// To the top of the page: the root is the scroll container (see .pulse-part),
+		// To the top of the page: the root is the scroll container (see .vibears-part),
 		// the window only where a page around it scrolls.
 		toTop() {
 			this.$nextTick(() => {
@@ -1492,7 +1492,7 @@ export default {
 </script>
 
 <style scoped>
-.pulse-part {
+.vibears-part {
 	/* Must fill the row flex container #content, otherwise the internal
 	   justify-content:center does not apply and the card sticks to the left. */
 	flex: 1 1 auto;
@@ -1507,8 +1507,8 @@ export default {
 	   #content from 1024 px on: its last 8 px would lie under the clip edge. */
 	min-height: calc(100vh - var(--header-height, 50px) - var(--body-container-margin, 0px));
 	min-height: calc(100svh - var(--header-height, 50px) - var(--body-container-margin, 0px));
-	background: var(--pulse-bg);
-	color: var(--pulse-text);
+	background: var(--vibears-bg);
+	color: var(--vibears-text);
 	display: flex;
 	justify-content: center;
 	align-items: stretch;
@@ -1538,23 +1538,23 @@ export default {
 .h-submit {
 	padding: 16px 0;
 	padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
-	background: var(--pulse-bg);
+	background: var(--vibears-bg);
 	display: flex; flex-direction: column; gap: 8px;
 }
 .h-submit .submit-btn { margin: 0; min-height: 56px; }
-.h-note { margin: 0; font-size: var(--t-sm); font-weight: 600; color: var(--pulse-text-2); text-align: center; }
-.h-hint { margin: 0; font-size: var(--t-sm); font-weight: 600; color: var(--pulse-text-2); }
+.h-note { margin: 0; font-size: var(--t-sm); font-weight: 600; color: var(--vibears-text-2); text-align: center; }
+.h-hint { margin: 0; font-size: var(--t-sm); font-weight: 600; color: var(--vibears-text-2); }
 /* The image box needs a FIXED height: with max-height the image keeps its
    natural height and overflow:hidden clips it instead of shrinking it (§8.1). */
 .h-img {
 	flex: none; height: 26%; min-height: 96px;
 	display: grid; place-items: center; overflow: hidden;
-	padding: 6px; border: 1px solid var(--pulse-border); border-radius: var(--pulse-r-card);
-	background: var(--pulse-image-mat);
+	padding: 6px; border: 1px solid var(--vibears-border); border-radius: var(--vibears-r-card);
+	background: var(--vibears-image-mat);
 	cursor: zoom-in;
 }
 .h-img.is-small { height: 16%; }
-.h-img img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; filter: var(--pulse-image-filter); }
+.h-img img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; filter: var(--vibears-image-filter); }
 /* Full-screen layer: close button outside the image, ≥ 48 px (§8.1). */
 .h-zoom { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .88); display: grid; place-items: center; padding: 16px; }
 .h-zoom img { max-width: 100%; max-height: 100%; object-fit: contain; }
@@ -1565,11 +1565,11 @@ export default {
 }
 
 .center { text-align: center; padding-top: 12vh; }
-.muted { color: var(--pulse-text-2); }
+.muted { color: var(--vibears-text-2); }
 .you { font-weight: 700; margin: 0 0 20px; }
 
 /* Code entry (§4.6 — its own step, only the tokens migrated) */
-.entry .eyebrow-p { color: var(--pulse-primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; font-size: var(--t-sm); margin: 0 0 8px; }
+.entry .eyebrow-p { color: var(--vibears-primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; font-size: var(--t-sm); margin: 0 0 8px; }
 .entry h1 { font-size: var(--t-h1); margin: 0 0 20px; }
 /* §4.8: 6 boxes with a guaranteed minimum width ≥44px — even at 320px, without horizontal scrolling. */
 .digits { display: flex; gap: clamp(4px, 1.8vw, 10px); justify-content: center; margin-bottom: 14px; }
@@ -1578,10 +1578,10 @@ export default {
 	min-width: 44px;
 	max-width: 58px;
 	aspect-ratio: 3 / 4;
-	border: 2px solid var(--pulse-border-strong);
-	border-radius: var(--pulse-r-el);
-	background: var(--pulse-bg);
-	color: var(--pulse-text);
+	border: 2px solid var(--vibears-border-strong);
+	border-radius: var(--vibears-r-el);
+	background: var(--vibears-bg);
+	color: var(--vibears-text);
 	font-size: 30px;
 	font-weight: 800;
 	text-align: center;
@@ -1589,9 +1589,9 @@ export default {
 	box-sizing: border-box;
 	font-variant-numeric: tabular-nums;
 }
-.digit:focus { outline: none; border-color: var(--pulse-primary); }
-.digit:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 2px; }
-.entry-error { color: var(--pulse-error); font-size: var(--t-sm); margin: 0 0 12px; }
+.digit:focus { outline: none; border-color: var(--vibears-primary); }
+.digit:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 2px; }
+.entry-error { color: var(--vibears-error); font-size: var(--t-sm); margin: 0 0 12px; }
 .entry .submit { width: 100%; }
 
 /* §4.11 room not found: branded + one CTA (no dead end) */
@@ -1600,13 +1600,13 @@ export default {
 .empty-cta { display: inline-flex; margin-top: 18px; text-decoration: none; }
 
 /* Nickname: visible counter up to 24 */
-.nick-ico { color: var(--pulse-primary); margin: 0 0 6px; }
+.nick-ico { color: var(--vibears-primary); margin: 0 0 6px; }
 .nick-field { position: relative; display: block; margin-bottom: 14px; }
 .nick-field .nick-input { margin-bottom: 0; }
-.nick-count { position: absolute; right: 12px; bottom: 10px; font-size: var(--t-cap); color: var(--pulse-text-2); font-variant-numeric: tabular-nums; pointer-events: none; }
+.nick-count { position: absolute; right: 12px; bottom: 10px; font-size: var(--t-cap); color: var(--vibears-text-2); font-variant-numeric: tabular-nums; pointer-events: none; }
 
 /* State icon (expired etc.) */
-.state-ico { color: var(--pulse-text-2); margin: 0 0 8px; }
+.state-ico { color: var(--vibears-text-2); margin: 0 0 8px; }
 
 /* Quiz: choosing a name (§4.6 — its own step) */
 .nick { padding-top: 8vh; }
@@ -1614,33 +1614,33 @@ export default {
 .nick-hint { margin: 0 0 20px; font-size: var(--t-sm); }
 .nick-input {
 	width: 100%;
-	border: 2px solid var(--pulse-border-strong);
-	border-radius: var(--pulse-r-card);
+	border: 2px solid var(--vibears-border-strong);
+	border-radius: var(--vibears-r-card);
 	padding: 16px;
 	font-size: var(--t-lead);
 	font-weight: 600;
 	text-align: center;
-	background: var(--pulse-bg);
-	color: var(--pulse-text);
+	background: var(--vibears-bg);
+	color: var(--vibears-text);
 	box-sizing: border-box;
 	margin-bottom: 14px;
 }
-.nick-input:focus { outline: none; border-color: var(--pulse-primary); }
+.nick-input:focus { outline: none; border-color: var(--vibears-primary); }
 .nick .submit { width: 100%; }
 
 /* Room name below the code — tells the person where they have landed. */
 .room-title { font-size: 17px; font-weight: 700; line-height: 1.3; margin: 2px 0 6px; overflow-wrap: anywhere; }
 .code-badge {
 	display: inline-block;
-	background: var(--pulse-primary); color: var(--pulse-on-primary);
+	background: var(--vibears-primary); color: var(--vibears-on-primary);
 	font-weight: 800; font-size: var(--t-lead); letter-spacing: 0.1em;
-	padding: 8px 16px; border-radius: var(--pulse-r-pill); margin-bottom: 24px;
+	padding: 8px 16px; border-radius: var(--vibears-r-pill); margin-bottom: 24px;
 	font-variant-numeric: tabular-nums;
 }
 /* Waiting pulse */
 .wait-dot {
 	width: 14px; height: 14px; border-radius: 50%;
-	background: var(--pulse-primary); margin: 0 auto 16px;
+	background: var(--vibears-primary); margin: 0 auto 16px;
 	animation: wait-pulse 1.4s ease-in-out infinite;
 }
 @keyframes wait-pulse {
@@ -1655,27 +1655,27 @@ export default {
 
 /* Countdown */
 .timer { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
-.timer-track { flex: 1; height: 12px; border-radius: var(--pulse-r-pill); background: var(--pulse-fill); overflow: hidden; }
+.timer-track { flex: 1; height: 12px; border-radius: var(--vibears-r-pill); background: var(--vibears-fill); overflow: hidden; }
 /* 1 s = tick interval -> the bar glides continuously instead of in one-second steps. */
-.timer-fill { height: 100%; border-radius: var(--pulse-r-pill); background: var(--pulse-primary); transition: width 1s linear; }
+.timer-fill { height: 100%; border-radius: var(--vibears-r-pill); background: var(--vibears-primary); transition: width 1s linear; }
 .timer-num { font-size: var(--t-lead); font-weight: 800; font-variant-numeric: tabular-nums; min-width: 2ch; text-align: right; }
 /* Urgency ≤ 5 s: not only colour — the number pulses as well. */
-.timer.is-low .timer-fill { background: var(--pulse-error); }
-.timer.is-low .timer-num { color: var(--pulse-error); animation: timer-pulse 1s ease-in-out infinite; }
+.timer.is-low .timer-fill { background: var(--vibears-error); }
+.timer.is-low .timer-num { color: var(--vibears-error); animation: timer-pulse 1s ease-in-out infinite; }
 @keyframes timer-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
 /* Quiz reveal: verdict */
 .verdict { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 24px; }
 .verdict-mark { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
-.verdict.is-ok .verdict-mark { background: var(--pulse-success); }
-.verdict.is-no .verdict-mark { background: var(--pulse-error); }
+.verdict.is-ok .verdict-mark { background: var(--vibears-success); }
+.verdict.is-no .verdict-mark { background: var(--vibears-error); }
 .verdict-text { font-size: var(--t-h2); font-weight: 800; }
-.verdict.is-ok .verdict-text { color: var(--pulse-success); }
-.verdict.is-no .verdict-text { color: var(--pulse-error); }
+.verdict.is-ok .verdict-text { color: var(--vibears-success); }
+.verdict.is-no .verdict-text { color: var(--vibears-error); }
 .verdict-points { font-size: var(--t-body); margin-top: 2px; }
-.verdict-sub { font-size: var(--t-sm); color: var(--pulse-text-2); }
+.verdict-sub { font-size: var(--t-sm); color: var(--vibears-text-2); }
 .myrank { text-align: center; margin: 20px 0; font-size: 17px; }
-.myrank b { color: var(--pulse-primary); font-variant-numeric: tabular-nums; }
+.myrank b { color: var(--vibears-primary); font-variant-numeric: tabular-nums; }
 
 /* ── Phone answer option (letter + colour A–H, selection = border + tick) ── */
 /* Grid instead of a flex column: grid-auto-rows: 1fr makes all cards as tall
@@ -1688,27 +1688,27 @@ export default {
 	appearance: none; -webkit-appearance: none;
 	display: flex; align-items: center; gap: 12px;
 	min-height: 64px; padding: 10px 12px;
-	border: 1.5px solid color-mix(in oklab, var(--opt-fill, var(--pulse-border)), var(--pulse-bg) 70%);
-	border-radius: var(--pulse-r-card);
-	background: color-mix(in oklab, var(--opt-fill, var(--pulse-bg)), var(--pulse-bg) 92%);
-	color: var(--pulse-text);
+	border: 1.5px solid color-mix(in oklab, var(--opt-fill, var(--vibears-border)), var(--vibears-bg) 70%);
+	border-radius: var(--vibears-r-card);
+	background: color-mix(in oklab, var(--opt-fill, var(--vibears-bg)), var(--vibears-bg) 92%);
+	color: var(--vibears-text);
 	box-shadow: none;
 	font-size: 17px; font-weight: 600; line-height: 1.25; text-align: left;
 	width: 100%; cursor: pointer;
 	transition: transform 0.08s ease, box-shadow 0.12s ease;
 }
 .choice.is-quiz {
-	background: var(--opt-fill, var(--pulse-primary));
-	border-color: var(--opt-fill, var(--pulse-primary));
-	color: var(--opt-ink, var(--pulse-on-primary));
+	background: var(--opt-fill, var(--vibears-primary));
+	border-color: var(--opt-fill, var(--vibears-primary));
+	color: var(--opt-ink, var(--vibears-on-primary));
 	font-weight: 700;
 }
 .choice.is-dim { filter: saturate(.25); opacity: 0.72; }
 .choice-badge { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 8px; font-size: 15px; }
-.choice.is-quiz .choice-badge { background: var(--opt-ink, var(--pulse-on-primary)); color: var(--opt-fill, var(--pulse-primary)); }
+.choice.is-quiz .choice-badge { background: var(--opt-ink, var(--vibears-on-primary)); color: var(--opt-fill, var(--vibears-primary)); }
 .choice-tick { margin-left: auto; flex: 0 0 auto; }
 .choice-label { flex: 1; min-width: 0; }
-.choice:hover:not(:disabled) { border-color: var(--pulse-primary); }
+.choice:hover:not(:disabled) { border-color: var(--vibears-primary); }
 .choice:active:not(:disabled) { transform: translateY(2px); }
 /* NC dims native buttons globally with `opacity: .5` — that would take the
    colour away from your own chosen card in the "sent" state. The OTHER cards
@@ -1717,39 +1717,39 @@ export default {
 /* Ring on the INSIDE — required, not taste: overflow-y:auto forces overflow-x
    to auto as well, and the scroll container clips an outer
    shadow on all four edges (§8.2). */
-.choice.is-picked { border-color: var(--pulse-primary); box-shadow: 0 0 0 2px var(--pulse-primary) inset; font-weight: 800; }
+.choice.is-picked { border-color: var(--vibears-primary); box-shadow: 0 0 0 2px var(--vibears-primary) inset; font-weight: 800; }
 
 /* Estimation question / free text / word cloud: input field + submit */
 .free-vote, .words { display: flex; flex-direction: column; gap: 14px; }
-.pulse-input {
+.vibears-input {
 	appearance: none; -webkit-appearance: none;
-	border: 2px solid var(--pulse-border-strong);
-	border-radius: var(--pulse-r-card);
-	background: var(--pulse-bg); color: var(--pulse-text);
+	border: 2px solid var(--vibears-border-strong);
+	border-radius: var(--vibears-r-card);
+	background: var(--vibears-bg); color: var(--vibears-text);
 	font-size: var(--t-body); font-weight: 600;
 	padding: 16px 18px; width: 100%; box-sizing: border-box;
 }
-.pulse-input.is-lg { font-size: var(--t-lead); text-align: center; }
-.pulse-input:focus { outline: none; border-color: var(--pulse-primary); }
-.pulse-input::placeholder { color: var(--pulse-text-2); font-weight: 400; }
+.vibears-input.is-lg { font-size: var(--t-lead); text-align: center; }
+.vibears-input:focus { outline: none; border-color: var(--vibears-primary); }
+.vibears-input::placeholder { color: var(--vibears-text-2); font-weight: 400; }
 /* Word cloud input: one word per field + character counter (limit 40, what the server keeps) */
 /* ── Ordering ─────────────────────────────────────────────────────────── */
 .rank-field { display: flex; flex-direction: column; gap: 10px; }
 .rank-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .rank-item {
 	display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-	border: 2px solid var(--pulse-border); border-radius: var(--pulse-r-card, 14px);
-	background: var(--pulse-bg);
+	border: 2px solid var(--vibears-border); border-radius: var(--vibears-r-card, 14px);
+	background: var(--vibears-bg);
 }
 .rank-pos {
 	flex: 0 0 auto; min-width: 1.9em; height: 1.9em; display: inline-flex; align-items: center; justify-content: center;
-	border-radius: var(--pulse-r-pill); background: var(--pulse-primary); color: var(--pulse-primary-text, #fff);
+	border-radius: var(--vibears-r-pill); background: var(--vibears-primary); color: var(--vibears-primary-text, #fff);
 	font-weight: 800; font-variant-numeric: tabular-nums;
 }
 .rank-label { flex: 1; min-width: 0; font-size: 17px; font-weight: 600; overflow-wrap: anywhere; }
 .rank-move { display: flex; gap: 6px; flex: 0 0 auto; }
 .word-field { display: block; }
-.word-count { display: block; margin-top: 4px; font-size: var(--t-cap); color: var(--pulse-text-2); text-align: right; }
+.word-count { display: block; margin-top: 4px; font-size: var(--t-cap); color: var(--vibears-text-2); text-align: right; }
 
 /* ── Scale family: ONE value display, ONE slider building block (refinement §1) ──
    (Design notes, not in the public repository.)
@@ -1761,35 +1761,35 @@ export default {
 
 .val-readout { display: flex; justify-content: center; align-items: baseline; gap: 5px; padding: 6px 0 2px; }
 .val-num {
-	font-family: var(--pulse-mono); font-weight: 800; font-size: 40px; line-height: 1;
-	letter-spacing: -0.02em; color: var(--pulse-text); font-variant-numeric: tabular-nums;
+	font-family: var(--vibears-mono); font-weight: 800; font-size: 40px; line-height: 1;
+	letter-spacing: -0.02em; color: var(--vibears-text); font-variant-numeric: tabular-nums;
 }
-.val-unit { font-family: var(--pulse-mono); font-weight: 700; font-size: var(--t-lead); color: var(--pulse-text-2); }
+.val-unit { font-family: var(--vibears-mono); font-weight: 700; font-size: var(--t-lead); color: var(--vibears-text-2); }
 /* "Nothing chosen yet": grey dash, submit locked (see template). */
-.val-readout.is-empty .val-num { color: var(--pulse-text-2); opacity: 0.55; }
+.val-readout.is-empty .val-num { color: var(--vibears-text-2); opacity: 0.55; }
 
 .scale-range { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; background: transparent; cursor: pointer; margin: 0; }
 .scale-range:disabled { cursor: default; opacity: 0.6; }
-.scale-range:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 4px; border-radius: var(--pulse-r-el); }
-.scale-range::-webkit-slider-runnable-track { height: 9px; border-radius: 999px; background: var(--pulse-fill); }
-.scale-range::-moz-range-track { height: 9px; border-radius: 999px; background: var(--pulse-fill); }
+.scale-range:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 4px; border-radius: var(--vibears-r-el); }
+.scale-range::-webkit-slider-runnable-track { height: 9px; border-radius: 999px; background: var(--vibears-fill); }
+.scale-range::-moz-range-track { height: 9px; border-radius: 999px; background: var(--vibears-fill); }
 .scale-range::-webkit-slider-thumb {
 	-webkit-appearance: none; width: 28px; height: 28px; margin-top: -9.5px; border-radius: 50%;
-	background: var(--thumb, var(--pulse-primary)); border: 3px solid var(--pulse-bg); box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+	background: var(--thumb, var(--vibears-primary)); border: 3px solid var(--vibears-bg); box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
 }
 .scale-range::-moz-range-thumb {
-	width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--pulse-bg);
-	background: var(--thumb, var(--pulse-primary)); box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+	width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--vibears-bg);
+	background: var(--thumb, var(--vibears-primary)); box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
 }
 /* Single: unipolar — fill 0 → thumb (reads as fill level/amount). */
 .scale-range.is-uni::-webkit-slider-runnable-track {
-	background: linear-gradient(90deg, var(--pulse-primary) var(--pct, 0%), var(--pulse-fill) var(--pct, 0%));
+	background: linear-gradient(90deg, var(--vibears-primary) var(--pct, 0%), var(--vibears-fill) var(--pct, 0%));
 }
-.scale-range.is-uni::-moz-range-progress { height: 9px; border-radius: 999px; background: var(--pulse-primary); }
+.scale-range.is-uni::-moz-range-progress { height: 9px; border-radius: 999px; background: var(--vibears-primary); }
 /* Compass: thumb in the "You" colour — the same colour as the pad dot and readout. */
-.scale-range.is-self { --thumb: var(--pulse-self); }
+.scale-range.is-self { --thumb: var(--vibears-self); }
 
-.scale-ends { display: flex; justify-content: space-between; font-size: var(--t-cap); color: var(--pulse-text-2); gap: 12px; }
+.scale-ends { display: flex; justify-content: space-between; font-size: var(--t-cap); color: var(--vibears-text-2); gap: 12px; }
 .scale-ends span { max-width: 45%; }
 .scale-ends span:last-child { text-align: right; }
 
@@ -1799,14 +1799,14 @@ export default {
 .aspect { display: flex; flex-direction: column; gap: 6px; }
 .aspect-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .aspect-name { font-weight: 700; font-size: var(--t-body); }
-.aspect-val { font-family: var(--pulse-mono); font-weight: 800; color: var(--pulse-text); font-variant-numeric: tabular-nums; font-size: var(--t-body); }
-.aspect-val.is-neutral { color: var(--pulse-text-2); }
+.aspect-val { font-family: var(--vibears-mono); font-weight: 800; color: var(--vibears-text); font-variant-numeric: tabular-nums; font-size: var(--t-body); }
+.aspect-val.is-neutral { color: var(--vibears-text-2); }
 .track-wrap { position: relative; }
 /* The tick sits BELOW the slider: the opaque thumb covers it, the
    transparent slider surface lets the stubs above/below the track show through. */
 .track-wrap .mid-tick {
 	position: absolute; top: 50%; transform: translate(-50%, -50%);
-	width: 2px; height: 20px; border-radius: 2px; background: var(--pulse-text-2);
+	width: 2px; height: 20px; border-radius: 2px; background: var(--vibears-text-2);
 	pointer-events: none; z-index: 0;
 }
 .track-wrap .scale-range { position: relative; z-index: 1; }
@@ -1814,17 +1814,17 @@ export default {
 	background:
 		linear-gradient(90deg,
 			transparent 0 var(--lo, 50%),
-			var(--pulse-primary) var(--lo, 50%) var(--hi, 50%),
+			var(--vibears-primary) var(--lo, 50%) var(--hi, 50%),
 			transparent var(--hi, 50%) 100%),
-		var(--pulse-fill);
+		var(--vibears-fill);
 }
 .scale-range.is-bip::-moz-range-track {
 	background:
 		linear-gradient(90deg,
 			transparent 0 var(--lo, 50%),
-			var(--pulse-primary) var(--lo, 50%) var(--hi, 50%),
+			var(--vibears-primary) var(--lo, 50%) var(--hi, 50%),
 			transparent var(--hi, 50%) 100%),
-		var(--pulse-fill);
+		var(--vibears-fill);
 }
 
 /* Compass: 2D pad + synchronised X/Y sliders; dot/thumb/readout in "You" magenta. */
@@ -1832,55 +1832,55 @@ export default {
 .pad-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 /* All four pole labels horizontal (§8.4): top and bottom outside, left and
    right inside at the edge. Rotated in tiny type they were unreadable. */
-.pad-pole { font-size: var(--t-sm); font-weight: 600; color: var(--pulse-meta); text-align: center; max-width: 18ch; }
-.pad-side { position: absolute; top: 50%; transform: translateY(-50%); font-size: var(--t-cap); font-weight: 600; color: var(--pulse-meta); max-width: 8ch; }
+.pad-pole { font-size: var(--t-sm); font-weight: 600; color: var(--vibears-meta); text-align: center; max-width: 18ch; }
+.pad-side { position: absolute; top: 50%; transform: translateY(-50%); font-size: var(--t-cap); font-weight: 600; color: var(--vibears-meta); max-width: 8ch; }
 .pad-side-l { left: 6px; }
 .pad-side-r { right: 6px; text-align: right; }
 .axwords { display: flex; flex-direction: column; gap: 2px; }
 .axwords p { margin: 0; font-size: var(--t-body); font-weight: 600; }
-.axwords-k { color: var(--pulse-meta); }
-.pad { position: relative; width: 100%; max-width: 220px; aspect-ratio: 1 / 1; border: 1.5px solid var(--pulse-border-strong); border-radius: 12px; background: var(--pulse-fill); touch-action: none; cursor: crosshair; }
-.pad-axis { position: absolute; background: var(--pulse-border-strong); }
+.axwords-k { color: var(--vibears-meta); }
+.pad { position: relative; width: 100%; max-width: 220px; aspect-ratio: 1 / 1; border: 1.5px solid var(--vibears-border-strong); border-radius: 12px; background: var(--vibears-fill); touch-action: none; cursor: crosshair; }
+.pad-axis { position: absolute; background: var(--vibears-border-strong); }
 .pad-axis-v { left: 50%; top: 0; width: 2px; height: 100%; transform: translateX(-1px); }
 .pad-axis-h { top: 50%; left: 0; height: 2px; width: 100%; transform: translateY(-1px); }
-.pad-thumb { position: absolute; width: 34px; height: 34px; border-radius: 50%; background: var(--pulse-self); border: 3px solid var(--pulse-bg); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); transform: translate(-50%, -50%); }
-.pad:focus-within { outline: 2px solid var(--pulse-primary); outline-offset: 3px; }
+.pad-thumb { position: absolute; width: 34px; height: 34px; border-radius: 50%; background: var(--vibears-self); border: 3px solid var(--vibears-bg); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); transform: translate(-50%, -50%); }
+.pad:focus-within { outline: 2px solid var(--vibears-primary); outline-offset: 3px; }
 .axrow { display: flex; flex-direction: column; gap: 2px; }
-.axrow-name { font-weight: 700; font-size: var(--t-sm); color: var(--pulse-text); }
+.axrow-name { font-weight: 700; font-size: var(--t-sm); color: var(--vibears-text); }
 
 /* Submit button (voting) + join submit */
 .submit-btn { width: 100%; margin-top: 4px; }
 .submit {
 	appearance: none !important;
 	border: none !important;
-	border-radius: var(--pulse-r-pill) !important;
+	border-radius: var(--vibears-r-pill) !important;
 	box-shadow: none !important;
-	background: var(--pulse-primary) !important;
-	color: var(--pulse-on-primary) !important;
+	background: var(--vibears-primary) !important;
+	color: var(--vibears-on-primary) !important;
 	font-size: var(--t-body); font-weight: 700;
 	padding: 16px !important; min-height: 44px;
 	cursor: pointer; margin: 4px 0 0 !important; height: auto !important;
 }
-.submit:hover:not(:disabled) { background: var(--pulse-primary-hover) !important; }
+.submit:hover:not(:disabled) { background: var(--vibears-primary-hover) !important; }
 .submit:disabled { opacity: 0.45; }
 
-.conn-off { text-align: center; font-size: var(--t-sm); color: var(--pulse-error); margin-top: 24px; }
+.conn-off { text-align: center; font-size: var(--t-sm); color: var(--vibears-error); margin-top: 24px; }
 
 /* ── Bands, correction window, picker sheet (§8.0/§8.3/§8.5/§8.7) ─────── */
-.band { display: flex; align-items: center; gap: 8px; margin: 0; padding: 12px; border-radius: var(--pulse-r-el); font-weight: 700; }
-.band.is-ok { background: var(--pulse-success-soft); color: var(--pulse-success); }
-.band.is-mut { background: var(--pulse-fill); color: var(--pulse-text-2); }
+.band { display: flex; align-items: center; gap: 8px; margin: 0; padding: 12px; border-radius: var(--vibears-r-el); font-weight: 700; }
+.band.is-ok { background: var(--vibears-success-soft); color: var(--vibears-success); }
+.band.is-mut { background: var(--vibears-fill); color: var(--vibears-text-2); }
 
 .fix-bar {
 	position: relative; overflow: hidden;
 	display: flex; align-items: center; gap: 10px;
-	padding: 12px 14px; border-radius: var(--pulse-r-el);
-	background: var(--pulse-success-soft); color: var(--pulse-success);
+	padding: 12px 14px; border-radius: var(--vibears-r-el);
+	background: var(--vibears-success-soft); color: var(--vibears-success);
 	font-weight: 700;
 }
 .fix-btn {
 	margin-left: auto; min-height: 44px; padding: 0 18px;
-	border-radius: var(--pulse-r-pill); border: 1.5px solid currentColor;
+	border-radius: var(--vibears-r-pill); border: 1.5px solid currentColor;
 	background: transparent; color: inherit; font-weight: 700; font-size: var(--t-body);
 	cursor: pointer;
 }
@@ -1888,18 +1888,18 @@ export default {
    the question's (§8.0). */
 .fix-line { position: absolute; left: 0; bottom: 0; height: 3px; background: currentColor; transition: width 0.5s linear; }
 
-.mine-box { border: 1.5px solid var(--pulse-border); border-radius: var(--pulse-r-card); padding: 14px; background: var(--pulse-fill); }
-.mine-k { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--pulse-meta); }
+.mine-box { border: 1.5px solid var(--vibears-border); border-radius: var(--vibears-r-card); padding: 14px; background: var(--vibears-fill); }
+.mine-k { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--vibears-meta); }
 /* A single word runs up to 40 characters, wider than the card at 26px: break it
    rather than push the card past the screen edge. */
 .mine-v { display: block; font-size: 26px; font-weight: 700; line-height: 1.2; padding-block: 0.14em; overflow-wrap: anywhere; }
-.mine-s { display: block; font-size: var(--t-body); font-weight: 600; color: var(--pulse-meta); }
+.mine-s { display: block; font-size: var(--t-body); font-weight: 600; color: var(--vibears-meta); }
 
 .end-title { margin: 0; font-size: var(--t-h2); font-weight: 800; text-align: center; }
 .big-place { text-align: center; padding-block: 8px; }
-.big-place-n { display: block; font-size: 88px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; padding-block: 0.06em; color: var(--pulse-primary); font-variant-numeric: tabular-nums; }
-.big-place-of { display: block; font-size: 17px; font-weight: 600; color: var(--pulse-meta); }
-.end-thanks { margin: 0; text-align: center; font-weight: 600; color: var(--pulse-text-2); }
+.big-place-n { display: block; font-size: 88px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; padding-block: 0.06em; color: var(--vibears-primary); font-variant-numeric: tabular-nums; }
+.big-place-of { display: block; font-size: 17px; font-weight: 600; color: var(--vibears-meta); }
+.end-thanks { margin: 0; text-align: center; font-weight: 600; color: var(--vibears-text-2); }
 .code-badge.is-inline { display: inline-block; margin-top: 8px; }
 
 /* Matching: row with a target chip, the whole row is the hit area (§8.3) */
@@ -1907,24 +1907,24 @@ export default {
 .mrow {
 	display: flex; align-items: center; gap: 10px; width: 100%;
 	min-height: 64px; padding: 10px 12px;
-	border: 1.5px solid var(--pulse-border); border-radius: var(--pulse-r-card);
-	background: var(--pulse-bg); color: var(--pulse-text);
+	border: 1.5px solid var(--vibears-border); border-radius: var(--vibears-r-card);
+	background: var(--vibears-bg); color: var(--vibears-text);
 	font-size: var(--t-body); font-weight: 600; text-align: left; cursor: pointer;
 }
 .mrow-cat { min-width: 0; padding-block: 0.14em; }
 .mrow-chip {
 	margin-left: auto; flex: 0 0 auto; min-height: 40px;
 	display: inline-flex; align-items: center; padding: 8px 14px;
-	border-radius: var(--pulse-r-pill); font-weight: 700;
-	background: var(--pulse-fill); color: var(--pulse-text-2);
+	border-radius: var(--vibears-r-pill); font-weight: 700;
+	background: var(--vibears-fill); color: var(--vibears-text-2);
 }
-.mrow-chip.is-set { background: var(--opt-fill, var(--pulse-primary)); color: var(--opt-ink, var(--pulse-on-primary)); }
+.mrow-chip.is-set { background: var(--opt-fill, var(--vibears-primary)); color: var(--opt-ink, var(--vibears-on-primary)); }
 
 .scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.34); z-index: 40; }
 .msheet {
 	position: fixed; inset: auto 0 0 0; z-index: 41;
 	max-height: 80svh; overflow-y: auto;
-	background: var(--pulse-bg); border-top: 1px solid var(--pulse-border);
+	background: var(--vibears-bg); border-top: 1px solid var(--vibears-border);
 	border-radius: 18px 18px 0 0; padding: 16px;
 	padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
 	box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.22);
@@ -1934,16 +1934,16 @@ export default {
 .msheet-opt {
 	display: flex; align-items: center; gap: 10px; width: 100%;
 	min-height: 56px; padding: 8px 12px;
-	border: 1.5px solid color-mix(in oklab, var(--opt-fill, var(--pulse-border)), var(--pulse-bg) 70%);
-	border-radius: var(--pulse-r-card);
-	background: color-mix(in oklab, var(--opt-fill, var(--pulse-bg)), var(--pulse-bg) 90%);
-	color: var(--pulse-text); font-size: var(--t-body); font-weight: 700;
+	border: 1.5px solid color-mix(in oklab, var(--opt-fill, var(--vibears-border)), var(--vibears-bg) 70%);
+	border-radius: var(--vibears-r-card);
+	background: color-mix(in oklab, var(--opt-fill, var(--vibears-bg)), var(--vibears-bg) 90%);
+	color: var(--vibears-text); font-size: var(--t-body); font-weight: 700;
 	text-align: left; cursor: pointer;
 }
 /* Already taken: recognisable, but still selectable — the choice then swaps. */
 .msheet-opt.is-used { filter: saturate(0.25); }
-.msheet-opt small { margin-left: auto; font-size: var(--t-sm); font-weight: 600; color: var(--pulse-meta); }
-.msheet-badge { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 8px; font-size: 15px; background: var(--opt-fill, var(--pulse-primary)); color: var(--opt-ink, var(--pulse-on-primary)); }
+.msheet-opt small { margin-left: auto; font-size: var(--t-sm); font-weight: 600; color: var(--vibears-meta); }
+.msheet-badge { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 8px; font-size: 15px; background: var(--opt-fill, var(--vibears-primary)); color: var(--opt-ink, var(--vibears-on-primary)); }
 .msheet-x { width: 100%; margin-top: 12px; }
 
 /* Hit areas (§8.8): the ordering arrows measured 36 px. */
@@ -1979,7 +1979,7 @@ export default {
 .review { display: flex; flex-direction: column; gap: 14px; padding-bottom: 16px; }
 .review-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .review-h { margin: 0; font-size: 22px; }
-.review-title { margin: 0; font-size: 15px; color: var(--pulse-text-2); overflow-wrap: anywhere; }
+.review-title { margin: 0; font-size: 15px; color: var(--vibears-text-2); overflow-wrap: anywhere; }
 .review-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
 .review-item { display: flex; flex-direction: column; gap: 8px; }
 .review-q { display: flex; gap: 8px; align-items: baseline; margin: 0; font-size: 17px; line-height: 1.3; }
@@ -1987,16 +1987,16 @@ export default {
 .review-q-text { min-width: 0; overflow-wrap: anywhere; }
 .review-num {
 	flex: 0 0 auto; min-width: 1.6em; height: 1.6em; display: inline-flex; align-items: center;
-	justify-content: center; border-radius: var(--pulse-r-pill, 999px); background: var(--pulse-fill);
-	color: var(--pulse-text-2); font-size: 0.8em; font-weight: 800;
+	justify-content: center; border-radius: var(--vibears-r-pill, 999px); background: var(--vibears-fill);
+	color: var(--vibears-text-2); font-size: 0.8em; font-weight: 800;
 }
 .review-mine { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0; font-size: 15px; }
-.review-mine-lbl { color: var(--pulse-text-2); }
+.review-mine-lbl { color: var(--vibears-text-2); }
 /* A flex item keeps its longest word whole unless told otherwise: a 40-character
    word or a free-text answer without spaces would run past the screen edge. */
 .review-mine b { overflow-wrap: anywhere; }
-.review-mine.is-ok b { color: var(--pulse-success); }
-.review-mine.is-no b { color: var(--pulse-error); }
+.review-mine.is-ok b { color: var(--vibears-success); }
+.review-mine.is-no b { color: var(--vibears-error); }
 .review-mine.is-none { font-style: italic; }
 .review-hidden { margin: 0; font-size: 14px; }
 .review-myrank { margin: 0; }
@@ -2010,10 +2010,10 @@ export default {
 .pace-you { font-size: var(--t-lead); line-height: 1.3; margin: 0 0 16px; }
 .pace-h { font-size: var(--t-h2); line-height: 1.25; margin: 0 0 12px; }
 .pace-line { margin: 0 0 12px; }
-.pace-flag { color: var(--pulse-primary); margin: 0 0 8px; }
+.pace-flag { color: var(--vibears-primary); margin: 0 0 8px; }
 /* Below the room name the state icon needs room (card "closed, without a name"). */
 .pace-card .room-title + .state-ico { margin-top: 12px; }
-.pace-facts { margin: 0 0 12px; font-size: var(--t-sm); font-weight: 600; color: var(--pulse-text-2); }
+.pace-facts { margin: 0 0 12px; font-size: var(--t-sm); font-weight: 600; color: var(--vibears-text-2); }
 /* Deadline: icon, absolute time, in the last quarter of an hour the chip. */
 .pace-when {
 	display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px;
@@ -2023,18 +2023,18 @@ export default {
 	list-style: none; margin: 0 0 20px; padding: 0;
 	display: flex; flex-direction: column; gap: 6px; font-size: var(--t-sm);
 }
-.pace-score { margin: 0 0 12px; font-size: var(--t-h2); font-weight: 800; color: var(--pulse-primary); font-variant-numeric: tabular-nums; }
+.pace-score { margin: 0 0 12px; font-size: var(--t-h2); font-weight: 800; color: var(--vibears-primary); font-variant-numeric: tabular-nums; }
 /* Notice box left-aligned — centred body text in a box reads badly. */
 .pace-notice { text-align: left; margin: 0 0 16px; }
 .pace-device { margin: 16px 0 0; font-size: var(--t-sm); }
 .pace-momentum { margin: 0; font-size: var(--t-sm); }
-.pace-momentum b { color: var(--pulse-text); font-variant-numeric: tabular-nums; }
+.pace-momentum b { color: var(--vibears-text); font-variant-numeric: tabular-nums; }
 
 /* ── Self-paced: answer zone (§2.5, §2.6, §2.11) ── */
 /* "Question k of n · Open until …", in the last quarter of an hour with a chip. */
 .pace-pos {
 	display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px;
-	margin: 0; font-size: var(--t-sm); font-weight: 600; color: var(--pulse-text-2);
+	margin: 0; font-size: var(--t-sm); font-weight: 600; color: var(--vibears-text-2);
 	font-variant-numeric: tabular-nums;
 }
 .center .pace-pos { justify-content: center; margin: 0 0 12px; }
@@ -2042,7 +2042,7 @@ export default {
    44 px like every phone button (§8.8). */
 .pace-skip { align-self: center; min-height: 44px; margin-top: 4px; }
 /* Verdict "wrong": its own surface, not just red text (never colour alone). */
-.band.is-no { background: var(--pulse-error-soft); color: var(--pulse-error); }
+.band.is-no { background: var(--vibears-error-soft); color: var(--vibears-error); }
 .pace-points { margin-left: auto; }
 .pace-timeup .submit { width: 100%; }
 /* Programmatic focus on the heading (§2.11): no ring around a title. */

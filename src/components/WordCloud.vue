@@ -10,7 +10,7 @@
 
 			<!-- Empty state (declarative, rendered by Vue, not by the engine) -->
 			<div v-if="isEmpty" class="pl-cloud-empty">
-				<PulseIcon name="edit" size="clamp(40px, 5vw, 72px)" />
+				<VibearsIcon name="edit" size="clamp(40px, 5vw, 72px)" />
 				<b>{{ t('vibears', 'No answers yet') }}</b>
 				<span>{{ t('vibears', 'Scan the code and type your word.') }}</span>
 			</div>
@@ -39,7 +39,7 @@
  */
 import { t } from '../util/l10n.js'
 import { fitCloud } from '../util/wordcloud.js'
-import PulseIcon from './ui/PulseIcon.vue'
+import VibearsIcon from './ui/VibearsIcon.vue'
 
 // ── Engine constants (from the framework-free reference, §7) ───────────────
 // The placement constants (gap, margin, top-N cap) live with the layout in
@@ -67,7 +67,7 @@ const DEMO_POOL = [
 
 export default {
 	name: 'WordCloud',
-	components: { PulseIcon },
+	components: { VibearsIcon },
 	props: {
 		// Snapshot from the server: [{ word, count }], sorted descending.
 		words: { type: Array, default: () => [] },
@@ -360,17 +360,17 @@ export default {
 .pl-cloud-empty {
 	position: absolute; inset: 0;
 	display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
-	text-align: center; color: var(--pulse-text-2);
+	text-align: center; color: var(--vibears-text-2);
 }
-.pl-cloud-empty b { color: var(--pulse-text); font-size: clamp(20px, 2.4vw, 32px); }
+.pl-cloud-empty b { color: var(--vibears-text); font-size: clamp(20px, 2.4vw, 32px); }
 .pl-cloud-empty span { font-size: clamp(14px, 1.4vw, 20px); max-width: 26ch; }
 
 /* "+{count} more" */
 .pl-cloud-overflow {
 	position: absolute; right: 8px; bottom: 8px;
-	font-size: clamp(13px, 1.2vw, 18px); font-weight: 600; color: var(--pulse-text-2);
-	background: var(--pulse-fill); border: 1px solid var(--pulse-border);
-	border-radius: var(--pulse-r-pill); padding: 4px 14px; pointer-events: none;
+	font-size: clamp(13px, 1.2vw, 18px); font-weight: 600; color: var(--vibears-text-2);
+	background: var(--vibears-fill); border: 1px solid var(--vibears-border);
+	border-radius: var(--vibears-r-pill); padding: 4px 14px; pointer-events: none;
 }
 
 /* Counter row */
@@ -378,8 +378,8 @@ export default {
 	flex: 0 0 auto; display: flex; gap: clamp(20px, 3vw, 48px); justify-content: center;
 	padding-top: clamp(12px, 1.6vw, 24px);
 }
-.pl-stat { color: var(--pulse-text-2); font-size: clamp(15px, 1.5vw, 24px); }
-.pl-stat b { color: var(--pulse-text); font-weight: 900; font-variant-numeric: tabular-nums; margin-right: 4px; }
+.pl-stat { color: var(--vibears-text-2); font-size: clamp(15px, 1.5vw, 24px); }
+.pl-stat b { color: var(--vibears-text); font-weight: 900; font-variant-numeric: tabular-nums; margin-right: 4px; }
 
 .pl-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 </style>

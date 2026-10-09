@@ -12,7 +12,7 @@ use OCP\IAppConfig;
 
 /**
  * Caps per account and per quiz room, so that a single Nextcloud user cannot
- * fill the data directory or the database. Pulse stores question images in the app's
+ * fill the data directory or the database. vibeARS stores question images in the app's
  * AppData area and its rows in its own tables — no user quota counts either.
  * Without these caps one account could store gigabytes with a few scripted
  * requests (re-encoded images are several times larger than the upload,

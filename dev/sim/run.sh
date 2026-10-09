@@ -15,7 +15,7 @@ set -eu
 HERE="$(cd "$(dirname "$0")" && pwd)"
 SHOTS="$HERE/../design-shots"
 CONTAINER="${CONTAINER:-nextcloud-nextcloud-1}"
-UID_SIM="${VIBEARS_SIM_USER:-pulse-shots}"
+UID_SIM="${VIBEARS_SIM_USER:-vibears-shots}"
 PASS_FILE="$SHOTS/.shots-pass"
 
 occ() { docker exec -u www-data "$CONTAINER" php /var/www/html/occ "$@"; }
@@ -23,8 +23,8 @@ occ() { docker exec -u www-data "$CONTAINER" php /var/www/html/occ "$@"; }
 # First check that Nextcloud is ready (`status -e`: exit ≠ 0 also in maintenance
 # mode or with a pending upgrade). Otherwise the simulation would hit only 503s.
 occ status -e >/dev/null 2>&1 || { echo "Nextcloud nicht bereit ($CONTAINER): gestoppt, Wartungsmodus oder Upgrade offen" >&2; exit 1; }
-if [ "$UID_SIM" != "pulse-shots" ]; then
-	# .shots-pass belongs to pulse-shots (design-shots shares it).
+if [ "$UID_SIM" != "vibears-shots" ]; then
+	# .shots-pass belongs to vibears-shots (design-shots shares it).
 	[ -n "${VIBEARS_SIM_PASS:-}" ] || { echo "VIBEARS_SIM_USER=$UID_SIM: Passwort per VIBEARS_SIM_PASS mitgeben" >&2; exit 1; }
 elif ! occ user:info "$UID_SIM" >/dev/null 2>&1; then
 	echo "==> Wegwerf-Nutzer $UID_SIM anlegen"
@@ -32,7 +32,7 @@ elif ! occ user:info "$UID_SIM" >/dev/null 2>&1; then
 	openssl rand -base64 18 > "$TMP_PASS"
 	OC_PASS="$(cat "$TMP_PASS")" docker exec -u www-data -e OC_PASS \
 		"$CONTAINER" php /var/www/html/occ user:add --password-from-env \
-		--display-name="Pulse Shots" "$UID_SIM" || { rm -f "$TMP_PASS"; exit 1; }
+		--display-name="vibeARS Shots" "$UID_SIM" || { rm -f "$TMP_PASS"; exit 1; }
 	# Store it only now that the user exists with this password — and
 	# use exactly this one, even if VIBEARS_SIM_PASS said otherwise.
 	mv "$TMP_PASS" "$PASS_FILE"

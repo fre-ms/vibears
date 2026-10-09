@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Pulse — design-system primitives (step 1).
- * Global, un-scoped; ported from the concept (stage 1), prefixed with `pulse-`
+ * vibeARS — design-system primitives (step 1).
+ * Global, un-scoped; ported from the concept (stage 1), prefixed with `vibears-`
  * (to avoid collisions with the old scoped classes during the migration).
  *
  * Contains the NC `<button>` resets: Nextcloud styles native <button> globally with
  * high specificity -> without appearance/reset that shows through.
- * Colours/radii/type come from pulse-tokens.css.
+ * Colours/radii/type come from vibears-tokens.css.
  *
  * Section references (§…) point to the design notes of the redesign and of the
  * self-paced quiz, which are not in the public repository (see "References in
@@ -17,7 +17,7 @@
  */
 
 /* ══ Buttons — ONE hierarchy ════════════════════════════════════════════════ */
-.pulse-btn {
+.vibears-btn {
 	font-family: inherit;
 	font-size: var(--t-body);
 	font-weight: 600;
@@ -33,9 +33,9 @@
 	   specificity -> the shape-defining roles carry !important, layout/size
 	   (padding/min-height) stay freely overridable (modifiers, is-sm …). */
 	border: 1px solid transparent !important;
-	border-radius: var(--pulse-r-pill) !important;
-	background: var(--pulse-fill) !important;
-	color: var(--pulse-text) !important;
+	border-radius: var(--vibears-r-pill) !important;
+	background: var(--vibears-fill) !important;
+	color: var(--vibears-text) !important;
 	box-shadow: none !important;
 	cursor: pointer;
 	-webkit-appearance: none;
@@ -43,43 +43,43 @@
 	box-sizing: border-box;
 	transition: filter .15s, background .15s, border-color .15s;
 }
-.pulse-btn:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 2px; }
-.pulse-btn:disabled { opacity: .5; cursor: default; }
-.pulse-btn:active:not(:disabled) { transform: translateY(1px); }
+.vibears-btn:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 2px; }
+.vibears-btn:disabled { opacity: .5; cursor: default; }
+.vibears-btn:active:not(:disabled) { transform: translateY(1px); }
 
-.pulse-btn.is-primary   { background: var(--pulse-primary) !important; color: var(--pulse-on-primary) !important; }
-.pulse-btn.is-primary:hover:not(:disabled)   { background: var(--pulse-primary-hover) !important; }
-.pulse-btn.is-secondary { background: transparent !important; color: var(--pulse-text) !important; border-color: var(--pulse-border-strong) !important; }
-.pulse-btn.is-secondary:hover:not(:disabled) { background: var(--pulse-hover) !important; }
-.pulse-btn.is-tertiary  { background: var(--pulse-fill) !important; color: var(--pulse-text) !important; }
-.pulse-btn.is-tertiary:hover:not(:disabled)  { background: var(--pulse-hover) !important; }
-.pulse-btn.is-quiz      { background: var(--pulse-quiz) !important; color: var(--pulse-quiz-on) !important; }
-.pulse-btn.is-quiz:hover:not(:disabled)      { filter: brightness(1.06); }
-.pulse-btn.is-on        { background: var(--pulse-primary) !important; color: var(--pulse-on-primary) !important; }
+.vibears-btn.is-primary   { background: var(--vibears-primary) !important; color: var(--vibears-on-primary) !important; }
+.vibears-btn.is-primary:hover:not(:disabled)   { background: var(--vibears-primary-hover) !important; }
+.vibears-btn.is-secondary { background: transparent !important; color: var(--vibears-text) !important; border-color: var(--vibears-border-strong) !important; }
+.vibears-btn.is-secondary:hover:not(:disabled) { background: var(--vibears-hover) !important; }
+.vibears-btn.is-tertiary  { background: var(--vibears-fill) !important; color: var(--vibears-text) !important; }
+.vibears-btn.is-tertiary:hover:not(:disabled)  { background: var(--vibears-hover) !important; }
+.vibears-btn.is-quiz      { background: var(--vibears-quiz) !important; color: var(--vibears-quiz-on) !important; }
+.vibears-btn.is-quiz:hover:not(:disabled)      { filter: brightness(1.06); }
+.vibears-btn.is-on        { background: var(--vibears-primary) !important; color: var(--vibears-on-primary) !important; }
 
 /* Danger: set apart by default (outline), only the serious action gets .is-solid */
-.pulse-btn.is-danger {
+.vibears-btn.is-danger {
 	background: transparent !important;
-	color: var(--pulse-error) !important;
+	color: var(--vibears-error) !important;
 	border-color: rgba(193, 48, 48, .45) !important;
-	border-color: color-mix(in srgb, var(--pulse-error) 45%, transparent) !important;
+	border-color: color-mix(in srgb, var(--vibears-error) 45%, transparent) !important;
 }
-.pulse-btn.is-danger:hover:not(:disabled) { background: var(--pulse-error-soft) !important; }
-.pulse-btn.is-danger.is-solid { background: var(--pulse-error) !important; color: #fff !important; border-color: var(--pulse-error) !important; }
+.vibears-btn.is-danger:hover:not(:disabled) { background: var(--vibears-error-soft) !important; }
+.vibears-btn.is-danger.is-solid { background: var(--vibears-error) !important; color: #fff !important; border-color: var(--vibears-error) !important; }
 /* Without this line the hover rule of the outline variant wins (one class
    more in specificity) and the filled danger button turns LIGHTER on hover
    — it looked disabled. */
-.pulse-btn.is-danger.is-solid:hover:not(:disabled) { background: var(--pulse-error) !important; filter: brightness(.92); }
+.vibears-btn.is-danger.is-solid:hover:not(:disabled) { background: var(--vibears-error) !important; filter: brightness(.92); }
 
-.pulse-btn.is-lg { min-height: 52px; font-size: 18px; padding: 0 32px; }
-.pulse-btn.is-sm { min-height: 36px; font-size: var(--t-sm); padding: 0 12px; }
-.pulse-btn.is-xs { min-height: 30px; font-size: 12px; padding: 0 8px; }
-.pulse-btn.is-icon { width: 44px; padding: 0; }
-.pulse-btn.is-icon.is-sm { width: 36px; }
-.pulse-btn.is-icon.is-xs { width: 30px; }
+.vibears-btn.is-lg { min-height: 52px; font-size: 18px; padding: 0 32px; }
+.vibears-btn.is-sm { min-height: 36px; font-size: var(--t-sm); padding: 0 12px; }
+.vibears-btn.is-xs { min-height: 30px; font-size: 12px; padding: 0 8px; }
+.vibears-btn.is-icon { width: 44px; padding: 0; }
+.vibears-btn.is-icon.is-sm { width: 36px; }
+.vibears-btn.is-icon.is-xs { width: 30px; }
 
 /* ══ Chip / Badge — ONE family ══════════════════════════════════════════════ */
-.pulse-chip {
+.vibears-chip {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -88,63 +88,63 @@
 	line-height: 1;
 	padding: 5px 11px;
 	border: 1px solid transparent;
-	border-radius: var(--pulse-r-pill);
-	background: var(--pulse-fill);
-	color: var(--pulse-text);
+	border-radius: var(--vibears-r-pill);
+	background: var(--vibears-fill);
+	color: var(--vibears-text);
 }
-.pulse-chip.is-neutral { background: var(--pulse-fill); color: var(--pulse-text-2); border-color: var(--pulse-border); }
-.pulse-chip.is-accent  { background: var(--pulse-primary-soft); color: var(--pulse-primary); }
-.pulse-chip.is-live    { background: var(--pulse-success-soft); color: var(--pulse-success); }
-.pulse-chip.is-locked  { background: var(--pulse-fill); color: var(--pulse-text-2); border-color: var(--pulse-border-strong); }
-.pulse-chip.is-warning { background: var(--pulse-warning-soft); color: var(--pulse-warning); }
-.pulse-chip.is-error   { background: var(--pulse-error-soft); color: var(--pulse-error); }
-.pulse-chip.is-success { background: var(--pulse-success-soft); color: var(--pulse-success); }
-.pulse-chip.is-quiz    { background: var(--pulse-quiz-soft); color: var(--pulse-quiz); }
+.vibears-chip.is-neutral { background: var(--vibears-fill); color: var(--vibears-text-2); border-color: var(--vibears-border); }
+.vibears-chip.is-accent  { background: var(--vibears-primary-soft); color: var(--vibears-primary); }
+.vibears-chip.is-live    { background: var(--vibears-success-soft); color: var(--vibears-success); }
+.vibears-chip.is-locked  { background: var(--vibears-fill); color: var(--vibears-text-2); border-color: var(--vibears-border-strong); }
+.vibears-chip.is-warning { background: var(--vibears-warning-soft); color: var(--vibears-warning); }
+.vibears-chip.is-error   { background: var(--vibears-error-soft); color: var(--vibears-error); }
+.vibears-chip.is-success { background: var(--vibears-success-soft); color: var(--vibears-success); }
+.vibears-chip.is-quiz    { background: var(--vibears-quiz-soft); color: var(--vibears-quiz); }
 
 /* Pulsing dot for "Running" and the like — its own name, does not collide with the
-   existing scoped .pulse-dot in Participant/Screen. */
-.pulse-chip-dot {
+   existing scoped .vibears-dot in Participant/Screen. */
+.vibears-chip-dot {
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
 	background: currentColor;
-	animation: pulse-chip-dot 1.6s ease-in-out infinite;
+	animation: vibears-chip-dot 1.6s ease-in-out infinite;
 }
-@keyframes pulse-chip-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.7); } }
+@keyframes vibears-chip-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.7); } }
 
 /* ══ Notice ═════════════════════════════════════════════════════════════════ */
-.pulse-notice {
+.vibears-notice {
 	display: flex;
 	gap: 12px;
 	align-items: flex-start;
 	padding: 12px 14px;
 	border: 1px solid transparent;
-	border-radius: var(--pulse-r-el);
+	border-radius: var(--vibears-r-el);
 	font-size: var(--t-sm);
 }
-.pulse-notice .pulse-notice-ico { flex: 0 0 20px; margin-top: 1px; }
-.pulse-notice.is-info    { background: var(--pulse-primary-soft); color: var(--pulse-primary); }
-.pulse-notice.is-warn    { background: var(--pulse-warning-soft); color: var(--pulse-warning); }
-.pulse-notice.is-success { background: var(--pulse-success-soft); color: var(--pulse-success); }
-.pulse-notice strong { display: block; color: var(--pulse-text); }
+.vibears-notice .vibears-notice-ico { flex: 0 0 20px; margin-top: 1px; }
+.vibears-notice.is-info    { background: var(--vibears-primary-soft); color: var(--vibears-primary); }
+.vibears-notice.is-warn    { background: var(--vibears-warning-soft); color: var(--vibears-warning); }
+.vibears-notice.is-success { background: var(--vibears-success-soft); color: var(--vibears-success); }
+.vibears-notice strong { display: block; color: var(--vibears-text); }
 
 /* ══ Answer palette A–H — wiring ════════════════════════════════════════════
    One class per index sets --opt-fill/--opt-ink; the letter badge AND the
    result bar read the same variables -> the option colour travels from
    the live tile all the way into the filled bar (util/palette.js supplies the
    class). Amber (D) additionally carries .is-ink for a dark letter-chip tint. */
-.pulse-opt-a { --opt-fill: var(--opt-a); --opt-ink: var(--opt-a-ink); }
-.pulse-opt-b { --opt-fill: var(--opt-b); --opt-ink: var(--opt-b-ink); }
-.pulse-opt-c { --opt-fill: var(--opt-c); --opt-ink: var(--opt-c-ink); }
-.pulse-opt-d { --opt-fill: var(--opt-d); --opt-ink: var(--opt-d-ink); }
-.pulse-opt-e { --opt-fill: var(--opt-e); --opt-ink: var(--opt-e-ink); }
-.pulse-opt-f { --opt-fill: var(--opt-f); --opt-ink: var(--opt-f-ink); }
-.pulse-opt-g { --opt-fill: var(--opt-g); --opt-ink: var(--opt-g-ink); }
-.pulse-opt-h { --opt-fill: var(--opt-h); --opt-ink: var(--opt-h-ink); }
+.vibears-opt-a { --opt-fill: var(--opt-a); --opt-ink: var(--opt-a-ink); }
+.vibears-opt-b { --opt-fill: var(--opt-b); --opt-ink: var(--opt-b-ink); }
+.vibears-opt-c { --opt-fill: var(--opt-c); --opt-ink: var(--opt-c-ink); }
+.vibears-opt-d { --opt-fill: var(--opt-d); --opt-ink: var(--opt-d-ink); }
+.vibears-opt-e { --opt-fill: var(--opt-e); --opt-ink: var(--opt-e-ink); }
+.vibears-opt-f { --opt-fill: var(--opt-f); --opt-ink: var(--opt-f-ink); }
+.vibears-opt-g { --opt-fill: var(--opt-g); --opt-ink: var(--opt-g-ink); }
+.vibears-opt-h { --opt-fill: var(--opt-h); --opt-ink: var(--opt-h-ink); }
 
 /* Letter badge — relative size (em) so that it renders small on the phone and large
    on the projector; surface = option colour, text = verified ink colour. */
-.pulse-badge {
+.vibears-badge {
 	display: inline-grid;
 	place-items: center;
 	width: 2.2em;
@@ -152,8 +152,8 @@
 	border-radius: .5em;
 	font-weight: 800;
 	flex: 0 0 auto;
-	background: var(--opt-fill, var(--pulse-fill));
-	color: var(--opt-ink, var(--pulse-text));
+	background: var(--opt-fill, var(--vibears-fill));
+	color: var(--opt-ink, var(--vibears-text));
 }
 
 /* ══ Stage row model (design notes §2.4, not in the public repository) ══════
@@ -185,10 +185,10 @@
 	border-radius: .2em;
 	min-width: 0;
 }
-.srow-track { position: absolute; inset: 0; background: var(--pulse-bar-track); }
+.srow-track { position: absolute; inset: 0; background: var(--vibears-bar-track); }
 .srow-fill {
 	position: absolute; inset: 0 auto 0 0; width: var(--p, 0%);
-	background: var(--opt-fill, var(--pulse-primary));
+	background: var(--opt-fill, var(--vibears-primary));
 	transition: width .7s cubic-bezier(.22, 1, .36, 1);
 }
 .srow-text {
@@ -198,9 +198,9 @@
 	min-width: 0;
 }
 /* On the fill: the verified contrast partner of the palette colour (--opt-ink). */
-.srow-text--fill  { color: var(--opt-ink, var(--pulse-on-primary)); clip-path: inset(0 calc(100% - var(--p, 0%)) 0 0); }
+.srow-text--fill  { color: var(--opt-ink, var(--vibears-on-primary)); clip-path: inset(0 calc(100% - var(--p, 0%)) 0 0); }
 /* On the track: normal text colour. */
-.srow-text--track { color: var(--pulse-text); clip-path: inset(0 0 0 var(--p, 0%)); }
+.srow-text--track { color: var(--vibears-text); clip-path: inset(0 0 0 var(--p, 0%)); }
 
 .srow-badge {
 	flex: 0 0 auto;
@@ -212,8 +212,8 @@
 }
 /* Over the fill a badge in the option colour would be invisible — there
    it carries a tint of the contrast partner. Over the track, the full colour. */
-.srow-text--fill  .srow-badge { background: color-mix(in srgb, var(--opt-ink, #fff) 22%, transparent); color: var(--opt-ink, var(--pulse-on-primary)); }
-.srow-text--track .srow-badge { background: var(--opt-fill, var(--pulse-fill)); color: var(--opt-ink, var(--pulse-text)); }
+.srow-text--fill  .srow-badge { background: color-mix(in srgb, var(--opt-ink, #fff) 22%, transparent); color: var(--opt-ink, var(--vibears-on-primary)); }
+.srow-text--track .srow-badge { background: var(--opt-fill, var(--vibears-fill)); color: var(--opt-ink, var(--vibears-text)); }
 
 .srow-label {
 	min-width: 0; flex: 0 1 auto;
@@ -238,15 +238,15 @@
    .srow itself would lie BELOW the absolutely positioned children and be invisible. */
 .srow.is-correct::after {
 	content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-	border: .12em solid var(--pulse-solution-ring); border-radius: inherit;
+	border: .12em solid var(--vibears-solution-ring); border-radius: inherit;
 }
 .srow.is-correct .srow-label { font-weight: 700; }
 .srow.is-wrong .srow-fill { filter: saturate(.35); }
 
 /* Open stage (§6.3): outline instead of surface — the same family, a different
    state. No value, no fill. */
-.srow--outline { border: .05em solid var(--pulse-border); background: transparent; }
-.srow--outline .srow-text { color: var(--pulse-text); position: static; height: 100%; }
+.srow--outline { border: .05em solid var(--vibears-border); background: transparent; }
+.srow--outline .srow-text { color: var(--vibears-text); position: static; height: 100%; }
 
 /* ── Stacked row (§7.5/§7.6) ────────────────────────────────────────────
    The row is always 100 % filled and split into segments; the segment
@@ -259,7 +259,7 @@
 	width: 1.5em; height: 1.5em; border-radius: .25em;
 	font-size: .82em; font-weight: 800; line-height: 1;
 	font-variant-numeric: tabular-nums;
-	background: var(--pulse-bar-track); color: var(--pulse-text);
+	background: var(--vibears-bar-track); color: var(--vibears-text);
 }
 .sstack-head {
 	flex: 0 0 9em; width: 9em; min-width: 0;
@@ -270,21 +270,21 @@
 	flex: 1 1 auto; min-width: 0;
 	display: flex; height: 2.4em;
 	border-radius: .2em; overflow: hidden;
-	background: var(--pulse-bar-track);
+	background: var(--vibears-bar-track);
 }
 .sseg {
 	position: relative; min-width: 0;
 	display: grid; place-items: center;
 	font-size: .82em; font-weight: 800; line-height: 1;
 	overflow: hidden; white-space: nowrap;
-	background: var(--seg-fill, var(--pulse-primary));
-	color: var(--seg-ink, var(--pulse-on-primary));
+	background: var(--seg-fill, var(--vibears-primary));
+	color: var(--seg-ink, var(--vibears-on-primary));
 }
 /* Solution in the segment, not at the start of the row (§7.6) — the ring sits as its own
    layer on top so that it does not disappear under the neighbouring segment. */
 .sseg.is-correct::after {
 	content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-	border: .12em solid var(--pulse-solution-ring);
+	border: .12em solid var(--vibears-solution-ring);
 }
 .sseg.is-wrong { filter: saturate(.35); }
 .sstack-val {
@@ -295,22 +295,22 @@
 /* ── Self-paced race (projector, §3.3) ──────────────────────────────────
    The same row as the reveal, but counts instead of answers: the
    question rows in the data colour, "Finished" in the completion colour (the
-   readout grey, resolved on the element: dark #c3d2e4 — --pulse-state-done
+   readout grey, resolved on the element: dark #c3d2e4 — --vibears-state-done
    would stay #33465e there, 1.5:1 on the track), "Not started" grey. The
    contrast partners (--*-ink) are measured in
-   pulse-tokens.css. "Not started" takes the secondary-text grey, not --pulse-border-
+   vibears-tokens.css. "Not started" takes the secondary-text grey, not --vibears-border-
    strong: its fill stood at 1.2:1 on the track, the bar length could
    not be seen (measured 28.09.: grey/track light 4.5:1, text on it
-   --pulse-bg ≥ 4.5:1 light and dark — both roles follow the NC theme,
+   --vibears-bg ≥ 4.5:1 light and dark — both roles follow the NC theme,
    on the public page too). The value is just a number — the
    minimum width for "9 · 38 %" would take the room for the label away from
    the question rows in two columns. */
-.pace-race-row { --opt-fill: var(--pulse-viz); --opt-ink: var(--pulse-viz-ink); }
-.pace-race-row.is-done { --opt-fill: var(--pulse-readout); --opt-ink: var(--pulse-state-done-ink); }
-.pace-race-row.is-idle { --opt-fill: var(--pulse-text-2); --opt-ink: var(--pulse-bg); }
+.pace-race-row { --opt-fill: var(--vibears-viz); --opt-ink: var(--vibears-viz-ink); }
+.pace-race-row.is-done { --opt-fill: var(--vibears-readout); --opt-ink: var(--vibears-state-done-ink); }
+.pace-race-row.is-idle { --opt-fill: var(--vibears-text-2); --opt-ink: var(--vibears-bg); }
 /* Public page without a theme choice (<body data-themes="">, the projector in the
    classroom): NC only switches to dark there via prefers-color-scheme
-   (:root), and none of the dark blocks in pulse-tokens.css apply. Track and
+   (:root), and none of the dark blocks in vibears-tokens.css apply. Track and
    text turn dark, data colour and readout would stay light — measured 28.09.:
    "Finished" #33465e on #292929 = 1.51:1, questions #0e7c8b = 2.96:1. So only the
    race rows pull in the dark values (the same as in the
@@ -318,29 +318,29 @@
    rest of the public projector stays as it is (moderated mode unchanged). */
 @media (prefers-color-scheme: dark) {
 	[data-themes=""] .pace-race-row {
-		--pulse-viz: #43c3d8;
-		--pulse-viz-ink: #062a30;
-		--pulse-readout: #c3d2e4;
-		--pulse-state-done-ink: #0d1620;
+		--vibears-viz: #43c3d8;
+		--vibears-viz-ink: #062a30;
+		--vibears-readout: #c3d2e4;
+		--vibears-state-done-ink: #0d1620;
 	}
 }
 .pace-race-row .srow-val { min-width: 2.5em; }
 
 /* "You" pill — identical in list, bar, podium. */
-.pulse-du {
+.vibears-du {
 	display: inline-flex;
 	align-items: center;
 	font-size: .75em;
 	font-weight: 700;
 	padding: .12em .55em;
-	border-radius: var(--pulse-r-pill);
-	background: var(--pulse-primary-soft);
-	color: var(--pulse-primary);
+	border-radius: var(--vibears-r-pill);
+	background: var(--vibears-primary-soft);
+	color: var(--vibears-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.pulse-chip-dot { animation: none; }
+	.vibears-chip-dot { animation: none; }
 	/* The race changes every 2 s, for the whole session (§3.3). */
 	.pace-race-row .srow-fill { transition: none; }
-	.pulse-btn { transition: none; }
+	.vibears-btn { transition: none; }
 }

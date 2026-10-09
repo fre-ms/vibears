@@ -84,6 +84,6 @@ export default {
 
 <style scoped>
 .spv { width: 100%; min-width: 0; aspect-ratio: 16 / 9; display: grid; place-items: center; }
-.spv-in { position: relative; box-sizing: content-box; overflow: hidden; border: 1px solid var(--pulse-border-strong); border-radius: var(--pulse-r-card); background: var(--pulse-screen-bg); }
+.spv-in { position: relative; box-sizing: content-box; overflow: hidden; border: 1px solid var(--vibears-border-strong); border-radius: var(--vibears-r-card); background: var(--vibears-screen-bg); }
 .spv-frame { width: 1280px; height: 720px; border: 0; transform-origin: top left; display: block; }
 </style>

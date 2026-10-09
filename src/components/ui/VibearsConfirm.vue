@@ -12,19 +12,19 @@
 			:aria-label="title"
 			tabindex="-1">
 			<h5 class="pconfirm-title">
-				<PulseIcon v-if="danger" name="warning" class="pconfirm-warn" size="1.2em" />
+				<VibearsIcon v-if="danger" name="warning" class="pconfirm-warn" size="1.2em" />
 				{{ title }}
 			</h5>
 			<p v-if="text" class="pconfirm-text">{{ text }}</p>
 			<div class="pconfirm-row">
-				<button ref="cancel" type="button" class="pulse-btn is-secondary" @click="onCancel">
+				<button ref="cancel" type="button" class="vibears-btn is-secondary" @click="onCancel">
 					{{ cancelLabel }}
 				</button>
-				<button v-if="altLabel" type="button" class="pulse-btn is-secondary pconfirm-alt" @click="onAlt">
+				<button v-if="altLabel" type="button" class="vibears-btn is-secondary pconfirm-alt" @click="onAlt">
 					{{ altLabel }}
 				</button>
 				<button type="button"
-					:class="['pulse-btn', danger ? 'is-danger is-solid' : 'is-primary']"
+					:class="['vibears-btn', danger ? 'is-danger is-solid' : 'is-primary']"
 					@click="onConfirm">
 					{{ confirmLabel }}
 				</button>
@@ -35,21 +35,21 @@
 
 <script>
 /*
- * PulseConfirm — themeable confirmation dialog, replaces window.confirm().
+ * VibearsConfirm — themeable confirmation dialog, replaces window.confirm().
  * Usually not used directly in a template but imperatively via
- * util/confirm.js -> pulseConfirm({...}): Promise<boolean>.
+ * util/confirm.js -> vibearsConfirm({...}): Promise<boolean>.
  * Destructive variant (danger): warning icon, "Cancel" on the left, red action on the right.
  * altLabel: a third, understated button between Cancel and Confirm
- * (e.g. "Stop without releasing" next to "Close and release") — pulseConfirm
+ * (e.g. "Stop without releasing" next to "Close and release") — vibearsConfirm
  * then resolves with 'alt'.
  * Own fixed overlay + focus trap (no NcModal, full control over the look).
  */
 import { t } from '../../util/l10n.js'
-import PulseIcon from './PulseIcon.vue'
+import VibearsIcon from './VibearsIcon.vue'
 
 export default {
-	name: 'PulseConfirm',
-	components: { PulseIcon },
+	name: 'VibearsConfirm',
+	components: { VibearsIcon },
 	props: {
 		title: { type: String, default: t('vibears', 'Are you sure?') },
 		text: { type: String, default: '' },
@@ -90,25 +90,25 @@ export default {
 .pconfirm {
 	width: 100%;
 	max-width: 360px;
-	background: var(--pulse-bg);
-	border: 1px solid var(--pulse-border);
-	border-radius: var(--pulse-r-card);
-	box-shadow: var(--pulse-shadow-pop);
+	background: var(--vibears-bg);
+	border: 1px solid var(--vibears-border);
+	border-radius: var(--vibears-r-card);
+	box-shadow: var(--vibears-shadow-pop);
 	padding: 22px;
 }
 .pconfirm-title {
 	margin: 0 0 6px;
 	font-size: var(--t-lead);
-	color: var(--pulse-text);
+	color: var(--vibears-text);
 	display: flex;
 	align-items: center;
 	gap: 10px;
 }
-.pconfirm-warn { color: var(--pulse-error); }
+.pconfirm-warn { color: var(--vibears-error); }
 .pconfirm-text {
 	margin: 0 0 18px;
 	font-size: var(--t-sm);
-	color: var(--pulse-text-2);
+	color: var(--vibears-text-2);
 	line-height: 1.5;
 }
 .pconfirm-row {

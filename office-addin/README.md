@@ -62,14 +62,14 @@ and restart PowerPoint.
 
 ### 1a. For a single person: shared folder
 
-1. Create a folder, e.g. `C:\PulseAddin`.
+1. Create a folder, e.g. `C:\VibearsAddin`.
 2. Copy the downloaded `vibears-addin.xml` into it.
 3. Share the folder: right-click → **Properties → Sharing → Share…**
-   (or **Advanced Sharing**), share name e.g. `PulseAddin`.
-   The result is a UNC path like `\\YOUR-PC\PulseAddin`.
+   (or **Advanced Sharing**), share name e.g. `VibearsAddin`.
+   The result is a UNC path like `\\YOUR-PC\VibearsAddin`.
 4. PowerPoint → **File → Options → Trust Center →
    Trust Center Settings… → Trusted Add-in Catalogs**.
-5. Enter the UNC path `\\YOUR-PC\PulseAddin` as the **Catalog Url** →
+5. Enter the UNC path `\\YOUR-PC\VibearsAddin` as the **Catalog Url** →
    **Add catalog**.
 6. Tick **"Show in Menu"** for it in the list → **OK**.
 7. **Restart PowerPoint.**

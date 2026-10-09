@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 /**
- * Caps per account (security review, task D / M4). Pulse's rooms, questions
+ * Caps per account (security review, task D / M4). vibeARS's rooms, questions
  * and images count towards no user quota, so without caps one account could
  * fill the database and the data directory with a few scripted requests:
  * - rooms per account, questions per room, characters per question — each

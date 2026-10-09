@@ -91,7 +91,7 @@ opened) and `click` (only for click tracks).
 `pace-screen` in this order, because some tracks change rooms; `pace-screen`
 releases `race` at the end. Among other things it measures: exactly one filled
 button per view, the footer of the run view above the fold, no solution in the
-phone DOM before the release (`.pulse-results`, `.tg-accepted`, `.srow-mark`),
+phone DOM before the release (`.vibears-results`, `.tg-accepted`, `.srow-mark`),
 no question text on the projector and 0 px horizontal overflow, in the open
 race the rows add up to the number of people who joined (finding `SUMME`), both
 CSVs in the browser 200 + `text/csv` (counter-check without request token:
@@ -195,8 +195,8 @@ all vibeARS routes. Therefore:
 - The projector keeps its state for 2 s: after a probe command at least
   `settle: 2500`.
 - Never in parallel with `dev/sim/run.sh` (or a second harness run): both use
-  `pulse-shots`, and `run.sh` removes **every** room of that user before and
-  after with `probe destroy pulse-shots` — including the sim's, whose next
+  `vibears-shots`, and `run.sh` removes **every** room of that user before and
+  after with `probe destroy vibears-shots` — including the sim's, whose next
   phone request then goes nowhere and counts.
 
 ## Baselines

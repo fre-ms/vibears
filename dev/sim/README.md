@@ -107,7 +107,7 @@ Additionally for self-paced:
 
 ## How it works
 
-- `run.sh` creates the throwaway user `pulse-shots` if needed (the same one as
+- `run.sh` creates the throwaway user `vibears-shots` if needed (the same one as
   in `dev/design-shots`, password in `dev/design-shots/.shots-pass`),
   determines the container IP and starts `sim.mjs`.
 - The moderator talks to the API with Basic auth + `OCS-APIRequest: true` (no
@@ -125,7 +125,7 @@ Additionally for self-paced:
   public leaderboard sit in the server cache for 2 s, so projector checks after
   a change first wait 2.1 s. Deadlines come from `serverNow` of the last
   response, never from this machine's clock.
-- Messages and CSV cells ("yes"/"no") are compared in English: `pulse-shots`
+- Messages and CSV cells ("yes"/"no") are compared in English: `vibears-shots`
   has the language `en`, and the phones send no `Accept-Language`.
 - Every request carries the user agent `vibears-sim`. After the run, a log scan
   shows whether any of them wrote a warning or an error to the Nextcloud log —
@@ -139,13 +139,13 @@ Additionally for self-paced:
   ```
 
 **Never in parallel** with `dev/design-shots/run.sh` or a second sim run:
-they all use `pulse-shots`, and the screenshot harness removes every room of
-that user with `probe destroy pulse-shots` — including the ones the sim is
+they all use `vibears-shots`, and the screenshot harness removes every room of
+that user with `probe destroy vibears-shots` — including the ones the sim is
 using right now. The next phone request to a deleted code counts as a
 brute-force attempt by the sim IP.
 
 Settings: `CONTAINER`, `VIBEARS_SIM_URL`, `VIBEARS_SIM_HOST`, `VIBEARS_SIM_USER`
-(then also `VIBEARS_SIM_PASS` — `.shots-pass` belongs to `pulse-shots`). If
+(then also `VIBEARS_SIM_PASS` — `.shots-pass` belongs to `vibears-shots`). If
 `occ` does not answer, `run.sh` aborts instead of overwriting the shared
 password.
 

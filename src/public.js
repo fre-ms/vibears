@@ -6,8 +6,8 @@ import Vue from 'vue'
 import { loadState } from '@nextcloud/initial-state'
 import { t, n } from './util/l10n.js'
 // Design-system foundation (on the phone + projector too): tokens + primitives, global.
-import './styles/pulse-tokens.css'
-import './styles/pulse-ds.css'
+import './styles/vibears-tokens.css'
+import './styles/vibears-ds.css'
 import Participant from './Participant.vue'
 import Screen from './Screen.vue'
 
@@ -23,6 +23,6 @@ const isScreen = loadState('vibears', 'screen', false)
 
 // eslint-disable-next-line no-new
 new Vue({
-	el: '#pulse-public-app',
+	el: '#vibears-public-app',
 	render: (h) => h(isScreen ? Screen : Participant),
 })

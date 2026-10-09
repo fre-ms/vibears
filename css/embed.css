@@ -4,7 +4,7 @@
  */
 /* Embed shell for the Office/PowerPoint add-in. Full-bleed, no NC chrome.
    Colors come from the token layer (js/vibears-styles.js loads it), buttons
-   from the ONE button system .pulse-btn — the shell used to have its own
+   from the ONE button system .vibears-btn — the shell used to have its own
    hex values and its own button (B3).
    Section references (§…) and review IDs (B3) point to the design notes of the
    redesign, which are not in the public repository (see "References in code
@@ -13,7 +13,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: var(--pulse-screen-bg, #fff);
+    background: var(--vibears-screen-bg, #fff);
 }
 
 /* Hide the NC guest chrome of the public layout — the slide shows only the poll. */
@@ -22,24 +22,24 @@ footer.guest-box {
     display: none !important;
 }
 
-#pulse-embed-root {
+#vibears-embed-root {
     position: absolute;
     inset: 0;
     z-index: 1000; /* above any NC chrome (e.g. #header z-index ~2000 is hidden in addition) */
     font-family: var(--font-face, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
-    color: var(--pulse-text, #1a1a1a);
+    color: var(--vibears-text, #1a1a1a);
 }
 
 /* Loading state + form are centered */
-.pulse-embed-loading {
+.vibears-embed-loading {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--pulse-text-2, #6b6b6b);
+    color: var(--vibears-text-2, #6b6b6b);
 }
 
 /* ── Setup form (enter the code) ──────────────────────────────── */
-.pulse-embed-setup {
+.vibears-embed-setup {
     position: absolute;
     inset: 0;
     margin: auto;
@@ -50,7 +50,7 @@ footer.guest-box {
 }
 /* Wordmark above the field: the shell sits in other people's slides, so it
    must be recognizable what this is (§9.7). */
-.pulse-embed-mark {
+.vibears-embed-mark {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -59,38 +59,38 @@ footer.guest-box {
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: 0.02em;
-    color: var(--pulse-primary, #006aa3);
+    color: var(--vibears-primary, #006aa3);
 }
-.pulse-embed-dot {
+.vibears-embed-dot {
     width: 0.5em;
     height: 0.5em;
     border-radius: 50%;
     background: currentColor;
 }
-.pulse-embed-lede {
+.vibears-embed-lede {
     margin: 0 0 18px;
-    color: var(--pulse-text-2, #6b6b6b);
+    color: var(--vibears-text-2, #6b6b6b);
     font-size: 0.95rem;
 }
-.pulse-embed-label {
+.vibears-embed-label {
     display: block;
     margin-bottom: 8px;
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--pulse-text-2, #6b6b6b);
+    color: var(--vibears-text-2, #6b6b6b);
 }
 /* Six cells instead of one field — the code IS six characters long.
    Nextcloud styles native <input> globally via element selectors and so
    beats every class: without !important, size, border and font size would come
    from there (measured: 45×34 px, 15 px font, gray border instead of red). */
-.pulse-embed-cells {
+.vibears-embed-cells {
     display: flex;
     justify-content: center;
     gap: 8px;
 }
-.pulse-embed-cell {
+.vibears-embed-cell {
     box-sizing: border-box;
     width: 3rem !important;
     height: 3.6rem !important;
@@ -102,35 +102,35 @@ footer.guest-box {
     font-weight: 700;
     text-align: center;
     text-transform: uppercase;
-    border: 2px solid var(--pulse-border-strong, #c4c4c4) !important;
-    border-radius: var(--pulse-r-el, 8px) !important;
-    background: var(--pulse-bg, #fff) !important;
-    color: var(--pulse-text, #1a1a1a) !important;
+    border: 2px solid var(--vibears-border-strong, #c4c4c4) !important;
+    border-radius: var(--vibears-r-el, 8px) !important;
+    background: var(--vibears-bg, #fff) !important;
+    color: var(--vibears-text, #1a1a1a) !important;
     font-variant-numeric: tabular-nums;
 }
-.pulse-embed-cell:focus-visible {
-    outline: 2px solid var(--pulse-primary, #006aa3) !important;
+.vibears-embed-cell:focus-visible {
+    outline: 2px solid var(--vibears-primary, #006aa3) !important;
     outline-offset: 1px;
 }
-.pulse-embed-cell--err {
-    border-color: var(--pulse-error, #b5261f) !important;
+.vibears-embed-cell--err {
+    border-color: var(--vibears-error, #b5261f) !important;
 }
 /* Message at the field, no dialog: the error shows up where it occurred. */
-.pulse-embed-err {
+.vibears-embed-err {
     margin: 10px 0 0;
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--pulse-error, #b5261f);
+    color: var(--vibears-error, #b5261f);
 }
 /* NC styles native <button> globally with high specificity — including the width.
-   Hence !important here, as in pulse-ds.css for the shape-defining roles. */
-.pulse-embed-go {
+   Hence !important here, as in vibears-ds.css for the shape-defining roles. */
+.vibears-embed-go {
     margin-top: 16px;
     width: 100% !important;
 }
 
 /* ── iframe view (full-bleed) + hover bar ─────────────────────── */
-.pulse-embed-frame {
+.vibears-embed-frame {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -138,7 +138,7 @@ footer.guest-box {
     border: 0;
     display: block;
 }
-.pulse-embed-bar {
+.vibears-embed-bar {
     position: absolute;
     top: 0;
     left: 0;
@@ -149,22 +149,22 @@ footer.guest-box {
     justify-content: space-between;
     gap: 8px;
     padding: 6px 10px;
-    background: var(--pulse-fill, #ededed);
-    color: var(--pulse-text, #1a1a1a);
+    background: var(--vibears-fill, #ededed);
+    color: var(--vibears-text, #1a1a1a);
     font-size: 0.8rem;
     transform: translateY(-100%);
     transition: transform 0.15s ease;
 }
-#pulse-embed-root:hover .pulse-embed-bar {
+#vibears-embed-root:hover .vibears-embed-bar {
     transform: translateY(0);
 }
-.pulse-embed-code {
+.vibears-embed-code {
     font-weight: 600;
     letter-spacing: 0.1em;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .pulse-embed-bar { transition: none; }
+    .vibears-embed-bar { transition: none; }
 }
 
 /*
@@ -175,19 +175,19 @@ footer.guest-box {
  */
 @media (prefers-color-scheme: dark) {
     html, body { background: #171717; }
-    #pulse-embed-root {
-        --pulse-screen-bg: #171717;
-        --pulse-bg: #1f1f1f;
-        --pulse-fill: #2b2b2b;
-        --pulse-hover: #2b2b2b;
-        --pulse-text: #ebebeb;
-        --pulse-text-2: #b0b0b0;
-        --pulse-border: #3a3a3a;
-        --pulse-border-strong: #545454;
-        --pulse-primary: #4aa3df;
-        --pulse-primary-hover: #6fb8e8;
-        --pulse-on-primary: #0b1a24;
-        --pulse-error: #ff7b70;
-        color: var(--pulse-text);
+    #vibears-embed-root {
+        --vibears-screen-bg: #171717;
+        --vibears-bg: #1f1f1f;
+        --vibears-fill: #2b2b2b;
+        --vibears-hover: #2b2b2b;
+        --vibears-text: #ebebeb;
+        --vibears-text-2: #b0b0b0;
+        --vibears-border: #3a3a3a;
+        --vibears-border-strong: #545454;
+        --vibears-primary: #4aa3df;
+        --vibears-primary-hover: #6fb8e8;
+        --vibears-on-primary: #0b1a24;
+        --vibears-error: #ff7b70;
+        color: var(--vibears-text);
     }
 }

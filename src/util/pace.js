@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Pulse — self-paced quiz: pure decisions and time arithmetic.
+ * vibeARS — self-paced quiz: pure decisions and time arithmetic.
  *
  * Deliberately without Nextcloud imports and without translation: the file also
  * runs under plain `node` (dev/unit/pace.test.mjs, dev/sim/load.mjs). The

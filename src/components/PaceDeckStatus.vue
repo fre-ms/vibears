@@ -5,8 +5,8 @@
 <template>
 	<div class="pace-ds">
 		<template v-if="progress">
-			<span class="pulse-chip is-live pace-ds-chip" :title="t('vibears', '{count} participants active in the last few seconds', { count: here })"><span class="pulse-chip-dot" />{{ t('vibears', '{count} here', { count: here }) }}</span>
-			<span class="pulse-chip is-neutral pace-ds-chip"><PulseIcon name="users" size="1em" /> {{ t('vibears', '{count} joined', { count: joined }) }}</span>
+			<span class="vibears-chip is-live pace-ds-chip" :title="t('vibears', '{count} participants active in the last few seconds', { count: here })"><span class="vibears-chip-dot" />{{ t('vibears', '{count} here', { count: here }) }}</span>
+			<span class="vibears-chip is-neutral pace-ds-chip"><VibearsIcon name="users" size="1em" /> {{ t('vibears', '{count} joined', { count: joined }) }}</span>
 		</template>
 		<span v-if="!online" class="pace-ds-off" role="status">{{ t('vibears', '● offline — connecting …') }}</span>
 	</div>
@@ -37,11 +37,11 @@ import { roomApi } from '../util/routes.js'
 import { t } from '../util/l10n.js'
 import { windowState } from '../util/pace.js'
 import progressPoll, { progressCounts } from '../mixins/progress-poll.js'
-import PulseIcon from './ui/PulseIcon.vue'
+import VibearsIcon from './ui/VibearsIcon.vue'
 
 export default {
 	name: 'PaceDeckStatus',
-	components: { PulseIcon },
+	components: { VibearsIcon },
 	mixins: [progressPoll],
 	props: {
 		code: { type: String, required: true },
@@ -88,5 +88,5 @@ export default {
 <style scoped>
 .pace-ds { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
 .pace-ds-chip { font-variant-numeric: tabular-nums; }
-.pace-ds-off { flex: 1 0 100%; font-size: 12px; color: var(--pulse-error); }
+.pace-ds-off { flex: 1 0 100%; font-size: 12px; color: var(--vibears-error); }
 </style>

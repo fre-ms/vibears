@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2026 hotochan123
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
- * Takes screenshots of every Pulse view.
+ * Takes screenshots of every vibeARS view.
  *
  * Drives the Firefox installed on the server through geckodriver (WebDriver
  * over HTTP, no npm dependency). The state of the rooms is not set by the
@@ -45,7 +45,7 @@ if (!HOST) {
 }
 const CONTAINER = process.env.CONTAINER || 'nextcloud-nextcloud-1'
 const APP_IN_CONTAINER = process.env.APP_IN_CONTAINER || '/var/www/html/apps/vibears'
-const UID = process.env.VIBEARS_SHOTS_UID || 'pulse-shots'
+const UID = process.env.VIBEARS_SHOTS_UID || 'vibears-shots'
 const LANG = process.env.VIBEARS_SHOTS_LANG || 'en-US, en'
 const PORT = Number(process.env.VIBEARS_SHOTS_PORT || 4444)
 const BASE = `http://127.0.0.1:${PORT}`
@@ -232,10 +232,10 @@ async function shot(s, { name, url, open, size, waitSel, actions = [], settle = 
 	// and Escape returns the focus (acceptance #7/#8/#10); all three can at best
 	// be guessed from the picture.
 	const menu = await s.script(`
-		const trig = document.querySelector('.deck-head .pulse-menu > .pulse-btn')
+		const trig = document.querySelector('.deck-head .vibears-menu > .vibears-btn')
 		if (!trig) { return null }
-		const list = document.querySelector('.pulse-menu-list')
-		const items = list ? Array.from(list.querySelectorAll('.pulse-menu-item')) : []
+		const list = document.querySelector('.vibears-menu-list')
+		const items = list ? Array.from(list.querySelectorAll('.vibears-menu-item')) : []
 		if (!list && document.activeElement !== trig) { return null }
 		return { open: !!list, focusOnTrigger: document.activeElement === trig,
 			checks: items.filter((b) => b.getAttribute('role') === 'menuitemcheckbox').length,
@@ -249,9 +249,9 @@ async function shot(s, { name, url, open, size, waitSel, actions = [], settle = 
 		if (!menu.open && !menu.focusOnTrigger) { overflow.push(`${file}: Fokus nach Escape verloren`) }
 	}
 	const plain = await s.script(`
-		const root = document.querySelector('.pulse-mod')
+		const root = document.querySelector('.vibears-mod')
 		if (!root || root.querySelector('.mod-live, .pace-run')) { return null }
-		const bs = Array.from(root.querySelectorAll('.pulse-btn')).filter((b) => {
+		const bs = Array.from(root.querySelectorAll('.vibears-btn')).filter((b) => {
 			if (b.offsetParent === null) { return false }
 			const bg = getComputedStyle(b).backgroundColor
 			return bg && !/rgba\\(0, 0, 0, 0\\)|transparent/.test(bg)
@@ -268,7 +268,7 @@ async function shot(s, { name, url, open, size, waitSel, actions = [], settle = 
 	const cluster = await s.script(`
 		const rows = (el, sel) => {
 			if (!el) { return null }
-			const bs = Array.from(el.querySelectorAll(sel || '.pulse-btn'))
+			const bs = Array.from(el.querySelectorAll(sel || '.vibears-btn'))
 			if (!bs.length) { return null }
 			const mid = bs.map((b) => { const r = b.getBoundingClientRect(); return r.top + r.height / 2 })
 				.sort((a, b) => a - b)
@@ -276,8 +276,8 @@ async function shot(s, { name, url, open, size, waitSel, actions = [], settle = 
 			for (let i = 1; i < mid.length; i++) { if (mid[i] - mid[i - 1] > 10) { n++ } }
 			return { n: bs.length, rows: n }
 		}
-		const head = rows(document.querySelector('.deck-head'), ':scope > .pulse-btn, :scope > .pulse-menu > .pulse-btn')
-		const card = rows(document.querySelector('.myroom'), '.pulse-btn, .myroom-hit')
+		const head = rows(document.querySelector('.deck-head'), ':scope > .vibears-btn, :scope > .vibears-menu > .vibears-btn')
+		const card = rows(document.querySelector('.myroom'), '.vibears-btn, .myroom-hit')
 		const item = rows(document.querySelector('.deck-item'))
 		if (item) { item.rows = 0 }
 		if (!head && !card && !item) { return null }
@@ -308,16 +308,16 @@ async function shot(s, { name, url, open, size, waitSel, actions = [], settle = 
 	const mod = await s.script(`
 		const live = document.querySelector('.mod-live')
 		if (!live) { return null }
-		const filled = Array.from(live.querySelectorAll('.pulse-btn')).filter((b) => {
+		const filled = Array.from(live.querySelectorAll('.vibears-btn')).filter((b) => {
 			const bg = getComputedStyle(b).backgroundColor
 			return bg && !/rgba\\(0, 0, 0, 0\\)|transparent/.test(bg)
 		})
 		const p = live.querySelector('.mod-primary')
 		const bar = live.querySelector('.mod-bar')
 		const br = bar ? bar.getBoundingClientRect() : null
-		const fs = !!document.querySelector('.pulse-mod.is-fs')
+		const fs = !!document.querySelector('.vibears-mod.is-fs')
 		const cv = live.querySelector('.mod-canvas'), cin = live.querySelector('.mod-canvas-in')
-		const root = document.querySelector('.pulse-mod')
+		const root = document.querySelector('.vibears-mod')
 		return { fs, barVisible: fs || !br || br.bottom <= window.innerHeight + 1,
 			filled: filled.map((b) => b.textContent.trim().replace(/\\s+/g, ' ')),
 			primary: p ? p.textContent.trim().replace(/\\s+/g, ' ') : null,
@@ -339,7 +339,7 @@ async function shot(s, { name, url, open, size, waitSel, actions = [], settle = 
 		const run = document.querySelector('.pace-run')
 		if (!run) { return null }
 		const txt = (el) => (el ? el.textContent.trim().replace(/\\s+/g, ' ') : '')
-		const filled = Array.from(run.querySelectorAll('.pulse-btn')).filter((b) => {
+		const filled = Array.from(run.querySelectorAll('.vibears-btn')).filter((b) => {
 			if (b.offsetParent === null || b.closest('.pod')) { return false }
 			const bg = getComputedStyle(b).backgroundColor
 			return bg && !/rgba\\(0, 0, 0, 0\\)|transparent/.test(bg)
@@ -445,7 +445,7 @@ async function publicPass(s, dark) {
 
 	await shot(s, {
 		name: `${tag}join`, url: '/apps/vibears/join', size: PHONE,
-		waitSel: '.pulse-part', note: 'Beitritt (Handy)',
+		waitSel: '.vibears-part', note: 'Beitritt (Handy)',
 	})
 	// Lobby: no cursor -> the projector shows the code and QR.
 	probe('state', poll.code, '0', 'open')
@@ -483,7 +483,7 @@ async function publicPass(s, dark) {
 			if (!dark) {
 				await shot(s, {
 					name: `phone-${mode}-${p.label}-vote`, url: `/apps/vibears/s/${room.code}`, size: PHONE,
-					waitSel: '.pulse-part', note: `Handy ${mode}/${p.label}, Abstimm-Ansicht`,
+					waitSel: '.vibears-part', note: `Handy ${mode}/${p.label}, Abstimm-Ansicht`,
 				})
 			}
 			probe('state', room.code, String(p.id), 'locked')
@@ -494,7 +494,7 @@ async function publicPass(s, dark) {
 			if (!dark && p.label === 'choice') {
 				await shot(s, {
 					name: `phone-${mode}-${p.label}-result`, url: `/apps/vibears/s/${room.code}`, size: PHONE,
-					waitSel: '.pulse-part', note: `Handy ${mode}/${p.label}, Auflösung`,
+					waitSel: '.vibears-part', note: `Handy ${mode}/${p.label}, Auflösung`,
 				})
 			}
 		}
@@ -510,7 +510,7 @@ async function publicPass(s, dark) {
 	if (!dark) {
 		await shot(s, {
 			name: 'phone-quiz-ended', url: `/apps/vibears/s/${quiz.code}`, size: PHONE,
-			waitSel: '.pulse-part', note: 'Handy: Quiz beendet',
+			waitSel: '.vibears-part', note: 'Handy: Quiz beendet',
 		})
 	}
 }
@@ -642,8 +642,8 @@ const PHONE_LONG = `
 	const out = cr ? words.filter((w) => { const r = w.getBoundingClientRect(); return r.left < cr.left - 0.5 || r.right > cr.right + 0.5 }).length : 0
 	const sc = document.querySelector('.h-scroll')
 	const de = document.documentElement
-	// The page scroller is .pulse-part (Nextcloud's #content clips), not the document.
-	const pp = document.querySelector('.pulse-part')
+	// The page scroller is .vibears-part (Nextcloud's #content clips), not the document.
+	const pp = document.querySelector('.vibears-part')
 	const pageX = Math.max(de.scrollWidth - de.clientWidth, pp ? pp.scrollWidth - pp.clientWidth : 0), scrollX = sc ? sc.scrollWidth - sc.clientWidth : 0
 	return 'eigene Antwort ' + (mine ? (mine.scrollWidth > mine.clientWidth + 1 ? 'LÄUFT ÜBER' : 'im Kasten, ' + lines(mine) + ' Zeilen') : 'FEHLT')
 		+ ', langes Wort in der Wolke ' + (long ? Math.round(parseFloat(getComputedStyle(long).fontSize)) + ' px, ' + lines(long) + ' Zeilen' : 'FEHLT')
@@ -730,8 +730,8 @@ const CORNERS_PHONE = `
 	const tip = names.filter((n) => groups[n].some((el) => el.querySelector('title')))
 	const sc = document.querySelector('.h-scroll')
 	const de = document.documentElement
-	// The page scroller is .pulse-part (Nextcloud's #content clips), not the document.
-	const pp = document.querySelector('.pulse-part')
+	// The page scroller is .vibears-part (Nextcloud's #content clips), not the document.
+	const pp = document.querySelector('.vibears-part')
 	const pageX = Math.max(de.scrollWidth - de.clientWidth, pp ? pp.scrollWidth - pp.clientWidth : 0), scrollX = sc ? sc.scrollWidth - sc.clientWidth : 0
 	return names.length + ' Ecken, ' + names.map((n) => n + ' ' + groups[n].length + ' Z.').join(', ')
 		+ ', ' + (cut.length ? cut.length + ' gekürzt (' + tip.length + ' mit Tooltip)' : 'nichts gekürzt')
@@ -1066,11 +1066,11 @@ async function moderatorPass(s) {
 	// the bottom edge of the first room card is measured.
 	await shot(s, {
 		name: 'mod-start', url: '/apps/vibears/', size: LAPTOP,
-		waitSel: '.pulse-mod', note: 'Moderator: Startbildschirm (zweispaltig ab 1200 px)',
+		waitSel: '.vibears-mod', note: 'Moderator: Startbildschirm (zweispaltig ab 1200 px)',
 	})
 	await shot(s, {
 		name: 'mod-start-narrow', url: '/apps/vibears/', size: [1024, 800],
-		waitSel: '.pulse-mod', note: 'Moderator: Startbildschirm einspaltig (1024 px)',
+		waitSel: '.vibears-mod', note: 'Moderator: Startbildschirm einspaltig (1024 px)',
 	})
 
 	// The four flow states (§9.1) one after another on the same quiz.
@@ -1113,7 +1113,7 @@ async function moderatorPass(s) {
 	await shot(s, {
 		name: 'mod-fullscreen', url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
 		waitSel: '.mod-bar', settle: 2000,
-		actions: [{ click: '.pulse-menu > .pulse-btn' }, { sleep: 300 }, { js: 'document.querySelector(\'.pulse-menu-item[data-key="fs"]\').click()' }, { sleep: 1500 }],
+		actions: [{ click: '.vibears-menu > .vibears-btn' }, { sleep: 300 }, { js: 'document.querySelector(\'.vibears-menu-item[data-key="fs"]\').click()' }, { sleep: 1500 }],
 		note: 'Moderator: Vollbild — nur die Leinwand, kein privates Panel',
 	})
 	// Leave fullscreen again, otherwise the session stays stuck in it.
@@ -1141,15 +1141,15 @@ async function moderatorPass(s) {
 	// Deck editor (stays unchanged, §9.6), as proof that it still works.
 	await shot(s, {
 		name: 'mod-deck', url: `/apps/vibears/room/${poll.code}`, size: LAPTOP,
-		waitSel: '.pulse-mod', settle: 1500,
-		actions: [{ click: '.pulse-menu > .pulse-btn' }, { sleep: 300 }, { js: 'document.querySelector(\'.pulse-menu-item[data-key="deck"]\').click()' }, { wait: '.deck-list' }, { sleep: 800 }],
+		waitSel: '.vibears-mod', settle: 1500,
+		actions: [{ click: '.vibears-menu > .vibears-btn' }, { sleep: 300 }, { js: 'document.querySelector(\'.vibears-menu-item[data-key="deck"]\').click()' }, { wait: '.deck-list' }, { sleep: 800 }],
 		note: 'Moderator: Deck-Liste',
 	})
 }
 
 /*
  * Embed shell (§9.7). It sits inside other people's slides: English source
- * texts via l10n, .pulse-btn instead of a custom button, the wordmark, and a
+ * texts via l10n, .vibears-btn instead of a custom button, the wordmark, and a
  * colour scheme that follows the embedding, not the server. The error case
  * belongs at the field.
  */
@@ -1157,20 +1157,20 @@ async function embedPass(s, dark) {
 	const tag = dark ? 'dark-' : ''
 	await shot(s, {
 		name: `${tag}embed-form`, url: '/apps/vibears/embed', size: [1280, 720],
-		waitSel: '.pulse-embed-cell', note: `Einbett-Shell: Code-Eingabe (${dark ? 'dunkel' : 'hell'})`,
+		waitSel: '.vibears-embed-cell', note: `Einbett-Shell: Code-Eingabe (${dark ? 'dunkel' : 'hell'})`,
 	})
 	if (dark) { return }
 	// Unknown code: message at the field, no dialog. ZZZZZZ is formally valid.
-	const cells = Array.from({ length: 6 }, (_, i) => ({ type: [`.pulse-embed-cell:nth-child(${i + 1})`, 'Z'] }))
+	const cells = Array.from({ length: 6 }, (_, i) => ({ type: [`.vibears-embed-cell:nth-child(${i + 1})`, 'Z'] }))
 	await shot(s, {
 		name: 'embed-unknown-code', size: [1280, 720],
-		actions: [...cells, { click: '.pulse-embed-go' }, { sleep: 1500 }],
+		actions: [...cells, { click: '.vibears-embed-go' }, { sleep: 1500 }],
 		note: 'Einbett-Shell: unbekannter Code -> Meldung am Feld',
 	})
 	// Valid code: the canvas fills the frame.
 	await shot(s, {
 		name: 'embed-live', url: `/apps/vibears/embed?code=${poll.code}`, size: [1280, 720],
-		waitSel: '.pulse-embed-frame', settle: 4000, note: 'Einbett-Shell: Leinwand im Rahmen',
+		waitSel: '.vibears-embed-frame', settle: 4000, note: 'Einbett-Shell: Leinwand im Rahmen',
 	})
 	// Self-paced (§5.2 step 4.5): the same shell with a running
 	// race; the canvas in the frame shows the bars, not the lobby.
@@ -1178,8 +1178,8 @@ async function embedPass(s, dark) {
 		const embedPace = async (name, code, note) => {
 			await shot(s, {
 				name, url: `/apps/vibears/embed?code=${code}`, size: [1280, 720],
-				waitSel: '.pulse-embed-frame', settle: 2500, measure: EMBED_PACE,
-				actions: [{ until: '(() => { const f = document.querySelector(".pulse-embed-frame"); const d = f && f.contentDocument; return d && d.querySelector(".scr.is-race .pace-race") })()', timeout: 12000 }],
+				waitSel: '.vibears-embed-frame', settle: 2500, measure: EMBED_PACE,
+				actions: [{ until: '(() => { const f = document.querySelector(".vibears-embed-frame"); const d = f && f.contentDocument; return d && d.querySelector(".scr.is-race .pace-race") })()', timeout: 12000 }],
 				note,
 			})
 			const line = index[index.length - 1]
@@ -1207,7 +1207,7 @@ async function embedPass(s, dark) {
 
 // Embed shell with a race: is it in the frame, and does the stage fit?
 const EMBED_PACE = `
-	const f = document.querySelector('.pulse-embed-frame')
+	const f = document.querySelector('.vibears-embed-frame')
 	const d = f && f.contentDocument
 	if (!d) { return 'Rahmen nicht lesbar' }
 	const st = d.querySelector('.scr-stage')
@@ -1349,7 +1349,7 @@ async function overviewPass(s, dark) {
 	for (const [w, h] of [DESKTOP, LAPTOP, [1024, 800]]) {
 		await shot(s, {
 			name: `ov-start-${w}${tag}`, url: '/apps/vibears/', size: [w, h],
-			waitSel: '.pulse-mod', settle: 1500,
+			waitSel: '.vibears-mod', settle: 1500,
 			note: `Übersicht: Startbildschirm + Raumliste bei ${w} px${dark ? ', dunkel' : ''}`,
 		})
 	}
@@ -1357,8 +1357,8 @@ async function overviewPass(s, dark) {
 	// A room without a running question already opens in the deck (loadRoom); then
 	// there is no overflow menu at all through which one could switch there.
 	const openDeck = [
-		{ js: 'if (!document.querySelector(".deck-list")) { document.querySelector(".pulse-menu > .pulse-btn").click() }' }, { sleep: 300 },
-		{ js: 'const d = document.querySelector(\'.pulse-menu-item[data-key="deck"]\'); if (d) { d.click() }' },
+		{ js: 'if (!document.querySelector(".deck-list")) { document.querySelector(".vibears-menu > .vibears-btn").click() }' }, { sleep: 300 },
+		{ js: 'const d = document.querySelector(\'.vibears-menu-item[data-key="deck"]\'); if (d) { d.click() }' },
 		{ wait: '.deck-list' }, { sleep: 800 },
 	]
 
@@ -1368,7 +1368,7 @@ async function overviewPass(s, dark) {
 		for (const [w, h] of [DESKTOP, LAPTOP, [1024, 800]]) {
 			await shot(s, {
 				name: `ov-deck-${label}-${w}${tag}`, url: `/apps/vibears/room/${room.code}`, size: [w, h],
-				waitSel: '.pulse-mod', settle: 1500,
+				waitSel: '.vibears-mod', settle: 1500,
 				actions: openDeck,
 				note: `Übersicht: Deck ${label} bei ${w} px${dark ? ', dunkel' : ''}`,
 			})
@@ -1378,17 +1378,17 @@ async function overviewPass(s, dark) {
 	// The open menu: fixed text plus check mark (R3), red items last (R4).
 	await shot(s, {
 		name: `ov-deck-menu-quiz${tag}`, url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
-		waitSel: '.pulse-mod', settle: 1200,
-		actions: [...openDeck, { js: 'document.querySelector(".deck-head .pulse-menu > .pulse-btn").click()' }, { sleep: 500 }],
+		waitSel: '.vibears-mod', settle: 1200,
+		actions: [...openDeck, { js: 'document.querySelector(".deck-head .vibears-menu > .vibears-btn").click()' }, { sleep: 500 }],
 		note: `Übersicht: Deck-Menü offen${dark ? ', dunkel' : ''}`,
 	})
 
 	// Escape closes and returns the focus to the trigger (acceptance #10).
 	await shot(s, {
 		name: `ov-deck-menu-keyboard${tag}`, url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
-		waitSel: '.pulse-mod', settle: 1200,
+		waitSel: '.vibears-mod', settle: 1200,
 		actions: [...openDeck,
-			{ js: 'document.querySelector(".deck-head .pulse-menu > .pulse-btn").click()' }, { sleep: 400 },
+			{ js: 'document.querySelector(".deck-head .vibears-menu > .vibears-btn").click()' }, { sleep: 400 },
 			{ js: 'document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))' },
 			{ sleep: 400 }],
 		note: `Übersicht: Menü mit Escape geschlossen, Fokus zurück am Auslöser${dark ? ', dunkel' : ''}`,
@@ -1398,7 +1398,7 @@ async function overviewPass(s, dark) {
 	// layer is added below it.
 	await shot(s, {
 		name: `ov-composer${tag}`, url: `/apps/vibears/room/${quiz.code}`, size: LAPTOP,
-		waitSel: '.pulse-mod', settle: 1500,
+		waitSel: '.vibears-mod', settle: 1500,
 		actions: [...openDeck,
 			{ js: 'document.querySelector(\'.add-btn\').click()' }, { wait: '.composer' }, { sleep: 900 }],
 		note: `Übersicht: Deck mit offenem Composer${dark ? ', dunkel' : ''}`,
@@ -1508,18 +1508,18 @@ const PACE_DECK = `
 	const q = (sel) => document.querySelector(sel)
 	const txt = (el) => (el ? el.textContent.trim().replace(/\\s+/g, ' ') : '')
 	if (!q('.deck-head')) { return null }
-	const prim = Array.from(document.querySelectorAll('.deck-head > .pulse-btn:not(.deck-back)')).map(txt)
+	const prim = Array.from(document.querySelectorAll('.deck-head > .vibears-btn:not(.deck-back)')).map(txt)
 	const parts = ['Modus „' + txt(q('.deck-mode')) + '"',
 		q('.deck-state') ? 'Zustand „' + txt(q('.deck-state')).replace(/until .*/, 'until …') + '"' : 'kein Zustands-Chip',
 		prim.length ? 'Hauptaktion „' + prim.join('", „') + '"' : 'keine Hauptaktion']
 	const note = q('.deck-lock-note')
 	if (note) { parts.push('Hinweis „' + txt(note) + '"') }
-	const st = Array.from(document.querySelectorAll('.pace-ds .pulse-chip')).map(txt)
+	const st = Array.from(document.querySelectorAll('.pace-ds .vibears-chip')).map(txt)
 	if (st.length) { parts.push('Status: ' + st.join(' · ')) }
 	const rows = document.querySelectorAll('.deck-item').length
 	parts.push(rows + ' Zeilen: ' + document.querySelectorAll('.deck-item .drag-handle').length + ' Griffe, '
-		+ document.querySelectorAll('.deck-item .pulse-menu').length + ' Zeilenmenüs, '
-		+ document.querySelectorAll('.deck-item > .pulse-btn').length + ' „Show", '
+		+ document.querySelectorAll('.deck-item .vibears-menu').length + ' Zeilenmenüs, '
+		+ document.querySelectorAll('.deck-item > .vibears-btn').length + ' „Show", '
 		+ document.querySelectorAll('.deck-q:disabled').length + ' gesperrte Fragen')
 	parts.push(q('.add-btn') ? '„+ Add question" da' : 'kein „+ Add question"')
 	parts.push('Zeile 1 „' + txt(q('.deck-item .deck-type')) + '"')
@@ -1527,11 +1527,11 @@ const PACE_DECK = `
 `
 // Open deck menu: toggles with check marks, disabled entries with a reason, red items.
 const PACE_MENU = `
-	const list = document.querySelector('.deck-head .pulse-menu-list')
+	const list = document.querySelector('.deck-head .vibears-menu-list')
 	if (!list) { return null }
-	return 'Menü: ' + Array.from(list.querySelectorAll('.pulse-menu-item')).map((b) => {
+	return 'Menü: ' + Array.from(list.querySelectorAll('.vibears-menu-item')).map((b) => {
 		const chk = b.getAttribute('role') === 'menuitemcheckbox' ? (b.getAttribute('aria-checked') === 'true' ? ' ✓' : ' ☐') : ''
-		const hint = b.querySelector('.pulse-menu-hint')
+		const hint = b.querySelector('.vibears-menu-hint')
 		return b.dataset.key + chk + (b.disabled ? ' (aus' + (hint ? ': ' + hint.textContent.trim() : ' OHNE GRUND') + ')' : '')
 			+ (b.classList.contains('is-danger') ? ' [rot]' : '')
 	}).join(', ')
@@ -1547,7 +1547,7 @@ const PACE_DIALOG = `
 	if (fixed) { parts.push(fixed + ' Gruppe fest') }
 	const rel = d.querySelector('.pod-rel')
 	if (rel) { parts.push((rel.classList.contains('is-error') ? 'Fehler' : 'Zeile') + ' „' + txt(rel).replace(/— .*/, '— …') + '"') }
-	if (d.querySelector('.pod-presets')) { parts.push(d.querySelectorAll('.pod-presets .pulse-btn').length + ' Vorwahl-Knöpfe') }
+	if (d.querySelector('.pod-presets')) { parts.push(d.querySelectorAll('.pod-presets .vibears-btn').length + ' Vorwahl-Knöpfe') }
 	if (d.querySelector('.pod-warn')) { parts.push('Warnung „each + Frist"') }
 	if (d.querySelector('.pod-practice')) { parts.push('Probelauf-Hinweis mit „' + txt(d.querySelector('.pod-practice-end')) + '"') }
 	if (d.querySelector('.pod-error')) { parts.push('Serverfehler „' + txt(d.querySelector('.pod-error')) + '"') }
@@ -1588,9 +1588,9 @@ async function toDeck(s, url) {
 	await s.go(HOST + url)
 	await waitFor(s, '.pace-run, .deck-head')
 	if (await s.script('return !!document.querySelector(".pace-run")')) {
-		await s.script('document.querySelector(".pace-top .pulse-menu > .pulse-btn").click()')
-		await waitFor(s, '.pace-top .pulse-menu-item[data-key="deck"]')
-		await s.script('document.querySelector(\'.pace-top .pulse-menu-item[data-key="deck"]\').click()')
+		await s.script('document.querySelector(".pace-top .vibears-menu > .vibears-btn").click()')
+		await waitFor(s, '.pace-top .vibears-menu-item[data-key="deck"]')
+		await s.script('document.querySelector(\'.pace-top .vibears-menu-item[data-key="deck"]\').click()')
 	}
 	await waitFor(s, '.deck-head')
 }
@@ -1609,11 +1609,11 @@ async function toDeck(s, url) {
 async function paceModPass(s) {
 	const P = paceData
 	const deck = (code) => `/apps/vibears/room/${code}`
-	const openMenu = { js: 'document.querySelector(".deck-head .pulse-menu > .pulse-btn").click()' }
+	const openMenu = { js: 'document.querySelector(".deck-head .vibears-menu > .vibears-btn").click()' }
 	const escape = { js: 'document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))' }
 	// As with the keyboard: focus on the trigger, then trigger it; only this way
 	// is "focus back after Escape" measurable (a script click does not focus).
-	const primary = { js: 'const b = Array.from(document.querySelectorAll(".deck-head > .pulse-btn:not(.deck-back)")).pop(); b.focus(); b.click()' }
+	const primary = { js: 'const b = Array.from(document.querySelectorAll(".deck-head > .vibears-btn:not(.deck-back)")).pop(); b.focus(); b.click()' }
 	const restore = []
 	await login(s)
 	try {
@@ -1621,7 +1621,7 @@ async function paceModPass(s) {
 		probe('present', P.draft.code, '4')
 		await shot(s, {
 			name: 'pace-deck-draft', url: deck(P.draft.code), size: LAPTOP,
-			waitSel: '.pace-ds .pulse-chip', settle: 800, measure: PACE_DECK,
+			waitSel: '.pace-ds .vibears-chip', settle: 800, measure: PACE_DECK,
 			note: 'Eigenes Tempo: Deck im Entwurf, Statuszeile (4 da, 2 beigetreten)',
 		})
 		await shot(s, {
@@ -1670,7 +1670,7 @@ async function paceModPass(s) {
 		restore.push(() => probe('open', P.practice.code, '0'))
 		await shot(s, {
 			name: 'pace-dialog-practice', url: deck(P.practice.code), size: LAPTOP,
-			waitSel: '.deck-head > .pulse-btn.is-primary', actions: [primary, { wait: '.pod' }, { sleep: 500 }], measure: PACE_DIALOG,
+			waitSel: '.deck-head > .vibears-btn.is-primary', actions: [primary, { wait: '.pod' }, { sleep: 500 }], measure: PACE_DIALOG,
 			note: 'Öffnen-Dialog im Probelauf: Hinweis, Rückmeldung fest',
 		})
 		await s.script(escape.js)
@@ -1699,7 +1699,7 @@ async function paceModPass(s) {
 		// Deadline while the deck is open (mid): set via probe -> the chip follows
 		// through polling (≤ 10 s); once it expires -> chip and menu immediately.
 		await toDeck(s, deck(P.mid.code))
-		await waitFor(s, '.pace-ds .pulse-chip')
+		await waitFor(s, '.pace-ds .vibears-chip')
 		await waitForText(s, '.deck-state', /Open now/)
 		restore.push(() => probe('window', P.mid.code, 'closesAt=0'))
 		const set1 = JSON.parse(probe('window', P.mid.code, 'closesAt=now+25').replace(/^ok /, ''))
@@ -1722,7 +1722,7 @@ async function paceModPass(s) {
 		const tOpen = await waitForText(s, '.deck-state', /Open now/, 20000)
 		probe('window', P.mid.code, 'closesAt=now-1')
 		const tExpired = await waitForText(s, '.deck-state', /closed/i, 20000)
-		const menuHint = await s.script('document.querySelector(".deck-head .pulse-menu > .pulse-btn").click(); return new Promise((r) => setTimeout(() => { const b = document.querySelector(\'.pulse-menu-item[data-key="pace"]\'); r(b ? (b.disabled ? "aus: " + b.textContent.trim().replace(/\\s+/g, " ") : "an") : "fehlt") }, 300))')
+		const menuHint = await s.script('document.querySelector(".deck-head .vibears-menu > .vibears-btn").click(); return new Promise((r) => setTimeout(() => { const b = document.querySelector(\'.vibears-menu-item[data-key="pace"]\'); r(b ? (b.disabled ? "aus: " + b.textContent.trim().replace(/\\s+/g, " ") : "an") : "fehlt") }, 300))')
 		await s.script(escape.js)
 		index.push(`| (Messung) | | ${deck('<CODE>')} | Frist entfernt: „Open now" nach ${(tOpen / 1000).toFixed(1)} s; per Probe abgelaufen: „Quiz closed" nach ${(tExpired / 1000).toFixed(1)} s, Menü „Self-paced" ${menuHint} |`)
 		probe('window', P.mid.code, 'closesAt=0')
@@ -1753,8 +1753,8 @@ async function paceModDark(s) {
 	probe('present', P.draft.code, '4')
 	await shot(s, {
 		name: 'dark-pace-dialog-homework', url: deck(P.draft.code), size: LAPTOP,
-		waitSel: '.deck-head > .pulse-btn.is-primary',
-		actions: [{ js: 'Array.from(document.querySelectorAll(".deck-head > .pulse-btn:not(.deck-back)")).pop().click()' }, { wait: '.pod' },
+		waitSel: '.deck-head > .vibears-btn.is-primary',
+		actions: [{ js: 'Array.from(document.querySelectorAll(".deck-head > .vibears-btn:not(.deck-back)")).pop().click()' }, { wait: '.pod' },
 			{ js: 'document.querySelectorAll(".pod .pseg")[0].querySelectorAll(".pseg-item")[1].click()' }, { wait: '.pace-input' }, { sleep: 500 }],
 		measure: PACE_DIALOG, note: 'Öffnen-Dialog Hausaufgabe, dunkel',
 	})
@@ -1832,14 +1832,14 @@ const PACE_RUN = `
 	const short = (v) => v.replace(/\\b(until|on) [^—·]*\\d[^—·]*?(?= —|\\.$|$)/g, '$1 …')
 	const rows = Array.from(run.querySelectorAll('.pace-table tbody tr'))
 	const dash = Array.from(run.querySelectorAll('.pace-table tbody td')).filter((td) => txt(td) === '—').length
-	const parts = ['Kopf: ' + Array.from(run.querySelectorAll('.pace-top-row .pulse-chip')).map((c) => short(txt(c))).join(' · '),
+	const parts = ['Kopf: ' + Array.from(run.querySelectorAll('.pace-top-row .vibears-chip')).map((c) => short(txt(c))).join(' · '),
 		'Fakten „' + txt(run.querySelector('.pace-facts')) + '"',
 		'Status „' + short(txt(run.querySelector('.pace-status'))) + '"',
 		'Zähler „' + txt(run.querySelector('.pace-done')) + '"',
 		rows.length + ' Zeilen (' + txt(run.querySelector('.pace-count')) + '), sortiert „' + txt(run.querySelector('.pace-sort .pseg-item.is-active'))
 			+ '" (' + run.querySelectorAll('.pace-sort .pseg-item').length + ' Wahlen), oben: ' + rows.slice(0, 3).map((r) => txt(r.querySelector('.pace-nick'))).join(', '),
 		dash + ' Zellen „—"',
-		run.querySelectorAll('.pace-table .pace-act .pulse-menu').length + ' Zeilenmenüs',
+		run.querySelectorAll('.pace-table .pace-act .vibears-menu').length + ' Zeilenmenüs',
 		run.querySelector('.pace-join') ? 'Beitritt da' : 'kein Beitritt',
 		run.querySelectorAll('.pace-q').length + ' Fragen']
 	const g = run.querySelector('.pace-grading')
@@ -1882,29 +1882,29 @@ const PACE_PREVIEW = `
 `
 // Open menu of the run view: toggles with check marks, red items last.
 const PACE_RUN_MENU = `
-	const list = document.querySelector('.pace-top .pulse-menu-list')
+	const list = document.querySelector('.pace-top .vibears-menu-list')
 	if (!list) { return null }
-	const items = Array.from(list.querySelectorAll('.pulse-menu-item'))
+	const items = Array.from(list.querySelectorAll('.vibears-menu-item'))
 	const last = items.length ? items[items.length - 1] : null
 	return 'Menü: ' + items.map((b) => b.dataset.key
 		+ (b.getAttribute('role') === 'menuitemcheckbox' ? (b.getAttribute('aria-checked') === 'true' ? ' ✓' : ' ☐') : '')
 		+ (b.disabled ? ' (aus)' : '') + (b.classList.contains('is-danger') ? ' [rot]' : '')).join(', ')
 		+ (items.some((b) => b.classList.contains('is-danger')) && !(last && last.classList.contains('is-danger')) ? ' — ROT NICHT ZULETZT' : '')
 `
-// Confirmation (PulseConfirm): title, buttons, which one is filled, and whether the free-text sentence is included.
+// Confirmation (VibearsConfirm): title, buttons, which one is filled, and whether the free-text sentence is included.
 const PACE_CONFIRM = `
 	const d = document.querySelector('.pconfirm')
 	if (!d) { return null }
 	const txt = (el) => (el ? el.textContent.trim().replace(/\\s+/g, ' ') : '')
 	const text = txt(d.querySelector('.pconfirm-text'))
 	const i = text.search(/\\d+ free-text answers? (is|are) not checked yet/)
-	return 'Bestätigung „' + txt(d.querySelector('.pconfirm-title')) + '": ' + Array.from(d.querySelectorAll('.pulse-btn')).map((b) => txt(b)
+	return 'Bestätigung „' + txt(d.querySelector('.pconfirm-title')) + '": ' + Array.from(d.querySelectorAll('.vibears-btn')).map((b) => txt(b)
 		+ (b.classList.contains('is-danger') ? ' [rot]' : b.classList.contains('is-primary') ? ' [gefüllt]' : '')).join(' · ')
 		+ (i >= 0 ? ' — Satz „' + text.slice(i) + '"' : ' — ohne Freitext-Satz')
 `
 // Focus after a run view dialog: back on the menu trigger (§1.5).
 const FOCUS_TRIGGER = `
-	const trig = document.querySelector('.pace-top .pulse-menu > .pulse-btn')
+	const trig = document.querySelector('.pace-top .vibears-menu > .vibears-btn')
 	const a = document.activeElement
 	return { dialog: !!document.querySelector('.pod'), onTrigger: !!trig && a === trig,
 		focus: a ? (a.getAttribute('aria-label') || a.textContent.trim().replace(/\\s+/g, ' ').slice(0, 40) || a.tagName.toLowerCase()) : '' }
@@ -1972,7 +1972,7 @@ async function roomRow(s, code) {
 	`, [code])
 }
 
-/** GET on a Pulse route from the signed-in page (cross-check, harness=1). */
+/** GET on a vibeARS route from the signed-in page (cross-check, harness=1). */
 async function pageGet(s, path) {
 	return s.async(`
 		const done = arguments[arguments.length - 1]
@@ -2053,9 +2053,9 @@ async function paceRunPass(s, dark) {
 			previewMarks()
 		}
 	}
-	const menu = { js: 'document.querySelector(".pace-top .pulse-menu > .pulse-btn").click()' }
-	const menuOpen = { wait: '.pace-top .pulse-menu-list' }
-	const item = (key) => ({ js: `document.querySelector('.pace-top .pulse-menu-item[data-key="${key}"]').click()` })
+	const menu = { js: 'document.querySelector(".pace-top .vibears-menu > .vibears-btn").click()' }
+	const menuOpen = { wait: '.pace-top .vibears-menu-list' }
+	const item = (key) => ({ js: `document.querySelector('.pace-top .vibears-menu-item[data-key="${key}"]').click()` })
 	const escape = 'document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))'
 	const restore = []
 	await login(s)
@@ -2122,7 +2122,7 @@ async function paceRunPass(s, dark) {
 			await s.script(PACE_WATCH)
 			await s.script('document.querySelector(".pace-primary").click()')
 			await waitFor(s, '.pconfirm')
-			await s.script('document.querySelector(".pconfirm .pulse-btn.is-primary").click()')
+			await s.script('document.querySelector(".pconfirm .vibears-btn.is-primary").click()')
 			await waitForText(s, '.pace-status', /^Closed/, 15000)
 			const hwc = ((await roomRow(s, P.homework.code)) || {}).window || {}
 			const hwCalls = await s.script('return window.__pace')
@@ -2244,12 +2244,12 @@ async function paceRunClicks(s, dl) {
 	const code = P.click.code
 	const run = (c) => `/apps/vibears/room/${c}`
 	const ready = '.pace-run .pace-table, .pace-run .pace-empty'
-	const menu = 'document.querySelector(".pace-top .pulse-menu > .pulse-btn").click()'
-	const item = (key) => `document.querySelector('.pace-top .pulse-menu-item[data-key="${key}"]').click()`
+	const menu = 'document.querySelector(".pace-top .vibears-menu > .vibears-btn").click()'
+	const item = (key) => `document.querySelector('.pace-top .vibears-menu-item[data-key="${key}"]').click()`
 	const escape = 'document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))'
 	const openItem = async (key) => {
 		await s.script(menu)
-		await waitFor(s, `.pace-top .pulse-menu-item[data-key="${key}"]`)
+		await waitFor(s, `.pace-top .vibears-menu-item[data-key="${key}"]`)
 		await s.script(item(key))
 	}
 	const note = (text) => index.push(`| (Messung) | | ${run('<CODE>')} | ${text} |`)
@@ -2261,11 +2261,11 @@ async function paceRunClicks(s, dl) {
 	await sleep(1500)
 	await s.script(PROGRESS_WATCH)
 	await s.script(menu)
-	await waitFor(s, '.pace-top .pulse-menu-item[data-key="scores"]')
+	await waitFor(s, '.pace-top .vibears-menu-item[data-key="scores"]')
 	await s.script(`
 		let i = 0
 		const go = () => {
-			const el = document.querySelector('.pace-top .pulse-menu-item[data-key="scores"]')
+			const el = document.querySelector('.pace-top .vibears-menu-item[data-key="scores"]')
 			if (el) { el.click() }
 			if (++i < 5) { setTimeout(go, 90) }
 		}
@@ -2273,7 +2273,7 @@ async function paceRunClicks(s, dl) {
 	`)
 	await sleep(7000)
 	const burst = await s.script(PROGRESS_OVERLAP)
-	const pts = await s.script('return !!Array.from(document.querySelectorAll(".pace-top-row .pulse-chip")).find((c) => /Points visible/.test(c.textContent))')
+	const pts = await s.script('return !!Array.from(document.querySelectorAll(".pace-top-row .vibears-chip")).find((c) => /Points visible/.test(c.textContent))')
 	note(`Einflug bei fünf schnellen Aktionen („Show points" 5×, Hausaufgabe): ${burst.n} /progress-Anfragen in 7 s, ${burst.overlap} überlappend; danach Punkte ${pts ? 'sichtbar' : 'verborgen'}`)
 	if (burst.overlap) { overflow.push(`Einflug: ${burst.overlap} überlappende /progress-Anfragen (fünf schnelle Aktionen)`) }
 	await shot(s, {
@@ -2333,15 +2333,15 @@ async function paceRunClicks(s, dl) {
 	if (!key2.rejected.includes(first.sample) || key2.accepted.includes(first.sample)) { overflow.push('Umbewerten: Server-Stand passt nicht') }
 
 	// 3. Remove: the last row of the table, through its row menu.
-	const victim = await s.script('const rows = document.querySelectorAll(".pace-table tbody tr"); const r = rows[rows.length - 1]; r.querySelector(".pace-act .pulse-menu > .pulse-btn").click(); return { name: r.querySelector(".pace-nick").textContent.trim(), rows: rows.length, label: r.querySelector(".pace-act .pulse-menu > .pulse-btn").getAttribute("aria-label") }')
-	await waitFor(s, '.pace-act .pulse-menu-item[data-key="remove"]')
-	await s.script('document.querySelector(\'.pace-act .pulse-menu-item[data-key="remove"]\').click()')
+	const victim = await s.script('const rows = document.querySelectorAll(".pace-table tbody tr"); const r = rows[rows.length - 1]; r.querySelector(".pace-act .vibears-menu > .vibears-btn").click(); return { name: r.querySelector(".pace-nick").textContent.trim(), rows: rows.length, label: r.querySelector(".pace-act .vibears-menu > .vibears-btn").getAttribute("aria-label") }')
+	await waitFor(s, '.pace-act .vibears-menu-item[data-key="remove"]')
+	await s.script('document.querySelector(\'.pace-act .vibears-menu-item[data-key="remove"]\').click()')
 	await waitFor(s, '.pconfirm')
 	await shot(s, {
 		name: 'pace-run-click-remove-confirm', size: LAPTOP, settle: 400, measure: PACE_CONFIRM,
 		note: `Klickstrecke: Zeilenmenü („${victim.label}") -> „Remove from the quiz" -> Bestätigung`,
 	})
-	await s.script('document.querySelector(".pconfirm .pulse-btn.is-danger").click()')
+	await s.script('document.querySelector(".pconfirm .vibears-btn.is-danger").click()')
 	const until3 = Date.now() + 15000
 	while (Date.now() < until3 && await s.script('return document.querySelectorAll(".pace-table tbody tr").length') !== victim.rows - 1) { await sleep(250) }
 	const after3 = await progressOf(s, code)
@@ -2424,7 +2424,7 @@ async function paceRunClicks(s, dl) {
 	await openItem('reopen')
 	await waitFor(s, '.pod')
 	await sleep(300)
-	const pre6b = await s.script('return { end: document.querySelector(".pod .pseg-item.is-active").textContent.trim(), was: !!document.querySelector(".pod-was"), submit: document.querySelector(".pod-submit").textContent.trim(), marker: window.localStorage.getItem("pulse-pace-stop:" + arguments[0]) }', [code])
+	const pre6b = await s.script('return { end: document.querySelector(".pod .pseg-item.is-active").textContent.trim(), was: !!document.querySelector(".pod-was"), submit: document.querySelector(".pod-submit").textContent.trim(), marker: window.localStorage.getItem("vibears-pace-stop:" + arguments[0]) }', [code])
 	await s.script(escape)
 	await sleep(300)
 	note(`„Reopen …“ nach dem Stoppen: vorbelegt „${pre6b.end}“, ${pre6b.was ? 'MIT „Was: …“' : 'ohne „Was: …“'}, Knopf „${pre6b.submit}“; Merker ${pre6b.marker === null ? 'keiner' : 'GESCHRIEBEN'}`)
@@ -2437,7 +2437,7 @@ async function paceRunClicks(s, dl) {
 		name: 'pace-run-click-release-confirm', size: LAPTOP, settle: 400, measure: PACE_CONFIRM,
 		note: 'Klickstrecke: Menü „Release results" (geschlossen, offene Freitexte) -> Bestätigung mit Freitext-Satz',
 	})
-	await s.script('document.querySelector(".pconfirm .pulse-btn.is-danger").click()')
+	await s.script('document.querySelector(".pconfirm .vibears-btn.is-danger").click()')
 	const tRel = await waitForText(s, '.pace-status', /Results released/, 15000)
 	const released = await roomRow(s, code)
 	const w2 = (released && released.window) || {}
@@ -2499,7 +2499,7 @@ async function paceRunClicks(s, dl) {
 // progress, verdict) and for interventions the UI does not offer
 // (the late correction, §6.2 step 1).
 const PHONE_VM = `(() => {
-	const r = document.querySelector('.pulse-part')
+	const r = document.querySelector('.vibears-part')
 	const v = r && r.__vue__
 	if (!v) { return null }
 	return v.$options.name === 'Participant' ? v : (v.$children || []).find((c) => c.$options.name === 'Participant') || null
@@ -2564,7 +2564,7 @@ const PACE_PHONE = `
 	// is-tertiary ist die tonale Stufe unter „primär" (grau hinterlegt) — kein zweiter Hauptknopf.
 	const tonal = (b) => b.classList.contains('is-tertiary')
 	const filled = (b) => { if (tonal(b)) { return false } const bg = getComputedStyle(b).backgroundColor; return bg && !/rgba\\(0, 0, 0, 0\\)|transparent/.test(bg) }
-	const bs = Array.from(root.querySelectorAll('.pulse-btn, .submit')).filter((b) => b.offsetParent !== null)
+	const bs = Array.from(root.querySelectorAll('.vibears-btn, .submit')).filter((b) => b.offsetParent !== null)
 	// Warum gefüllt? Ein Zeiger- oder Fokuszustand ist kein zweiter Hauptknopf — er steht dabei.
 	const why = (b) => [b.matches(':hover') ? 'Hover' : '', b.matches(':focus') ? 'Fokus' : '', b.matches(':active') ? 'aktiv' : ''].filter(Boolean).join('+')
 	if (bs.length) { parts.push('Knöpfe: ' + bs.map((b) => (tonal(b) ? '◦ ' : filled(b) ? '■ ' : '□ ') + txt(b) + (b.disabled ? ' (aus)' : '') + (filled(b) && why(b) ? ' (' + why(b) + ', ' + getComputedStyle(b).backgroundColor + ')' : '')).join(', ')) }
@@ -2590,11 +2590,11 @@ const PACE_PHONE = `
 	if (ae && ae !== document.body) { parts.push('Fokus ' + ae.tagName.toLowerCase() + (typeof ae.className === 'string' && ae.className.trim() ? '.' + ae.className.trim().split(/\\s+/).join('.') : '')) }
 	const sr = q('.pace-sr')
 	if (sr && txt(sr)) { parts.push('Ansage „' + txt(sr) + '"') }
-	for (const el of document.querySelectorAll('.pulse-toast')) { parts.push('Toast „' + txt(el) + '"') }
+	for (const el of document.querySelectorAll('.vibears-toast')) { parts.push('Toast „' + txt(el) + '"') }
 	const de = document.documentElement
 	const pageX = Math.max(de.scrollWidth - de.clientWidth, root.scrollWidth - root.clientWidth)
 	if (pageX > 0) { parts.push('SEITE SCROLLT WAAGERECHT ' + pageX + ' px') }
-	if (vm.paceState !== 'released' && document.querySelector('.pulse-results, .tg-accepted, .srow-mark')) { parts.push('LÖSUNG SICHTBAR') }
+	if (vm.paceState !== 'released' && document.querySelector('.vibears-results, .tg-accepted, .srow-mark')) { parts.push('LÖSUNG SICHTBAR') }
 	return parts.join(', ')
 `
 
@@ -2764,7 +2764,7 @@ const frameWin = ([w, h]) => Object.assign([450, h + 90], { css: w + '×' + h })
 async function phoneAt(s, path, [w, h]) {
 	await s.size(frameWin([w, h]))
 	await s.go(HOST + '/apps/vibears/join')
-	await waitFor(s, '.pulse-part')
+	await waitFor(s, '.vibears-part')
 	await s.script(`
 		const back = document.createElement('div')
 		back.style.cssText = 'position:fixed;inset:0;z-index:2147483646;background:#8a8f98'
@@ -2775,7 +2775,7 @@ async function phoneAt(s, path, [w, h]) {
 		document.body.append(back, f)
 	`, [HOST + path, w, h])
 	await s.frame(await s.find('#shots-phone'))
-	await waitFor(s, '.pulse-part')
+	await waitFor(s, '.vibears-part')
 }
 
 /*
@@ -2957,8 +2957,8 @@ async function pacePhonePass(s, dark) {
 		// network). The UI no longer offers "Change" after the window, so this
 		// goes through the Vue instance, the same way as the button.
 		await s.script(`const vm = ${PHONE_VM}; vm.startChange(); vm.numInput = '8'; vm.doSubmit(); return true`)
-		await until(`${has('.pulse-toast')} && !vm.busy`, 'Toast nach der späten Korrektur', 8000)
-		const late = await vm(`({ changing: vm.changing, value: vm.numInput, toast: document.querySelector('.pulse-toast').textContent.trim() })`)
+		await until(`${has('.vibears-toast')} && !vm.busy`, 'Toast nach der späten Korrektur', 8000)
+		const late = await vm(`({ changing: vm.changing, value: vm.numInput, toast: document.querySelector('.vibears-toast').textContent.trim() })`)
 		const tAlive = await until(`${has('.pace-verdict:not([data-verdict="none"])')} && ${has('.pace-next:not([disabled])')}`, 'Band mit Urteil und aktivem Weiter', 15000)
 		await phone({
 			name: 'pace-phone-change-late', waitSel: '.pace-verdict', settle: 200,
@@ -3029,11 +3029,11 @@ async function pacePhonePass(s, dark) {
 		})
 		const rv = await s.script(`return { title: document.querySelector('.review-h').textContent.trim(),
 			chips: Array.from(document.querySelectorAll('.review-chip')).map((c) => c.textContent.trim()),
-			hidden: document.querySelectorAll('.review-hidden').length, results: document.querySelectorAll('.pulse-results').length,
+			hidden: document.querySelectorAll('.review-hidden').length, results: document.querySelectorAll('.vibears-results').length,
 			score: (document.querySelector('.review-myrank') || {}).textContent }`)
 		check(rv.title === 'Your answers' && rv.results === 0 && rv.chips.includes('Being checked') && !!rv.score,
 			'Auswertung vor der Freigabe: ' + JSON.stringify(rv))
-		await s.click('.review-head .pulse-btn')
+		await s.click('.review-head .vibears-btn')
 		await waitFor(s, card('through'))
 
 		// Closed, not released yet: raw, because `close` without a deadline would release immediately.
@@ -3048,10 +3048,10 @@ async function pacePhonePass(s, dark) {
 		await waitFor(s, '.big-place')
 		await phone({ name: 'pace-phone-final', waitSel: '.big-place', note: 'Freigegeben: Endstand mit eigenem Platz' })
 		note('e2e: Geschlossen-Karte ' + secs(tClosed) + ' nach „window closedAt=now", Endstand ' + secs(tFinal) + ' nach „release"')
-		await s.click('.h-app .h-submit .pulse-btn')
+		await s.click('.h-app .h-submit .vibears-btn')
 		await waitFor(s, '.review')
 		await phone({ name: 'pace-phone-final-review', waitSel: '.review', note: '„See all results" nach der Freigabe: „All results", jetzt mit Lösungen und Verteilung' })
-		const fr = await s.script('return { title: document.querySelector(".review-h").textContent.trim(), results: document.querySelectorAll(".pulse-results").length }')
+		const fr = await s.script('return { title: document.querySelector(".review-h").textContent.trim(), results: document.querySelectorAll(".vibears-results").length }')
 		check(fr.title === 'All results' && fr.results > 0, 'Auswertung nach der Freigabe: ' + JSON.stringify(fr))
 	}
 
@@ -3136,7 +3136,7 @@ async function pacePhonePass(s, dark) {
 			none: document.querySelectorAll('.review-mine.is-none').length, score: !!document.querySelector('.review-myrank') }`)
 		check(hr.title === 'Your answers' && hr.chips.join() === 'Answer saved' && hr.none === 5 && !hr.score,
 			'Hausaufgabe-Auswertung: ' + JSON.stringify(hr))
-		await s.click('.review-head .pulse-btn')
+		await s.click('.review-head .vibears-btn')
 
 		// ── Matching with eight pairs at 320 × 640 (match8) ──────────────
 		await join(P.match8.code, 'Max', [320, 640])
@@ -3244,7 +3244,7 @@ async function pacePhonePass(s, dark) {
  * (question text or options anywhere in the text) and the contrast of the
  * race rows (text on fill / text on track, ≥ 4.5:1; bar against track only as
  * a number) and of the secondary texts (meta chips, legend, short URL,
- * deadline pill: the public page carries data-themes="", so Pulse's dark
+ * deadline pill: the public page carries data-themes="", so vibeARS's dark
  * values do not apply there). Capital letters = finding; the pass enters it
  * into the anomalies.
  */
@@ -3321,7 +3321,7 @@ const PACE_SCREEN = `
 	bad(board.length > 8, 'SPITZE ÜBER 8')
 	bad(board.some((sc) => Number(sc) <= 0), 'NULLZEILE IN DER SPITZE')
 	if (q('.scr-final')) { out.push('Endstand-Block') }
-	bad(vm.paceState === 'closed' && (root.querySelectorAll('.pulse-lb').length > 0 || names.length > 0), 'RANGLISTE IM GESCHLOSSENEN' + (names.length ? ' (' + names.join(', ') + ')' : ''))
+	bad(vm.paceState === 'closed' && (root.querySelectorAll('.vibears-lb').length > 0 || names.length > 0), 'RANGLISTE IM GESCHLOSSENEN' + (names.length ? ' (' + names.join(', ') + ')' : ''))
 	const chips = Array.from(root.querySelectorAll('.scr-meta .scr-chip')).map(txt)
 	if (chips.length) { out.push('Meta [' + chips.join(' | ') + ']' + (txt(q('.scr-legend')) ? ' „' + txt(q('.scr-legend')) + '"' : '') + (q('.scr-join-mini') ? ' + Mini-QR' : '')) }
 	const lg = q('.scr-legend')
@@ -3528,7 +3528,7 @@ try {
 		})
 		await shot(s, {
 			name: 'dark-phone-poll-choice', url: `/apps/vibears/s/${poll.code}`, size: PHONE,
-			waitSel: '.pulse-part', note: 'Handy Abstimmen, dunkel',
+			waitSel: '.vibears-part', note: 'Handy Abstimmen, dunkel',
 		})
 		// The lightness scale mixes against the stage background (§7.0), so in the
 		// dark it runs the other way and has to be checked separately.
@@ -3612,7 +3612,7 @@ try {
 		} else {
 			console.log('Eigenes Tempo — Laufansicht:')
 			// The CSV buttons download into a throwaway folder that is removed afterwards.
-			const dl = mkdtempSync(join(tmpdir(), 'pulse-shots-dl-'))
+			const dl = mkdtempSync(join(tmpdir(), 'vibears-shots-dl-'))
 			s = await newSession(false, downloadPrefs(dl))
 			try {
 				await paceRunPass(s, false)

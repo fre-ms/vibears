@@ -7,4 +7,4 @@
 \OCP\Util::addStyle('vibears', 'public');
 \OCP\Util::addScript('vibears', 'vibears-public');
 ?>
-<div id="pulse-public-app"></div>
+<div id="vibears-public-app"></div>

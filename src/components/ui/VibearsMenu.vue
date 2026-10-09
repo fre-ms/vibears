@@ -3,9 +3,9 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<div class="pulse-menu" @keydown="onKey">
+	<div class="vibears-menu" @keydown="onKey">
 		<button ref="trigger"
-			class="pulse-btn is-secondary is-icon"
+			class="vibears-btn is-secondary is-icon"
 			:class="small ? 'is-sm' : ''"
 			type="button"
 			aria-haspopup="menu"
@@ -13,13 +13,13 @@
 			:title="label"
 			:aria-label="label"
 			@click="toggle">
-			<PulseIcon name="more" size="1.2em" />
+			<VibearsIcon name="more" size="1.2em" />
 		</button>
-		<ul v-if="open" ref="list" class="pulse-menu-list" role="menu" :aria-label="label">
+		<ul v-if="open" ref="list" class="vibears-menu-list" role="menu" :aria-label="label">
 			<li v-for="(item, i) in items" :key="item.key" role="none">
-				<hr v-if="i === firstDanger && i > 0" class="pulse-menu-sep">
+				<hr v-if="i === firstDanger && i > 0" class="vibears-menu-sep">
 				<button ref="entries"
-					class="pulse-menu-item"
+					class="vibears-menu-item"
 					:class="{ 'is-danger': item.danger, 'is-checkable': item.checked !== undefined, 'has-hint': !!item.hint }"
 					:data-key="item.key"
 					type="button"
@@ -28,14 +28,14 @@
 					:disabled="!!item.disabled"
 					tabindex="-1"
 					@click="run(item)">
-					<PulseIcon v-if="item.checked === undefined" :name="item.icon" size="1.05em" />
-					<PulseIcon v-else-if="item.checked" name="check" size="1.05em" class="pulse-menu-tick" />
-					<span v-else class="pulse-menu-tick" aria-hidden="true" />
-					<span v-if="item.hint" class="pulse-menu-body">
-						<span class="pulse-menu-txt">{{ item.label }}</span>
-						<span class="pulse-menu-hint">{{ item.hint }}</span>
+					<VibearsIcon v-if="item.checked === undefined" :name="item.icon" size="1.05em" />
+					<VibearsIcon v-else-if="item.checked" name="check" size="1.05em" class="vibears-menu-tick" />
+					<span v-else class="vibears-menu-tick" aria-hidden="true" />
+					<span v-if="item.hint" class="vibears-menu-body">
+						<span class="vibears-menu-txt">{{ item.label }}</span>
+						<span class="vibears-menu-hint">{{ item.hint }}</span>
 					</span>
-					<span v-else class="pulse-menu-txt">{{ item.label }}</span>
+					<span v-else class="vibears-menu-txt">{{ item.label }}</span>
 				</button>
 			</li>
 		</ul>
@@ -44,7 +44,7 @@
 
 <script>
 /*
- * PulseMenu — the overflow menu (overview design notes §3.1, rule R2; not in the public repository).
+ * VibearsMenu — the overflow menu (overview design notes §3.1, rule R2; not in the public repository).
  *
  * The presentation view had it as a one-off in Moderator.vue since stage 5;
  * with the deck header, the deck row and the room card it would have become
@@ -64,11 +64,11 @@
  * focus to the trigger — without that you end up at the top of the page
  * after closing.
  */
-import PulseIcon from './PulseIcon.vue'
+import VibearsIcon from './VibearsIcon.vue'
 
 export default {
-	name: 'PulseMenu',
-	components: { PulseIcon },
+	name: 'VibearsMenu',
+	components: { VibearsIcon },
 	props: {
 		items: { type: Array, required: true },
 		label: { type: String, default: '' },
@@ -154,8 +154,8 @@ export default {
 </script>
 
 <style scoped>
-.pulse-menu { position: relative; display: inline-flex; }
-.pulse-menu-list {
+.vibears-menu { position: relative; display: inline-flex; }
+.vibears-menu-list {
 	position: absolute;
 	z-index: 30;
 	inset-block-start: calc(100% + 6px);
@@ -164,12 +164,12 @@ export default {
 	margin: 0;
 	padding: 6px;
 	list-style: none;
-	background: var(--pulse-bg);
-	border: 1px solid var(--pulse-border-strong);
-	border-radius: var(--pulse-r-el);
-	box-shadow: var(--pulse-shadow-pop);
+	background: var(--vibears-bg);
+	border: 1px solid var(--vibears-border-strong);
+	border-radius: var(--vibears-r-el);
+	box-shadow: var(--vibears-shadow-pop);
 }
-.pulse-menu-item {
+.vibears-menu-item {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -177,30 +177,30 @@ export default {
 	min-height: 40px;
 	padding: 0 10px;
 	border: 0;
-	border-radius: var(--pulse-r-el);
+	border-radius: var(--vibears-r-el);
 	background: transparent;
-	color: var(--pulse-text);
+	color: var(--vibears-text);
 	font: inherit;
 	font-size: var(--t-sm);
 	font-weight: 600;
 	text-align: start;
 	cursor: pointer;
 }
-.pulse-menu-item:hover:not(:disabled) { background: var(--pulse-hover); }
-.pulse-menu-item:disabled { color: var(--pulse-text-2); opacity: .5; cursor: default; }
-.pulse-menu-item.is-danger { color: var(--pulse-error); }
-.pulse-menu-item:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: -2px; }
+.vibears-menu-item:hover:not(:disabled) { background: var(--vibears-hover); }
+.vibears-menu-item:disabled { color: var(--vibears-text-2); opacity: .5; cursor: default; }
+.vibears-menu-item.is-danger { color: var(--vibears-error); }
+.vibears-menu-item:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: -2px; }
 /* The tick takes up its space even when unset — otherwise the
    label shifts on toggling, and the toggle feels like a jump. */
-.pulse-menu-tick { width: 1.05em; height: 1.05em; flex: 0 0 auto; }
-.pulse-menu-txt { flex: 1; min-width: 0; }
+.vibears-menu-tick { width: 1.05em; height: 1.05em; flex: 0 0 auto; }
+.vibears-menu-txt { flex: 1; min-width: 0; }
 /* Entry with a reason: two lines, only icon/tick + label dimmed. */
-.pulse-menu-item.has-hint { padding-block: 6px; }
-.pulse-menu-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.pulse-menu-hint { font-size: var(--t-sm); font-weight: 400; color: var(--pulse-text-2); line-height: 1.35; }
-.pulse-menu-item.has-hint:disabled { opacity: 1; background: transparent; }
-.pulse-menu-item.has-hint:disabled > .pulse-icon,
-.pulse-menu-item.has-hint:disabled > .pulse-menu-tick,
-.pulse-menu-item.has-hint:disabled .pulse-menu-txt { opacity: .5; }
-.pulse-menu-sep { margin: 6px 4px; border: 0; border-block-start: 1px solid var(--pulse-border); }
+.vibears-menu-item.has-hint { padding-block: 6px; }
+.vibears-menu-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.vibears-menu-hint { font-size: var(--t-sm); font-weight: 400; color: var(--vibears-text-2); line-height: 1.35; }
+.vibears-menu-item.has-hint:disabled { opacity: 1; background: transparent; }
+.vibears-menu-item.has-hint:disabled > .vibears-icon,
+.vibears-menu-item.has-hint:disabled > .vibears-menu-tick,
+.vibears-menu-item.has-hint:disabled .vibears-menu-txt { opacity: .5; }
+.vibears-menu-sep { margin: 6px 4px; border: 0; border-block-start: 1px solid var(--vibears-border); }
 </style>

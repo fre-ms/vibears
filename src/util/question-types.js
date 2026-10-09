@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Pulse: the composer's contract per question type (the types each room mode
+ * vibeARS: the composer's contract per question type (the types each room mode
  * offers, and poll -> draft -> request body, i.e. what the server's validation
  * gets to see), the deck's type labels and answer hints, and the loss
  * sentence of the destructive confirmations. Moved out of Moderator.vue, which

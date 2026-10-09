@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Pulse — protocol number between server and bundle (phone + projector).
+ * vibeARS — protocol number between server and bundle (phone + projector).
  * The same number as Application::PROTOCOL (ProtocolConstantTest keeps both
  * equal). If /state reports a different one, the tab is still running a script from the
  * browser cache against a newer (or older) server: reloading once

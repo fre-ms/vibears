@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Pulse — every URL the Vue frontend (src/) requests or links to, and the
+ * vibeARS — every URL the Vue frontend (src/) requests or links to, and the
  * time limits of its requests, in one place. The embed shell
  * js/vibears-embed.js is hand-written and builds its own URLs (projector page,
  * /s/{code}/state); nothing here covers those.

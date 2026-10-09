@@ -220,19 +220,19 @@ export default {
 .pace-race-qr {
 	width: 7em; box-sizing: border-box;
 	background: #fff; padding: 0.3em;
-	border: 3px solid var(--pulse-border-strong); border-radius: var(--pulse-r-card);
-	box-shadow: var(--pulse-shadow-pop);
+	border: 3px solid var(--vibears-border-strong); border-radius: var(--vibears-r-card);
+	box-shadow: var(--vibears-shadow-pop);
 }
 .pace-race-pin {
 	margin: 0.2em 0 0; padding: 0.05em 0.45em;
-	background: var(--pulse-primary); color: var(--pulse-on-primary);
-	border-radius: var(--pulse-r-card);
+	background: var(--vibears-primary); color: var(--vibears-on-primary);
+	border-radius: var(--vibears-r-card);
 	font-weight: 900; font-size: 1.5em; line-height: 1.2; letter-spacing: 0.1em;
 	font-variant-numeric: tabular-nums; white-space: nowrap;
 }
-/* Secondary-text grey instead of --pulse-readout: that one would stay #33465e
+/* Secondary-text grey instead of --vibears-readout: that one would stay #33465e
    on the public page (data-themes="") even in the dark. */
-.pace-race-url { margin: 0; max-width: 100%; font-size: 0.6em; font-weight: 700; color: var(--pulse-text-2); word-break: break-all; }
+.pace-race-url { margin: 0; max-width: 100%; font-size: 0.6em; font-weight: 700; color: var(--vibears-text-2); word-break: break-all; }
 
 /* Leaders: eight leaderboard rows, tighter than on the phone — they share the
    height with the bars next to them. */

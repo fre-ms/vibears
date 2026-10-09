@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Pulse: small pure formatting/calculation helpers, shared by Moderator
+ * vibeARS: small pure formatting/calculation helpers, shared by Moderator
  * (control desk), Participant (phone) and Screen (projector). Deliberately without
  * Vue state: this way every former duplicate (PIN regex 4×, countdown maths
  * incl. server skew 3×) lives in exactly ONE place and can no longer drift.

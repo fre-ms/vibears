@@ -14,7 +14,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
- * Initial schema for Pulse: rooms, polls and votes.
+ * Initial schema for vibeARS: rooms, polls and votes.
  */
 class Version000000Date20260716000000 extends SimpleMigrationStep {
 

@@ -19,7 +19,7 @@ import http from 'node:http'
 
 const URL_BASE = (process.env.VIBEARS_SIM_URL || 'http://127.0.0.1').replace(/\/$/, '')
 const HOST_HEADER = process.env.VIBEARS_SIM_HOST || 'localhost'
-const USER = process.env.VIBEARS_SIM_USER || 'pulse-shots'
+const USER = process.env.VIBEARS_SIM_USER || 'vibears-shots'
 const PASS = process.env.VIBEARS_SIM_PASS || ''
 const BASE = URL_BASE + '/index.php/apps/vibears'
 const AUTH = 'Basic ' + Buffer.from(USER + ':' + PASS).toString('base64')

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Pulse: the layout of the projector's word cloud (components/WordCloud.vue) —
+ * vibeARS: the layout of the projector's word cloud (components/WordCloud.vue) —
  * collision-free spiral placement plus the fit loop, as pure functions. The
  * component keeps the DOM, the animation and the canvas that measures the
  * text and hands the measuring in as `measure(text, size)`. Without Vue and

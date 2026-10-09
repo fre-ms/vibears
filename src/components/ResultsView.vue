@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<div class="pulse-results">
+	<div class="vibears-results">
 		<!-- Multiple choice / multiple answers: bars normalised to the total votes,
 		     option colour carried over from the live tile (palette bridge).
 		     On the projector (wide) one row carries everything — badge, label and value
@@ -19,10 +19,10 @@
 			<div v-for="row in (wide ? [] : choiceRows)" :key="row.id" class="bar-row" :class="[row.pal.cls, { 'is-correct': isCorrect(row.id), 'is-wrong': hasCorrect && !isCorrect(row.id), 'is-winner': !hasCorrect && isWinner(row.count) }]">
 				<div class="bar-head">
 					<span class="bar-label">
-						<span class="pulse-badge bar-badge">{{ row.pal.letter }}</span>
+						<span class="vibears-badge bar-badge">{{ row.pal.letter }}</span>
 						<span class="bar-text">{{ row.label }}</span>
-						<span v-if="isCorrect(row.id)" class="bar-flag is-correct"><PulseIcon name="check" size="1em" /> {{ t('vibears', 'correct') }}</span>
-						<span v-else-if="!hasCorrect && isWinner(row.count)" class="bar-flag is-winner"><PulseIcon name="check" size="1em" /> {{ t('vibears', 'leading') }}</span>
+						<span v-if="isCorrect(row.id)" class="bar-flag is-correct"><VibearsIcon name="check" size="1em" /> {{ t('vibears', 'correct') }}</span>
+						<span v-else-if="!hasCorrect && isWinner(row.count)" class="bar-flag is-winner"><VibearsIcon name="check" size="1em" /> {{ t('vibears', 'leading') }}</span>
 					</span>
 					<span class="bar-count">{{ row.count }} · {{ percent(row.count) }}%</span>
 				</div>
@@ -49,10 +49,10 @@
 			<div v-for="(row, i) in (wide ? [] : results.results)" :key="row.id" class="rank-row" :class="{ 'is-correct': rankCorrect(row.id, i), 'is-wrong': hasRankKey && !rankCorrect(row.id, i) }">
 				<div class="bar-head">
 					<span class="bar-label">
-						<span class="pulse-badge bar-badge">{{ i + 1 }}</span>
+						<span class="vibears-badge bar-badge">{{ i + 1 }}</span>
 						<span class="bar-text">{{ row.label }}</span>
 						<span v-if="hasRankKey" class="bar-flag" :class="rankCorrect(row.id, i) ? 'is-correct' : 'is-wrong'">
-							<PulseIcon :name="rankCorrect(row.id, i) ? 'check' : 'close'" size="1em" /> {{ t('vibears', 'place {place}', { place: rankTarget(row.id) }) }}
+							<VibearsIcon :name="rankCorrect(row.id, i) ? 'check' : 'close'" size="1em" /> {{ t('vibears', 'place {place}', { place: rankTarget(row.id) }) }}
 						</span>
 					</span>
 					<span class="bar-count">{{ t('vibears', 'avg. {value}', { value: row.n ? num(row.average) : '—' }) }}<span v-if="row.first" class="rank-first"> · {{ t('vibears', '{count}× first place', { count: row.first }) }}</span></span>
@@ -81,7 +81,7 @@
 				<div class="mres-head">
 					<span class="mres-item">{{ row.label }}</span>
 					<span v-if="hasMatchKey" class="bar-flag is-correct">
-						<PulseIcon name="check" size="1em" /> {{ matchTargetLabel(matchKeyOf(row.id)) }}
+						<VibearsIcon name="check" size="1em" /> {{ matchTargetLabel(matchKeyOf(row.id)) }}
 					</span>
 					<span v-if="dense" class="mres-lead">{{ matchLead(row) }}</span>
 				</div>
@@ -147,7 +147,7 @@
 			<div v-else-if="results.results.length" class="bars bars--dist">
 				<div v-for="row in results.results" :key="row.value" class="bar-row" :class="{ 'is-correct': numWithin(row.value) }">
 					<div class="bar-head">
-						<span class="bar-label"><span v-if="numWithin(row.value)" class="bar-flag is-correct"><PulseIcon name="check" size="1em" /></span>{{ row.value }}</span>
+						<span class="bar-label"><span v-if="numWithin(row.value)" class="bar-flag is-correct"><VibearsIcon name="check" size="1em" /></span>{{ row.value }}</span>
 						<span class="bar-count">{{ row.count }}×</span>
 					</div>
 					<div class="bar-track"><div class="bar-fill" :style="{ width: scalePercent(row.count) + '%' }" /></div>
@@ -189,19 +189,19 @@
 				<div class="radar-main">
 					<div class="radar-wrap">
 						<svg viewBox="0 0 440 440" role="img" :aria-label="radarAria">
-							<circle v-for="(r, i) in radar.rings" :key="'g' + i" :cx="radar.cx" :cy="radar.cy" :r="r" style="fill:none;stroke:var(--pulse-border)" />
-							<circle :cx="radar.cx" :cy="radar.cy" :r="radar.neutral" style="fill:none;stroke:var(--pulse-text-2);stroke-dasharray:4 5;stroke-width:1.5" />
-							<circle :cx="radar.cx" :cy="radar.cy" :r="radar.R" style="fill:none;stroke:var(--pulse-border-strong);stroke-width:1.75" />
-							<line v-for="(p, i) in radar.spokes" :key="'s' + i" :x1="radar.cx" :y1="radar.cy" :x2="p[0]" :y2="p[1]" style="stroke:var(--pulse-border)" />
-							<path :d="radar.band" style="fill:var(--pulse-viz-2);fill-opacity:.45;fill-rule:evenodd;stroke:none" />
-							<polygon :points="radar.avgPoints" style="fill:var(--pulse-viz);fill-opacity:.12;stroke:var(--pulse-viz);stroke-width:3.5;stroke-linejoin:round" />
-							<polygon v-if="radar.minePoints" :points="radar.minePoints" style="fill:none;stroke:var(--pulse-self);stroke-width:2.5;stroke-dasharray:2 4;stroke-linejoin:round" />
-							<circle v-for="(nm, i) in radar.nums" :key="'d' + i" :cx="nm.dot[0]" :cy="nm.dot[1]" r="5" style="fill:var(--pulse-viz);stroke:var(--pulse-bg);stroke-width:2" />
+							<circle v-for="(r, i) in radar.rings" :key="'g' + i" :cx="radar.cx" :cy="radar.cy" :r="r" style="fill:none;stroke:var(--vibears-border)" />
+							<circle :cx="radar.cx" :cy="radar.cy" :r="radar.neutral" style="fill:none;stroke:var(--vibears-text-2);stroke-dasharray:4 5;stroke-width:1.5" />
+							<circle :cx="radar.cx" :cy="radar.cy" :r="radar.R" style="fill:none;stroke:var(--vibears-border-strong);stroke-width:1.75" />
+							<line v-for="(p, i) in radar.spokes" :key="'s' + i" :x1="radar.cx" :y1="radar.cy" :x2="p[0]" :y2="p[1]" style="stroke:var(--vibears-border)" />
+							<path :d="radar.band" style="fill:var(--vibears-viz-2);fill-opacity:.45;fill-rule:evenodd;stroke:none" />
+							<polygon :points="radar.avgPoints" style="fill:var(--vibears-viz);fill-opacity:.12;stroke:var(--vibears-viz);stroke-width:3.5;stroke-linejoin:round" />
+							<polygon v-if="radar.minePoints" :points="radar.minePoints" style="fill:none;stroke:var(--vibears-self);stroke-width:2.5;stroke-dasharray:2 4;stroke-linejoin:round" />
+							<circle v-for="(nm, i) in radar.nums" :key="'d' + i" :cx="nm.dot[0]" :cy="nm.dot[1]" r="5" style="fill:var(--vibears-viz);stroke:var(--vibears-bg);stroke-width:2" />
 							<g v-for="(nm, i) in radar.nums" :key="'n' + i">
 								<circle :cx="nm.x" :cy="nm.y" r="14" class="rnum-bg" />
 								<text :x="nm.x" :y="nm.y + 5" text-anchor="middle" class="rnum">{{ nm.n }}</text>
 							</g>
-							<circle :cx="radar.cx" :cy="radar.cy" r="2.5" style="fill:var(--pulse-text-2)" />
+							<circle :cx="radar.cx" :cy="radar.cy" r="2.5" style="fill:var(--vibears-text-2)" />
 						</svg>
 					</div>
 					<ol class="viz-col">
@@ -237,24 +237,24 @@
 				<div class="compass-main">
 					<div class="compass-wrap">
 						<svg viewBox="0 0 460 440" role="img" :aria-label="compassAria">
-							<line v-for="(l, i) in compass.grid" :key="'cg' + i" :x1="l.x1" :y1="l.y1" :x2="l.x2" :y2="l.y2" style="stroke:var(--pulse-border);stroke-width:1" />
-							<rect v-for="(c, i) in compass.cells" :key="'hc' + i" :x="c.x" :y="c.y" :width="c.w" :height="c.h" :style="{ fill: 'var(--pulse-viz)', fillOpacity: c.op }" />
-							<circle v-for="(d, i) in compass.dots" :key="'sd' + i" :cx="d.x" :cy="d.y" r="7" style="fill:var(--pulse-viz);fill-opacity:.5" />
-							<rect :x="compass.frame.x" :y="compass.frame.y" :width="compass.frame.w" :height="compass.frame.h" rx="6" style="fill:none;stroke:var(--pulse-border-strong);stroke-width:1.75" />
-							<line :x1="compass.nullV.x1" :y1="compass.nullV.y1" :x2="compass.nullV.x2" :y2="compass.nullV.y2" style="stroke:var(--pulse-text-2);stroke-width:1.75" />
-							<line :x1="compass.nullH.x1" :y1="compass.nullH.y1" :x2="compass.nullH.x2" :y2="compass.nullH.y2" style="stroke:var(--pulse-text-2);stroke-width:1.75" />
+							<line v-for="(l, i) in compass.grid" :key="'cg' + i" :x1="l.x1" :y1="l.y1" :x2="l.x2" :y2="l.y2" style="stroke:var(--vibears-border);stroke-width:1" />
+							<rect v-for="(c, i) in compass.cells" :key="'hc' + i" :x="c.x" :y="c.y" :width="c.w" :height="c.h" :style="{ fill: 'var(--vibears-viz)', fillOpacity: c.op }" />
+							<circle v-for="(d, i) in compass.dots" :key="'sd' + i" :cx="d.x" :cy="d.y" r="7" style="fill:var(--vibears-viz);fill-opacity:.5" />
+							<rect :x="compass.frame.x" :y="compass.frame.y" :width="compass.frame.w" :height="compass.frame.h" rx="6" style="fill:none;stroke:var(--vibears-border-strong);stroke-width:1.75" />
+							<line :x1="compass.nullV.x1" :y1="compass.nullV.y1" :x2="compass.nullV.x2" :y2="compass.nullV.y2" style="stroke:var(--vibears-text-2);stroke-width:1.75" />
+							<line :x1="compass.nullH.x1" :y1="compass.nullH.y1" :x2="compass.nullH.x2" :y2="compass.nullH.y2" style="stroke:var(--vibears-text-2);stroke-width:1.75" />
 							<text :x="compass.poles.top.x" :y="compass.poles.top.y" text-anchor="middle" class="flabel">{{ compass.poles.top.t }}</text>
 							<text :x="compass.poles.bottom.x" :y="compass.poles.bottom.y" text-anchor="middle" class="flabel">{{ compass.poles.bottom.t }}</text>
 							<text :x="compass.poles.right.x" :y="compass.poles.right.y" text-anchor="start" class="flabel">{{ compass.poles.right.t }}</text>
 							<text :x="compass.poles.left.x" :y="compass.poles.left.y" text-anchor="end" class="flabel">{{ compass.poles.left.t }}</text>
 							<text v-for="(cc, i) in compass.corners" :key="'cc' + i" :x="cc.x" :y="cc.y" :text-anchor="cc.anchor" class="fcorner"><title v-if="cc.full">{{ cc.full }}</title>{{ cc.t }}</text>
 							<template v-if="compass.centroid">
-								<polygon :points="compass.centroid.points" style="fill:var(--pulse-viz);stroke:var(--pulse-bg);stroke-width:2" />
-								<text :x="compass.centroid.x" :y="compass.centroid.ty" text-anchor="middle" class="fcorner" style="fill:var(--pulse-viz);font-weight:800">{{ t('vibears', 'Centre of gravity') }}</text>
+								<polygon :points="compass.centroid.points" style="fill:var(--vibears-viz);stroke:var(--vibears-bg);stroke-width:2" />
+								<text :x="compass.centroid.x" :y="compass.centroid.ty" text-anchor="middle" class="fcorner" style="fill:var(--vibears-viz);font-weight:800">{{ t('vibears', 'Centre of gravity') }}</text>
 							</template>
 							<template v-if="compass.mine">
-								<circle :cx="compass.mine.x" :cy="compass.mine.y" r="13" style="fill:none;stroke:var(--pulse-self);stroke-width:3" />
-								<circle :cx="compass.mine.x" :cy="compass.mine.y" r="6" style="fill:var(--pulse-self);stroke:var(--pulse-bg);stroke-width:2" />
+								<circle :cx="compass.mine.x" :cy="compass.mine.y" r="13" style="fill:none;stroke:var(--vibears-self);stroke-width:3" />
+								<circle :cx="compass.mine.x" :cy="compass.mine.y" r="6" style="fill:var(--vibears-self);stroke:var(--vibears-bg);stroke-width:2" />
 								<text :x="compass.mine.tx" :y="compass.mine.ty" class="fdu">{{ t('vibears', 'You') }}</text>
 							</template>
 						</svg>
@@ -324,7 +324,7 @@
  */
 import { fmtNum, hasTallLabel, HEATMAP_THRESHOLD, wrapLabel } from '../util/format.js'
 import { option, rampStep, withPalette } from '../util/palette.js'
-import PulseIcon from './ui/PulseIcon.vue'
+import VibearsIcon from './ui/VibearsIcon.vue'
 import StageCompass from './StageCompass.vue'
 import StageHistogram from './StageHistogram.vue'
 import StageRadar from './StageRadar.vue'
@@ -335,7 +335,7 @@ import VizEmpty from './ui/VizEmpty.vue'
 
 export default {
 	name: 'ResultsView',
-	components: { PulseIcon, StageCompass, StageHistogram, StageRadar, StageRow, StageStack, TextGrading, VizEmpty },
+	components: { VibearsIcon, StageCompass, StageHistogram, StageRadar, StageRow, StageStack, TextGrading, VizEmpty },
 	props: {
 		results: { type: Object, default: null },
 		// Quiz choice/truefalse: option ID of the correct answer -> green.
@@ -821,7 +821,7 @@ export default {
 
 /* All sizes in em -> the component scales via the container font-size:
    small on the phone, large on the projector (§5.4, the fix for "reveal stays too small"). */
-.pulse-results { width: 100%; font-size: inherit; }
+.vibears-results { width: 100%; font-size: inherit; }
 
 /* Stage (projector, §2.4): the rows get the remaining height and share it
    among themselves — four options fill the screen, eight shrink down to the minimum
@@ -844,9 +844,9 @@ export default {
 
 /* Number guess on the projector: figures as one row in class B. */
 .numline { flex: 0 0 auto; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.4em; margin-bottom: 0.5em; font-weight: 700; }
-.numline-target { font-size: 1.3em; font-weight: 900; color: var(--pulse-success); font-variant-numeric: tabular-nums; }
-.numline-lbl { color: var(--pulse-meta); font-weight: 600; }
-.numline-sep { color: var(--pulse-border-strong); }
+.numline-target { font-size: 1.3em; font-weight: 900; color: var(--vibears-success); font-variant-numeric: tabular-nums; }
+.numline-lbl { color: var(--vibears-meta); font-weight: 600; }
+.numline-sep { color: var(--vibears-border-strong); }
 .numline-val { font-variant-numeric: tabular-nums; }
 
 .bar-row { margin-bottom: 1.1em; }
@@ -863,49 +863,49 @@ export default {
 .bar-badge {
 	/* Letter badge in the option colour (palette bridge). */
 	flex: 0 0 auto; font-size: 0.85em;
-	background: var(--opt-fill, var(--pulse-fill)); color: var(--opt-ink, var(--pulse-text));
+	background: var(--opt-fill, var(--vibears-fill)); color: var(--opt-ink, var(--vibears-text));
 }
 .bar-flag { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 0.2em; font-weight: 800; font-size: 0.8em; }
-.bar-flag.is-correct { color: var(--pulse-success); }
-.bar-flag.is-winner { color: var(--pulse-warning); }
+.bar-flag.is-correct { color: var(--vibears-success); }
+.bar-flag.is-winner { color: var(--vibears-warning); }
 .is-correct .bar-text, .is-winner .bar-text { font-weight: 800; }
 /* Only dim the old two-line bars. The stage row (§2.4) encodes
    "wrong" through the saturation of the fill — extra opacity on the
    whole row would also take the text's contrast away. */
 .bar-row.is-wrong, .rank-row.is-wrong { opacity: 0.55; }
-.bar-count { flex: 0 0 auto; color: var(--pulse-readout); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bar-count { flex: 0 0 auto; color: var(--vibears-readout); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .bar-track {
 	height: 2.1em;
-	border-radius: var(--pulse-r-el);
-	background: var(--pulse-fill);
+	border-radius: var(--vibears-r-el);
+	background: var(--vibears-fill);
 	overflow: hidden;
 }
 .bar-fill {
 	height: 100%;
-	border-radius: var(--pulse-r-el);
+	border-radius: var(--vibears-r-el);
 	min-width: 0.2em;
 	/* Palette bridge: bar in the option colour (not blanket primary blue). */
-	background: var(--opt-fill, var(--pulse-primary));
+	background: var(--opt-fill, var(--vibears-primary));
 	transition: width 0.7s cubic-bezier(.22, 1, .36, 1);
 }
 /* Distribution bars (scale/number) carry no option palette -> primary. */
-.bars--dist .bar-fill { background: var(--pulse-primary); }
+.bars--dist .bar-fill { background: var(--vibears-primary); }
 
 .ranks { display: flex; flex-direction: column; gap: 0.7em; }
-.rank-row .bar-fill { background: var(--pulse-viz-1, var(--pulse-primary)); }
-.rank-row.is-correct .bar-fill { background: var(--pulse-success); }
+.rank-row .bar-fill { background: var(--vibears-viz-1, var(--vibears-primary)); }
+.rank-row.is-correct .bar-fill { background: var(--vibears-success); }
 .rank-row.is-wrong .bar-fill { opacity: 0.5; }
-.rank-first { color: var(--pulse-text-2); }
-.norm-note { margin: 0.4em 0 0; font-size: 0.8em; color: var(--pulse-text-2); }
+.rank-first { color: var(--vibears-text-2); }
+.norm-note { margin: 0.4em 0 0; font-size: 0.8em; color: var(--vibears-text-2); }
 
 /* Distribution figures (avg., target number) */
 .dist-metrics { display: flex; flex-wrap: wrap; gap: 1.5em; justify-content: center; margin-bottom: 1.3em; }
 .metric { text-align: center; }
-.metric-val { display: block; font-size: 3.4em; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: var(--pulse-primary); }
-.metric--target .metric-val { color: var(--pulse-success); }
+.metric-val { display: block; font-size: 3.4em; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: var(--vibears-primary); }
+.metric--target .metric-val { color: var(--vibears-success); }
 .metric-val--sub { font-size: 2.4em; }
-.metric-label { font-size: 0.85em; color: var(--pulse-text-2); }
-.bar-label em { font-style: normal; color: var(--pulse-text-2); font-weight: 400; }
+.metric-label { font-size: 0.85em; color: var(--vibears-text-2); }
+.bar-label em { font-style: normal; color: var(--vibears-text-2); font-weight: 400; }
 
 /* Scale histogram (handoff §6; design notes, not in the public repository) —
    everything in em, scales phone -> projector.
@@ -913,32 +913,32 @@ export default {
    does value v sit exactly at ((v-min)+0.5)/N — the formula used to position the avg./median
    markers. With a gap they would drift against the columns. */
 .hist-wrap { position: relative; }
-.hist { display: flex; align-items: flex-end; gap: 0; margin-top: 0.4em; border-bottom: 1px solid var(--pulse-border-strong); }
+.hist { display: flex; align-items: flex-end; gap: 0; margin-top: 0.4em; border-bottom: 1px solid var(--vibears-border-strong); }
 .hist-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 0.3em; }
-.hist-cnt { font-size: 0.72em; line-height: 1; min-height: 1em; color: var(--pulse-text-2); font-variant-numeric: tabular-nums; }
+.hist-cnt { font-size: 0.72em; line-height: 1; min-height: 1em; color: var(--vibears-text-2); font-variant-numeric: tabular-nums; }
 .hist-track { width: 100%; height: 6.5em; display: flex; align-items: flex-end; }
-.hist-bar { width: 62%; min-height: 0.15em; border-radius: 0.25em 0.25em 0 0; background: var(--pulse-viz); transition: height 0.7s cubic-bezier(.22, 1, .36, 1); }
+.hist-bar { width: 62%; min-height: 0.15em; border-radius: 0.25em 0.25em 0 0; background: var(--vibears-viz); transition: height 0.7s cubic-bezier(.22, 1, .36, 1); }
 /* Values without votes stay as a quiet plinth -> a complete axis
    instead of a lonely column in empty space. */
-.hist-bar.is-zero { height: 0.3em; background: var(--pulse-border-strong); border-radius: 0.15em; }
+.hist-bar.is-zero { height: 0.3em; background: var(--vibears-border-strong); border-radius: 0.15em; }
 
 /* Avg./median marker: a line through the distribution + a small flag on top.
    Avg. solid in the data colour, median dashed in the text colour —
    distinguishable by SHAPE, not only by colour (AA). */
 .hmark { position: absolute; top: 0; bottom: 1.6em; width: 0; pointer-events: none; }
 .hmark::before { content: ''; position: absolute; top: 1.5em; bottom: 0; left: -1.5px; width: 3px; }
-.hmark--avg::before { background: var(--pulse-viz); }
-.hmark--med::before { background: repeating-linear-gradient(to bottom, var(--pulse-text) 0 0.35em, transparent 0.35em 0.65em); }
+.hmark--avg::before { background: var(--vibears-viz); }
+.hmark--med::before { background: repeating-linear-gradient(to bottom, var(--vibears-text) 0 0.35em, transparent 0.35em 0.65em); }
 .hmark-flag {
 	position: absolute; top: 0; left: 0; transform: translateX(-50%);
 	padding: 0.15em 0.5em; border-radius: 0.35em; white-space: nowrap;
 	font-size: 0.72em; font-weight: 800; font-variant-numeric: tabular-nums;
-	color: var(--pulse-bg);
+	color: var(--vibears-bg);
 }
-.hmark--avg .hmark-flag { background: var(--pulse-viz); }
-.hmark--med .hmark-flag { background: var(--pulse-text); top: 1.5em; }
-.hist-lab { font-size: 0.85em; font-weight: 700; line-height: 1; color: var(--pulse-text); font-variant-numeric: tabular-nums; }
-.hist-ends { display: flex; justify-content: space-between; gap: 1em; margin-top: 0.3em; font-size: 0.8em; color: var(--pulse-text-2); }
+.hmark--avg .hmark-flag { background: var(--vibears-viz); }
+.hmark--med .hmark-flag { background: var(--vibears-text); top: 1.5em; }
+.hist-lab { font-size: 0.85em; font-weight: 700; line-height: 1; color: var(--vibears-text); font-variant-numeric: tabular-nums; }
+.hist-ends { display: flex; justify-content: space-between; gap: 1em; margin-top: 0.3em; font-size: 0.8em; color: var(--vibears-text-2); }
 .hist-ends span { max-width: 45%; }
 .hist-ends span:last-child { text-align: right; }
 .hist--dense .hist-lab { font-size: 0.68em; }
@@ -951,23 +951,23 @@ export default {
 .radar-wrap { width: 100%; }
 .radar-wrap svg { width: 100%; max-width: 42em; height: auto; display: block; margin: 0 auto; }
 /* Number discs at the spoke end — replace the text at the edge (no clipping). */
-.rnum-bg { fill: var(--pulse-viz); stroke: var(--pulse-bg); stroke-width: 2; }
-.rnum { fill: var(--pulse-bg); font-family: var(--pulse-mono); font-weight: 800; font-size: 15px; }
+.rnum-bg { fill: var(--vibears-viz); stroke: var(--vibears-bg); stroke-width: 2; }
+.rnum { fill: var(--vibears-bg); font-family: var(--vibears-mono); font-weight: 800; font-size: 15px; }
 /* Figures column: number → aspect → avg., below the chart. */
 .viz-col { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4em; min-width: 0; }
 .viz-item { display: flex; align-items: baseline; gap: 0.55em; min-width: 0; }
-.viz-num { flex: 0 0 auto; width: 1.7em; height: 1.7em; align-self: center; border-radius: 50%; display: inline-grid; place-items: center; background: var(--pulse-viz); color: var(--pulse-bg); font-family: var(--pulse-mono); font-weight: 800; font-size: 0.72em; }
+.viz-num { flex: 0 0 auto; width: 1.7em; height: 1.7em; align-self: center; border-radius: 50%; display: inline-grid; place-items: center; background: var(--vibears-viz); color: var(--vibears-bg); font-family: var(--vibears-mono); font-weight: 800; font-size: 0.72em; }
 .viz-label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
-.viz-val { flex: 0 0 auto; font-variant-numeric: tabular-nums; font-weight: 800; color: var(--pulse-viz); white-space: nowrap; }
+.viz-val { flex: 0 0 auto; font-variant-numeric: tabular-nums; font-weight: 800; color: var(--vibears-viz); white-space: nowrap; }
 
 /* Projector: the container takes the rest of the stage height; StageRadar and StageCompass size the chart. */
 .spectrum-radar.is-wide, .compass-result.is-wide { flex: 1 1 auto; min-height: 0; }
-.rlegend { display: flex; flex-wrap: wrap; gap: 1em; justify-content: center; margin-top: 0.6em; font-size: 0.8em; color: var(--pulse-text-2); }
+.rlegend { display: flex; flex-wrap: wrap; gap: 1em; justify-content: center; margin-top: 0.6em; font-size: 0.8em; color: var(--vibears-text-2); }
 .rsw { display: inline-block; width: 1.1em; height: 0.8em; border-radius: 0.2em; vertical-align: -0.1em; margin-right: 0.4em; }
-.rsw-avg { background: var(--pulse-viz); }
-.rsw-band { background: var(--pulse-viz-2); opacity: 0.7; }
-.rsw-neutral { background: transparent; border: 1.5px dashed var(--pulse-text-2); }
-.rsw-mine { background: transparent; border: 1.5px dashed var(--pulse-self); }
+.rsw-avg { background: var(--vibears-viz); }
+.rsw-band { background: var(--vibears-viz-2); opacity: 0.7; }
+.rsw-neutral { background: transparent; border: 1.5px dashed var(--vibears-text-2); }
+.rsw-mine { background: transparent; border: 1.5px dashed var(--vibears-self); }
 
 /* Scale · compass field — SVG viewBox scales phone→projector. */
 .compass-result { display: flex; flex-direction: column; align-items: stretch; }
@@ -977,16 +977,16 @@ export default {
 /* Compass figures: centre of gravity + "You" as a large X/Y readout. */
 .compass-readout { align-items: center; gap: 0.9em; }
 .viz-kpi { display: flex; flex-direction: column; gap: 0.05em; }
-.viz-kpi-lbl { font-size: 0.8em; color: var(--pulse-text-2); font-weight: 700; }
-.viz-kpi-val { font-family: var(--pulse-mono); font-weight: 800; font-size: 1.5em; color: var(--pulse-viz); font-variant-numeric: tabular-nums; }
-.viz-kpi.is-self .viz-kpi-val { color: var(--pulse-self); }
-.flabel { fill: var(--pulse-text); font-weight: 800; font-size: 16px; }
-.fcorner { fill: var(--pulse-text-2); font-weight: 700; font-size: 13px; }
-.fdu { fill: var(--pulse-self); font-weight: 800; font-size: 15px; }
-.rsw-vote { background: var(--pulse-viz); opacity: 0.5; border-radius: 50%; }
-.rsw-heat { background: var(--pulse-viz); opacity: 0.5; }
-.rsw-centroid { background: var(--pulse-viz); border-radius: 0.15em; transform: rotate(45deg); }
-.rsw-du { background: var(--pulse-self); border-radius: 50%; }
+.viz-kpi-lbl { font-size: 0.8em; color: var(--vibears-text-2); font-weight: 700; }
+.viz-kpi-val { font-family: var(--vibears-mono); font-weight: 800; font-size: 1.5em; color: var(--vibears-viz); font-variant-numeric: tabular-nums; }
+.viz-kpi.is-self .viz-kpi-val { color: var(--vibears-self); }
+.flabel { fill: var(--vibears-text); font-weight: 800; font-size: 16px; }
+.fcorner { fill: var(--vibears-text-2); font-weight: 700; font-size: 13px; }
+.fdu { fill: var(--vibears-self); font-weight: 800; font-size: 15px; }
+.rsw-vote { background: var(--vibears-viz); opacity: 0.5; border-radius: 50%; }
+.rsw-heat { background: var(--vibears-viz); opacity: 0.5; }
+.rsw-centroid { background: var(--vibears-viz); border-radius: 0.15em; transform: rotate(45deg); }
+.rsw-du { background: var(--vibears-self); border-radius: 50%; }
 
 .cloud {
 	display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
@@ -995,14 +995,14 @@ export default {
 /* A word runs up to 40 characters; at 2.6em that is wider than a phone or the
    moderator's panel. Break it inside the box, centred like the cloud, instead of
    running past the edge. */
-.cloud-word { max-width: 100%; overflow-wrap: anywhere; text-align: center; font-weight: 700; color: var(--pulse-primary); transition: font-size 0.5s cubic-bezier(.22, 1, .36, 1); }
-.cloud-empty { color: var(--pulse-text-2); }
-.cloud-more { color: var(--pulse-text-2); font-size: 0.85em; font-weight: 600; }
+.cloud-word { max-width: 100%; overflow-wrap: anywhere; text-align: center; font-weight: 700; color: var(--vibears-primary); transition: font-size 0.5s cubic-bezier(.22, 1, .36, 1); }
+.cloud-empty { color: var(--vibears-text-2); }
+.cloud-more { color: var(--vibears-text-2); font-size: 0.85em; font-weight: 600; }
 
 .total {
 	margin-top: 0.8em;
 	font-size: 0.85em;
-	color: var(--pulse-text-2);
+	color: var(--vibears-text-2);
 	text-align: right;
 }
 

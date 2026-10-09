@@ -17,20 +17,20 @@ function injectStyles() {
 	stylesInjected = true
 	const style = document.createElement('style')
 	style.textContent = `
-	.pulse-toasts { position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+	.vibears-toasts { position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
 		z-index: 100000; display: flex; flex-direction: column; gap: 8px; align-items: center;
 		pointer-events: none; max-width: 92vw; }
-	.pulse-toast { pointer-events: auto; cursor: pointer;
+	.vibears-toast { pointer-events: auto; cursor: pointer;
 		background: var(--color-error, #c73e3e); color: #fff;
 		padding: 12px 18px; border-radius: var(--border-radius-large, 12px);
 		box-shadow: 0 4px 16px rgba(0, 0, 0, .28); font-size: 15px; font-weight: 500;
 		max-width: 480px; line-height: 1.35;
-		animation: pulse-toast-in .18s cubic-bezier(.22, 1, .36, 1); }
-	.pulse-toast.is-ok { background: var(--color-success, #2d7d46); }
-	.pulse-toast.is-out { animation: pulse-toast-out .18s ease forwards; }
-	@keyframes pulse-toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
-	@keyframes pulse-toast-out { to { opacity: 0; transform: translateY(-8px); } }
-	@media (prefers-reduced-motion: reduce) { .pulse-toast, .pulse-toast.is-out { animation: none; } }
+		animation: vibears-toast-in .18s cubic-bezier(.22, 1, .36, 1); }
+	.vibears-toast.is-ok { background: var(--color-success, #2d7d46); }
+	.vibears-toast.is-out { animation: vibears-toast-out .18s ease forwards; }
+	@keyframes vibears-toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+	@keyframes vibears-toast-out { to { opacity: 0; transform: translateY(-8px); } }
+	@media (prefers-reduced-motion: reduce) { .vibears-toast, .vibears-toast.is-out { animation: none; } }
 	`
 	document.head.appendChild(style)
 }
@@ -39,7 +39,7 @@ function ensureContainer() {
 	if (container && document.body.contains(container)) { return container }
 	injectStyles()
 	container = document.createElement('div')
-	container.className = 'pulse-toasts'
+	container.className = 'vibears-toasts'
 	document.body.appendChild(container)
 	return container
 }
@@ -51,7 +51,7 @@ function ensureContainer() {
 function showToast(message, opts = {}) {
 	const variant = opts.variant || 'error'
 	const el = document.createElement('div')
-	el.className = variant === 'success' ? 'pulse-toast is-ok' : 'pulse-toast'
+	el.className = variant === 'success' ? 'vibears-toast is-ok' : 'vibears-toast'
 	el.setAttribute('role', opts.role || 'alert')
 	el.textContent = String(message || (variant === 'success' ? t('vibears', 'Done') : t('vibears', 'Error')))
 	const remove = () => {

@@ -444,11 +444,13 @@ npm ci             # exactly the dependency versions of package-lock.json
 npm run build      # produces js/vibears-main.js, js/vibears-public.js, js/vibears-styles.js and js/vibears-admin.js
 ```
 
-Use Node.js 22.18.0, the version the committed bundles are built with: with it,
-`npm ci` plus `npm run build` reproduces `js/` byte for byte. CI builds the same
-way and fails when the committed `js/` differs from a fresh build, so after a
-change to `src/` or to the dependencies, commit the rebuilt `js/` along with
-it. `build/package.sh` without `SKIP_BUILD=1` runs the build itself.
+Use Node.js 26.10.0, the version the committed bundles are built with: with it,
+`npm ci` plus `npm run build` reproduces `js/` byte for byte (the output is
+determined by the packages in `package-lock.json`, not by Node — 22.18.0 and
+26.10.0 build identical bundles — but the byte-for-byte check needs one pinned
+toolchain). CI builds the same way and fails when the committed `js/` differs
+from a fresh build, so after a change to `src/` or to the dependencies, commit
+the rebuilt `js/` along with it. `build/package.sh` without `SKIP_BUILD=1` runs the build itself.
 
 ## Languages
 
@@ -730,7 +732,7 @@ and the same steps would apply to the app ID `vibears`.
 AGPL-3.0-or-later, see [`LICENSE`](LICENSE). Every source file carries the
 matching SPDX header (`hotochan123` for Pulse's code, `fre.ms` for the fork's
 additions, both where a file was changed). The one exception inside a file: the `copy`, `more`,
-`plus` and `close` icons in `src/components/ui/PulseIcon.vue` are taken from
+`plus` and `close` icons in `src/components/ui/VibearsIcon.vue` are taken from
 or adapted from [Feather Icons](https://github.com/feathericons/feather)
 (`copy` with a slightly smaller front square), under the MIT License:
 

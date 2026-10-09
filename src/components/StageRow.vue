@@ -10,7 +10,7 @@
 			<!-- Layer above the fill: identical content, clipped complementarily. -->
 			<span class="srow-text srow-text--fill" aria-hidden="true">
 				<span v-if="badge !== ''" class="srow-badge">{{ badge }}</span>
-				<PulseIcon v-if="state === 'correct'" name="check" size="1.2em" class="srow-mark" />
+				<VibearsIcon v-if="state === 'correct'" name="check" size="1.2em" class="srow-mark" />
 				<span class="srow-label">{{ label }}</span>
 				<span v-if="flag" class="srow-flag">{{ flag }}</span>
 				<span v-if="value !== ''" class="srow-val">{{ value }}</span>
@@ -18,7 +18,7 @@
 		</template>
 		<span class="srow-text srow-text--track">
 			<span v-if="badge !== ''" class="srow-badge">{{ badge }}</span>
-			<PulseIcon v-if="state === 'correct'" name="check" size="1.2em" class="srow-mark" />
+			<VibearsIcon v-if="state === 'correct'" name="check" size="1.2em" class="srow-mark" />
 			<span class="srow-label">{{ label }}</span>
 			<span v-if="flag" class="srow-flag">{{ flag }}</span>
 			<span v-if="value !== ''" class="srow-val">{{ value }}</span>
@@ -31,20 +31,20 @@
  * Stage row (design notes §2.4, not in the public repository) — the bar IS
  * the row.
  *
- * The palette colour comes from outside: the class `pulse-opt-a` … `-h` on the
+ * The palette colour comes from outside: the class `vibears-opt-a` … `-h` on the
  * element sets --opt-fill/--opt-ink (util/palette.js supplies them). Vue passes
  * classes on the component tag through to the root element, so
  * `<StageRow :class="row.pal.cls" …>` is enough.
  *
- * Styling lives in pulse-ds.css (global) on purpose, not scoped: the stage,
+ * Styling lives in vibears-ds.css (global) on purpose, not scoped: the stage,
  * final standings and the open option list share the same row model, and the
  * respective parents decide the row height (.srows--stretch/--fixed).
  */
-import PulseIcon from './ui/PulseIcon.vue'
+import VibearsIcon from './ui/VibearsIcon.vue'
 
 export default {
 	name: 'StageRow',
-	components: { PulseIcon },
+	components: { VibearsIcon },
 	props: {
 		// Letter (A–H) or rank number. Empty = no badge.
 		badge: { type: [String, Number], default: '' },

@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<div class="pulse-lb" :class="{ 'is-animating': animate, 'is-split': split, 'is-solo': split && !listRows.length }">
+	<div class="vibears-lb" :class="{ 'is-animating': animate, 'is-split': split, 'is-solo': split && !listRows.length }">
 		<p v-if="!rows.length" class="lb-empty">{{ t('vibears', 'No points yet.') }}</p>
 
 		<!-- Final standings on the projector (§4.3): two columns. This uses the wide format,
@@ -17,7 +17,7 @@
 						<div class="win-card" :class="{ 'you-ring': p.me }">
 							<span class="podium-name">
 								<span class="podium-name-txt">{{ p.nickname }}</span>
-								<span v-if="p.me" class="pulse-du lb-du">{{ t('vibears', 'You') }}</span>
+								<span v-if="p.me" class="vibears-du lb-du">{{ t('vibears', 'You') }}</span>
 								<span v-if="p.shared" class="lb-tie">{{ t('vibears', 'shared') }}</span>
 							</span>
 							<span class="podium-score">{{ p.score }}</span>
@@ -46,7 +46,7 @@
 						<span class="medal" :class="metalCls(p.rank)" aria-hidden="true">{{ p.rank }}</span>
 						<span class="podium-name">
 							<span class="podium-name-txt">{{ p.nickname }}</span>
-							<span v-if="p.me" class="pulse-du lb-du">{{ t('vibears', 'You') }}</span>
+							<span v-if="p.me" class="vibears-du lb-du">{{ t('vibears', 'You') }}</span>
 							<span v-if="p.shared" class="lb-tie">{{ t('vibears', 'shared') }}</span>
 						</span>
 						<span class="podium-score">{{ p.score }}</span>
@@ -60,7 +60,7 @@
 		<ol v-if="!split" class="lb-list">
 			<li v-for="(r, i) in listRows" :key="r.nickname + i" class="lb-row" :class="{ 'is-me': r.me }">
 				<span class="lb-rank">{{ r.rank }}</span>
-				<span class="lb-name"><span class="lb-name-txt">{{ r.nickname }}</span><span v-if="r.me" class="pulse-du lb-du">{{ t('vibears', 'You') }}</span><span v-if="r.shared" class="lb-tie">{{ t('vibears', 'shared') }}</span></span>
+				<span class="lb-name"><span class="lb-name-txt">{{ r.nickname }}</span><span v-if="r.me" class="vibears-du lb-du">{{ t('vibears', 'You') }}</span><span v-if="r.shared" class="lb-tie">{{ t('vibears', 'shared') }}</span></span>
 				<span class="lb-correct">{{ t('vibears', '{count} correct', { count: r.correct }) }}</span>
 				<span class="lb-score">{{ r.score }}</span>
 			</li>
@@ -171,8 +171,8 @@ export default {
 
 <style scoped>
 /* em -> scales via the container font-size (moderator small, projector large). */
-.pulse-lb { width: 100%; font-size: inherit; }
-.lb-empty { color: var(--pulse-text-2); text-align: center; }
+.vibears-lb { width: 100%; font-size: inherit; }
+.lb-empty { color: var(--vibears-text-2); text-align: center; }
 
 /* ── Final standings on the projector (§4.3) ──────────────────────────────
    Two columns: podium on the left, places 4–8 on the right in the row model from §2.4 —
@@ -201,7 +201,7 @@ export default {
 .is-split .riser.is-silver { height: 4.8em; }
 .is-split .riser.is-bronze { height: 4em; }
 .lb-col { min-width: 0; }
-.lb-rest { margin: 0.5em 0 0; font-size: 0.5em; color: var(--pulse-meta); }
+.lb-rest { margin: 0.5em 0 0; font-size: 0.5em; color: var(--vibears-meta); }
 
 /* ── Podium (design notes §2, not in the public repository) ───────────────── */
 .podium-stage { position: relative; margin: 0 0 1.8em; }
@@ -210,43 +210,43 @@ export default {
 	position: absolute; left: 50%; top: 4%; width: 62%; height: 78%;
 	transform: translateX(-50%); pointer-events: none; opacity: 0;
 	background: radial-gradient(60% 60% at 50% 32%,
-		color-mix(in oklab, var(--pulse-gold) 42%, transparent) 0%, transparent 70%);
+		color-mix(in oklab, var(--vibears-gold) 42%, transparent) 0%, transparent 70%);
 }
-.is-animating .podium-glow { animation: pulse-glow 1400ms ease-out 4.35s both; }
+.is-animating .podium-glow { animation: vibears-glow 1400ms ease-out 4.35s both; }
 
 .podium { list-style: none; display: flex; align-items: flex-end; justify-content: center; gap: 0.9em; margin: 0; padding: 0; }
 .podium-col { display: flex; flex-direction: column; align-items: center; flex: 0 1 8em; min-width: 0; }
-.win-card { display: flex; flex-direction: column; align-items: center; gap: 0.3em; padding: 0.35em 0.5em; border-radius: var(--pulse-r-card); max-width: 100%; min-width: 0; }
+.win-card { display: flex; flex-direction: column; align-items: center; gap: 0.3em; padding: 0.35em 0.5em; border-radius: var(--vibears-r-card); max-width: 100%; min-width: 0; }
 /* "You" on the podium: self ring around the winner card. */
-.win-card.you-ring { outline: 3px solid var(--pulse-self); outline-offset: 3px; }
+.win-card.you-ring { outline: 3px solid var(--vibears-self); outline-offset: 3px; }
 
 .medal {
 	width: 2.1em; height: 2.1em; border-radius: 50%; display: grid; place-items: center;
-	font-family: var(--pulse-mono); font-weight: 800; font-size: 1em; line-height: 1;
-	border: 2px solid var(--pulse-bg); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
+	font-family: var(--vibears-mono); font-weight: 800; font-size: 1em; line-height: 1;
+	border: 2px solid var(--vibears-bg); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
 }
-.medal.is-gold { background: radial-gradient(circle at 35% 30%, var(--pulse-gold-2), var(--pulse-gold)); color: #3a2a00; }
-.medal.is-silver { background: radial-gradient(circle at 35% 30%, var(--pulse-silver-2), var(--pulse-silver)); color: #25292e; }
-.medal.is-bronze { background: radial-gradient(circle at 35% 30%, var(--pulse-bronze-2), var(--pulse-bronze)); color: #2e1a0c; }
-.is-animating .medal { animation: pulse-pop 460ms cubic-bezier(.34, 1.56, .64, 1) both; }
+.medal.is-gold { background: radial-gradient(circle at 35% 30%, var(--vibears-gold-2), var(--vibears-gold)); color: #3a2a00; }
+.medal.is-silver { background: radial-gradient(circle at 35% 30%, var(--vibears-silver-2), var(--vibears-silver)); color: #25292e; }
+.medal.is-bronze { background: radial-gradient(circle at 35% 30%, var(--vibears-bronze-2), var(--vibears-bronze)); color: #2e1a0c; }
+.is-animating .medal { animation: vibears-pop 460ms cubic-bezier(.34, 1.56, .64, 1) both; }
 
 .podium-name { display: inline-flex; align-items: center; gap: 0.4em; font-weight: 700; max-width: 100%; min-width: 0; }
 .podium-name-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.podium-score { font-variant-numeric: tabular-nums; font-weight: 800; color: var(--pulse-primary); }
+.podium-score { font-variant-numeric: tabular-nums; font-weight: 800; color: var(--vibears-primary); }
 
 .riser {
-	width: 100%; margin-top: 0.4em; border-radius: var(--pulse-r-el) var(--pulse-r-el) 0 0;
+	width: 100%; margin-top: 0.4em; border-radius: var(--vibears-r-el) var(--vibears-r-el) 0 0;
 	display: grid; place-items: center;
-	color: var(--pulse-bg); font-family: var(--pulse-mono); font-weight: 800; font-size: 1.6em; line-height: 1;
+	color: var(--vibears-bg); font-family: var(--vibears-mono); font-weight: 800; font-size: 1.6em; line-height: 1;
 }
-.riser.is-gold { height: 5.4em; background: linear-gradient(180deg, var(--pulse-gold), color-mix(in oklab, var(--pulse-gold) 74%, #000)); }
-.riser.is-silver { height: 3.7em; background: linear-gradient(180deg, var(--pulse-silver), color-mix(in oklab, var(--pulse-silver) 74%, #000)); }
-.riser.is-bronze { height: 2.4em; background: linear-gradient(180deg, var(--pulse-bronze), color-mix(in oklab, var(--pulse-bronze) 74%, #000)); }
+.riser.is-gold { height: 5.4em; background: linear-gradient(180deg, var(--vibears-gold), color-mix(in oklab, var(--vibears-gold) 74%, #000)); }
+.riser.is-silver { height: 3.7em; background: linear-gradient(180deg, var(--vibears-silver), color-mix(in oklab, var(--vibears-silver) 74%, #000)); }
+.riser.is-bronze { height: 2.4em; background: linear-gradient(180deg, var(--vibears-bronze), color-mix(in oklab, var(--vibears-bronze) 74%, #000)); }
 .riser-rank { opacity: 0.85; }
 
 /* Staggered entrance: bronze (c3) first, winner (c1) last. Delays apply
    per RANK (class), independent of the visual order via `order`. */
-.is-animating .podium-col { animation: pulse-rise 620ms cubic-bezier(.2, .7, .2, 1) both; }
+.is-animating .podium-col { animation: vibears-rise 620ms cubic-bezier(.2, .7, .2, 1) both; }
 .is-animating .podium-col.c3 { animation-delay: 500ms; }
 .is-animating .podium-col.c2 { animation-delay: 2300ms; }
 .is-animating .podium-col.c1 { animation-delay: 4300ms; }
@@ -254,32 +254,32 @@ export default {
 .is-animating .podium-col.c2 .medal { animation-delay: 2850ms; }
 .is-animating .podium-col.c1 .medal { animation-delay: 4850ms; }
 
-@keyframes pulse-rise { from { opacity: 0; transform: translateY(2.2em); } to { opacity: 1; transform: none; } }
-@keyframes pulse-pop { 0% { transform: scale(0); } 70% { transform: scale(1.18); } 100% { transform: scale(1); } }
-@keyframes pulse-glow { from { opacity: 0; } 40% { opacity: 1; } to { opacity: 0.65; } }
+@keyframes vibears-rise { from { opacity: 0; transform: translateY(2.2em); } to { opacity: 1; transform: none; } }
+@keyframes vibears-pop { 0% { transform: scale(0); } 70% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes vibears-glow { from { opacity: 0; } 40% { opacity: 1; } to { opacity: 0.65; } }
 
 .lb-list { list-style: none; margin: 0; padding: 0; }
 .lb-row {
 	display: flex; align-items: center; gap: 0.75em;
 	padding: 0.6em 0.9em; margin-bottom: 0.4em;
-	background: var(--pulse-hover);
+	background: var(--vibears-hover);
 	border: 2px solid transparent;
-	border-radius: var(--pulse-r-el);
+	border-radius: var(--vibears-r-el);
 }
 /* One's own row in the "You" colour (§6: "You" is the same colour everywhere). */
-.lb-row.is-me { border-color: var(--pulse-self); background: var(--pulse-self-soft); }
-.lb-rank { font-weight: 800; color: var(--pulse-text-2); min-width: 1.5em; font-variant-numeric: tabular-nums; text-align: right; }
+.lb-row.is-me { border-color: var(--vibears-self); background: var(--vibears-self-soft); }
+.lb-rank { font-weight: 800; color: var(--vibears-text-2); min-width: 1.5em; font-variant-numeric: tabular-nums; text-align: right; }
 .lb-name { flex: 1; min-width: 0; display: inline-flex; align-items: center; gap: 0.5em; font-weight: 600; }
 .lb-name-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lb-correct { color: var(--pulse-text-2); font-size: 0.85em; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.lb-score { font-weight: 800; font-variant-numeric: tabular-nums; min-width: 3em; text-align: right; color: var(--pulse-primary); }
+.lb-correct { color: var(--vibears-text-2); font-size: 0.85em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lb-score { font-weight: 800; font-variant-numeric: tabular-nums; min-width: 3em; text-align: right; color: var(--vibears-primary); }
 
-/* "You" pill in the self colour — overrides the global (primary blue) .pulse-du. */
-.lb-du { background: var(--pulse-self-soft); color: var(--pulse-self); }
+/* "You" pill in the self colour — overrides the global (primary blue) .vibears-du. */
+.lb-du { background: var(--vibears-self-soft); color: var(--vibears-self); }
 
 /* "shared" chip on a points tie (ex aequo) — neutral, carries the message
    in addition to the same medal number/height (colour is never the only carrier). */
-.lb-tie { flex: 0 0 auto; font-size: 0.7em; font-weight: 700; padding: 0.1em 0.5em; border-radius: var(--pulse-r-pill); background: var(--pulse-fill); color: var(--pulse-text); white-space: nowrap; }
+.lb-tie { flex: 0 0 auto; font-size: 0.7em; font-weight: 700; padding: 0.1em 0.5em; border-radius: var(--vibears-r-pill); background: var(--vibears-fill); color: var(--vibears-text); white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
 	.is-animating .podium-col,

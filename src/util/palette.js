@@ -7,9 +7,9 @@
  * Replaces the hard-coded OPT_COLORS array (formerly in Screen.vue) and carries the
  * color all the way from the live tile to the result bar: set `cls` on the
  * option element -> letter badge and bar fill inherit --opt-fill
- * /--opt-ink (see pulse-ds.css, classes .pulse-opt-*).
+ * /--opt-ink (see vibears-ds.css, classes .vibears-opt-*).
  *
- * The color values themselves live theme-independently in pulse-tokens.css (--opt-*).
+ * The color values themselves live theme-independently in vibears-tokens.css (--opt-*).
  *
  * Section references (§…) point to the design notes of the redesign, which are
  * not in the public repository (see "References in code comments" in the
@@ -27,7 +27,7 @@ export function option(index) {
 	const key = KEYS[i]
 	return {
 		letter: String.fromCharCode(65 + i), // A … H
-		cls: 'pulse-opt-' + key,             // sets --opt-fill/--opt-ink
+		cls: 'vibears-opt-' + key,             // sets --opt-fill/--opt-ink
 		isInk: key === 'd',                  // amber: dark text on a light tile
 	}
 }
@@ -54,9 +54,9 @@ export function withPalette(list) {
 export function rampStep(k, n) {
 	const lift = n > 1 ? ((k - 1) / (n - 1)) * 70 : 0
 	return {
-		fill: `color-mix(in oklab, var(--pulse-primary), var(--pulse-screen-bg) ${Math.round(lift)}%)`,
+		fill: `color-mix(in oklab, var(--vibears-primary), var(--vibears-screen-bg) ${Math.round(lift)}%)`,
 		// From half the lightening on, the light contrast partner no longer holds up;
 		// measured, not estimated (§3.1/§7.0).
-		ink: lift >= 50 ? 'var(--pulse-text)' : 'var(--pulse-on-primary)',
+		ink: lift >= 50 ? 'var(--vibears-text)' : 'var(--vibears-on-primary)',
 	}
 }

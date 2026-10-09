@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * Public Pulse pages (participant /s/{code} + projector /screen/{code}):
+ * Public vibeARS pages (participant /s/{code} + projector /screen/{code}):
  * hide the Nextcloud guest footer — the slogan "… a safe home for all your
  * data" + "Get your own free account". It is a nuisance on the projector and
  * distracts participants. Targets only this one footer element, so the app

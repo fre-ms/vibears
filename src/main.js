@@ -6,8 +6,8 @@ import Vue from 'vue'
 import { t, n } from './util/l10n.js'
 // Design-system foundation: load tokens + primitives globally (un-scoped),
 // so they reach the moderator and every scoped component style.
-import './styles/pulse-tokens.css'
-import './styles/pulse-ds.css'
+import './styles/vibears-tokens.css'
+import './styles/vibears-ds.css'
 import Moderator from './Moderator.vue'
 
 // Translations globally: t/n are available in template and script (app id
@@ -17,6 +17,6 @@ Vue.prototype.n = n
 
 // eslint-disable-next-line no-new
 new Vue({
-	el: '#pulse-app',
+	el: '#vibears-app',
 	render: (h) => h(Moderator),
 })

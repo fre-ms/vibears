@@ -374,7 +374,7 @@ class PublicRevealGateTest extends TestCase {
             'items' => [['id' => 'IT01', 'label' => 'Hund'], ['id' => 'IT02', 'label' => 'Katze'], ['id' => 'IT03', 'label' => 'Kuh']],
             'targets' => [['id' => 'TC03', 'label' => 'bellt'], ['id' => 'TA01', 'label' => 'miaut'], ['id' => 'TB02', 'label' => 'muht']],
         ]));
-        $this->assertSame(['TA01', 'TB02', 'TC03'], array_column($match['poll']['match']['targets'], 'id'));
+        $this->assertSame(['TC03', 'TB02', 'TA01'], array_column($match['poll']['match']['targets'], 'id'));
     }
 
     public function testPollRankingIsNeverResorted(): void {

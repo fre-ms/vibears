@@ -4,7 +4,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<div class="pulse-mod" :class="{ 'is-fs': isFullscreen, 'is-live': liveFrame, 'is-start': phase === 'start' }">
+	<div class="vibears-mod" :class="{ 'is-fs': isFullscreen, 'is-live': liveFrame, 'is-start': phase === 'start' }">
 		<!--
 		  Start screen (§9.5): two columns from 1200 px. Before, there were about
 		  150 px of empty space above the header block and "My rooms" started so
@@ -19,9 +19,9 @@
 
 				<!-- One CTA + mode segmented control (§4.1): pick the mode first, then ONE start button -->
 				<div class="start-cta">
-					<PulseSegmented v-model="startMode" :options="modeOptions" :label="t('vibears', 'Choose mode')" />
-					<button class="pulse-btn is-primary is-lg" :disabled="busy" @click="startRoom(startMode)">
-						<PulseIcon name="play" size="1.05em" /> {{ startMode === 'quiz' ? t('vibears', 'Start quiz') : t('vibears', 'Start poll') }}
+					<VibearsSegmented v-model="startMode" :options="modeOptions" :label="t('vibears', 'Choose mode')" />
+					<button class="vibears-btn is-primary is-lg" :disabled="busy" @click="startRoom(startMode)">
+						<VibearsIcon name="play" size="1.05em" /> {{ startMode === 'quiz' ? t('vibears', 'Start quiz') : t('vibears', 'Start poll') }}
 					</button>
 				</div>
 				<p class="mode-note">
@@ -38,8 +38,8 @@
 				     behind a labelled button; the text is read in the browser and sent
 				     as JSON, so the server sees one string, not an upload. -->
 				<p class="start-import">
-					<label class="pulse-btn is-secondary is-sm start-import-pick" :class="{ 'is-disabled': busy || importBusy }">
-						<PulseIcon name="download" size="1em" class="ic-flip-v" /> {{ importBusy ? t('vibears', 'Importing …') : t('vibears', 'Import a deck (Markdown)') }}
+					<label class="vibears-btn is-secondary is-sm start-import-pick" :class="{ 'is-disabled': busy || importBusy }">
+						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ importBusy ? t('vibears', 'Importing …') : t('vibears', 'Import a deck (Markdown)') }}
 						<input ref="importInput" class="start-import-input" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" :disabled="busy || importBusy" @change="importDeck">
 					</label>
 				</p>
@@ -54,15 +54,15 @@
 								<span v-if="r.title" class="myroom-title">{{ r.title }}</span>
 								<span class="myroom-code" :class="{ 'is-sub': r.title }">{{ spaced(r.code) }}</span>
 								<span class="myroom-meta">
-									<span class="pulse-chip myroom-type" :class="r.mode === 'quiz' ? 'is-quiz' : 'is-accent'"><PulseIcon :name="r.mode === 'quiz' ? 'quiz' : 'poll'" size="1em" /> {{ r.mode === 'quiz' ? t('vibears', 'Quiz') : t('vibears', 'Poll') }}</span>
-									<span v-if="r.pace === 'self' && r.window" class="pulse-chip myroom-chip myroom-pace" :class="paceChip(r.window).cls"><span v-if="paceChip(r.window).dot" class="pulse-chip-dot" />{{ paceChip(r.window).label }}</span>
-									<span v-if="r.activePollId" class="pulse-chip is-live myroom-chip"><span class="pulse-chip-dot" />{{ t('vibears', 'Running') }}</span>
+									<span class="vibears-chip myroom-type" :class="r.mode === 'quiz' ? 'is-quiz' : 'is-accent'"><VibearsIcon :name="r.mode === 'quiz' ? 'quiz' : 'poll'" size="1em" /> {{ r.mode === 'quiz' ? t('vibears', 'Quiz') : t('vibears', 'Poll') }}</span>
+									<span v-if="r.pace === 'self' && r.window" class="vibears-chip myroom-chip myroom-pace" :class="paceChip(r.window).cls"><span v-if="paceChip(r.window).dot" class="vibears-chip-dot" />{{ paceChip(r.window).label }}</span>
+									<span v-if="r.activePollId" class="vibears-chip is-live myroom-chip"><span class="vibears-chip-dot" />{{ t('vibears', 'Running') }}</span>
 									<span class="myroom-count">{{ n('vibears', '%n question', '%n questions', r.pollCount) }} · {{ ago(r.createdAt) }}</span>
 								</span>
 							</span>
-							<PulseIcon name="chevron" size="1.2em" class="myroom-go" />
+							<VibearsIcon name="chevron" size="1.2em" class="myroom-go" />
 						</button>
-						<PulseMenu :items="roomMenu(r)" :label="t('vibears', 'More actions for this room')" small />
+						<VibearsMenu :items="roomMenu(r)" :label="t('vibears', 'More actions for this room')" small />
 					</li>
 				</ul>
 			</div>
@@ -74,16 +74,16 @@
 				<h2>{{ t('vibears', 'Summary') }}</h2>
 				<div class="deck-head-actions">
 					<div class="btn-group">
-						<button class="pulse-btn is-secondary is-sm" @click="goHome"><PulseIcon name="chevron" size="1em" class="ic-flip" /> {{ t('vibears', 'My rooms') }}</button>
-						<button class="pulse-btn is-secondary is-sm summary-back" @click="summaryBack">{{ summaryToPace ? t('vibears', 'Back to progress') : t('vibears', 'Back to the deck') }}</button>
+						<button class="vibears-btn is-secondary is-sm" @click="goHome"><VibearsIcon name="chevron" size="1em" class="ic-flip" /> {{ t('vibears', 'My rooms') }}</button>
+						<button class="vibears-btn is-secondary is-sm summary-back" @click="summaryBack">{{ summaryToPace ? t('vibears', 'Back to progress') : t('vibears', 'Back to the deck') }}</button>
 					</div>
 					<!-- Self-paced: next to "Participants/Answers as CSV" (run view)
 					     this is the third CSV — hence the unambiguous name. -->
-					<a class="pulse-btn is-primary is-sm export-btn" :href="exportUrl" download>{{ isPaced ? t('vibears', 'Results per question (CSV)') : t('vibears', 'Export CSV') }}</a>
+					<a class="vibears-btn is-primary is-sm export-btn" :href="exportUrl" download>{{ isPaced ? t('vibears', 'Results per question (CSV)') : t('vibears', 'Export CSV') }}</a>
 				</div>
 			</div>
 			<!-- While the quiz is open, this page shows the solutions — do not mirror it. -->
-			<p v-if="isPaced && paceState === 'open'" class="pulse-notice is-warn summary-warn"><PulseIcon name="lock" size="1.1em" class="pulse-notice-ico" /><span><b class="summary-warn-head">{{ t('vibears', 'Only for you') }}</b> {{ t('vibears', 'This page shows the solutions — do not mirror it while the quiz is open.') }}</span></p>
+			<p v-if="isPaced && paceState === 'open'" class="vibears-notice is-warn summary-warn"><VibearsIcon name="lock" size="1.1em" class="vibears-notice-ico" /><span><b class="summary-warn-head">{{ t('vibears', 'Only for you') }}</b> {{ t('vibears', 'This page shows the solutions — do not mirror it while the quiz is open.') }}</span></p>
 			<div v-if="summary.length" class="summary-list">
 				<div v-for="(item, i) in summary" :key="item.poll.id" class="summary-item">
 					<h3 class="summary-q">
@@ -103,57 +103,57 @@
 			<div class="present-main">
 				<!-- ── DECK EDITOR ─────────────────────────────────────────── -->
 				<div class="deck-head" :class="{ 'is-paced': isPaced }">
-					<button class="pulse-btn is-secondary is-icon deck-back" :title="t('vibears', 'My rooms')" :aria-label="t('vibears', 'My rooms')" @click="goHome"><PulseIcon name="chevron" size="1.1em" class="ic-flip" /></button>
+					<button class="vibears-btn is-secondary is-icon deck-back" :title="t('vibears', 'My rooms')" :aria-label="t('vibears', 'My rooms')" @click="goHome"><VibearsIcon name="chevron" size="1.1em" class="ic-flip" /></button>
 					<h2 v-if="!renaming" class="deck-title">
 						<span class="deck-title-txt" :class="{ 'is-untitled': !roomTitle }">{{ roomTitle || (isQuiz ? t('vibears', 'Your quiz') : t('vibears', 'Your deck')) }}</span>
-						<button class="pulse-btn is-secondary is-icon is-xs" :title="t('vibears', 'Name the room — helps you find it again under “My rooms”')" :aria-label="t('vibears', 'Name the room')" @click="startRename"><PulseIcon name="edit" size="1em" /></button>
+						<button class="vibears-btn is-secondary is-icon is-xs" :title="t('vibears', 'Name the room — helps you find it again under “My rooms”')" :aria-label="t('vibears', 'Name the room')" @click="startRename"><VibearsIcon name="edit" size="1em" /></button>
 					</h2>
 					<form v-else class="deck-rename" @submit.prevent="saveRename">
 						<input ref="renameInput" v-model="renameDraft" class="pinput deck-rename-input" type="text" maxlength="80" :placeholder="t('vibears', 'Room name (optional)')" :aria-label="t('vibears', 'Room name')" @keyup.esc="cancelRename">
-						<button class="pulse-btn is-primary is-sm" type="submit">{{ t('vibears', 'Save') }}</button>
-						<button class="pulse-btn is-secondary is-sm" type="button" @click="cancelRename">{{ t('vibears', 'Cancel') }}</button>
+						<button class="vibears-btn is-primary is-sm" type="submit">{{ t('vibears', 'Save') }}</button>
+						<button class="vibears-btn is-secondary is-sm" type="button" @click="cancelRename">{{ t('vibears', 'Cancel') }}</button>
 					</form>
-					<span class="pulse-chip deck-mode" :class="isQuiz ? 'is-quiz' : 'is-accent'"><PulseIcon :name="isQuiz ? 'quiz' : 'poll'" size="1em" /> {{ isPaced ? t('vibears', 'Quiz · self-paced') : isQuiz ? t('vibears', 'Quiz') : t('vibears', 'Poll') }}</span>
-					<span v-if="deckStateChip" class="pulse-chip deck-state" :class="deckStateChip.cls"><span v-if="deckStateChip.dot" class="pulse-chip-dot" />{{ deckStateChip.label }}</span>
+					<span class="vibears-chip deck-mode" :class="isQuiz ? 'is-quiz' : 'is-accent'"><VibearsIcon :name="isQuiz ? 'quiz' : 'poll'" size="1em" /> {{ isPaced ? t('vibears', 'Quiz · self-paced') : isQuiz ? t('vibears', 'Quiz') : t('vibears', 'Poll') }}</span>
+					<span v-if="deckStateChip" class="vibears-chip deck-state" :class="deckStateChip.cls"><span v-if="deckStateChip.dot" class="vibears-chip-dot" />{{ deckStateChip.label }}</span>
 					<span class="deck-head-spacer" />
-					<PulseMenu :items="deckMenu" :label="t('vibears', 'More actions')" />
+					<VibearsMenu :items="deckMenu" :label="t('vibears', 'More actions')" />
 					<!-- Empty deck: the header has no primary action, the empty state in the
 					     middle carries it. While a form is open, the header steps
 					     back — the filled button then belongs to the form (R1), including
 					     the "Open quiz" dialog in self-paced mode. -->
-					<button v-if="deckPrimary" ref="deckPrimary" class="pulse-btn" :class="deckQuiet ? 'is-secondary' : 'is-primary'" @click="deckPrimary.act()"><PulseIcon :name="deckPrimary.icon" size="1em" /> {{ deckPrimary.label }}</button>
+					<button v-if="deckPrimary" ref="deckPrimary" class="vibears-btn" :class="deckQuiet ? 'is-secondary' : 'is-primary'" @click="deckPrimary.act()"><VibearsIcon :name="deckPrimary.icon" size="1em" /> {{ deckPrimary.label }}</button>
 				</div>
-				<p v-if="isPractice" class="pulse-notice is-warn practice-banner"><PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" /><span>{{ t('vibears', 'Practice run active — votes do not count towards the leaderboard. For the real start switch the practice run off in the menu (empties the room).') }}</span></p>
+				<p v-if="isPractice" class="vibears-notice is-warn practice-banner"><VibearsIcon name="warning" size="1.1em" class="vibears-notice-ico" /><span>{{ t('vibears', 'Practice run active — votes do not count towards the leaderboard. For the real start switch the practice run off in the menu (empties the room).') }}</span></p>
 				<!-- Self-paced from opening on: the frozen order stays until the
 				     reset. While the quiz is open, resetting is not possible yet —
 				     hence the intermediate step "close first" there. -->
-				<p v-if="deckLocked" class="pulse-notice is-info deck-lock-note"><PulseIcon name="lock" size="1.1em" class="pulse-notice-ico" /><span>{{ paceState === 'open' ? t('vibears', 'Close the quiz, then reset it to edit the questions.') : t('vibears', 'The questions are locked since the quiz was opened. Reset the room to edit them.') }}</span></p>
+				<p v-if="deckLocked" class="vibears-notice is-info deck-lock-note"><VibearsIcon name="lock" size="1.1em" class="vibears-notice-ico" /><span>{{ paceState === 'open' ? t('vibears', 'Close the quiz, then reset it to edit the questions.') : t('vibears', 'The questions are locked since the quiz was opened. Reset the room to edit them.') }}</span></p>
 
 				<draggable v-if="deck.length" v-model="deck" tag="ol" class="deck-list"
 					handle=".drag-handle" :animation="150" :disabled="deckLocked" @end="onReorder">
 					<li v-for="(p, i) in deck" :key="p.id" class="deck-item" :class="{ 'is-current': p.id === currentId }">
-						<span v-if="!deckLocked" class="drag-handle" aria-hidden="true" :title="t('vibears', 'Drag to reorder')"><PulseIcon name="drag" size="1.1em" /></span>
+						<span v-if="!deckLocked" class="drag-handle" aria-hidden="true" :title="t('vibears', 'Drag to reorder')"><VibearsIcon name="drag" size="1.1em" /></span>
 						<span class="deck-num">{{ i + 1 }}</span>
 						<div class="deck-body">
 							<button class="deck-q" :title="deckLocked ? null : t('vibears', 'Edit')" :disabled="deckLocked" @click="openComposer(p)">{{ p.question }}</button>
 							<span class="deck-type"><span v-if="p.image" class="deck-imgflag" :title="t('vibears', 'This question has an image')">{{ t('vibears', 'Image') }}</span><span class="deck-tico" :class="'is-' + typeTag(p.type).c">{{ typeTag(p.type).t }}</span>{{ typeLabel(p.type) }}<template v-if="p.type === 'scale'"> · <b class="deck-submode">{{ scaleModeLabel(p) }}</b></template><span v-if="isQuiz"><template v-if="showRowLimit"> · {{ p.timeLimit ? p.timeLimit + 's' : t('vibears', 'no time limit') }}</template> · {{ answerHint(p) }}</span></span>
 						</div>
-						<span v-if="p.id === currentId" class="pulse-chip is-accent deck-current-chip">{{ t('vibears', 'Current') }}</span>
-						<button v-if="!isPaced" class="pulse-btn is-sm is-secondary" @click="present(p.id)"><PulseIcon name="play" size="1em" /> {{ t('vibears', 'Show') }}</button>
-						<PulseMenu v-if="!deckLocked" ref="rowMenus" :data-poll-id="p.id" :items="rowMenu(p, i)" :label="t('vibears', 'More actions for this question')" small />
+						<span v-if="p.id === currentId" class="vibears-chip is-accent deck-current-chip">{{ t('vibears', 'Current') }}</span>
+						<button v-if="!isPaced" class="vibears-btn is-sm is-secondary" @click="present(p.id)"><VibearsIcon name="play" size="1em" /> {{ t('vibears', 'Show') }}</button>
+						<VibearsMenu v-if="!deckLocked" ref="rowMenus" :data-poll-id="p.id" :items="rowMenu(p, i)" :label="t('vibears', 'More actions for this question')" small />
 					</li>
 				</draggable>
 				<div v-else class="empty-state">
-					<PulseIcon :name="isQuiz ? 'quiz' : 'poll'" size="2.4em" class="empty-ico" />
+					<VibearsIcon :name="isQuiz ? 'quiz' : 'poll'" size="2.4em" class="empty-ico" />
 					<p class="empty-title">{{ t('vibears', 'No questions yet') }}</p>
 					<p class="empty-sub">{{ t('vibears', 'Start with the first question —') }} {{ isQuiz ? t('vibears', 'multiple choice, true/false, number guess and more') : t('vibears', 'multiple choice, word cloud or scale') }}.</p>
-					<button v-if="!showComposer && !deckLocked" class="pulse-btn is-primary" @click="openComposer()">{{ t('vibears', 'Add the first question') }}</button>
+					<button v-if="!showComposer && !deckLocked" class="vibears-btn is-primary" @click="openComposer()">{{ t('vibears', 'Add the first question') }}</button>
 				</div>
 
 				<!-- Composer -->
 				<div v-if="showComposer && !deckLocked" ref="composer" class="composer">
-					<p v-if="editingId" class="pulse-notice is-warn edit-note"><PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" /><span>{{ t('vibears', 'Editing resets the votes cast for this question so far.') }}</span></p>
-					<PulseSegmented v-model="draft.type" :options="typeOptions" :label="t('vibears', 'Question type')" class="composer-seg" />
+					<p v-if="editingId" class="vibears-notice is-warn edit-note"><VibearsIcon name="warning" size="1.1em" class="vibears-notice-ico" /><span>{{ t('vibears', 'Editing resets the votes cast for this question so far.') }}</span></p>
+					<VibearsSegmented v-model="draft.type" :options="typeOptions" :label="t('vibears', 'Question type')" class="composer-seg" />
 
 					<input ref="qInput" v-model="draft.question" class="pinput pinput--q" type="text" :placeholder="t('vibears', 'Your question …')" @keyup.enter="focusFirstOption">
 
@@ -162,10 +162,10 @@
 					<div class="img-row">
 						<div v-if="draft.imagePreview" class="img-preview">
 							<img :src="draft.imagePreview" :alt="t('vibears', 'Preview of the question image')">
-							<button class="pulse-btn is-secondary is-icon is-sm img-drop" :title="t('vibears', 'Remove image')" :aria-label="t('vibears', 'Remove image')" @click="clearImage"><PulseIcon name="close" size="1.05em" /></button>
+							<button class="vibears-btn is-secondary is-icon is-sm img-drop" :title="t('vibears', 'Remove image')" :aria-label="t('vibears', 'Remove image')" @click="clearImage"><VibearsIcon name="close" size="1.05em" /></button>
 						</div>
-						<label class="pulse-btn is-secondary is-sm img-pick">
-							<PulseIcon name="edit" size="1em" /> {{ draft.imagePreview ? t('vibears', 'Replace image') : t('vibears', 'Add image') }}
+						<label class="vibears-btn is-secondary is-sm img-pick">
+							<VibearsIcon name="edit" size="1em" /> {{ draft.imagePreview ? t('vibears', 'Replace image') : t('vibears', 'Add image') }}
 							<input ref="imageInput" class="img-input" type="file" accept="image/png,image/jpeg,image/gif,image/webp" @change="pickImage">
 						</label>
 						<span class="img-hint">{{ t('vibears', 'PNG, JPEG, GIF or WebP · up to 5 MB') }}</span>
@@ -183,14 +183,14 @@
 						<div v-for="(opt, i) in draft.options" :key="i" class="opt-row">
 							<button v-if="isQuiz && draft.type !== 'rank'" class="opt-correct" :class="{ 'is-on': isOptCorrect(i), 'is-multi': draft.type === 'multi' }"
 								:aria-pressed="isOptCorrect(i) ? 'true' : 'false'" :aria-label="isOptCorrect(i) ? t('vibears', 'Correct answer (marked)') : t('vibears', 'Mark as the correct answer')" :title="isOptCorrect(i) ? t('vibears', 'Correct') : t('vibears', 'Mark as correct')" @click="toggleCorrect(i)">
-								<span class="opt-correct-box"><PulseIcon v-if="isOptCorrect(i)" name="check" size="0.95em" /></span>
+								<span class="opt-correct-box"><VibearsIcon v-if="isOptCorrect(i)" name="check" size="0.95em" /></span>
 								<span class="opt-correct-txt">{{ t('vibears', 'correct') }}</span>
 							</button>
 							<span v-if="draft.type === 'rank'" class="opt-rank-pos" aria-hidden="true">{{ i + 1 }}</span>
 							<input v-model="draft.options[i]" ref="optionInputs" class="pinput" type="text" maxlength="200" :placeholder="draft.type === 'rank' ? t('vibears', '{number}. answer', { number: i + 1 }) : t('vibears', 'Option {number}', { number: i + 1 })">
-							<button v-if="draft.options.length > 2" class="pulse-btn is-secondary is-icon" :title="t('vibears', 'Remove option')" :aria-label="t('vibears', 'Remove option')" @click="removeOption(i)"><PulseIcon name="close" size="1.05em" /></button>
+							<button v-if="draft.options.length > 2" class="vibears-btn is-secondary is-icon" :title="t('vibears', 'Remove option')" :aria-label="t('vibears', 'Remove option')" @click="removeOption(i)"><VibearsIcon name="close" size="1.05em" /></button>
 						</div>
-						<button v-if="draft.options.length < 8" class="pulse-btn is-secondary is-sm" @click="addOption"><PulseIcon name="plus" size="1em" /> {{ t('vibears', 'Option') }}</button>
+						<button v-if="draft.options.length < 8" class="vibears-btn is-secondary is-sm" @click="addOption"><VibearsIcon name="plus" size="1em" /> {{ t('vibears', 'Option') }}</button>
 					</template>
 
 					<!-- Matching: one pair per row. The right side appears shuffled on the phone. -->
@@ -199,19 +199,19 @@
 						<div v-for="(pair, i) in draft.pairs" :key="i" class="pair-row">
 							<span class="opt-rank-pos" aria-hidden="true">{{ i + 1 }}</span>
 							<input v-model="pair.left" ref="optionInputs" class="pinput" type="text" maxlength="100" :placeholder="t('vibears', 'Item {number}', { number: i + 1 })">
-							<PulseIcon name="arrow-right" size="1.1em" class="pair-arrow" />
+							<VibearsIcon name="arrow-right" size="1.1em" class="pair-arrow" />
 							<input v-model="pair.right" class="pinput" type="text" maxlength="100" :placeholder="t('vibears', 'Belongs to {number}', { number: i + 1 })">
-							<button v-if="draft.pairs.length > 2" class="pulse-btn is-secondary is-icon" :title="t('vibears', 'Remove pair')" :aria-label="t('vibears', 'Remove pair')" @click="removePair(i)"><PulseIcon name="close" size="1.05em" /></button>
+							<button v-if="draft.pairs.length > 2" class="vibears-btn is-secondary is-icon" :title="t('vibears', 'Remove pair')" :aria-label="t('vibears', 'Remove pair')" @click="removePair(i)"><VibearsIcon name="close" size="1.05em" /></button>
 						</div>
-						<button v-if="draft.pairs.length < 8" class="pulse-btn is-secondary is-sm" @click="addPair"><PulseIcon name="plus" size="1em" /> {{ t('vibears', 'Pair') }}</button>
+						<button v-if="draft.pairs.length < 8" class="vibears-btn is-secondary is-sm" @click="addPair"><VibearsIcon name="plus" size="1em" /> {{ t('vibears', 'Pair') }}</button>
 					</template>
 
 					<!-- True/false -->
 					<template v-else-if="draft.type === 'truefalse'">
 						<p class="quiz-hint">{{ t('vibears', 'Which one is correct?') }}</p>
 						<div class="tf-pick">
-							<button class="pulse-btn" :class="{ 'is-on': draft.correctIndex === 0 }" @click="draft.correctIndex = 0">{{ t('vibears', 'True') }}</button>
-							<button class="pulse-btn" :class="{ 'is-on': draft.correctIndex === 1 }" @click="draft.correctIndex = 1">{{ t('vibears', 'False') }}</button>
+							<button class="vibears-btn" :class="{ 'is-on': draft.correctIndex === 0 }" @click="draft.correctIndex = 0">{{ t('vibears', 'True') }}</button>
+							<button class="vibears-btn" :class="{ 'is-on': draft.correctIndex === 1 }" @click="draft.correctIndex = 1">{{ t('vibears', 'False') }}</button>
 						</div>
 					</template>
 
@@ -233,9 +233,9 @@
 						<p class="quiz-hint">{{ t('vibears', 'Accepted answer(s) — you can approve further spellings later during the reveal:') }}</p>
 						<div v-for="(a, i) in draft.answers" :key="i" class="opt-row">
 							<input v-model="draft.answers[i]" ref="optionInputs" class="pinput" type="text" maxlength="100" :placeholder="i === 0 ? t('vibears', 'Correct answer') : t('vibears', 'Another accepted answer')">
-							<button v-if="draft.answers.length > 1" class="pulse-btn is-secondary is-icon" :title="t('vibears', 'Remove answer')" :aria-label="t('vibears', 'Remove answer')" @click="removeAnswer(i)"><PulseIcon name="close" size="1.05em" /></button>
+							<button v-if="draft.answers.length > 1" class="vibears-btn is-secondary is-icon" :title="t('vibears', 'Remove answer')" :aria-label="t('vibears', 'Remove answer')" @click="removeAnswer(i)"><VibearsIcon name="close" size="1.05em" /></button>
 						</div>
-						<button v-if="draft.answers.length < 8" class="pulse-btn is-secondary is-sm" @click="addAnswer"><PulseIcon name="plus" size="1em" /> {{ t('vibears', 'Answer') }}</button>
+						<button v-if="draft.answers.length < 8" class="vibears-btn is-secondary is-sm" @click="addAnswer"><VibearsIcon name="plus" size="1em" /> {{ t('vibears', 'Answer') }}</button>
 					</template>
 
 					<!-- Scale (poll) — mode Single | Spectrum | Compass -->
@@ -243,7 +243,7 @@
 						<div class="submode">
 								<span class="submode-arrow" aria-hidden="true">▸</span>
 								<span class="submode-key">{{ t('vibears', 'Scale mode') }}</span>
-								<PulseSegmented v-model="draft.scaleMode" :options="scaleModeOptions" :label="t('vibears', 'Scale mode')" class="submode-seg" />
+								<VibearsSegmented v-model="draft.scaleMode" :options="scaleModeOptions" :label="t('vibears', 'Scale mode')" class="submode-seg" />
 							</div>
 						<!-- Single/Spectrum: shared maximum X -->
 						<label v-if="draft.scaleMode !== 'compass'" class="words-hint">{{ draft.scaleMode === 'spectrum' ? t('vibears', 'Scale 0 to') : t('vibears', 'Scale 1 to') }}
@@ -266,9 +266,9 @@
 										<input v-model="draft.aspects[i].poleHigh" class="pinput pinput--pole" type="text" maxlength="40" :placeholder="t('vibears', 'Pole at X (optional)')">
 									</div>
 								</div>
-								<button v-if="draft.aspects.length > 3" class="pulse-btn is-secondary is-icon" :title="t('vibears', 'Remove aspect')" :aria-label="t('vibears', 'Remove aspect')" @click="removeAspect(i)"><PulseIcon name="close" size="1.05em" /></button>
+								<button v-if="draft.aspects.length > 3" class="vibears-btn is-secondary is-icon" :title="t('vibears', 'Remove aspect')" :aria-label="t('vibears', 'Remove aspect')" @click="removeAspect(i)"><VibearsIcon name="close" size="1.05em" /></button>
 							</div>
-							<button v-if="draft.aspects.length < 8" class="pulse-btn is-secondary is-sm" @click="addAspect"><PulseIcon name="plus" size="1em" /> {{ t('vibears', 'Aspect') }}</button>
+							<button v-if="draft.aspects.length < 8" class="vibears-btn is-secondary is-sm" @click="addAspect"><VibearsIcon name="plus" size="1em" /> {{ t('vibears', 'Aspect') }}</button>
 						</template>
 						<!-- Compass: framed sections (§4) — axes · range & display · corner labels -->
 						<template v-else>
@@ -341,11 +341,11 @@
 					<p v-if="isQuiz && draft.timeLimit === 0" class="quiz-hint">{{ isPaced ? t('vibears', 'Without a time limit this question can be skipped, and a correct answer earns the full points regardless of speed.') : t('vibears', 'The question stays open until you reveal it or move on. A correct answer earns the full points regardless of speed.') }}</p>
 
 					<div class="composer-actions">
-						<button class="pulse-btn is-primary" :disabled="busy" @click="saveQuestion">{{ busy ? '…' : (editingId ? t('vibears', 'Save') : t('vibears', 'Add to the deck')) }}</button>
-						<button class="pulse-btn is-secondary" @click="cancelComposer">{{ t('vibears', 'Cancel') }}</button>
+						<button class="vibears-btn is-primary" :disabled="busy" @click="saveQuestion">{{ busy ? '…' : (editingId ? t('vibears', 'Save') : t('vibears', 'Add to the deck')) }}</button>
+						<button class="vibears-btn is-secondary" @click="cancelComposer">{{ t('vibears', 'Cancel') }}</button>
 					</div>
 				</div>
-				<button v-else-if="deck.length && !deckLocked" class="pulse-btn is-secondary add-btn" @click="openComposer()">{{ t('vibears', '+ Add question') }}</button>
+				<button v-else-if="deck.length && !deckLocked" class="vibears-btn is-secondary add-btn" @click="openComposer()">{{ t('vibears', '+ Add question') }}</button>
 			</div>
 
 			<!-- Join panel with QR -->
@@ -358,7 +358,7 @@
 				<span class="join-code">{{ spacedCode }}</span>
 				<div class="join-link">
 					<a class="join-url" :href="joinPath" target="_blank" rel="noopener">{{ joinUrl }}</a>
-					<button class="pulse-btn is-secondary is-icon is-xs join-copy" :title="t('vibears', 'Copy join link')" :aria-label="t('vibears', 'Copy join link')" @click="copyJoin"><PulseIcon name="copy" size="1em" /></button>
+					<button class="vibears-btn is-secondary is-icon is-xs join-copy" :title="t('vibears', 'Copy join link')" :aria-label="t('vibears', 'Copy join link')" @click="copyJoin"><VibearsIcon name="copy" size="1em" /></button>
 				</div>
 				<!-- Self-paced: the status line instead of "● live" — who is already here,
 				     even before opening. It also keeps the window up to date (deadline,
@@ -413,17 +413,17 @@
 			<header class="mod-top">
 				<span class="mod-pos">{{ headPos }}</span>
 				<CountdownRing v-if="showCountdown" class="mod-cd" :remaining="quizRemaining" :total="(currentPoll && currentPoll.timeLimit) || 0" />
-				<span class="pulse-chip is-live mod-here" :title="t('vibears', '{count} participants active in the last few seconds', { count: presentCount })"><span class="pulse-chip-dot" />{{ t('vibears', '{count} here', { count: presentCount }) }}</span>
-				<span v-if="isPractice" class="pulse-chip is-warning"><PulseIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</span>
-				<span v-if="isRevealAtEnd" class="pulse-chip is-accent"><PulseIcon name="check_ring" size="1em" /> {{ t('vibears', 'Reveal at the end') }}</span>
-				<span v-if="isQuiz && room && room.joinsLocked" class="pulse-chip is-locked"><PulseIcon name="lock" size="1em" /> {{ t('vibears', 'Joining locked') }}</span>
+				<span class="vibears-chip is-live mod-here" :title="t('vibears', '{count} participants active in the last few seconds', { count: presentCount })"><span class="vibears-chip-dot" />{{ t('vibears', '{count} here', { count: presentCount }) }}</span>
+				<span v-if="isPractice" class="vibears-chip is-warning"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run') }}</span>
+				<span v-if="isRevealAtEnd" class="vibears-chip is-accent"><VibearsIcon name="check_ring" size="1em" /> {{ t('vibears', 'Reveal at the end') }}</span>
+				<span v-if="isQuiz && room && room.joinsLocked" class="vibears-chip is-locked"><VibearsIcon name="lock" size="1em" /> {{ t('vibears', 'Joining locked') }}</span>
 				<span class="mod-spacer" />
 				<span v-if="room" class="mod-code" :title="t('vibears', 'Room code')">{{ spacedCode }}</span>
-				<button class="pulse-btn is-secondary is-sm" :aria-expanded="joinOpen ? 'true' : 'false'" @click="toggleJoin">{{ t('vibears', 'Join') }}</button>
+				<button class="vibears-btn is-secondary is-sm" :aria-expanded="joinOpen ? 'true' : 'false'" @click="toggleJoin">{{ t('vibears', 'Join') }}</button>
 				<!-- Overflow menu: everything needed once or twice per session,
 				     instead of glowing permanently next to the work area. -->
-				<PulseMenu :items="menuItems" :label="t('vibears', 'More actions')" small />
-				<p v-if="!online" class="pulse-notice is-warn mod-offline" role="status"><PulseIcon name="warning" size="1.1em" class="pulse-notice-ico" /><span>{{ t('vibears', 'No connection — the room is not answering. The main action stays disabled until it is back.') }}</span></p>
+				<VibearsMenu :items="menuItems" :label="t('vibears', 'More actions')" small />
+				<p v-if="!online" class="vibears-notice is-warn mod-offline" role="status"><VibearsIcon name="warning" size="1.1em" class="vibears-notice-ico" /><span>{{ t('vibears', 'No connection — the room is not answering. The main action stays disabled until it is back.') }}</span></p>
 			</header>
 
 			<div class="mod-body">
@@ -431,7 +431,7 @@
 				     after finish() (/end) the room sees the same standings. Only the
 				     interim standings via the menu stay with the moderator (header: "Leaderboard"). -->
 				<div v-if="phase === 'leaderboard'" class="mod-standings">
-					<h2 class="mod-standings-head"><PulseIcon name="ranking" size="1em" /> {{ quizOver ? t('vibears', 'Final standings') : t('vibears', 'Leaderboard') }}</h2>
+					<h2 class="mod-standings-head"><VibearsIcon name="ranking" size="1em" /> {{ quizOver ? t('vibears', 'Final standings') : t('vibears', 'Leaderboard') }}</h2>
 					<Leaderboard v-if="leaderboard.length" :rows="leaderboard" :podium="true" :limit="30" />
 					<p v-else class="deck-empty">{{ t('vibears', 'No points yet — nobody has played along.') }}</p>
 					<!-- Removing a name that should not stand here — also after the end.
@@ -461,7 +461,7 @@
 					     gets projected. This is not a question of looks but one
 					     of security (§9.3). -->
 					<aside v-if="!isFullscreen" class="mod-private">
-						<h2 class="mod-private-head"><PulseIcon name="lock" size="1.05em" /> {{ t('vibears', 'Only for you') }}</h2>
+						<h2 class="mod-private-head"><VibearsIcon name="lock" size="1.05em" /> {{ t('vibears', 'Only for you') }}</h2>
 						<p class="mod-private-sub">{{ t('vibears', 'Live distribution — this panel never goes on the projector.') }}</p>
 						<div v-if="currentPoll" class="mod-private-body">
 							<TextGrading v-if="currentPoll.type === 'text'" :results="results" @grade="gradeAnswer" />
@@ -479,29 +479,29 @@
 
 						<!-- Demo/test tool: fill the active question with many votes (preview) -->
 						<div v-if="demoMode" class="demo-bar" role="group" :aria-label="t('vibears', 'Test tool: demo votes')">
-							<span class="pulse-chip is-warning demo-chip"><span class="pulse-chip-dot" /> {{ t('vibears', 'Demo mode') }}</span>
+							<span class="vibears-chip is-warning demo-chip"><span class="vibears-chip-dot" /> {{ t('vibears', 'Demo mode') }}</span>
 							<span class="demo-hint">{{ t('vibears', 'only to check the display — real votes stay') }}</span>
 							<span class="demo-spacer" />
 							<label class="demo-lbl">{{ t('vibears', 'Number') }}
 								<input v-model.number="demoCount" class="pinput pinput--num demo-count" type="number" min="1" max="200" step="5" :aria-label="t('vibears', 'Number of demo votes')">
 							</label>
-							<button class="pulse-btn is-secondary is-sm" :disabled="demoBusy" @click="seedDemo"><PulseIcon name="plus" size="1em" /> {{ t('vibears', 'Create votes') }}</button>
-							<button class="pulse-btn is-danger is-sm" :disabled="demoBusy" @click="clearDemo"><PulseIcon name="trash" size="1em" /> {{ t('vibears', 'Clear demo') }}</button>
+							<button class="vibears-btn is-secondary is-sm" :disabled="demoBusy" @click="seedDemo"><VibearsIcon name="plus" size="1em" /> {{ t('vibears', 'Create votes') }}</button>
+							<button class="vibears-btn is-danger is-sm" :disabled="demoBusy" @click="clearDemo"><VibearsIcon name="trash" size="1em" /> {{ t('vibears', 'Clear demo') }}</button>
 						</div>
 					</aside>
 				</template>
 			</div>
 
 			<footer class="mod-bar">
-				<button class="pulse-btn is-secondary" :disabled="!canPrev || (phase === 'leaderboard' && quizOver)" @click="prev"><PulseIcon name="chevron" size="1em" class="ic-flip" /> {{ t('vibears', 'Back') }}</button>
+				<button class="vibears-btn is-secondary" :disabled="!canPrev || (phase === 'leaderboard' && quizOver)" @click="prev"><VibearsIcon name="chevron" size="1em" class="ic-flip" /> {{ t('vibears', 'Back') }}</button>
 				<!-- The only filled button on the screen, and it knows what is
 				     up next (§9.1). Colored as destructive only at the final standings. -->
-				<button class="pulse-btn mod-primary is-lg" :class="primary.danger ? 'is-danger is-solid' : 'is-primary'" :disabled="!online || busy" :title="online ? '' : t('vibears', 'No connection to the room')" @click="runPrimary">
-					<PulseIcon :name="primary.icon" size="1.05em" /> {{ primary.label }}
+				<button class="vibears-btn mod-primary is-lg" :class="primary.danger ? 'is-danger is-solid' : 'is-primary'" :disabled="!online || busy" :title="online ? '' : t('vibears', 'No connection to the room')" @click="runPrimary">
+					<VibearsIcon :name="primary.icon" size="1.05em" /> {{ primary.label }}
 				</button>
-				<button v-if="canNext && primary.key !== 'next' && !(phase === 'leaderboard' && quizOver)" class="pulse-btn is-secondary" @click="next">{{ t('vibears', 'Next') }} <PulseIcon name="chevron" size="1em" /></button>
-				<span v-if="advanceIn !== null" class="pulse-chip is-accent auto-next" role="status"><PulseIcon name="timer" size="1em" /> {{ advanceLabel }} {{ t('vibears', 'in {seconds} s', { seconds: advanceIn }) }}</span>
-				<button v-if="advanceIn !== null" class="pulse-btn is-secondary is-sm" @click="cancelAdvance">{{ t('vibears', 'Stop') }}</button>
+				<button v-if="canNext && primary.key !== 'next' && !(phase === 'leaderboard' && quizOver)" class="vibears-btn is-secondary" @click="next">{{ t('vibears', 'Next') }} <VibearsIcon name="chevron" size="1em" /></button>
+				<span v-if="advanceIn !== null" class="vibears-chip is-accent auto-next" role="status"><VibearsIcon name="timer" size="1em" /> {{ advanceLabel }} {{ t('vibears', 'in {seconds} s', { seconds: advanceIn }) }}</span>
+				<button v-if="advanceIn !== null" class="vibears-btn is-secondary is-sm" @click="cancelAdvance">{{ t('vibears', 'Stop') }}</button>
 				<span class="mod-spacer" />
 				<!-- The number sits next to what it refers to, not alone in empty space (D20):
 				     the same building block as on the projector, just small. -->
@@ -516,14 +516,14 @@
 				<aside class="mod-joinpanel" role="dialog" :aria-label="t('vibears', 'Join in')">
 					<div class="mod-join-head">
 						<h2>{{ t('vibears', 'Join in') }}</h2>
-						<button class="pulse-btn is-secondary is-icon is-sm" :title="t('vibears', 'Close')" :aria-label="t('vibears', 'Close')" @click="joinOpen = false"><PulseIcon name="close" size="1.05em" /></button>
+						<button class="vibears-btn is-secondary is-icon is-sm" :title="t('vibears', 'Close')" :aria-label="t('vibears', 'Close')" @click="joinOpen = false"><VibearsIcon name="close" size="1.05em" /></button>
 					</div>
 					<div class="qr-card mod-join-qr"><QrCode :value="joinUrlFull" /></div>
 					<span class="join-hint">{{ t('vibears', 'Join in — code at') }} <b>{{ joinBase }}</b></span>
 					<span class="join-code">{{ spacedCode }}</span>
 					<div class="join-link">
 						<a class="join-url" :href="joinPath" target="_blank" rel="noopener">{{ joinUrl }}</a>
-						<button class="pulse-btn is-secondary is-icon is-xs join-copy" :title="t('vibears', 'Copy join link')" :aria-label="t('vibears', 'Copy join link')" @click="copyJoin"><PulseIcon name="copy" size="1em" /></button>
+						<button class="vibears-btn is-secondary is-icon is-xs join-copy" :title="t('vibears', 'Copy join link')" :aria-label="t('vibears', 'Copy join link')" @click="copyJoin"><VibearsIcon name="copy" size="1em" /></button>
 					</div>
 				</aside>
 			</div>
@@ -547,12 +547,12 @@ import QrCode from './components/QrCode.vue'
 import Leaderboard from './components/Leaderboard.vue'
 import LivePlayers from './components/LivePlayers.vue'
 import TextGrading from './components/TextGrading.vue'
-import PulseIcon from './components/ui/PulseIcon.vue'
-import PulseSegmented from './components/ui/PulseSegmented.vue'
-import PulseMenu from './components/ui/PulseMenu.vue'
+import VibearsIcon from './components/ui/VibearsIcon.vue'
+import VibearsSegmented from './components/ui/VibearsSegmented.vue'
+import VibearsMenu from './components/ui/VibearsMenu.vue'
 import CountdownRing from './components/CountdownRing.vue'
 import IntakeBoard from './components/IntakeBoard.vue'
-import { pulseConfirm } from './util/confirm.js'
+import { vibearsConfirm } from './util/confirm.js'
 import { formatCode, remainingSecs, paceStateChip, fmtAgo } from './util/format.js'
 import { csvUrl, downloadMarkdown } from './util/csv.js'
 import { isPacedRoom, windowState, progressCounts } from './util/pace.js'
@@ -565,7 +565,7 @@ import PaceRun from './components/PaceRun.vue'
 export default {
 	name: 'Moderator',
 	mixins: [pollingMixin],
-	components: { ResultsView, QrCode, Leaderboard, LivePlayers, TextGrading, PulseIcon, PulseSegmented, PulseMenu, CountdownRing, IntakeBoard, draggable, PaceOpenDialog, PaceDeckStatus, PaceRun },
+	components: { ResultsView, QrCode, Leaderboard, LivePlayers, TextGrading, VibearsIcon, VibearsSegmented, VibearsMenu, CountdownRing, IntakeBoard, draggable, PaceOpenDialog, PaceDeckStatus, PaceRun },
 	data() {
 		return {
 			phase: 'start', // 'start' | 'deck' | 'present' | 'summary' | 'leaderboard' | 'pace' (run view, self-paced)
@@ -728,7 +728,7 @@ export default {
 		// ── Presentation view (§9) ──────────────────────────────────────────
 		// Presentation, final standings and the self-paced run view share
 		// one frame: full height, their own header and footer, no page margin
-		// from .pulse-mod.
+		// from .vibears-mod.
 		liveFrame() {
 			return this.phase === 'present' || this.phase === 'leaderboard' || this.phase === 'pace'
 		},
@@ -1166,7 +1166,7 @@ export default {
 					if (loss) text += ' ' + loss
 				}
 			}
-			if (!await pulseConfirm({
+			if (!await vibearsConfirm({
 				title: t('vibears', 'Really delete this room?'),
 				text,
 				confirmLabel: t('vibears', 'Delete permanently'),
@@ -1273,7 +1273,7 @@ export default {
 				const loss = lossText(known, this.paceState)
 				text = t('vibears', 'All participants, answers and the leaderboard are deleted, and the quiz goes back to preparation — you can edit the questions and open it again. The questions stay.') + (loss ? ' ' + loss : '')
 			}
-			if (!await pulseConfirm({
+			if (!await vibearsConfirm({
 				title: t('vibears', 'Reset the room?'),
 				text,
 				confirmLabel: t('vibears', 'Reset'),
@@ -1309,7 +1309,7 @@ export default {
 				const loss = lossText(this.paceCounts, this.paceState)
 				if (loss) text += ' ' + loss
 			}
-			if (!await pulseConfirm({
+			if (!await vibearsConfirm({
 				title: on ? t('vibears', 'Start the practice run?') : t('vibears', 'End the practice run?'),
 				text,
 				confirmLabel: on ? t('vibears', 'Start practice run') : t('vibears', 'End practice run'),
@@ -1493,7 +1493,7 @@ export default {
 						? t('vibears', 'Everyone works through the questions on their own phone, at their own pace — you open and close the quiz instead of presenting it. Participants, answers and the leaderboard collected so far are cleared; the questions stay.')
 						: t('vibears', 'You present the questions one by one again. Participants, answers and the leaderboard collected so far are cleared; the questions stay.')
 					const loss = lossText(counts, paced ? this.paceState : 'draft')
-					if (!await pulseConfirm({
+					if (!await vibearsConfirm({
 						title: on ? t('vibears', 'Switch to self-paced?') : t('vibears', 'Switch to moderated?'),
 						text: loss ? text + ' ' + loss : text,
 						confirmLabel: on ? t('vibears', 'Switch to self-paced') : t('vibears', 'Switch to moderated'),
@@ -1780,7 +1780,7 @@ export default {
 			})
 		},
 		async deleteQuestion(poll) {
-			if (!await pulseConfirm({
+			if (!await vibearsConfirm({
 				title: t('vibears', 'Delete the question?'),
 				text: t('vibears', 'This question and its votes will be deleted. This cannot be undone.'),
 				confirmLabel: t('vibears', 'Delete permanently'),
@@ -1878,7 +1878,7 @@ export default {
 			this.stopPolling()
 			this.phase = 'deck'
 		},
-		// Back to the Pulse overview (start screen with "My rooms").
+		// Back to the vibeARS overview (start screen with "My rooms").
 		openBeamer() {
 			if (!this.room) return
 			openProjector(this.room.code)
@@ -2131,7 +2131,7 @@ export default {
 </script>
 
 <style scoped>
-.pulse-mod {
+.vibears-mod {
 	/* NC's #content is a row flex container -> without flex/width this root
 	   div would stay content-wide and stick to the left (margin:auto would have no room). */
 	flex: 1 1 auto;
@@ -2143,19 +2143,19 @@ export default {
 	   is unreachable. max-height binds the height to the flex parent. */
 	max-height: 100%;
 	overflow-y: auto;
-	background: var(--pulse-bg);
-	color: var(--pulse-text);
+	background: var(--vibears-bg);
+	color: var(--vibears-text);
 	padding: 40px min(5vw, 64px);
 	box-sizing: border-box;
 	font-family: var(--font-face, system-ui, -apple-system, sans-serif);
 }
-.pulse-mod.is-fs { overflow: auto; }
+.vibears-mod.is-fs { overflow: auto; }
 /* Presentation and final standings fill the area themselves (own header/footer) —
-   the page margin of .pulse-mod would frame the frame twice. */
-.pulse-mod.is-live { padding: 0; overflow: hidden; }
+   the page margin of .vibears-mod would frame the frame twice. */
+.vibears-mod.is-live { padding: 0; overflow: hidden; }
 /* §9.5: the header block starts 64 px from the window edge (NC header 50 px + 14),
    not at around 150 — the empty space cost the first room card. */
-.pulse-mod.is-start { padding-block-start: 14px; }
+.vibears-mod.is-start { padding-block-start: 14px; }
 
 /* Start */
 .start { max-width: 1180px; margin: 0 auto; display: grid; gap: 40px; align-items: start; }
@@ -2164,15 +2164,15 @@ export default {
    the fold (§9.5). */
 @media (min-width: 1200px) { .start { grid-template-columns: minmax(0, 440px) minmax(0, 1fr); gap: 56px; } }
 .start-intro { max-width: 620px; }
-.eyebrow { color: var(--pulse-primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; font-size: 13px; margin: 0 0 12px; }
+.eyebrow { color: var(--vibears-primary); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; font-size: 13px; margin: 0 0 12px; }
 .start h1 { font-size: clamp(30px, 4.5vw, 48px); margin: 0 0 16px; }
-.lede { color: var(--pulse-text-2); font-size: 18px; margin: 0 0 32px; }
-.mode-note { color: var(--pulse-text-2); font-size: 13px; margin: 18px 0 0; }
-.mode-note b { color: var(--pulse-text); }
+.lede { color: var(--vibears-text-2); font-size: 18px; margin: 0 0 32px; }
+.mode-note { color: var(--vibears-text-2); font-size: 13px; margin: 18px 0 0; }
+.mode-note b { color: var(--vibears-text); }
 /* Text button, not a second outlined button: joining is the rarer action
    and should not compete with Start (§9.5). */
-.start-join { display: inline-block; margin-top: 18px; font-size: 15px; font-weight: 600; color: var(--pulse-primary); text-decoration: underline; text-underline-offset: 3px; }
-.start-join:hover { color: var(--pulse-primary-hover); }
+.start-join { display: inline-block; margin-top: 18px; font-size: 15px; font-weight: 600; color: var(--vibears-primary); text-decoration: underline; text-underline-offset: 3px; }
+.start-join:hover { color: var(--vibears-primary-hover); }
 /* Import: a labelled button in front of the (visually hidden) file input. */
 .start-import { margin: 22px 0 0; }
 .start-import-pick { position: relative; cursor: pointer; }
@@ -2184,19 +2184,19 @@ export default {
 /* My rooms */
 .myrooms { text-align: left; }
 @media (max-width: 1199px) { .myrooms { margin-top: 8px; } }
-.myrooms-head { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pulse-text-2); margin: 0 0 12px; }
+.myrooms-head { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--vibears-text-2); margin: 0 0 12px; }
 .myrooms-list { list-style: none; margin: 0; padding: 0; }
 .myroom {
 	display: flex; align-items: center;
-	border: 2px solid var(--pulse-border);
+	border: 2px solid var(--vibears-border);
 	margin-bottom: 10px;
 }
 .myroom-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .myroom-title { font-size: 19px; font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
 .myroom-code { font-size: 22px; font-weight: 800; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
 /* With a title, the name leads — the code moves to the secondary line. */
-.myroom-code.is-sub { font-size: 15px; font-weight: 700; color: var(--pulse-text-2); }
-.myroom-meta { font-size: 13px; color: var(--pulse-text-2); }
+.myroom-code.is-sub { font-size: 15px; font-weight: 700; color: var(--vibears-text-2); }
+.myroom-meta { font-size: 13px; color: var(--vibears-text-2); }
 /* Type clearly visible: colored icon + text chip (quiz = quiz purple, poll = blue). */
 .myroom-type { font-size: 12px; }
 
@@ -2216,24 +2216,24 @@ export default {
 	.present-aside { flex-basis: auto; width: 100%; max-width: 340px; position: static; margin: 0 auto; }
 }
 
-.qr-card { background: #fff; border-radius: var(--border-radius-container, 16px); padding: 16px; margin-bottom: 14px; border: 1px solid var(--pulse-border); }
-.join-hint { font-size: 12px; color: var(--pulse-text-2); text-transform: uppercase; letter-spacing: 0.1em; }
-.join-hint b { color: var(--pulse-text); font-weight: 700; }
-.join-code { font-size: clamp(34px, 4vw, 52px); font-weight: 800; letter-spacing: 0.08em; color: var(--pulse-text); font-variant-numeric: tabular-nums; line-height: 1.05; margin: 2px 0 6px; }
+.qr-card { background: #fff; border-radius: var(--border-radius-container, 16px); padding: 16px; margin-bottom: 14px; border: 1px solid var(--vibears-border); }
+.join-hint { font-size: 12px; color: var(--vibears-text-2); text-transform: uppercase; letter-spacing: 0.1em; }
+.join-hint b { color: var(--vibears-text); font-weight: 700; }
+.join-code { font-size: clamp(34px, 4vw, 52px); font-weight: 800; letter-spacing: 0.08em; color: var(--vibears-text); font-variant-numeric: tabular-nums; line-height: 1.05; margin: 2px 0 6px; }
 /* Short address + copy as one calm line (§5b). */
 .join-link { display: flex; align-items: center; gap: 8px; }
-.join-url { flex: 1; min-width: 0; font-size: clamp(14px, 1.4vw, 18px); font-weight: 600; color: var(--pulse-primary); word-break: break-all; text-decoration: none; }
+.join-url { flex: 1; min-width: 0; font-size: clamp(14px, 1.4vw, 18px); font-weight: 600; color: var(--vibears-primary); word-break: break-all; text-decoration: none; }
 .join-url:hover { text-decoration: underline; }
 .join-copy { flex: 0 0 auto; }
-.conn { font-size: 12px; margin-top: 10px; color: var(--pulse-success); }
-.conn.is-off { color: var(--pulse-error); }
+.conn { font-size: 12px; margin-top: 10px; color: var(--vibears-success); }
+.conn.is-off { color: var(--vibears-error); }
 
 /* Deck editor */
 .deck-head { display: flex; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
 .deck-head h2 { margin: 0; font-size: 24px; }
 .deck-title { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
 .deck-title-txt { overflow-wrap: anywhere; }
-.deck-title-txt.is-untitled { color: var(--pulse-text-2); }
+.deck-title-txt.is-untitled { color: var(--vibears-text-2); }
 .deck-rename { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 /* Inherits border/focus from .pinput; only the title look and width here. */
 .deck-rename-input { font-size: 20px; font-weight: 700; width: min(380px, 60vw); }
@@ -2241,42 +2241,42 @@ export default {
 .deck-item {
 	display: flex; align-items: center; gap: 14px;
 	padding: 12px 16px; margin-bottom: 10px;
-	border: 2px solid var(--pulse-border);
+	border: 2px solid var(--vibears-border);
 }
 .drag-handle { cursor: grab; font-size: 18px; line-height: 1; user-select: none; }
 .drag-handle:active { cursor: grabbing; }
 .deck-item.sortable-chosen { opacity: 0.9; }
-.deck-item.sortable-ghost { opacity: 0.4; border-color: var(--pulse-primary); }
-.deck-num { font-weight: 800; color: var(--pulse-text-2); font-variant-numeric: tabular-nums; min-width: 20px; }
-.edit-note { color: var(--pulse-warning); font-size: 13px; margin: 0 0 14px; }
+.deck-item.sortable-ghost { opacity: 0.4; border-color: var(--vibears-primary); }
+.deck-num { font-weight: 800; color: var(--vibears-text-2); font-variant-numeric: tabular-nums; min-width: 20px; }
+.edit-note { color: var(--vibears-warning); font-size: 13px; margin: 0 0 14px; }
 .deck-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.deck-type { font-size: 12px; color: var(--pulse-text-2); display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; }
+.deck-type { font-size: 12px; color: var(--vibears-text-2); display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; }
 /* Type tag in the deck (MC/WC/SC/…): SC carries the "you" magenta of the scale family. */
 .deck-tico {
 	display: inline-grid; place-items: center; min-width: 2.1em; height: 1.6em; padding: 0 0.4em;
 	border-radius: 0.35em; font-size: 0.82em; font-weight: 800; letter-spacing: 0.02em;
-	background: var(--pulse-fill); color: var(--pulse-text-2); border: 1px solid var(--pulse-border);
+	background: var(--vibears-fill); color: var(--vibears-text-2); border: 1px solid var(--vibears-border);
 }
 .deck-tico.is-rk { font-size: 10px; letter-spacing: -0.02em; }
 .pair-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .pair-row .pinput { flex: 1 1 0; min-width: 0; }
-.pair-arrow { color: var(--pulse-text-2); }
-.deck-imgflag { padding: 0 0.5em; height: 1.6em; display: inline-grid; place-items: center; border-radius: 0.35em; background: var(--pulse-primary-soft); color: var(--pulse-primary); font-weight: 700; }
+.pair-arrow { color: var(--vibears-text-2); }
+.deck-imgflag { padding: 0 0.5em; height: 1.6em; display: inline-grid; place-items: center; border-radius: 0.35em; background: var(--vibears-primary-soft); color: var(--vibears-primary); font-weight: 700; }
 .opt-rank-pos {
 	flex: 0 0 auto; min-width: 2em; height: 2em; display: inline-flex; align-items: center; justify-content: center;
-	border-radius: var(--pulse-r-pill); background: var(--pulse-fill); color: var(--pulse-text-2); font-weight: 800;
+	border-radius: var(--vibears-r-pill); background: var(--vibears-fill); color: var(--vibears-text-2); font-weight: 800;
 }
-.deck-tico.is-sc { background: var(--pulse-self-soft); color: var(--pulse-self); border-color: transparent; }
-.deck-submode { color: var(--pulse-readout); font-weight: 800; }
-.deck-empty { color: var(--pulse-text-2); margin: 8px 0 20px; }
+.deck-tico.is-sc { background: var(--vibears-self-soft); color: var(--vibears-self); border-color: transparent; }
+.deck-submode { color: var(--vibears-readout); font-weight: 800; }
+.deck-empty { color: var(--vibears-text-2); margin: 8px 0 20px; }
 .add-btn { margin-top: 4px; }
 
 /* Quiz composer */
-.quiz-hint { font-size: 13px; color: var(--pulse-text-2); margin: 4px 0 8px; }
+.quiz-hint { font-size: 13px; color: var(--vibears-text-2); margin: 4px 0 8px; }
 .quiz-time { margin-top: 6px; }
 /* .opt-correct is redefined in the second style block (shape+color+text, §4.6). */
 .tf-pick { display: flex; gap: 12px; margin: 8px 0; }
-.tf-pick .pulse-btn { min-width: 96px; }
+.tf-pick .vibears-btn { min-width: 96px; }
 .num-fields { display: flex; gap: 20px; flex-wrap: wrap; margin: 6px 0; }
 .num-fields .words-hint { flex-direction: column; align-items: flex-start; gap: 4px; }
 .num-fields input { width: 140px; }
@@ -2285,30 +2285,30 @@ export default {
 .summary-view { max-width: 760px; margin: 0 auto; }
 .summary-warn { margin: 0 0 24px; }
 .summary-warn-head { display: block; }
-.summary-item { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--pulse-border); }
+.summary-item { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--vibears-border); }
 .summary-item:last-child { border-bottom: none; }
 .summary-q { font-size: 20px; margin: 0 0 20px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.summary-num { font-weight: 800; color: var(--pulse-text-2); font-variant-numeric: tabular-nums; }
+.summary-num { font-weight: 800; color: var(--vibears-text-2); font-variant-numeric: tabular-nums; }
 .summary-qtext { flex: 1; min-width: 0; }
-.summary-type { font-size: 12px; font-weight: 400; color: var(--pulse-text-2); }
+.summary-type { font-size: 12px; font-weight: 400; color: var(--vibears-text-2); }
 
 /* Presentation — status/chips/notice now come from the DS (2nd block).
    Only the layout leftovers remain here. */
 .practice-banner { margin: 4px 0 20px; }
-/* Demo/test bar (§4): on --pulse-*, warning chip + dashed warning-tinted
+/* Demo/test bar (§4): on --vibears-*, warning chip + dashed warning-tinted
    frame = "does not count", actions clearly separated (ghost vs. danger outline). */
-.demo-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; padding: 10px 14px; border: 1px dashed var(--pulse-warning); border-radius: var(--pulse-r-el); background: var(--pulse-warning-soft); }
+.demo-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; padding: 10px 14px; border: 1px dashed var(--vibears-warning); border-radius: var(--vibears-r-el); background: var(--vibears-warning-soft); }
 .demo-chip { flex: 0 0 auto; }
-.demo-lbl { display: inline-flex; align-items: center; gap: 7px; font-size: var(--t-sm); font-weight: 700; color: var(--pulse-warning); }
+.demo-lbl { display: inline-flex; align-items: center; gap: 7px; font-size: var(--t-sm); font-weight: 700; color: var(--vibears-warning); }
 .demo-count { width: 5em; }
 .demo-spacer { flex: 1 1 auto; }
-.demo-hint { font-size: var(--t-sm); font-weight: 600; color: var(--pulse-warning); }
+.demo-hint { font-size: var(--t-sm); font-weight: 600; color: var(--vibears-warning); }
 /* ── Presentation view (§9) ───────────────────────────────────────────────
    Three rows: header (64), body (rest), control bar (96). The body is the
    only row allowed to shrink — minmax(0,1fr), otherwise the
    content pushes the bar out of view. */
-.mod-live { position: relative; height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; background: var(--pulse-bg); }
-.mod-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 64px; padding: 8px 20px; border-block-end: 1px solid var(--pulse-border); }
+.mod-live { position: relative; height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; background: var(--vibears-bg); }
+.mod-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 64px; padding: 8px 20px; border-block-end: 1px solid var(--vibears-border); }
 .mod-pos { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .mod-cd { font-size: 20px; }
 .mod-here { font-variant-numeric: tabular-nums; }
@@ -2322,23 +2322,23 @@ export default {
 /* Below 1000 px stacked — the control bar stays at the bottom (§9.8). */
 @media (max-width: 999px) { .mod-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); overflow-y: auto; } }
 .mod-canvas { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; }
-.mod-canvas-in { position: relative; overflow: hidden; border: 1px solid var(--pulse-border-strong); border-radius: var(--pulse-r-card); background: var(--pulse-screen-bg); }
+.mod-canvas-in { position: relative; overflow: hidden; border: 1px solid var(--vibears-border-strong); border-radius: var(--vibears-r-card); background: var(--vibears-screen-bg); }
 /* The kiosk computes in vw/vh: the iframe MUST be 1280×720 and is scaled down via
    transform. A smaller window would give a different layout than
    in the room — and with it a preview that proves nothing. */
 .mod-frame { width: 1280px; height: 720px; border: 0; transform-origin: top left; display: block; }
-.mod-private { min-width: 0; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding: 14px; border: 1px solid var(--pulse-border-strong); border-radius: var(--pulse-r-card); background: var(--pulse-surface, var(--pulse-hover)); font-size: 14px; }
+.mod-private { min-width: 0; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding: 14px; border: 1px solid var(--vibears-border-strong); border-radius: var(--vibears-r-card); background: var(--vibears-surface, var(--vibears-hover)); font-size: 14px; }
 .mod-private-head { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; font-weight: 800; }
-.mod-private-sub { margin: 0 0 4px; font-size: 12px; color: var(--pulse-text-2); }
+.mod-private-sub { margin: 0 0 4px; font-size: 12px; color: var(--vibears-text-2); }
 .mod-private-body { min-width: 0; }
-.mod-private-empty { color: var(--pulse-text-2); }
+.mod-private-empty { color: var(--vibears-text-2); }
 .mod-private-lb { margin-top: 8px; }
 .mod-standings { min-width: 0; overflow-y: auto; grid-column: 1 / -1; font-size: clamp(16px, 1.6vw, 21px); }
 .mod-standings-head { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 24px; }
 .mod-standings-players { max-width: 480px; margin-block-start: 20px; }
 
 /* Control bar: one primary action, paging on the left, the intake on the right */
-.mod-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 96px; padding: 12px 20px; border-block-start: 1px solid var(--pulse-border); }
+.mod-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 96px; padding: 12px 20px; border-block-start: 1px solid var(--vibears-border); }
 .mod-primary { min-width: 220px; }
 /* The same building block as on the projector, just small — number, reference, dot grid. */
 .mod-intake { font-size: 11px; }
@@ -2348,7 +2348,7 @@ export default {
 .mod-joinwrap { position: absolute; inset: 0; z-index: 40; display: flex; justify-content: flex-end; background: rgba(0, 0, 0, 0.22); }
 /* Column, not flow: hint, code and link are <span>s from the old
    QR column — side by side they ran into each other. */
-.mod-joinpanel { width: min(420px, 92vw); padding: 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: stretch; gap: 4px; background: var(--pulse-bg); border-inline-start: 1px solid var(--pulse-border-strong); box-shadow: var(--pulse-shadow-pop); }
+.mod-joinpanel { width: min(420px, 92vw); padding: 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: stretch; gap: 4px; background: var(--vibears-bg); border-inline-start: 1px solid var(--vibears-border-strong); box-shadow: var(--vibears-shadow-pop); }
 .mod-joinpanel .join-code { font-size: 40px; }
 .mod-joinpanel .join-hint { line-height: 1.5; }
 .mod-join-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
@@ -2358,14 +2358,14 @@ export default {
 /* Fullscreen = the projected mode: only the canvas. The control bar comes back
    on hover so you can advance without leaving
    fullscreen — no answers are shown there. */
-.pulse-mod.is-fs .mod-live { grid-template-rows: minmax(0, 1fr); }
-.pulse-mod.is-fs .mod-top, .pulse-mod.is-fs .mod-offline { display: none; }
+.vibears-mod.is-fs .mod-live { grid-template-rows: minmax(0, 1fr); }
+.vibears-mod.is-fs .mod-top, .vibears-mod.is-fs .mod-offline { display: none; }
 /* Without the private panel, its 360 px column would otherwise remain — the
    preview would be narrower than the screen in fullscreen. */
-.pulse-mod.is-fs .mod-body { padding: 0; grid-template-columns: minmax(0, 1fr); }
-.pulse-mod.is-fs .mod-canvas-in { border: 0; border-radius: 0; }
-.pulse-mod.is-fs .mod-bar { position: absolute; inset-inline: 0; inset-block-end: 0; background: var(--pulse-bg); transform: translateY(100%); transition: transform 0.15s ease; }
-.pulse-mod.is-fs .mod-bar:hover, .pulse-mod.is-fs .mod-bar:focus-within { transform: none; }
+.vibears-mod.is-fs .mod-body { padding: 0; grid-template-columns: minmax(0, 1fr); }
+.vibears-mod.is-fs .mod-canvas-in { border: 0; border-radius: 0; }
+.vibears-mod.is-fs .mod-bar { position: absolute; inset-inline: 0; inset-block-end: 0; background: var(--vibears-bg); transform: translateY(100%); transition: transform 0.15s ease; }
+.vibears-mod.is-fs .mod-bar:hover, .vibears-mod.is-fs .mod-bar:focus-within { transform: none; }
 
 /* Quiz presentation: countdown + leaderboard */
 /* Transition = tick interval (1 s), so the bar glides continuously instead of
@@ -2378,34 +2378,34 @@ export default {
 /* Image row in the composer + image in the presentation */
 .img-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 12px 0 4px; }
 .img-preview { position: relative; line-height: 0; }
-.img-preview img { max-height: 96px; max-width: 200px; border-radius: var(--pulse-r-el); border: 1px solid var(--pulse-border); }
+.img-preview img { max-height: 96px; max-width: 200px; border-radius: var(--vibears-r-el); border: 1px solid var(--vibears-border); }
 .img-drop { position: absolute; top: -8px; inset-inline-end: -8px; }
 .img-pick { cursor: pointer; }
 .img-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.img-hint { font-size: 12px; color: var(--pulse-text-2); }
+.img-hint { font-size: 12px; color: var(--vibears-text-2); }
 .composer-actions { display: flex; gap: 10px; margin-top: 20px; }
-.composer { padding: 20px; border: 1px solid var(--pulse-border); }
+.composer { padding: 20px; border: 1px solid var(--vibears-border); }
 
 /* Type ▸ mode (§4): the scale mode is a sub-choice of "Scale" — indented,
    with a connector and smaller chip switches (not a second segmented control). */
-.submode { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 2px 0 18px; margin-left: 8px; padding-left: 16px; border-left: 2px solid var(--pulse-border-strong); }
-.submode-arrow { color: var(--pulse-text-2); font-weight: 800; }
-.submode-key { font-size: var(--t-cap); font-weight: 700; color: var(--pulse-text-2); text-transform: uppercase; letter-spacing: 0.06em; }
+.submode { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 2px 0 18px; margin-left: 8px; padding-left: 16px; border-left: 2px solid var(--vibears-border-strong); }
+.submode-arrow { color: var(--vibears-text-2); font-weight: 800; }
+.submode-key { font-size: var(--t-cap); font-weight: 700; color: var(--vibears-text-2); text-transform: uppercase; letter-spacing: 0.06em; }
 .submode-seg { margin: 0; }
 .submode-seg :deep(.pseg) { padding: 3px; }
 .submode-seg :deep(.pseg-item) { font-size: var(--t-cap); padding: 5px 10px; }
 
 /* Framed section groups (§4): strong header on a fill + framed content. */
-.sgroup { border: 1px solid var(--pulse-border-strong); border-radius: var(--pulse-r-el); background: var(--pulse-bg); overflow: hidden; margin-bottom: 12px; }
-.sgroup-head { margin: 0; padding: 10px 14px; font-size: var(--t-sm); font-weight: 800; background: var(--pulse-fill); color: var(--pulse-text); border-bottom: 1px solid var(--pulse-border); }
-.sgroup-opt { font-weight: 600; color: var(--pulse-text-2); }
+.sgroup { border: 1px solid var(--vibears-border-strong); border-radius: var(--vibears-r-el); background: var(--vibears-bg); overflow: hidden; margin-bottom: 12px; }
+.sgroup-head { margin: 0; padding: 10px 14px; font-size: var(--t-sm); font-weight: 800; background: var(--vibears-fill); color: var(--vibears-text); border-bottom: 1px solid var(--vibears-border); }
+.sgroup-opt { font-weight: 600; color: var(--vibears-text-2); }
 .sgroup-in { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 /* Axes sit borderless inside the group's frame (the group frames, not each axis). */
 .sgroup-in .axis-block { border: 0; padding: 0; margin: 0; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .corner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .corner-cell { display: flex; flex-direction: column; gap: 4px; }
-.corner-lbl { font-size: var(--t-cap); font-weight: 700; color: var(--pulse-text-2); }
+.corner-lbl { font-size: var(--t-cap); font-weight: 700; color: var(--vibears-text-2); }
 
 /* Inputs */
 .pinput {
@@ -2415,7 +2415,7 @@ export default {
 	box-sizing: border-box;
 }
 /* Uniform, visible focus ring on all input fields (§8). */
-.pinput:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 1px; border-color: var(--pulse-primary); }
+.pinput:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 1px; border-color: var(--vibears-primary); }
 .pinput--q { font-size: 20px; margin-bottom: 18px; }
 /* NC gives <select> a fixed height globally -> with our padding the line gets
    cut off at the bottom. Lift the fixed height so the box grows with its content. */
@@ -2423,11 +2423,11 @@ export default {
 .pinput--num { width: 5.5em; height: auto !important; min-height: 40px; padding: 8px 12px !important; line-height: normal; }
 /* Spectrum composer: aspect row (number · name + pole pair · remove) */
 .aspect-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
-.aspect-idx { flex: 0 0 auto; width: 24px; min-height: 40px; display: grid; place-items: center; font-weight: 800; color: var(--pulse-text-2); font-variant-numeric: tabular-nums; }
+.aspect-idx { flex: 0 0 auto; width: 24px; min-height: 40px; display: grid; place-items: center; font-weight: 800; color: var(--vibears-text-2); font-variant-numeric: tabular-nums; }
 .aspect-fields { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .aspect-poles { display: flex; gap: 6px; }
 .aspect-poles .pinput--pole { width: 100%; font-size: var(--t-sm); }
-.axis-block { border: 1px solid var(--pulse-border); border-radius: var(--pulse-r-el); padding: 10px 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; }
+.axis-block { border: 1px solid var(--vibears-border); border-radius: var(--vibears-r-el); padding: 10px 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; }
 
 .ic-flip { transform: scaleX(-1); }
 
@@ -2442,20 +2442,20 @@ export default {
 .start-cta .is-lg { min-width: 240px; }
 
 /* My rooms: icon badge + text status chip */
-.myroom { border-radius: var(--pulse-r-card); border-color: var(--pulse-border); background: var(--pulse-hover); }
+.myroom { border-radius: var(--vibears-r-card); border-color: var(--vibears-border); background: var(--vibears-hover); }
 .myroom-meta { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .myroom-chip { font-size: 12px; }
 
 /* Button groups: only the summary still has more than one action. */
 .deck-head-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-inline-start: auto; }
 .btn-group { display: inline-flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.btn-group + .btn-group { margin-left: 6px; padding-left: 12px; border-left: 1px solid var(--pulse-border); }
+.btn-group + .btn-group { margin-left: 6px; padding-left: 12px; border-left: 1px solid var(--vibears-border); }
 .export-btn { text-decoration: none; }
 
 /* Deck editor */
-.deck-item { border-radius: var(--pulse-r-card); border-color: var(--pulse-border); background: var(--pulse-hover); }
-.deck-item.is-current { border-color: var(--pulse-primary); }
-.drag-handle { color: var(--pulse-text-2); display: inline-flex; }
+.deck-item { border-radius: var(--vibears-r-card); border-color: var(--vibears-border); background: var(--vibears-hover); }
+.deck-item.is-current { border-color: var(--vibears-primary); }
+.drag-handle { color: var(--vibears-text-2); display: inline-flex; }
 .deck-current-chip { flex: 0 0 auto; font-size: 12px; }
 
 /* ── Overviews tidied up (overview design notes, not in the public repository) ───
@@ -2487,7 +2487,7 @@ export default {
 	white-space: nowrap;
 }
 .deck-q:hover { text-decoration: underline; text-underline-offset: 3px; }
-.deck-q:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 2px; border-radius: 4px; }
+.deck-q:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 2px; border-radius: 4px; }
 
 /* Room card: the card itself opens the room (R6). A filled "Open" per
    card would have meant seven primary actions for seven rooms (B4). */
@@ -2502,18 +2502,18 @@ export default {
 	margin: 0 !important;
 	padding: 12px 16px !important;
 	border: 0 !important;
-	border-radius: var(--pulse-r-card) !important;
+	border-radius: var(--vibears-r-card) !important;
 	background: transparent !important;
 	color: inherit !important;
 	font: inherit !important;
 	text-align: start;
 	cursor: pointer;
 }
-.myroom-hit:hover { background: var(--pulse-fill) !important; }
-.myroom-hit:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: -2px; }
+.myroom-hit:hover { background: var(--vibears-fill) !important; }
+.myroom-hit:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: -2px; }
 .myroom-body { align-items: flex-start; }
-.myroom-go { flex: 0 0 auto; color: var(--pulse-text-2); }
-.myroom .pulse-menu { margin-inline-end: 10px; }
+.myroom-go { flex: 0 0 auto; color: var(--vibears-text-2); }
+.myroom .vibears-menu { margin-inline-end: 10px; }
 
 /* The explanatory text is for the first visit (R7). On narrow screens it was just as
    present on the tenth visit and pushed the first room card to the bottom edge (B5). */
@@ -2525,39 +2525,39 @@ export default {
 
 /* Empty state (§4.11): branded + one CTA */
 .empty-state { text-align: center; padding: 40px 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.empty-ico { color: var(--pulse-primary); opacity: 0.85; }
+.empty-ico { color: var(--vibears-primary); opacity: 0.85; }
 .empty-title { font-size: 20px; font-weight: 800; margin: 4px 0 0; }
-.empty-sub { color: var(--pulse-text-2); margin: 0 0 8px; max-width: 40ch; }
+.empty-sub { color: var(--vibears-text-2); margin: 0 0 8px; max-width: 40ch; }
 
 /* Composer */
-.composer { border-radius: var(--pulse-r-card); border-color: var(--pulse-border); background: var(--pulse-hover); }
+.composer { border-radius: var(--vibears-r-card); border-color: var(--vibears-border); background: var(--vibears-hover); }
 .composer-seg { margin: 4px 0 18px; }
 /* Correct marker (§4.6): shape (box) + color (green) + text ("correct") */
 .opt-correct {
 	appearance: none !important; -webkit-appearance: none;
 	flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px;
 	min-height: 44px; padding: 0 14px 0 10px;
-	border: 2px solid var(--pulse-border-strong); border-radius: var(--pulse-r-pill);
-	background: var(--pulse-bg); color: var(--pulse-text-2);
+	border: 2px solid var(--vibears-border-strong); border-radius: var(--vibears-r-pill);
+	background: var(--vibears-bg); color: var(--vibears-text-2);
 	font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
 	box-shadow: none; margin: 0;
 	transition: background 0.1s ease, border-color 0.1s ease, color 0.1s ease;
 }
-.opt-correct:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 2px; }
+.opt-correct:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 2px; }
 .opt-correct-box {
 	flex: 0 0 auto; display: grid; place-items: center;
 	width: 22px; height: 22px; border-radius: 50%;
-	border: 2px solid var(--pulse-border-strong); color: #fff;
+	border: 2px solid var(--vibears-border-strong); color: #fff;
 }
-.opt-correct.is-multi .opt-correct-box { border-radius: var(--pulse-r-el); }
-.opt-correct.is-on { border-color: var(--pulse-success); color: var(--pulse-success); background: var(--pulse-success-soft); }
-.opt-correct.is-on .opt-correct-box { background: var(--pulse-success); border-color: var(--pulse-success); }
+.opt-correct.is-multi .opt-correct-box { border-radius: var(--vibears-r-el); }
+.opt-correct.is-on { border-color: var(--vibears-success); color: var(--vibears-success); background: var(--vibears-success-soft); }
+.opt-correct.is-on .opt-correct-box { background: var(--vibears-success); border-color: var(--vibears-success); }
 @media (prefers-reduced-motion: reduce) { .opt-correct { transition: none; } }
 
-/* Inputs on Pulse tokens */
-.pinput { background: var(--pulse-bg) !important; color: var(--pulse-text); border: 2px solid var(--pulse-border-strong); border-radius: var(--pulse-r-el); }
-.pinput:focus { border-color: var(--pulse-primary); }
-.pinput::placeholder { color: var(--pulse-text-2); }
+/* Inputs on vibeARS tokens */
+.pinput { background: var(--vibears-bg) !important; color: var(--vibears-text); border: 2px solid var(--vibears-border-strong); border-radius: var(--vibears-r-el); }
+.pinput:focus { border-color: var(--vibears-primary); }
+.pinput::placeholder { color: var(--vibears-text-2); }
 
 /* Auto-advance chip in the control bar */
 .auto-next { font-variant-numeric: tabular-nums; }

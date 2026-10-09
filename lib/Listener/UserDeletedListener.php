@@ -28,9 +28,9 @@ use Psr\Log\LoggerInterface;
  * still go. deleteRoom removes the rows in one transaction (retried on a
  * deadlock), so a skipped room stays complete rather than half deleted.
  *
- * This listener only runs while Pulse is enabled. The daily cleanup job
+ * This listener only runs while vibeARS is enabled. The daily cleanup job
  * catches what it misses — a skipped room, or the rooms of an account
- * deleted while Pulse was disabled: it deletes the rooms of every owner
+ * deleted while vibeARS was disabled: it deletes the rooms of every owner
  * that no longer exists, however recently participants polled them
  * (CleanupStaleRoomsJob::ownerGone, RoomService::cleanupOrphanedRooms).
  *

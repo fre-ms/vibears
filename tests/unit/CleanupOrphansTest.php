@@ -32,7 +32,7 @@ use ReflectionProperty;
  * The daily cleanup, owner side of the security review (task D: L8, L9).
  *
  * L8: rooms must not outlive their owner. Before, an account deleted while
- * Pulse was disabled left its rooms behind, a new account with the same user
+ * vibeARS was disabled left its rooms behind, a new account with the same user
  * ID inherited them, and any anonymous code holder kept a room alive for
  * ever just by polling it. Now
  * - participant heartbeats count for retention only while the owner has

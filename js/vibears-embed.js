@@ -30,7 +30,7 @@
     }
 
     var ORIGIN = window.location.origin; // https://nextcloud.example.com
-    var root = document.getElementById('pulse-embed-root');
+    var root = document.getElementById('vibears-embed-root');
     var settingsApi = null; // Office.context.document.settings, once available
 
     function screenUrl(code) {
@@ -63,7 +63,7 @@
         root.innerHTML = '';
 
         var frame = document.createElement('iframe');
-        frame.className = 'pulse-embed-frame';
+        frame.className = 'vibears-embed-frame';
         frame.src = screenUrl(code);
         frame.setAttribute('allowfullscreen', '');
         frame.setAttribute('title', tr('vibeARS live view'));
@@ -71,13 +71,13 @@
         // Thin bar, shown on hover, for changing the code — it does not get in
         // the way of the projection but is reachable while setting up.
         var bar = document.createElement('div');
-        bar.className = 'pulse-embed-bar';
+        bar.className = 'vibears-embed-bar';
         var label = document.createElement('span');
-        label.className = 'pulse-embed-code';
+        label.className = 'vibears-embed-code';
         label.textContent = tr('Room {code}', { code: code });
         var change = document.createElement('button');
         change.type = 'button';
-        change.className = 'pulse-btn is-secondary is-sm pulse-embed-change';
+        change.className = 'vibears-btn is-secondary is-sm vibears-embed-change';
         change.textContent = tr('Change code');
         change.addEventListener('click', function () { renderForm(code); });
         bar.appendChild(label);
@@ -107,33 +107,33 @@
         root.innerHTML = '';
 
         var wrap = document.createElement('div');
-        wrap.className = 'pulse-embed-setup';
+        wrap.className = 'vibears-embed-setup';
 
         // Wordmark: the shell sits in other people's slides and has to say what it
         // is — before, there was just a bare input field.
         var mark = document.createElement('p');
-        mark.className = 'pulse-embed-mark';
-        mark.innerHTML = '<span class="pulse-embed-dot"></span>vibeARS';
+        mark.className = 'vibears-embed-mark';
+        mark.innerHTML = '<span class="vibears-embed-dot"></span>vibeARS';
 
         var p = document.createElement('p');
-        p.className = 'pulse-embed-lede';
+        p.className = 'vibears-embed-lede';
         p.textContent = tr('Enter the room code to embed the live view into this slide.');
 
         var label = document.createElement('label');
-        label.className = 'pulse-embed-label';
-        label.id = 'pulse-embed-label';
+        label.className = 'vibears-embed-label';
+        label.id = 'vibears-embed-label';
         label.textContent = tr('Room code');
 
         // Six cells instead of one field: the code IS six characters long, and
         // pasting from the clipboard spreads across the cells.
         var cells = document.createElement('div');
-        cells.className = 'pulse-embed-cells';
+        cells.className = 'vibears-embed-cells';
         cells.setAttribute('role', 'group');
-        cells.setAttribute('aria-labelledby', 'pulse-embed-label');
+        cells.setAttribute('aria-labelledby', 'vibears-embed-label');
 
         var err = document.createElement('p');
-        err.className = 'pulse-embed-err';
-        err.id = 'pulse-embed-err';
+        err.className = 'vibears-embed-err';
+        err.id = 'vibears-embed-err';
         err.setAttribute('role', 'alert');
         err.hidden = true;
 
@@ -144,12 +144,12 @@
         function clearError() {
             err.hidden = true;
             err.textContent = '';
-            boxes.forEach(function (b) { b.classList.remove('pulse-embed-cell--err') });
+            boxes.forEach(function (b) { b.classList.remove('vibears-embed-cell--err') });
         }
         function fail(message) {
             err.textContent = message;
             err.hidden = false;
-            boxes.forEach(function (b) { b.classList.add('pulse-embed-cell--err') });
+            boxes.forEach(function (b) { b.classList.add('vibears-embed-cell--err') });
             boxes[0].focus();
             boxes[0].select();
         }
@@ -167,12 +167,12 @@
         for (var i = 0; i < 6; i++) {
             var cell = document.createElement('input');
             cell.type = 'text';
-            cell.className = 'pulse-embed-cell';
+            cell.className = 'vibears-embed-cell';
             cell.maxLength = 1;
             cell.inputMode = 'latin';
             cell.autocapitalize = 'characters';
             cell.setAttribute('aria-label', tr('Character {position} of 6', { position: i + 1 }));
-            cell.setAttribute('aria-describedby', 'pulse-embed-err');
+            cell.setAttribute('aria-describedby', 'vibears-embed-err');
             cell.dataset.at = String(i);
             cell.addEventListener('input', function (e) {
                 clearError();
@@ -199,7 +199,7 @@
 
         var btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'pulse-btn is-primary is-lg pulse-embed-go';
+        btn.className = 'vibears-btn is-primary is-lg vibears-embed-go';
         btn.textContent = tr('Show');
 
         function go() {

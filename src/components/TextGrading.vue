@@ -6,7 +6,7 @@
 	<div class="text-grading">
 		<div v-if="!keyless && acceptedList.length" class="tg-accepted">
 			<span class="tg-accepted-label">{{ t('vibears', 'Accepted:') }}</span>
-			<span v-for="a in acceptedList" :key="a" class="pulse-chip is-success tg-chip">{{ a }}</span>
+			<span v-for="a in acceptedList" :key="a" class="vibears-chip is-success tg-chip">{{ a }}</span>
 		</div>
 		<p v-if="!readonly" class="tg-hint">{{ t('vibears', 'Approve (tick) or reject (cross) answers that are not obvious — identical spellings count along automatically.') }}</p>
 		<ul v-if="results.answers.length" class="tg-list">
@@ -16,13 +16,13 @@
 
 				<!-- interactive: grade (correct/wrong), 44 px, shape+colour+text -->
 				<span v-if="!readonly" class="tg-actions">
-					<button class="tg-btn tg-ok" :class="{ 'is-on': a.status === 'accepted' }" :disabled="busy" :title="t('vibears', 'Mark as correct')" :aria-label="t('vibears', 'Mark as correct')" @click="$emit('grade', a.sample, true)"><PulseIcon name="check" size="1.15em" /></button>
-					<button class="tg-btn tg-no" :class="{ 'is-on': a.status === 'rejected' }" :disabled="busy" :title="t('vibears', 'Mark as wrong')" :aria-label="t('vibears', 'Mark as wrong')" @click="$emit('grade', a.sample, false)"><PulseIcon name="close" size="1.15em" /></button>
+					<button class="tg-btn tg-ok" :class="{ 'is-on': a.status === 'accepted' }" :disabled="busy" :title="t('vibears', 'Mark as correct')" :aria-label="t('vibears', 'Mark as correct')" @click="$emit('grade', a.sample, true)"><VibearsIcon name="check" size="1.15em" /></button>
+					<button class="tg-btn tg-no" :class="{ 'is-on': a.status === 'rejected' }" :disabled="busy" :title="t('vibears', 'Mark as wrong')" :aria-label="t('vibears', 'Mark as wrong')" @click="$emit('grade', a.sample, false)"><VibearsIcon name="close" size="1.15em" /></button>
 				</span>
 				<!-- read-only: status as a badge (shape+colour+text), openly visible -->
 				<span v-else class="tg-status" :class="'is-' + a.status">
-					<template v-if="a.status === 'accepted'"><PulseIcon name="check" size="1em" /> {{ t('vibears', 'correct') }}</template>
-					<template v-else-if="a.status === 'rejected'"><PulseIcon name="close" size="1em" /> {{ t('vibears', 'wrong') }}</template>
+					<template v-if="a.status === 'accepted'"><VibearsIcon name="check" size="1em" /> {{ t('vibears', 'correct') }}</template>
+					<template v-else-if="a.status === 'rejected'"><VibearsIcon name="close" size="1em" /> {{ t('vibears', 'wrong') }}</template>
 					<template v-else>{{ t('vibears', 'open') }}</template>
 				</span>
 			</li>
@@ -39,11 +39,11 @@
  * self-paced quiz, which are not in the public repository (see "References in
  * code comments" in the README).
  */
-import PulseIcon from './ui/PulseIcon.vue'
+import VibearsIcon from './ui/VibearsIcon.vue'
 
 export default {
 	name: 'TextGrading',
-	components: { PulseIcon },
+	components: { VibearsIcon },
 	props: {
 		results: { type: Object, required: true },
 		// read-only: same look, but without the grading buttons — this way
@@ -77,33 +77,33 @@ export default {
 /* em -> scales with the container font-size (phone/moderator small, projector large). */
 .text-grading { width: 100%; font-size: inherit; }
 .tg-accepted { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em; margin-bottom: 0.7em; }
-.tg-accepted-label { font-size: 0.85em; color: var(--pulse-text-2); }
+.tg-accepted-label { font-size: 0.85em; color: var(--vibears-text-2); }
 .tg-chip { font-size: 0.85em; }
-.tg-hint { font-size: 0.85em; color: var(--pulse-text-2); margin: 0 0 0.8em; }
+.tg-hint { font-size: 0.85em; color: var(--vibears-text-2); margin: 0 0 0.8em; }
 .tg-list { list-style: none; margin: 0; padding: 0; }
-.tg-row { display: flex; align-items: center; gap: 0.75em; padding: 0.5em 0.25em; border-bottom: 1px solid var(--pulse-border); }
-.tg-count { flex: 0 0 auto; min-width: 3ch; text-align: right; color: var(--pulse-text-2); font-variant-numeric: tabular-nums; font-weight: 700; }
+.tg-row { display: flex; align-items: center; gap: 0.75em; padding: 0.5em 0.25em; border-bottom: 1px solid var(--vibears-border); }
+.tg-count { flex: 0 0 auto; min-width: 3ch; text-align: right; color: var(--vibears-text-2); font-variant-numeric: tabular-nums; font-weight: 700; }
 .tg-text { flex: 1; font-weight: 600; word-break: break-word; }
-.tg-row.is-accepted .tg-text { color: var(--pulse-success); }
+.tg-row.is-accepted .tg-text { color: var(--vibears-success); }
 .tg-row.is-rejected .tg-text { text-decoration: line-through; opacity: 0.6; }
 .tg-actions { flex: 0 0 auto; display: flex; gap: 0.4em; }
 .tg-btn {
-	appearance: none; width: 2.75em; min-width: 44px; height: 2.75em; min-height: 44px; border-radius: var(--pulse-r-el);
-	border: 2px solid var(--pulse-border-strong); background: var(--pulse-bg);
-	color: var(--pulse-text-2); cursor: pointer;
+	appearance: none; width: 2.75em; min-width: 44px; height: 2.75em; min-height: 44px; border-radius: var(--vibears-r-el);
+	border: 2px solid var(--vibears-border-strong); background: var(--vibears-bg);
+	color: var(--vibears-text-2); cursor: pointer;
 	display: inline-flex; align-items: center; justify-content: center; padding: 0;
 }
-.tg-btn:focus-visible { outline: 2px solid var(--pulse-primary); outline-offset: 2px; }
+.tg-btn:focus-visible { outline: 2px solid var(--vibears-primary); outline-offset: 2px; }
 /* busy: Nextcloud greys out disabled <button>s — the look stays, just dimmed. */
-.tg-btn:disabled { opacity: 0.55; cursor: default; background: var(--pulse-bg); color: var(--pulse-text-2); border-color: var(--pulse-border-strong); }
-.tg-ok.is-on { background: var(--pulse-success); border-color: var(--pulse-success); color: #fff; }
-.tg-no.is-on { background: var(--pulse-error); border-color: var(--pulse-error); color: #fff; }
+.tg-btn:disabled { opacity: 0.55; cursor: default; background: var(--vibears-bg); color: var(--vibears-text-2); border-color: var(--vibears-border-strong); }
+.tg-ok.is-on { background: var(--vibears-success); border-color: var(--vibears-success); color: #fff; }
+.tg-no.is-on { background: var(--vibears-error); border-color: var(--vibears-error); color: #fff; }
 /* read-only status badge */
 .tg-status { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 0.25em; font-weight: 800; font-size: 0.85em; }
-.tg-status.is-accepted { color: var(--pulse-success); }
-.tg-status.is-rejected { color: var(--pulse-error); }
-.tg-status.is-open { color: var(--pulse-text-2); }
-.tg-empty, .tg-total, .tg-more { color: var(--pulse-text-2); font-size: 0.85em; }
+.tg-status.is-accepted { color: var(--vibears-success); }
+.tg-status.is-rejected { color: var(--vibears-error); }
+.tg-status.is-open { color: var(--vibears-text-2); }
+.tg-empty, .tg-total, .tg-more { color: var(--vibears-text-2); font-size: 0.85em; }
 .tg-more { margin: 0.5em 0 0; padding-inline-start: 0.25em; }
 .tg-total { margin-top: 0.8em; text-align: right; }
 </style>

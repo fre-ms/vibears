@@ -31,9 +31,7 @@ class PublicView {
      * so no client stays stuck on the old state with a 204.
      */
     public static function opaque(string $raw, string $secret): string {
-        // The salt is Pulse's on purpose: it is never visible, and the golden
-        // tests (StateVersionTest, PublicSpoilerTest) pin values computed with it.
-        return substr(hash_hmac('sha256', 'v' . Application::PROTOCOL . ':' . $raw, 'pulse-state:' . $secret), 0, 24);
+        return substr(hash_hmac('sha256', 'v' . Application::PROTOCOL . ':' . $raw, 'vibears-state:' . $secret), 0, 24);
     }
 
     /**
@@ -57,7 +55,7 @@ class PublicView {
         if ($room->getMode() !== 'quiz' || $revealed) {
             return $data;
         }
-        $key = 'pulse-order:' . $secret; // Pulse's salt, see opaque()
+        $key = 'vibears-order:' . $secret;
         $prefix = $poll->getId() . ':';
         $shuffle = static function (array $list) use ($key, $prefix): array {
             $keyed = [];
