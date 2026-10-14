@@ -21,11 +21,12 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       # The Node version the committed bundles are built with: npm ci plus
-      # npm run build reproduces them byte for byte with it (checked in a
-      # node:22.18.0 container, in a different directory as well).
+      # npm run build reproduces them byte for byte with it. The output does
+      # not depend on the Node version in practice (22.18.0 and 26.10.0 built
+      # identical bundles), but the check needs one pinned toolchain.
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 22.18.0
+          node-version: 26.10.0
           cache: npm
 
       - run: npm ci
@@ -94,8 +95,8 @@ jobs:
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: pulse-tarball
-          path: build/pulse-*.tar.gz
+          name: vibears-tarball
+          path: build/vibears-*.tar.gz
           retention-days: 7
 
   php:
@@ -131,7 +132,7 @@ jobs:
       - name: Check out the app
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
-          path: server/apps/pulse
+          path: server/apps/vibears
 
       - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
@@ -148,12 +149,12 @@ jobs:
       # dev/ holds probe.php, which the screenshot harness runs on the
       # live instance.
       - name: Syntax check
-        working-directory: server/apps/pulse
+        working-directory: server/apps/vibears
         run: find lib tests dev -name '*.php' -print0 | xargs -0 -n1 php -l >/dev/null
 
       # A skip is an environment gap (no intl, a PCRE without \p{DI}, traces
       # without arguments), and each one would hide a security test: here
       # it fails the job. tests/run.sh keeps PHPUnit's default.
       - name: Unit tests
-        working-directory: server/apps/pulse
+        working-directory: server/apps/vibears
         run: phpunit -c phpunit.xml --fail-on-skipped
