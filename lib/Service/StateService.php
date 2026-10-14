@@ -53,14 +53,35 @@ class StateService {
      * @return list<array{poll:array, results:array}>
      */
     public function summary(Room $room): array {
+        $deck = $this->deckService->deck($room);
+        $votes = $this->votesByPoll($deck);
+        $stats = $room->getMode() === 'quiz' ? ItemStatistics::compute($deck, $votes) : [];
         $out = [];
-        foreach ($this->deckService->deck($room) as $poll) {
+        foreach ($deck as $poll) {
             $out[] = [
                 'poll' => $this->deckService->ownerPoll($poll),
-                'results' => $this->tallyService->tally($poll, $this->voteMapper->findByPoll($poll->getId())),
+                'results' => $this->tallyService->tally($poll, $votes[$poll->getId()]),
+                // Quiz: difficulty, discrimination and the figure per option
+                // (ItemStatistics); null in a poll, which has no solutions.
+                'stats' => $stats[$poll->getId()] ?? null,
             ];
         }
         return $out;
+    }
+
+    /**
+     * The votes of every question of the deck, keyed by poll ID — read once
+     * for the tallies and the item statistics alike.
+     *
+     * @param Poll[] $deck
+     * @return array<int, list<\OCA\Vibears\Db\Vote>>
+     */
+    private function votesByPoll(array $deck): array {
+        $votes = [];
+        foreach ($deck as $poll) {
+            $votes[$poll->getId()] = $this->voteMapper->findByPoll($poll->getId());
+        }
+        return $votes;
     }
 
     /**
@@ -69,20 +90,32 @@ class StateService {
      * BOM as in the self-paced export (CsvFormat::document).
      */
     public function exportCsv(Room $room): string {
-        $rows = [[
+        $quiz = $room->getMode() === 'quiz';
+        $head = [
             $this->l10n->t('No.'),
             $this->l10n->t('Question'),
             $this->l10n->t('Type'),
             $this->l10n->t('Answer'),
             $this->l10n->t('Votes'),
             $this->l10n->t('Share'),
-        ]];
+        ];
+        if ($quiz) {
+            // Item statistics (ItemStatistics): figures of the question on
+            // every one of its rows, the option's own figure on its row.
+            $head[] = $this->l10n->t('Difficulty');
+            $head[] = $this->l10n->t('Discrimination');
+            $head[] = $this->l10n->t('Answer discrimination');
+        }
+        $rows = [$head];
 
+        $deck = $this->deckService->deck($room);
+        $votes = $this->votesByPoll($deck);
+        $stats = $quiz ? ItemStatistics::compute($deck, $votes) : [];
         $nr = 0;
-        foreach ($this->deckService->deck($room) as $poll) {
+        foreach ($deck as $poll) {
             $nr++;
-            $tally = $this->tallyService->tally($poll, $this->voteMapper->findByPoll($poll->getId()));
-            array_push($rows, ...$this->csvRows($nr, $poll, $tally));
+            $tally = $this->tallyService->tally($poll, $votes[$poll->getId()]);
+            array_push($rows, ...$this->csvRows($nr, $poll, $tally, $stats[$poll->getId()] ?? null));
         }
         return CsvFormat::document($rows);
     }
@@ -93,10 +126,16 @@ class StateService {
      * split as TallyService::tally). Every builder returns those last three
      * cells per row.
      *
+     * In a quiz three more cells follow: the question's difficulty and
+     * discrimination on every row, and on the row of a choice, true/false or
+     * multiple-answer option that option's own figure (the rows of those
+     * types come one per option, in the tally's order).
+     *
      * @param array $tally result of TallyService::tally
+     * @param ?array $stat the question's entry from ItemStatistics::compute, null in a poll
      * @return list<list<int|string>>
      */
-    private function csvRows(int $nr, Poll $poll, array $tally): array {
+    private function csvRows(int $nr, Poll $poll, array $tally, ?array $stat = null): array {
         $type = $poll->getType();
         $lead = [$nr, $poll->getQuestion(), $this->typeLabel($type)];
         $mode = $tally['mode'] ?? 'single';
@@ -108,7 +147,22 @@ class StateService {
             $type === 'text' => $this->textRows($tally),
             default => $this->defaultRows($type, $tally),
         };
-        return array_map(static fn (array $row): array => [...$lead, ...$row], $cells);
+        if ($stat === null) {
+            return array_map(static fn (array $row): array => [...$lead, ...$row], $cells);
+        }
+        $ids = in_array($type, ItemStatistics::OPTION_TYPES, true) ? array_column($tally['results'], 'id') : [];
+        $item = [$this->figure($stat['difficulty']), $this->figure($stat['discrimination'])];
+        $out = [];
+        foreach (array_values($cells) as $i => $row) {
+            $optionId = $ids[$i] ?? null;
+            $out[] = [...$lead, ...$row, ...$item, $this->figure($optionId === null ? null : ($stat['options'][$optionId] ?? null))];
+        }
+        return $out;
+    }
+
+    /** A statistic for the export: in the export's language, empty when undefined. */
+    private function figure(?float $value): string {
+        return $value === null ? '' : $this->num($value);
     }
 
     /**

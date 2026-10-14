@@ -50,6 +50,9 @@ globalThis.open = (...args) => { opened.push(args) }
 function setup({ webroot, rewrite }) {
 	globalThis._oc_webroot = webroot
 	globalThis.OC = { config: { modRewriteWorking: rewrite } }
+	// generateFilePath (chunkBase) reads the app's web root from here — the
+	// instance may keep the app under custom_apps/, so it is never hard-coded.
+	globalThis._oc_appswebroots = { vibears: webroot + '/apps/vibears' }
 }
 setup({ webroot: '', rewrite: false })
 
@@ -58,7 +61,7 @@ const { csvUrl, markdownUrl } = await import('../../src/util/csv.js')
 const { serverMessage } = await import('../../src/toast.js')
 const {
 	MOD_TIMEOUT, PHONE_TIMEOUT, roomsApi, roomApi, importApi, adminRetentionApi, publicApi, pollImage,
-	participantPage, joinPage, screenPage, roomPage, home, addinManifest, openProjector,
+	participantPage, joinPage, screenPage, roomPage, home, addinManifest, openProjector, chunkBase,
 } = routes
 
 let passed = 0
@@ -230,6 +233,12 @@ for (const scenario of [
 		assert.deepEqual(opened, [[expected('https://cloud.example.com:8443/index.php/apps/vibears/screen/Ab3dE9'), 'vibears-beamer-Ab3dE9']])
 		const path = opened[0][0].slice(globalThis.location.origin.length)
 		assert.ok(routeOf(path, scenario.prefix, 'GET'), path)
+	})
+
+	// Static files under the app's web root (_oc_appswebroots), not a route:
+	// no /index.php, whatever mod_rewrite does.
+	test(`chunkBase (${scenario.label}): webpack fetches its chunks from js/ under the app's web root`, () => {
+		assert.equal(chunkBase(), scenario.webroot + '/apps/vibears/js/')
 	})
 }
 setup({ webroot: '', rewrite: false })

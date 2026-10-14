@@ -2,6 +2,8 @@
  * SPDX-FileCopyrightText: 2026 hotochan123
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+// First: public path and CSP nonce for chunks (the KaTeX chunk), see util/webpack-env.js.
+import './util/webpack-env.js'
 import Vue from 'vue'
 import { t, n } from './util/l10n.js'
 // Design-system foundation: load tokens + primitives globally (un-scoped),

@@ -84,15 +84,24 @@
 			</div>
 			<!-- While the quiz is open, this page shows the solutions — do not mirror it. -->
 			<p v-if="isPaced && paceState === 'open'" class="vibears-notice is-warn summary-warn"><VibearsIcon name="lock" size="1.1em" class="vibears-notice-ico" /><span><b class="summary-warn-head">{{ t('vibears', 'Only for you') }}</b> {{ t('vibears', 'This page shows the solutions — do not mirror it while the quiz is open.') }}</span></p>
+			<p v-if="summary.some((it) => it.stats)" class="summary-legend">{{ t('vibears', 'Difficulty = share of correct answers among those who answered (0 to 1). Discrimination = correlation between a correct answer and the number of correct answers on the other questions; below 0.2 a question is usually worth a second look. Both are in the CSV export as well.') }}</p>
 			<div v-if="summary.length" class="summary-list">
 				<div v-for="(item, i) in summary" :key="item.poll.id" class="summary-item">
 					<h3 class="summary-q">
 						<span class="summary-num">{{ i + 1 }}</span>
-						<span class="summary-qtext">{{ item.poll.question }}</span>
+						<RichText class="summary-qtext" :text="item.poll.question" />
 						<span class="summary-type">{{ typeLabel(item.poll.type) }}</span>
 					</h3>
+					<!-- Quiz: the item statistics (ItemStatistics) — how many answered,
+					     the share of correct answers and the corrected item-total
+					     correlation; a low one is flagged, the figure stays. -->
+					<p v-if="item.stats" class="summary-stats">
+						<span>{{ t('vibears', 'Answered') }} <b>{{ item.stats.n }}</b></span>
+						<span>{{ t('vibears', 'Difficulty') }} <b>{{ statNum(item.stats.difficulty) }}</b></span>
+						<span :class="{ 'is-low': item.stats.discrimination !== null && item.stats.discrimination < 0.2 }">{{ t('vibears', 'Discrimination') }} <b>{{ statNum(item.stats.discrimination) }}</b></span>
+					</p>
 					<TextGrading v-if="item.poll.type === 'text'" :results="item.results" @grade="(ans, ok) => gradeSummaryAnswer(item, ans, ok)" />
-					<ResultsView v-else :results="item.results" :correct-id="item.poll.correctOption || ''" :correct-ids="((item.poll.answerKey || {}).correct) || []" :answer-key="item.poll.answerKey || null" />
+					<ResultsView v-else :results="item.results" :correct-id="item.poll.correctOption || ''" :correct-ids="((item.poll.answerKey || {}).correct) || []" :answer-key="item.poll.answerKey || null" :option-stats="item.stats ? item.stats.options : null" />
 				</div>
 			</div>
 			<p v-else class="deck-empty">{{ t('vibears', 'No questions in the deck yet.') }}</p>
@@ -135,7 +144,7 @@
 						<span v-if="!deckLocked" class="drag-handle" aria-hidden="true" :title="t('vibears', 'Drag to reorder')"><VibearsIcon name="drag" size="1.1em" /></span>
 						<span class="deck-num">{{ i + 1 }}</span>
 						<div class="deck-body">
-							<button class="deck-q" :title="deckLocked ? null : t('vibears', 'Edit')" :disabled="deckLocked" @click="openComposer(p)">{{ p.question }}</button>
+							<button class="deck-q" :title="deckLocked ? null : t('vibears', 'Edit')" :disabled="deckLocked" @click="openComposer(p)"><RichText :text="p.question" /></button>
 							<span class="deck-type"><span v-if="p.image" class="deck-imgflag" :title="t('vibears', 'This question has an image')">{{ t('vibears', 'Image') }}</span><span class="deck-tico" :class="'is-' + typeTag(p.type).c">{{ typeTag(p.type).t }}</span>{{ typeLabel(p.type) }}<template v-if="p.type === 'scale'"> · <b class="deck-submode">{{ scaleModeLabel(p) }}</b></template><span v-if="isQuiz"><template v-if="showRowLimit"> · {{ p.timeLimit ? p.timeLimit + 's' : t('vibears', 'no time limit') }}</template> · {{ answerHint(p) }}</span></span>
 						</div>
 						<span v-if="p.id === currentId" class="vibears-chip is-accent deck-current-chip">{{ t('vibears', 'Current') }}</span>
@@ -156,6 +165,10 @@
 					<VibearsSegmented v-model="draft.type" :options="typeOptions" :label="t('vibears', 'Question type')" class="composer-seg" />
 
 					<input ref="qInput" v-model="draft.question" class="pinput pinput--q" type="text" :placeholder="t('vibears', 'Your question …')" @keyup.enter="focusFirstOption">
+					<!-- Inline markup (util/richtext.js). The preview only appears once the
+					     draft uses it, so a plain question keeps the form short. -->
+					<p class="q-hint">{{ t('vibears', 'Formatting: **bold**, *italic*, `code`, formulas between $ and $ (KaTeX) — in the answers as well.') }}</p>
+					<RichText v-if="hasRich(draft.question)" tag="p" class="q-preview" :text="draft.question" />
 
 					<!-- Image for the question (optional). Uploaded on save and
 					     re-encoded + downscaled on the server. -->
@@ -570,7 +583,7 @@ import VibearsMenu from './components/ui/VibearsMenu.vue'
 import CountdownRing from './components/CountdownRing.vue'
 import IntakeBoard from './components/IntakeBoard.vue'
 import { vibearsConfirm } from './util/confirm.js'
-import { formatCode, remainingSecs, paceStateChip, fmtAgo } from './util/format.js'
+import { formatCode, remainingSecs, paceStateChip, fmtAgo, fmtNum } from './util/format.js'
 import { csvUrl, downloadMarkdown } from './util/csv.js'
 import { isPacedRoom, windowState, progressCounts } from './util/pace.js'
 import { QUESTION_TYPES, emptyDraft, typeOptionsFor, typeTag, scaleModeLabel, typeLabel, answerHint, lossText } from './util/question-types.js'
@@ -578,11 +591,13 @@ import pollingMixin from './mixins/polling.js'
 import PaceOpenDialog from './components/PaceOpenDialog.vue'
 import PaceDeckStatus from './components/PaceDeckStatus.vue'
 import PaceRun from './components/PaceRun.vue'
+import RichText from './components/RichText.vue'
+import { hasRich } from './util/richtext.js'
 
 export default {
 	name: 'Moderator',
 	mixins: [pollingMixin],
-	components: { ResultsView, QrCode, Leaderboard, LivePlayers, TextGrading, VibearsIcon, VibearsSegmented, VibearsMenu, CountdownRing, IntakeBoard, draggable, PaceOpenDialog, PaceDeckStatus, PaceRun },
+	components: { ResultsView, QrCode, Leaderboard, LivePlayers, TextGrading, VibearsIcon, VibearsSegmented, VibearsMenu, CountdownRing, IntakeBoard, draggable, PaceOpenDialog, PaceDeckStatus, PaceRun, RichText },
 	data() {
 		return {
 			phase: 'start', // 'start' | 'deck' | 'present' | 'summary' | 'leaderboard' | 'pace' (run view, self-paced)
@@ -1025,6 +1040,11 @@ export default {
 		if (this.canvasRo) this.canvasRo.disconnect()
 	},
 	methods: {
+		hasRich,
+		// An item statistic with two decimals; a dash where it is undefined.
+		statNum(value) {
+			return value === null || value === undefined ? '—' : fmtNum(value, 2, 2)
+		},
 		// Deck labels (util/question-types.js), called by the template.
 		typeTag,
 		scaleModeLabel,
@@ -2341,6 +2361,12 @@ export default {
 .summary-num { font-weight: 800; color: var(--vibears-text-2); font-variant-numeric: tabular-nums; }
 .summary-qtext { flex: 1; min-width: 0; }
 .summary-type { font-size: 12px; font-weight: 400; color: var(--vibears-text-2); }
+.summary-legend { margin: 0 0 20px; font-size: 13px; color: var(--vibears-text-2); }
+.summary-stats { margin: -12px 0 16px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--vibears-text-2); }
+.summary-stats b { color: var(--vibears-text); font-variant-numeric: tabular-nums; }
+.summary-stats .is-low b { color: var(--vibears-warning); }
+.q-hint { margin: -6px 0 10px; font-size: 12px; color: var(--vibears-text-2); }
+.q-preview { margin: -4px 0 12px; padding: 8px 12px; border: 1px dashed var(--vibears-border); border-radius: 8px; font-size: 15px; }
 
 /* Presentation — status/chips/notice now come from the DS (2nd block).
    Only the layout leftovers remain here. */

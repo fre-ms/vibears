@@ -135,7 +135,7 @@
 						<li v-for="q in questions" :key="q.pollId" class="pace-q">
 							<span class="pace-qk">{{ q.k }}</span>
 							<span class="pace-qbody">
-								<span class="pace-qtext" :title="q.question">{{ q.question }}</span>
+								<RichText class="pace-qtext" :title="plainText(q.question)" :text="q.question" />
 								<span class="pace-qstats"><span class="pace-qstat">{{ t('vibears', 'Reached') }} <b>{{ q.reached }}</b></span> · <span class="pace-qstat">{{ t('vibears', 'Answered') }} <b>{{ q.answered }}</b></span> · <span class="pace-qstat">{{ t('vibears', 'Correct') }} <b>{{ q.correct === null ? '—' : q.correct }}</b></span></span>
 							</span>
 							<span v-if="q.pending > 0" class="vibears-chip is-warning pace-cell-chip"><VibearsIcon name="hourglass" size="1em" /> {{ n('vibears', '%n to check', '%n to check', q.pending) }}</span>
@@ -210,12 +210,14 @@ import TextGrading from './TextGrading.vue'
 import VibearsIcon from './ui/VibearsIcon.vue'
 import VibearsMenu from './ui/VibearsMenu.vue'
 import VibearsSegmented from './ui/VibearsSegmented.vue'
+import RichText from './RichText.vue'
+import { plainText } from '../util/richtext.js'
 
 const sumCount = (rows) => rows.reduce((acc, a) => acc + (Number(a.count) || 0), 0)
 
 export default {
 	name: 'PaceRun',
-	components: { PaceOpenDialog, QrCode, ScreenPreview, TextGrading, VibearsIcon, VibearsMenu, VibearsSegmented },
+	components: { PaceOpenDialog, QrCode, ScreenPreview, TextGrading, VibearsIcon, VibearsMenu, VibearsSegmented, RichText },
 	mixins: [progressPoll],
 	props: {
 		room: { type: Object, required: true },
@@ -484,6 +486,7 @@ export default {
 		if (this.tick) clearInterval(this.tick)
 	},
 	methods: {
+		plainText,
 		t,
 		n,
 		fmtNum,

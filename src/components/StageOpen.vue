@@ -44,7 +44,7 @@
 				<StageRow v-for="item in matchItems" :key="item.id" :label="item.label" outline />
 			</div>
 			<ul class="sopen-chips">
-				<li v-for="target in matchTargets" :key="target.id" class="sopen-chip">{{ target.label }}</li>
+				<RichText v-for="target in matchTargets" :key="target.id" tag="li" class="sopen-chip" :text="target.label" />
 			</ul>
 		</div>
 	</div>
@@ -61,10 +61,11 @@
 import { hasTallLabel } from '../util/format.js'
 import { withPalette } from '../util/palette.js'
 import StageRow from './StageRow.vue'
+import RichText from './RichText.vue'
 
 export default {
 	name: 'StageOpen',
-	components: { StageRow },
+	components: { StageRow, RichText },
 	props: {
 		poll: { type: Object, required: true },
 	},

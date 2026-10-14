@@ -16,6 +16,7 @@
     "@nextcloud/initial-state": "^2.2.0",
     "@nextcloud/l10n": "^3.4.1",
     "@nextcloud/router": "^3.0.1",
+    "katex": "^0.19.0",
     "qrcode-generator": "^1.4.4",
     "vue": "^2.7.16",
     "vuedraggable": "^2.24.3"

@@ -66,6 +66,13 @@ jobs:
           node dev/unit/routes.test.mjs
           node dev/unit/composer-limits.test.mjs
           node dev/unit/wordcloud.test.mjs
+          node dev/unit/richtext.test.mjs
+
+      # css/katex/ is KaTeX's stylesheet and woff2 fonts, copied from the
+      # npm package by build/vendor-katex.js; a version bump without a
+      # re-run would ship a stylesheet that does not match the JS chunk.
+      - name: Vendored KaTeX matches the package
+        run: node build/vendor-katex.js --check
 
       # The simulation and the screenshot harness only ever run against a
       # live instance, so CI at least parses them, the build scripts and the

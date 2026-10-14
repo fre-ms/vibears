@@ -5,6 +5,8 @@
 
 /** Moderator interface (signed-in users). */
 \OCP\Util::addScript('vibears', 'vibears-main');
-// CSS is injected by the JS bundle (vue-style-loader), so there is no separate css/.
+// The app's CSS is injected by the JS bundle (vue-style-loader); only KaTeX's
+// stylesheet and fonts are static files (css/katex/, build/vendor-katex.js).
+\OCP\Util::addStyle('vibears', 'katex/katex.min');
 ?>
 <div id="vibears-app"></div>

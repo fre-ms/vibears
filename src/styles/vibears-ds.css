@@ -344,3 +344,10 @@
 	.pace-race-row .srow-fill { transition: none; }
 	.vibears-btn { transition: none; }
 }
+
+/* ── Inline markup of question texts and answer options (RichText.vue) ──
+   Bold and italic inherit; code gets a quiet box; KaTeX brings its own
+   stylesheet (css/katex/), only the display spacing is tightened here. */
+.rt code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; padding: 0 0.3em; border-radius: 4px; background: color-mix(in srgb, currentColor 10%, transparent); }
+.rt .rt-math:not(.is-typeset) { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; }
+.rt .katex-display { margin: 0.35em 0; }

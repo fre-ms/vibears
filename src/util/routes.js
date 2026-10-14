@@ -20,7 +20,7 @@
  * Only URLs, no requests: the axios calls stay in the views, and the public
  * code keeps its literal axios import (PublicCrossSiteTest).
  */
-import { generateUrl } from '@nextcloud/router'
+import { generateFilePath, generateUrl } from '@nextcloud/router'
 
 // Time limit (ms) of the moderator requests that must not hang: the
 // self-paced calls, the player list, the counts for a confirmation and the
@@ -158,4 +158,13 @@ export function addinManifest() {
  */
 export function openProjector(code) {
 	window.open(window.location.origin + screenPage(code), 'vibears-beamer-' + code)
+}
+
+/**
+ * Where webpack fetches the chunks of the bundle from (js/vibears-katex.js):
+ * the app's js/ directory under the instance's web root. Set as
+ * __webpack_public_path__ by util/webpack-env.js before anything else runs.
+ */
+export function chunkBase() {
+	return generateFilePath('vibears', '', 'js/')
 }

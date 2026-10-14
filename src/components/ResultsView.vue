@@ -20,11 +20,14 @@
 				<div class="bar-head">
 					<span class="bar-label">
 						<span class="vibears-badge bar-badge">{{ row.pal.letter }}</span>
-						<span class="bar-text">{{ row.label }}</span>
+						<RichText class="bar-text" :text="row.label" />
 						<span v-if="isCorrect(row.id)" class="bar-flag is-correct"><VibearsIcon name="check" size="1em" /> {{ t('vibears', 'correct') }}</span>
 						<span v-else-if="!hasCorrect && isWinner(row.count)" class="bar-flag is-winner"><VibearsIcon name="check" size="1em" /> {{ t('vibears', 'leading') }}</span>
 					</span>
 					<span class="bar-count">{{ row.count }} · {{ percent(row.count) }}%</span>
+					<!-- Summary of a quiz: the option's discrimination (ItemStatistics) — the
+					     key should be positive, a good distractor negative. -->
+					<span v-if="optionFigure(row.id) !== null" class="bar-stat" :title="t('vibears', 'Discrimination of this answer: correlation between choosing it and the score on the other questions')">r = {{ optionFigure(row.id) }}</span>
 				</div>
 				<div class="bar-track"><div class="bar-fill" :style="{ width: percent(row.count) + '%' }" /></div>
 			</div>
@@ -50,7 +53,7 @@
 				<div class="bar-head">
 					<span class="bar-label">
 						<span class="vibears-badge bar-badge">{{ i + 1 }}</span>
-						<span class="bar-text">{{ row.label }}</span>
+						<RichText class="bar-text" :text="row.label" />
 						<span v-if="hasRankKey" class="bar-flag" :class="rankCorrect(row.id, i) ? 'is-correct' : 'is-wrong'">
 							<VibearsIcon :name="rankCorrect(row.id, i) ? 'check' : 'close'" size="1em" /> {{ t('vibears', 'place {place}', { place: rankTarget(row.id) }) }}
 						</span>
@@ -79,7 +82,7 @@
 			</div>
 			<div v-for="row in (wide ? [] : results.results)" :key="row.id" class="mres-row">
 				<div class="mres-head">
-					<span class="mres-item">{{ row.label }}</span>
+					<RichText class="mres-item" :text="row.label" />
 					<span v-if="hasMatchKey" class="bar-flag is-correct">
 						<VibearsIcon name="check" size="1em" /> {{ matchTargetLabel(matchKeyOf(row.id)) }}
 					</span>
@@ -90,7 +93,7 @@
 					<div v-for="cell in matchCells(row)" :key="cell.id" class="bar-row"
 						:class="{ 'is-correct': matchIsCorrect(row, cell), 'is-wrong': hasMatchKey && !matchIsCorrect(row, cell), 'is-winner': !hasMatchKey && cell.id === row.top }">
 						<div class="bar-head">
-							<span class="bar-label"><span class="bar-text">{{ cell.label }}</span></span>
+							<span class="bar-label"><RichText class="bar-text" :text="cell.label" /></span>
 							<span class="bar-count">{{ cell.count }} · {{ matchPercent(cell.count, row.n) }}%</span>
 						</div>
 						<div class="bar-track"><div class="bar-fill" :style="{ width: matchPercent(cell.count, row.n) + '%' }" /></div>
@@ -332,10 +335,11 @@ import StageRow from './StageRow.vue'
 import StageStack from './StageStack.vue'
 import TextGrading from './TextGrading.vue'
 import VizEmpty from './ui/VizEmpty.vue'
+import RichText from './RichText.vue'
 
 export default {
 	name: 'ResultsView',
-	components: { VibearsIcon, StageCompass, StageHistogram, StageRadar, StageRow, StageStack, TextGrading, VizEmpty },
+	components: { VibearsIcon, StageCompass, StageHistogram, StageRadar, StageRow, StageStack, TextGrading, VizEmpty, RichText },
 	props: {
 		results: { type: Object, default: null },
 		// Quiz choice/truefalse: option ID of the correct answer -> green.
@@ -355,6 +359,9 @@ export default {
 		// a list of bars per target — eight pairs times eight targets would be 64 bars in
 		// a 340 px column, and the order of the question would get lost in them.
 		dense: { type: Boolean, default: false },
+		// Summary of a quiz: per option ID its discrimination from
+		// ItemStatistics (null = undefined); shown as "r = …" on the bar rows.
+		optionStats: { type: Object, default: null },
 	},
 	computed: {
 		total() {
@@ -648,6 +655,12 @@ export default {
 		},
 	},
 	methods: {
+		// The option's discrimination as text, or null if there is none.
+		optionFigure(id) {
+			const s = this.optionStats
+			if (!s || s[id] === undefined || s[id] === null) return null
+			return fmtNum(s[id], 2, 2)
+		},
 		// Uniform figure format: 1 decimal place in the language of the
 		// UI, tabular digits (number guess + scale share it, §7 grammar).
 		num(v) {
@@ -874,6 +887,7 @@ export default {
    whole row would also take the text's contrast away. */
 .bar-row.is-wrong, .rank-row.is-wrong { opacity: 0.55; }
 .bar-count { flex: 0 0 auto; color: var(--vibears-readout); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bar-stat { flex: 0 0 auto; margin-left: 10px; font-size: 12px; color: var(--vibears-text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .bar-track {
 	height: 2.1em;
 	border-radius: var(--vibears-r-el);

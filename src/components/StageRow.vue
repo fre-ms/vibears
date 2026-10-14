@@ -11,7 +11,7 @@
 			<span class="srow-text srow-text--fill" aria-hidden="true">
 				<span v-if="badge !== ''" class="srow-badge">{{ badge }}</span>
 				<VibearsIcon v-if="state === 'correct'" name="check" size="1.2em" class="srow-mark" />
-				<span class="srow-label">{{ label }}</span>
+				<RichText class="srow-label" :text="label" />
 				<span v-if="flag" class="srow-flag">{{ flag }}</span>
 				<span v-if="value !== ''" class="srow-val">{{ value }}</span>
 			</span>
@@ -19,7 +19,7 @@
 		<span class="srow-text srow-text--track">
 			<span v-if="badge !== ''" class="srow-badge">{{ badge }}</span>
 			<VibearsIcon v-if="state === 'correct'" name="check" size="1.2em" class="srow-mark" />
-			<span class="srow-label">{{ label }}</span>
+			<RichText class="srow-label" :text="label" />
 			<span v-if="flag" class="srow-flag">{{ flag }}</span>
 			<span v-if="value !== ''" class="srow-val">{{ value }}</span>
 		</span>
@@ -41,10 +41,11 @@
  * respective parents decide the row height (.srows--stretch/--fixed).
  */
 import VibearsIcon from './ui/VibearsIcon.vue'
+import RichText from './RichText.vue'
 
 export default {
 	name: 'StageRow',
-	components: { VibearsIcon },
+	components: { VibearsIcon, RichText },
 	props: {
 		// Letter (A–H) or rank number. Empty = no badge.
 		badge: { type: [String, Number], default: '' },

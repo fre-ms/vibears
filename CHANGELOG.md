@@ -11,6 +11,21 @@ notes of a version from its section here, so every version needs an entry.
 ## [Unreleased]
 
 ### Added
+- **Item statistics in the summary of a quiz.** Per question how many
+  answered, the difficulty (share of correct answers) and the
+  discrimination (corrected item-total correlation over the number of
+  correct answers on the other questions); per answer option its own
+  discrimination, so a distractor that the strong players pick stands out.
+  A discrimination below 0.2 is flagged. The three figures are three more
+  columns of the CSV export of a quiz.
+- **Formulas and simple markup in questions and answers.** `**bold**`,
+  `*italic*`, `` `code` `` and formulas between `$…$` or `$$…$$` (KaTeX),
+  rendered on the phone, the projector, in the moderator's deck and
+  results, and in the PowerPoint add-in. The composer shows a preview as
+  soon as the draft uses markup. KaTeX is a chunk of its own
+  (`js/vibears-katex.js`) that a page only fetches when it meets a
+  formula; its stylesheet and woff2 fonts are static files under
+  `css/katex/` (`build/vendor-katex.js`).
 - **Choose the address of the join link.** On an instance that is reachable
   under several names (`trusted_domains`), the moderator's join panel offers
   a selector; the chosen address is kept with the room and used by the QR

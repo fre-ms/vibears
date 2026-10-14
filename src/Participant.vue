@@ -21,7 +21,7 @@
 				<p v-else-if="isPaced && review.myScore != null" class="myrank review-myrank">{{ n('vibears', '%n point', '%n points', review.myScore) }}</p>
 				<ol class="review-list">
 					<li v-for="(it, i) in review.items" :key="it.poll.id" class="review-item">
-						<h2 class="review-q"><span class="review-num">{{ i + 1 }}</span><span class="review-q-text">{{ it.poll.question }}</span></h2>
+						<h2 class="review-q"><span class="review-num">{{ i + 1 }}</span><RichText class="review-q-text" :text="it.poll.question" /></h2>
 						<p v-if="it.mine" class="review-mine" :class="{ 'is-ok': it.mine.correct === true, 'is-no': it.mine.correct === false }">
 							<span class="review-mine-lbl">{{ t('vibears', 'Your answer:') }}</span> <b>{{ myAnswerText(it) }}</b>
 							<span v-if="it.mine.correct === true" class="vibears-chip is-success review-chip"><VibearsIcon name="check" size="1em" /> +{{ it.mine.points }}</span>
@@ -218,7 +218,7 @@
 			<div v-else-if="revealed" class="h-app">
 				<div class="h-scroll">
 					<span v-if="practice" class="vibears-chip is-warning practice-chip"><VibearsIcon name="warning" size="1em" /> {{ t('vibears', 'Practice run · does not count') }}</span>
-					<h1 class="q">{{ poll.question }}</h1>
+					<RichText tag="h1" class="q" :text="poll.question" />
 
 					<!-- 1. Your own result sits ABOVE the distribution — it is what
 					     people look for first (§8.6). -->
@@ -266,7 +266,7 @@
 					<span>{{ t('vibears', 'Question {number} of {total}', { number: progress.k, total: progress.n }) }}<template v-if="paceUntil"> · {{ t('vibears', 'Open until {time}', { time: paceUntil }) }}</template></span>
 					<span v-if="closesInMin" class="vibears-chip is-warning pace-soon">{{ n('vibears', 'Closes in %n min', 'Closes in %n min', closesInMin) }}</span>
 				</p>
-				<h1 class="q" tabindex="-1">{{ poll.question }}</h1>
+				<RichText tag="h1" class="q" tabindex="-1" :text="poll.question" />
 				<VibearsIcon name="timer" size="2.4em" class="state-ico" />
 				<p class="muted pace-line" role="status">{{ paceLast ? t('vibears', 'Time is up.') : t('vibears', 'Time is up — on to the next question.') }}</p>
 				<button class="submit pace-next" :disabled="!canNext" :aria-busy="nextBusy ? 'true' : 'false'" @click="nextStep">
@@ -276,7 +276,7 @@
 
 			<!-- Time is up, nothing submitted (quiz only, moderated) -->
 			<div v-else-if="isQuiz && !isPaced && expired && !voted" class="center">
-				<h1 class="q">{{ poll.question }}</h1>
+				<RichText tag="h1" class="q" :text="poll.question" />
 				<VibearsIcon name="timer" size="2.4em" class="state-ico" />
 				<p class="muted">{{ t('vibears', 'Time is up — the reveal is coming.') }}</p>
 			</div>
@@ -304,7 +304,7 @@
 						<img :src="imageUrl(poll)" :alt="t('vibears', 'Image for the question')">
 					</button>
 
-					<h1 class="q" :tabindex="isPaced ? -1 : null">{{ poll.question }}</h1>
+					<RichText tag="h1" class="q" :tabindex="isPaced ? -1 : null" :text="poll.question" />
 					<p v-if="showTapHint" class="h-hint">{{ t('vibears', 'Tapping sends right away — you can change it just after.') }}</p>
 
 					<!-- Choice and True/False: in the quiz the tap submits immediately (§8.0). -->
@@ -313,7 +313,7 @@
 							class="choice" :class="[o.pal.cls, { 'is-quiz': isQuiz, 'is-picked': isPicked(o.id), 'is-dim': sent && !isPicked(o.id) }]"
 							:aria-checked="isPicked(o.id)" role="radio" :disabled="busy || locked || paceHold" @click="pickOne(o.id, $event)">
 							<span class="vibears-badge choice-badge">{{ o.pal.letter }}</span>
-							<span class="choice-label">{{ o.label }}</span>
+							<RichText class="choice-label" :text="o.label" />
 							<VibearsIcon v-if="isPicked(o.id)" name="check" size="1.2em" class="choice-tick" />
 						</button>
 					</div>
@@ -324,7 +324,7 @@
 							class="choice" :class="[o.pal.cls, { 'is-quiz': isQuiz, 'is-picked': multiPick.includes(o.id), 'is-dim': sent && !multiPick.includes(o.id) }]"
 							:aria-checked="multiPick.includes(o.id)" role="checkbox" :disabled="busy || locked || paceHold" @click="toggleMulti(o.id)">
 							<span class="vibears-badge choice-badge">{{ o.pal.letter }}</span>
-							<span class="choice-label">{{ o.label }}</span>
+							<RichText class="choice-label" :text="o.label" />
 							<VibearsIcon v-if="multiPick.includes(o.id)" name="check" size="1.2em" class="choice-tick" />
 						</button>
 					</div>
@@ -345,10 +345,10 @@
 						<ol ref="rankList" class="rank-list">
 							<li v-for="(o, i) in rankOrder" :key="o.id" class="rank-item" :data-rank-id="o.id">
 								<span class="rank-pos">{{ i + 1 }}</span>
-								<span class="rank-label">{{ o.label }}</span>
+								<RichText class="rank-label" :text="o.label" />
 								<span class="rank-move">
-									<button class="vibears-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === 0" :aria-label="t('vibears', '{answer} up', { answer: o.label })" @click="moveRank(i, -1)"><VibearsIcon name="arrow-up" size="1.1em" /></button>
-									<button class="vibears-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === rankOrder.length - 1" :aria-label="t('vibears', '{answer} down', { answer: o.label })" @click="moveRank(i, 1)"><VibearsIcon name="arrow-down" size="1.1em" /></button>
+									<button class="vibears-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === 0" :aria-label="t('vibears', '{answer} up', { answer: plainText(o.label) })" @click="moveRank(i, -1)"><VibearsIcon name="arrow-up" size="1.1em" /></button>
+									<button class="vibears-btn is-secondary is-icon rank-arrow" :disabled="busy || locked || i === rankOrder.length - 1" :aria-label="t('vibears', '{answer} down', { answer: plainText(o.label) })" @click="moveRank(i, 1)"><VibearsIcon name="arrow-down" size="1.1em" /></button>
 								</span>
 							</li>
 						</ol>
@@ -360,7 +360,7 @@
 						<ul class="mrow-list">
 							<li v-for="item in matchItems" :key="item.id">
 								<button type="button" class="mrow" :disabled="busy || locked" @click="openSheet(item.id)">
-									<span class="mrow-cat">{{ item.label }}</span>
+									<RichText class="mrow-cat" :text="item.label" />
 									<span class="mrow-chip" :class="[matchPickPal(item.id), { 'is-set': matchPick[item.id] }]">
 										{{ matchPick[item.id] ? matchLabelOf(matchPick[item.id]) : t('vibears', 'Choose') }}
 									</span>
@@ -539,11 +539,13 @@ import { phoneDelay } from './util/pace.js'
 import VibearsIcon from './components/ui/VibearsIcon.vue'
 import ResultsView from './components/ResultsView.vue'
 import Leaderboard from './components/Leaderboard.vue'
+import RichText from './components/RichText.vue'
+import { plainText } from './util/richtext.js'
 
 export default {
 	name: 'Participant',
 	mixins: [pollingMixin, pacePhone],
-	components: { VibearsIcon, ResultsView, Leaderboard },
+	components: { VibearsIcon, ResultsView, Leaderboard, RichText },
 	data() {
 		return {
 			code: loadState('vibears', 'code', ''),
@@ -871,6 +873,7 @@ export default {
 		document.removeEventListener('visibilitychange', this.onPollVisibility)
 	},
 	methods: {
+		plainText,
 		// ── Matching ────────────────────────────────────────────────────────
 		initMatch(poll, mine) {
 			if (!poll || poll.type !== 'match') return { targets: [], pick: {} }

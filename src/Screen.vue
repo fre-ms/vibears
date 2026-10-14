@@ -82,7 +82,7 @@
 			<!-- At the end of the quiz the big screen belongs to the final standings: the
 			     question of the last round would otherwise sit above it as a second heading (B2). -->
 			<header v-if="!quizEnded && !hasImage" class="scr-head">
-				<h1 class="scr-q">{{ poll.question }}</h1>
+				<RichText tag="h1" class="scr-q" :text="poll.question" />
 				<!-- Countdown on one axis with the question, not as a strip
 				     above it (§6.5) — important, but not the question. -->
 				<CountdownRing v-if="showCountdown" class="scr-cd" :remaining="remaining" :total="poll.timeLimit || 0" />
@@ -102,7 +102,7 @@
 						<img class="scr-img" :src="imageUrl(poll)" :alt="t('vibears', 'Image for the question')" @load="fitStage(true)">
 					</div>
 					<div class="scr-split-q">
-						<h1 class="scr-q">{{ poll.question }}</h1>
+						<RichText tag="h1" class="scr-q" :text="poll.question" />
 						<CountdownRing v-if="showCountdown" class="scr-cd" :remaining="remaining" :total="poll.timeLimit || 0" />
 					</div>
 				</template>
@@ -212,6 +212,7 @@ import Leaderboard from './components/Leaderboard.vue'
 import WordCloud from './components/WordCloud.vue'
 import QrCode from './components/QrCode.vue'
 import StageRace from './components/StageRace.vue'
+import RichText from './components/RichText.vue'
 
 // Floor of the shrink loop (§2.3): below it the stage is only readable from 5 m —
 // then there is too much content on it.
@@ -220,7 +221,7 @@ const FIT_FLOOR_PX = 24
 export default {
 	name: 'Screen',
 	mixins: [pollingMixin],
-	components: { VibearsIcon, ResultsView, CountdownRing, IntakeBoard, StageOpen, Leaderboard, WordCloud, QrCode, StageRace },
+	components: { VibearsIcon, ResultsView, CountdownRing, IntakeBoard, StageOpen, Leaderboard, WordCloud, QrCode, StageRace, RichText },
 	data() {
 		return {
 			code: loadState('vibears', 'code', ''),

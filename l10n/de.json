@@ -1,5 +1,11 @@
 {
 	"translations": {
+		"Difficulty": "Schwierigkeit",
+		"Discrimination": "Trennschärfe",
+		"Answer discrimination": "Trennschärfe der Antwort",
+		"Discrimination of this answer: correlation between choosing it and the score on the other questions": "Trennschärfe dieser Antwort: Korrelation zwischen ihrer Wahl und der Punktzahl in den übrigen Fragen",
+		"Difficulty = share of correct answers among those who answered (0 to 1). Discrimination = correlation between a correct answer and the number of correct answers on the other questions; below 0.2 a question is usually worth a second look. Both are in the CSV export as well.": "Schwierigkeit = Anteil richtiger Antworten unter allen, die geantwortet haben (0 bis 1). Trennschärfe = Korrelation zwischen einer richtigen Antwort und der Zahl richtiger Antworten in den übrigen Fragen; unter 0,2 lohnt meist ein zweiter Blick auf die Frage. Beide stehen auch im CSV-Export.",
+		"Formatting: **bold**, *italic*, `code`, formulas between $ and $ (KaTeX) — in the answers as well.": "Formatierung: **fett**, *kursiv*, `Code`, Formeln zwischen $ und $ (KaTeX) — auch in den Antworten.",
 		"A room can hold at most %d questions.": "Ein Raum kann höchstens %d Fragen enthalten.",
 		"Remove names that do not belong in the quiz. Once everyone is in, lock joining in the menu.": "Entferne Namen, die nicht ins Quiz gehören. Wenn alle drin sind, sperre den Beitritt im Menü.",
 		"The answers of {name} are deleted and the name becomes free. They can join again, but start from zero points — unless joining is locked.": "Die Antworten von {name} werden gelöscht, der Name wird frei. Die Person kann wieder beitreten, beginnt aber bei null Punkten — außer der Beitritt ist gesperrt.",

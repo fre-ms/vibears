@@ -114,6 +114,12 @@ vibeARS is licensed under AGPL-3.0-or-later and comes without any warranty.
   number guess · free text (with grading) · ranking · **matching**.
 - A deck of several questions, an image per question, a projector view, QR code,
   practice run, and a summary with CSV export.
+- **Formulas and markup** in questions and answers: `**bold**`, `*italic*`,
+  `` `code` `` and KaTeX formulas between `$…$`, rendered everywhere the text
+  is shown. See [Formatting and formulas](#formatting-and-formulas).
+- **Item statistics** in the summary of a quiz: per question the difficulty
+  and the discrimination, per answer option its own discrimination, also in
+  the CSV. See [Item statistics](#item-statistics).
 - **Several addresses:** on an instance that is reachable under more than one
   name (`trusted_domains` in `config.php` — an internal name, a public one, a
   short alias for the lecture hall), the moderator chooses per room which
@@ -185,6 +191,37 @@ change the last two (all limits: [Limits](#limits)). Lock joining once the
 class is in. Implementation notes with
 test paths and open points:
 [`docs/pace-2026-09/UI.md`](docs/pace-2026-09/UI.md).
+
+## Item statistics
+
+The summary of a quiz (the page behind "Show final standings" and "Back to
+the deck → Summary") carries, per question, the figures an exam analysis
+would report, computed from the stored verdicts of the answers and
+independent of the speed points:
+
+- **Answered:** how many people answered the question.
+- **Difficulty:** the share of correct answers among those who answered,
+  0 to 1. A high value means an easy question.
+- **Discrimination:** the corrected item-total correlation, i.e. the
+  point-biserial correlation between answering this question correctly and
+  the number of correct answers on the *other* questions of the deck, over
+  those who answered it. A question somebody did not answer counts as 0 in
+  that rest score. The summary flags a value below 0.2, the cut-off that
+  item analyses commonly use as a reason to look at the question again
+  (Möltner, Schellberg and Jünger, *Grundlegende quantitative Analysen
+  medizinischer Prüfungen*, GMS Z Med Ausbild 2006, 23(3): Doc53). The
+  figure is undefined, and shown as a dash, with fewer than two answers,
+  when everybody was right or wrong, or in a deck of one question.
+- **Per answer option** (multiple choice, true/false, multiple answers): the
+  same correlation for choosing that option, as "r = …" next to the bar. The
+  key should be positive; a distractor that correlates positively attracts
+  the strong players and is worth a second look.
+
+The CSV export of a quiz carries the three figures as three more columns:
+difficulty and discrimination on every row of a question, the option's own
+discrimination on its row. A poll has no solutions and keeps the six columns.
+The computation lives in `lib/Service/ItemStatistics.php`, database-free and
+covered by `tests/unit/ItemStatisticsTest.php`.
 
 ## Room retention
 
@@ -309,6 +346,38 @@ time: 60
 The export is stable: importing a file and exporting the new room gives the
 same file again, so a deck kept in git shows only real changes in its diffs.
 
+## Formatting and formulas
+
+A question text and every answer option (choice, true/false, multiple
+answers, ranking, matching) can carry a small inline markup:
+
+| You type | You get |
+|---|---|
+| `**bold**`, `*italic*` | **bold**, *italic* |
+| `` `code` `` | `code` in a monospace box |
+| `$x^2 + y^2 = r^2$` | the formula inline, typeset by [KaTeX](https://katex.org) |
+| `$$\int_0^1 x\,dx$$` | the formula on a line of its own |
+| `\$` | a literal dollar sign |
+
+The dollar rules follow Pandoc: an opening `$` must be followed by a
+non-space, a closing `$` must be preceded by a non-space and must not be
+followed by a digit, so "$5 and $6" stays text. A marker without its partner
+is literal, and nothing inside a formula or a code span is read as emphasis.
+The composer shows a preview as soon as the draft uses markup. The markup
+is rendered on the phone, the projector, in the moderator's deck and results
+and in the PowerPoint add-in; the deck file and the CSV carry the source text.
+
+Everything the author typed is HTML-escaped before the markup is applied
+(`src/util/richtext.js`, tested without a browser by
+`dev/unit/richtext.test.mjs`); the only tags that reach the page are
+`<strong>`, `<em>`, `<code>` and KaTeX's own output, which never contains
+scripts or links (`trust: false`). KaTeX itself is a chunk of its own,
+`js/vibears-katex.js`, that a page fetches the first time it meets a formula
+— most decks have none, and the participant bundle is loaded by every phone
+in the hall — and its stylesheet and woff2 fonts are static files under
+`css/katex/` (see [Building](#building)). Until the chunk is there, or if it
+cannot be loaded, the formula shows its source.
+
 ## Join address
 
 The join link, its QR code and the "code at …" hint use the address of the
@@ -382,13 +451,18 @@ src/              Moderator.vue (control desk), Participant.vue (phone), Screen.
                   self-paced: components/Pace*.vue (moderator), StageRace.vue (projector),
                   mixins/pace-phone.js (phone), util/pace.js (pure rules, no browser),
                   util/question-types.js (composer contract per question type, no browser),
+                  util/richtext.js (inline markup of questions and answers, no browser)
+                  + components/RichText.vue (renders it, fetches the KaTeX chunk),
                   util/routes.js (every URL and request time limit of the Vue frontend;
                   js/vibears-embed.js builds its own),
                   styles.js (token layer without Vue — for the embed shell),
                   admin.js (the administration form, without Vue)
 templates/        index.php (moderator), public.php (phone, projector), embed.php, admin.php
+css/              public.css, embed.css, admin.css; katex/ = KaTeX's stylesheet and woff2
+                  fonts, vendored by build/vendor-katex.js
 l10n/             Translations (de.json is maintained, de.js is generated from it)
 build/            l10n-build.js (json -> js), l10n-check.js (coverage),
+                  vendor-katex.js (KaTeX stylesheet + woff2 fonts -> css/katex/),
                   package.sh (release archive), certificate.sh (signing key)
 tests/            PHPUnit (database-free) + run.sh
 office-addin/     PowerPoint add-in (guide, Traefik example; the instance generates
@@ -466,8 +540,15 @@ Build outside the web root as well, then deploy as above:
 
 ```
 npm ci             # exactly the dependency versions of package-lock.json
-npm run build      # produces js/vibears-main.js, js/vibears-public.js, js/vibears-styles.js and js/vibears-admin.js
+npm run build      # produces js/vibears-main.js, js/vibears-public.js, js/vibears-styles.js, js/vibears-admin.js
+                   # and the chunk js/vibears-katex.js (fetched only by pages that meet a formula)
 ```
+
+KaTeX's stylesheet and woff2 fonts are not part of the bundle but static files
+under `css/katex/`, copied from the npm package by `node build/vendor-katex.js`
+(the `@font-face` rules are cut down to woff2). Run it after a KaTeX version
+bump and commit the result; CI checks with `node build/vendor-katex.js --check`
+that the directory matches the package.
 
 Use Node.js 26.10.0, the version the committed bundles are built with: with it,
 `npm ci` plus `npm run build` reproduces `js/` byte for byte (the output is
@@ -536,6 +617,7 @@ node dev/unit/question-types.test.mjs          # composer contract per question 
 node dev/unit/routes.test.mjs                  # Vue frontend URLs and their call sites, checked against appinfo/routes.php
 node dev/unit/composer-limits.test.mjs         # composer maxlength/min/max, checked against what DeckService keeps
 node dev/unit/wordcloud.test.mjs               # projector word-cloud layout (long words fit), phone word length vs. server
+node dev/unit/richtext.test.mjs                # inline markup of questions and answers (escaping, emphasis, formula placeholders)
 dev/sim/run.sh        # HTTP simulation of complete runs against the running instance (dev/sim/README.md)
 ```
 
@@ -635,6 +717,13 @@ network.
 - **Anonymous participants.** A random voter token in a cookie discourages
   double voting without identifying anyone; whoever clears their cookies can
   vote again. In a quiz, participants only give a nickname.
+- **Markup in questions.** Question texts and answer options are the only
+  texts rendered with `v-html`, and only through `src/util/richtext.js`,
+  which escapes everything before it applies its own markup (bold, italic,
+  code, formula placeholders); KaTeX typesets the placeholders with
+  `trust: false`, so no `\href` or `\url` becomes a link, and with bounded
+  `maxSize` and `maxExpand`, so a macro bomb cannot freeze a phone. Texts
+  from participants (names, free-text answers, words) never go through it.
 - **Voter cookie.** On https with Nextcloud at the root of its domain the cookie
   is called `__Host-vibears_vt` (Secure, `Path=/`, no `Domain`, `HttpOnly`,
   `SameSite=Lax`). Browsers accept such a cookie only from this very origin, so
