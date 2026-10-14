@@ -21,13 +21,13 @@ jobs:
     name: Bundle, translations, release archive
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # The Node version the committed bundles are built with: npm ci plus
       # npm run build reproduces them byte for byte with it. The output does
       # not depend on the Node version in practice (22.18.0 and 26.10.0 built
       # identical bundles), but the check needs one pinned toolchain.
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 26.10.0
           cache: npm
@@ -96,7 +96,7 @@ jobs:
       - name: Pack a test release archive
         run: SKIP_BUILD=1 ALLOW_UNRELEASED=1 sh build/package.sh
 
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: vibears-tarball
           path: build/vibears-*.tar.gz
@@ -125,7 +125,7 @@ jobs:
       # classes — hence the server checkout, in which the app lives under
       # apps/ just like in real life.
       - name: Check out the Nextcloud server
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: nextcloud/server
           ref: ${{ matrix.server }}
@@ -133,11 +133,11 @@ jobs:
           path: server
 
       - name: Check out the app
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: server/apps/vibears
 
-      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: ${{ matrix.php }}
           # intl: the Spoofchecker tests in NameConfusableTest.
