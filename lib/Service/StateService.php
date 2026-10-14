@@ -373,7 +373,9 @@ class StateService {
 
     /** Room settings the audience sees: practice-run banner and title. */
     private function roomFlags(Room $room): string {
-        return ($room->getPractice() ? 'p' : '-') . crc32($room->titleOrEmpty());
+        // The join address is part of it: the projector shows the QR code of the
+        // address and would keep the old one behind a 204 otherwise.
+        return ($room->getPractice() ? 'p' : '-') . crc32($room->titleOrEmpty() . '|' . ($room->getJoinHost() ?? ''));
     }
 
     /** Fingerprint as an opaque keyed hash (why: PublicView::opaque). */
@@ -481,7 +483,7 @@ class StateService {
             // If the bundle in the tab no longer matches the server, it reloads itself
             // once (src/util/protocol.js).
             'protocol' => Application::PROTOCOL,
-            'room' => ['code' => $room->getCode(), 'title' => $room->titleOrEmpty(), 'mode' => $room->getMode()],
+            'room' => ['code' => $room->getCode(), 'title' => $room->titleOrEmpty(), 'mode' => $room->getMode(), 'joinHost' => $room->getJoinHost() ?? ''],
             'poll' => null,
             'results' => null,
             'hasVoted' => false,

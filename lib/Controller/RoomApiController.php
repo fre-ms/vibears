@@ -212,6 +212,19 @@ class RoomApiController extends Controller {
         }, Http::STATUS_BAD_REQUEST);
     }
 
+    /**
+     * The address of the room's join link. Body: { host } — one of the
+     * configured addresses (JoinAddresses, trusted_domains), '' = the address
+     * of the page the link is shown on. Anything else is a 400 with a message.
+     */
+    #[NoAdminRequired]
+    public function joinHost(string $code): JSONResponse {
+        return $this->withRoom($code, function ($room) {
+            $this->roomService->setJoinHost($room, Input::str($this->request->getParam('host')));
+            return new JSONResponse($this->deckService->roomView($room));
+        }, Http::STATUS_BAD_REQUEST);
+    }
+
     /** Rename a room; an empty title removes it again. */
     #[NoAdminRequired]
     public function rename(string $code): JSONResponse {

@@ -360,6 +360,14 @@
 					<a class="join-url" :href="joinPath" target="_blank" rel="noopener">{{ joinUrl }}</a>
 					<button class="vibears-btn is-secondary is-icon is-xs join-copy" :title="t('vibears', 'Copy join link')" :aria-label="t('vibears', 'Copy join link')" @click="copyJoin"><VibearsIcon name="copy" size="1em" /></button>
 				</div>
+				<!-- Several addresses (trusted_domains): the moderator picks the one the
+				     audience should use; the room keeps it, so projector and add-in follow. -->
+				<label v-if="joinHosts.length > 1" class="join-host">
+					<span class="join-host-lbl">{{ t('vibears', 'Address of the join link') }}</span>
+					<select class="pinput pinput--sel join-host-sel" :value="joinHostValue" :disabled="busy" :aria-label="t('vibears', 'Address of the join link')" @change="setJoinHost($event.target.value)">
+						<option v-for="h in joinHosts" :key="h.host" :value="h.host">{{ h.host }}</option>
+					</select>
+				</label>
 				<!-- Self-paced: the status line instead of "● live" — who is already here,
 				     even before opening. It also keeps the window up to date (deadline,
 				     second tab). -->
@@ -525,6 +533,14 @@
 						<a class="join-url" :href="joinPath" target="_blank" rel="noopener">{{ joinUrl }}</a>
 						<button class="vibears-btn is-secondary is-icon is-xs join-copy" :title="t('vibears', 'Copy join link')" :aria-label="t('vibears', 'Copy join link')" @click="copyJoin"><VibearsIcon name="copy" size="1em" /></button>
 					</div>
+				<!-- Several addresses (trusted_domains): the moderator picks the one the
+					     audience should use; the room keeps it, so projector and add-in follow. -->
+					<label v-if="joinHosts.length > 1" class="join-host">
+						<span class="join-host-lbl">{{ t('vibears', 'Address of the join link') }}</span>
+						<select class="pinput pinput--sel join-host-sel" :value="joinHostValue" :disabled="busy" :aria-label="t('vibears', 'Address of the join link')" @change="setJoinHost($event.target.value)">
+							<option v-for="h in joinHosts" :key="h.host" :value="h.host">{{ h.host }}</option>
+						</select>
+					</label>
 				</aside>
 			</div>
 		</section>
@@ -538,6 +554,7 @@
  * repository (see "References in code comments" in the README).
  */
 import axios from '@nextcloud/axios'
+import { loadState } from '@nextcloud/initial-state'
 import { MOD_TIMEOUT, roomsApi, roomApi, importApi, pollImage, participantPage, joinPage, screenPage, roomPage, home, addinManifest, openProjector } from './util/routes.js'
 import { t, n } from './util/l10n.js'
 import { showError, showSuccess, serverMessage } from './toast.js'
@@ -586,6 +603,8 @@ export default {
 			online: true,
 			busy: false,
 			importBusy: false, // a deck file is being read and sent
+			// The addresses the join link can use (trusted_domains), current one first (JoinAddresses).
+			joinHosts: (loadState('vibears', 'joinHosts', { hosts: [] }).hosts || []),
 			isFullscreen: false,
 			joinOpen: false,   // join panel — a state, not a column (§9.4)
 			frameScale: 0.5,   // scale of the canvas preview (1280×720 -> box)
@@ -671,14 +690,30 @@ export default {
 		joinPath() {
 			return this.room ? participantPage(this.room.code) : ''
 		},
+		// The address of the join link: the room's choice if it is one of the
+		// configured addresses, otherwise the address of this page.
+		joinHostEntry() {
+			const host = (this.room && this.room.joinHost) || ''
+			return this.joinHosts.find((h) => h.host === host) || null
+		},
+		joinHostValue() {
+			return this.joinHostEntry ? this.joinHostEntry.host : (this.joinHosts[0] ? this.joinHosts[0].host : '')
+		},
+		joinOrigin() {
+			return this.joinHostEntry ? this.joinHostEntry.origin : window.location.origin
+		},
+		joinHostName() {
+			return this.joinHostEntry ? this.joinHostEntry.host : window.location.host
+		},
 		joinUrl() {
-			return this.room ? window.location.host + this.joinPath : ''
+			return this.room ? this.joinHostName + this.joinPath : ''
 		},
 		joinUrlFull() {
-			return this.room ? window.location.origin + this.joinPath : ''
+			return this.room ? this.joinOrigin + this.joinPath : ''
 		},
 		joinBase() {
-			return window.location.host + joinPage()
+			const path = joinPage()
+			return this.joinHostName + path
 		},
 		joinPagePath() {
 			return joinPage()
@@ -1132,6 +1167,18 @@ export default {
 				this.importBusy = false
 				// The same file again counts as a change next time.
 				input.value = ''
+			}
+		},
+		// The address of the join link, kept per room (POST /joinhost): the
+		// server checks it against the configured addresses.
+		async setJoinHost(host) {
+			if (!this.room || host === this.joinHostValue) return
+			try {
+				const { data } = await axios.post(this.api(this.room.code, '/joinhost'), { host })
+				// Take over only the address: a fresh roomView would clear results/leaderboard.
+				this.room = { ...this.room, joinHost: data.joinHost }
+			} catch (e) {
+				if (!this.staleLive(e)) showError(serverMessage(e, t('vibears', 'Could not change the address.')))
 			}
 		},
 		// Copy a room as a template: the server creates the copy with the same
@@ -2173,6 +2220,9 @@ export default {
    and should not compete with Start (§9.5). */
 .start-join { display: inline-block; margin-top: 18px; font-size: 15px; font-weight: 600; color: var(--vibears-primary); text-decoration: underline; text-underline-offset: 3px; }
 .start-join:hover { color: var(--vibears-primary-hover); }
+/* Address selector of the join link (only with several trusted_domains). */
+.join-host { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; font-size: 13px; color: var(--vibears-text-2); }
+.join-host-sel { max-width: 100%; }
 /* Import: a labelled button in front of the (visually hidden) file input. */
 .start-import { margin: 22px 0 0; }
 .start-import-pick { position: relative; cursor: pointer; }

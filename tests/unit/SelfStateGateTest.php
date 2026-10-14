@@ -313,7 +313,7 @@ class SelfStateGateTest extends PaceStateTestCase {
     public function testHeaderFields(): void {
         $data = $this->phone();
 
-        $this->assertSame(['code' => 'AB12CD', 'title' => 'Planeten', 'mode' => 'quiz', 'pace' => 'self'], $data['room']);
+        $this->assertSame(['code' => 'AB12CD', 'title' => 'Planeten', 'mode' => 'quiz', 'pace' => 'self', 'joinHost' => ''], $data['room']);
         $this->assertSame(Application::PROTOCOL, $data['protocol']);
         $this->assertSame(self::NOW, $data['serverNow']);
         $this->assertSame('open', $data['window']['state']);

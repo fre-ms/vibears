@@ -78,7 +78,7 @@ class RoomApiErrorMapTest extends TestCase {
      * so they have no case in missingPoll() (demoSeed finds the running
      * question through the cursor and answers "No active question." itself).
      */
-    private const WITHOUT_QUESTION_LOOKUP = ['addPoll', 'create', 'demoSeed', 'duplicate', 'importMarkdown', 'pace'];
+    private const WITHOUT_QUESTION_LOOKUP = ['addPoll', 'create', 'demoSeed', 'duplicate', 'importMarkdown', 'joinHost', 'pace'];
 
     /** 'service::method' that throws InvalidArgumentException('x'); '' = none. */
     private string $throwAt = '';
@@ -113,6 +113,7 @@ class RoomApiErrorMapTest extends TestCase {
             'duplicateRoom' => fn (): Room => $this->room,
             'listRooms' => fn (): array => [],
             'setTitle' => fn () => null,
+            'setJoinHost' => fn () => null,
             'deleteRoom' => fn () => null,
             'resetRoom' => fn () => null,
             'setPractice' => fn () => null,
@@ -190,6 +191,7 @@ class RoomApiErrorMapTest extends TestCase {
             // 400
             'create' => ['create', [], 'rooms::createRoom', Http::STATUS_BAD_REQUEST],
             'duplicate' => ['duplicate', ['ABCDEF'], 'rooms::duplicateRoom', Http::STATUS_BAD_REQUEST],
+            'joinHost' => ['joinHost', ['ABCDEF'], 'rooms::setJoinHost', Http::STATUS_BAD_REQUEST],
             'pace' => ['pace', ['ABCDEF'], 'pace::setPace', Http::STATUS_BAD_REQUEST],
             'addPoll' => ['addPoll', ['ABCDEF'], 'deck::addPoll', Http::STATUS_BAD_REQUEST],
             'updatePoll' => ['updatePoll', ['ABCDEF', 7], 'deck::updatePoll', Http::STATUS_BAD_REQUEST],
@@ -228,7 +230,7 @@ class RoomApiErrorMapTest extends TestCase {
             }
         }
         $catching = array_values(array_unique(array_column(self::invalidArgument(), 0)));
-        $this->assertCount(17, $catching, 'actions that answer with the InvalidArgumentException message');
+        $this->assertCount(18, $catching, 'actions that answer with the InvalidArgumentException message');
         $known = array_merge($catching, self::WITHOUT_MESSAGE_ANSWER);
         sort($declared);
         sort($known);

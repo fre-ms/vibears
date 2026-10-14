@@ -93,6 +93,7 @@ const GOLDEN = () => [
 	['Moderator api(code) delete', 'DELETE', roomApi(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9'],
 	['Moderator duplicate', 'POST', roomApi(CODE, '/duplicate'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/duplicate'],
 	['Moderator rename', 'POST', roomApi(CODE, '/title'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/title'],
+	['Moderator setJoinHost', 'POST', roomApi(CODE, '/joinhost'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/joinhost'],
 	['Moderator reset room', 'POST', roomApi(CODE, '/reset'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/reset'],
 	['Moderator reveal at the end', 'POST', roomApi(CODE, '/reveal'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/reveal'],
 	['Moderator practice', 'POST', roomApi(CODE, '/practice'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/practice'],
@@ -186,8 +187,8 @@ function routeOf(url, prefix, verb) {
 	return ROUTES.find((r) => r.verb === verb && r.re.test(path))
 }
 
-test('routes.php: all 46 url entries parsed, each with a verb and a controller', () => {
-	assert.equal(ROUTES.length, 46)
+test('routes.php: all 47 url entries parsed, each with a verb and a controller', () => {
+	assert.equal(ROUTES.length, 47)
 	for (const r of ROUTES) assert.match(r.verb, /^(GET|POST|PUT|DELETE)$/, r.url)
 	assert.deepEqual([...new Set(ROUTES.map((r) => r.controller))].sort(), ['addin', 'adminSettings', 'page', 'public', 'publicVote', 'roomApi'])
 	// the parser picked up the requirements: a 6-character code only

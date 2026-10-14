@@ -114,6 +114,11 @@ vibeARS is licensed under AGPL-3.0-or-later and comes without any warranty.
   number guess · free text (with grading) · ranking · **matching**.
 - A deck of several questions, an image per question, a projector view, QR code,
   practice run, and a summary with CSV export.
+- **Several addresses:** on an instance that is reachable under more than one
+  name (`trusted_domains` in `config.php` — an internal name, a public one, a
+  short alias for the lecture hall), the moderator chooses per room which
+  address the join link and its QR code carry. Projector and PowerPoint add-in
+  follow the choice. See [Join address](#join-address).
 - **Self-paced** quizzes (the "Self-paced" toggle in a quiz deck's menu): instead
   of one question for everybody, each person works through the deck on their own
   phone — as a race in the room or as homework with a deadline. The moderator
@@ -304,6 +309,25 @@ time: 60
 The export is stable: importing a file and exporting the new room gives the
 same file again, so a deck kept in git shows only real changes in its diffs.
 
+## Join address
+
+The join link, its QR code and the "code at …" hint use the address of the
+page they are shown on. Where Nextcloud is reachable under several names, the
+moderator's join panel (in the deck and in the presentation view) offers a
+selector with every plain entry of `trusted_domains`, the current address
+first; wildcard entries such as `*.example.com` cannot become a link and are
+left out. The choice is stored with the room, so the projector window, the
+canvas preview and the PowerPoint add-in show the same address; it stays when
+the room is reopened and is taken over when the room is copied. A stored
+address that disappears from `trusted_domains` later falls back to the page's
+own.
+
+`trusted_domains` holds host names only, so the scheme is derived: the
+current address keeps the scheme of the page, every other address gets
+`overwriteprotocol` where that is set, otherwise `https` — except names that
+only exist inside a network (`localhost`, loopback and private IP ranges,
+`*.local`, `*.localhost`), which get `http`.
+
 ## Architecture
 
 - **Public access** without login through `#[PublicPage]` + `#[NoCSRFRequired]` —
@@ -345,6 +369,7 @@ lib/Service/      RoomService (rooms), DeckService (questions), VoteService (vot
                   PaceService + PaceStateService (self-paced quiz: window, read views),
                   PublicPayload (capped public views), Limits (caps per account),
                   Retention (the administration's deletion setting),
+                  JoinAddresses (the addresses the join link can use),
                   DeckMarkdown (the deck file: export and parse) + DeckImportService
 lib/Settings/     AdminSettings + AdminSection (Settings → Administration → ARS)
 lib/SetupCheck/   EmbedFraming (setup check for the PowerPoint embed)

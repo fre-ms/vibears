@@ -155,6 +155,7 @@ abstract class PublicControllerTestCase extends TestCase {
             $this->urlGenerator(),
             $this->appConfig(),
             $this->limits(),
+            $this->createMock(\OCA\Vibears\Service\JoinAddresses::class),
         );
     }
 
@@ -163,7 +164,7 @@ abstract class PublicControllerTestCase extends TestCase {
         $initial->method('provideInitialState')->willReturnCallback(function (string $key, mixed $value): void {
             $this->calls[] = ['initialState', [$key, $value]];
         });
-        return new PublicController($this->request(), $this->roomMapper(), $initial, $this->throttler());
+        return new PublicController($this->request(), $this->roomMapper(), $initial, $this->throttler(), $this->createMock(\OCA\Vibears\Service\JoinAddresses::class));
     }
 
     // ── Recorded calls ─────────────────────────────────────────────────────

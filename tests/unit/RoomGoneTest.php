@@ -168,6 +168,7 @@ class RoomGoneTest extends TestCase {
             $this->createMock(\OCP\IURLGenerator::class),
             $this->createMock(\OCP\IAppConfig::class),
             new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            $this->createMock(\OCA\Vibears\Service\JoinAddresses::class),
         );
     }
 

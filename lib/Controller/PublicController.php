@@ -9,6 +9,7 @@ namespace OCA\Vibears\Controller;
 
 use OCA\Vibears\AppInfo\Application;
 use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\JoinAddresses;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
@@ -36,6 +37,7 @@ class PublicController extends Controller {
         private RoomMapper $roomMapper,
         private IInitialState $initialState,
         private IThrottler $throttler,
+        private JoinAddresses $joinAddresses,
     ) {
         parent::__construct(Application::APP_ID, $request);
     }
@@ -101,6 +103,8 @@ class PublicController extends Controller {
         $this->initialState->provideInitialState('code', $code);
         $this->initialState->provideInitialState('roomExists', $exists);
         $this->initialState->provideInitialState('screen', true);
+        // The join link's address for the first paint; /state keeps it current.
+        $this->initialState->provideInitialState('joinOrigin', $exists ? $this->joinOrigin($code) : null);
 
         $response = new TemplateResponse(
             Application::APP_ID,
@@ -160,6 +164,15 @@ class PublicController extends Controller {
         $csp->addAllowedImageDomain('https://*.microsoft.com');
         $response->setContentSecurityPolicy($csp);
         return $response;
+    }
+
+    /** The origin of the room's join link, null for the page's own (JoinAddresses). */
+    private function joinOrigin(string $code): ?string {
+        try {
+            return $this->joinAddresses->joinOrigin($this->roomMapper->findByCode($code)->getJoinHost());
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     private function roomExists(string $code): bool {

@@ -159,6 +159,7 @@ class ControllerInputTest extends TestCase {
             'create' => ['create', [], false],
             'duplicate' => ['duplicate', $c, false],
             'rename' => ['rename', $c, false],
+            'joinHost' => ['joinHost', $c, false],
             'leaderboard' => ['leaderboard', $c, false],
             'show' => ['show', $c, false],
             'destroy' => ['destroy', $c, false],
@@ -599,6 +600,7 @@ class ControllerInputTest extends TestCase {
             $this->createMock(\OCP\IURLGenerator::class),
             $this->createMock(\OCP\IAppConfig::class),
             new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
+            $this->createMock(\OCA\Vibears\Service\JoinAddresses::class),
         );
     }
 

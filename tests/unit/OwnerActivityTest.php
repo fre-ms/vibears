@@ -66,6 +66,7 @@ class OwnerActivityTest extends TestCase {
             'exportCsv' => ['exportCsv', $c],
             'duplicate' => ['duplicate', $c],
             'rename' => ['rename', $c],
+            'joinHost' => ['joinHost', $c],
             'leaderboard' => ['leaderboard', $c],
             'show' => ['show', $c],
             'destroy' => ['destroy', $c],

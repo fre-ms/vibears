@@ -277,6 +277,7 @@ class PaceStateService {
                 'title' => $room->titleOrEmpty(),
                 'mode' => $room->getMode(),
                 'pace' => $room->getPace(),
+                'joinHost' => $room->getJoinHost() ?? '',
             ],
             // If the bundle in the tab no longer matches the server, it reloads once.
             'protocol' => Application::PROTOCOL,

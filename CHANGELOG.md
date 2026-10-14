@@ -8,6 +8,15 @@ vibeARS is a fork of [Pulse](https://github.com/hotochan123/nextcloud-pulse);
 the entries up to 0.19.1 are Pulse's. `build/package.sh` reads the release
 notes of a version from its section here, so every version needs an entry.
 
+## [Unreleased]
+
+### Added
+- **Choose the address of the join link.** On an instance that is reachable
+  under several names (`trusted_domains`), the moderator's join panel offers
+  a selector; the chosen address is kept with the room and used by the QR
+  code, the join link, the projector and the PowerPoint add-in. The current
+  address stays the default. New column `join_host` on the rooms table.
+
 ## [0.20.0] - 2026-10-09
 
 The first release of the fork, with an app ID of its own: `vibears`

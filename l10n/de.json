@@ -878,7 +878,10 @@
 		"Question %1$d (line %2$d): \"answer\" must be true or false.": "Frage %1$d (Zeile %2$d): „answer“ muss true oder false sein.",
 		"Line %d: a pair is written as \"left → right\".": "Zeile %d: Ein Paar schreibt sich „links → rechts“.",
 		"Question %1$d (line %2$d): \"%3$s\" is written as \"title | low pole | high pole\".": "Frage %1$d (Zeile %2$d): „%3$s“ schreibt sich „Titel | unterer Pol | oberer Pol“.",
-		"Line %d: \"time\" is a number of seconds or \"none\".": "Zeile %d: „time“ ist eine Zahl von Sekunden oder „none“."
+		"Line %d: \"time\" is a number of seconds or \"none\".": "Zeile %d: „time“ ist eine Zahl von Sekunden oder „none“.",
+		"Address of the join link": "Adresse des Beitrittslinks",
+		"Could not change the address.": "Die Adresse konnte nicht geändert werden.",
+		"This address is not one of the configured addresses of this Nextcloud.": "Diese Adresse gehört nicht zu den eingetragenen Adressen dieser Nextcloud."
 	},
 	"pluralForm": "nplurals=2; plural=(n != 1);"
 }

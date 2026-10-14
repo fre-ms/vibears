@@ -225,6 +225,8 @@ export default {
 		return {
 			code: loadState('vibears', 'code', ''),
 			roomExists: loadState('vibears', 'roomExists', false),
+			// The address of the join link (JoinAddresses): '' = this page's own; /state keeps it current.
+			joinOrigin: loadState('vibears', 'joinOrigin', '') || '',
 			practice: false,
 			roomTitle: '',   // room name from publicState.room (empty = none)
 			poll: null,
@@ -485,11 +487,14 @@ export default {
 		joinPath() {
 			return participantPage(this.code)
 		},
+		joinOriginUsed() {
+			return this.joinOrigin || window.location.origin
+		},
 		joinUrl() {
-			return window.location.host + this.joinPath
+			return this.joinOriginUsed.replace(/^[a-z][a-z0-9+.-]*:\/\//i, '') + this.joinPath
 		},
 		joinUrlFull() {
-			return window.location.origin + this.joinPath
+			return this.joinOriginUsed + this.joinPath
 		},
 		// Quiz ended = the running question is 'ended' (set by "Finish quiz";
 		// a question revealed on its own is 'locked'). Without a leaderboard —
@@ -622,6 +627,7 @@ export default {
 			// old numbers would stay in the meta bar for a different question type.
 			if (!data.results || data.results.type !== 'words') this.cloudStats = null
 			if (data.room) this.roomTitle = data.room.title || ''
+			if (data.room && 'joinOrigin' in data.room) this.joinOrigin = data.room.joinOrigin || ''
 			this.answered = data.answered || 0
 			this.present = data.present || 0
 			if ('practice' in data) this.practice = !!data.practice

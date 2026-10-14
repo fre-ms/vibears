@@ -58,6 +58,7 @@ class RoomService {
         private IDBConnection $db,
         private Limits $limits,
         private LoggerInterface $logger,
+        private JoinAddresses $joinAddresses,
     ) {
     }
 
@@ -116,6 +117,21 @@ class RoomService {
      */
     public function setTitle(Room $room, string $title): void {
         $room->setTitle($this->sanitizeTitle($title));
+        $this->roomMapper->update($room);
+    }
+
+    /**
+     * The address of the room's join link: one of the configured addresses
+     * (JoinAddresses), or '' for the address of the page the link is shown on.
+     *
+     * @throws \InvalidArgumentException not one of the configured addresses
+     */
+    public function setJoinHost(Room $room, string $host): void {
+        $host = strtolower(trim($host));
+        if ($host !== '' && !$this->joinAddresses->isAllowed($host)) {
+            throw new \InvalidArgumentException($this->l10n->t('This address is not one of the configured addresses of this Nextcloud.'));
+        }
+        $room->setJoinHost($host === '' ? null : $host);
         $this->roomMapper->update($room);
     }
 
@@ -194,6 +210,11 @@ class RoomService {
         $changed = false;
         if ($src->getRevealAtEnd()) {
             $copy->setRevealAtEnd(true);
+            $changed = true;
+        }
+        // The join link's address is a decision about the instance, not about one run.
+        if ($src->getJoinHost() !== null) {
+            $copy->setJoinHost($src->getJoinHost());
             $changed = true;
         }
         if ($src->getPace() !== $copy->getPace()

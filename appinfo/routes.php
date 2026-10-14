@@ -25,6 +25,8 @@ return [
         ['name' => 'roomApi#show',       'url' => '/api/1.0/rooms/{code}',                'verb' => 'GET',    'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#destroy',    'url' => '/api/1.0/rooms/{code}',                'verb' => 'DELETE', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#rename',     'url' => '/api/1.0/rooms/{code}/title',          'verb' => 'POST',   'requirements' => ['code' => '[A-Za-z0-9]{6}']],
+        // The address of the join link (one of trusted_domains)
+        ['name' => 'roomApi#joinHost',   'url' => '/api/1.0/rooms/{code}/joinhost',       'verb' => 'POST',   'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#duplicate',  'url' => '/api/1.0/rooms/{code}/duplicate',      'verb' => 'POST',   'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         // Empty the room (votes+participants+leaderboard), switch the practice run on/off
         ['name' => 'roomApi#resetRoom',  'url' => '/api/1.0/rooms/{code}/reset',          'verb' => 'POST',   'requirements' => ['code' => '[A-Za-z0-9]{6}']],

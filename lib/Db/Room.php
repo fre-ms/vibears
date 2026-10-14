@@ -42,6 +42,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setDeckOrder(?string $deckOrder)
  * @method bool getJoinsLocked()
  * @method void setJoinsLocked(bool $joinsLocked)
+ * @method ?string getJoinHost()
+ * @method void setJoinHost(?string $joinHost)
  * @method int getTouchedAt()
  * @method void setTouchedAt(int $touchedAt)
  * @method int getCreatedAt()
@@ -65,6 +67,7 @@ class Room extends Entity implements \JsonSerializable {
     protected $feedback = 'each'; // 'each' | 'end'
     protected $deckOrder = null;  // frozen order, JSON [12,15,13]; null in draft
     protected $joinsLocked = false; // "Lock joining"
+    protected $joinHost = null;   // address of the join link (JoinAddresses), null = the page's own
     protected $touchedAt = 0;   // owner's last activity, any room mode (retention)
     protected $createdAt = 0;
 
@@ -108,6 +111,7 @@ class Room extends Entity implements \JsonSerializable {
             'closedAt' => $this->getClosedAt(),
             'releasedAt' => $this->getReleasedAt(),
             'joinsLocked' => $this->getJoinsLocked(),
+            'joinHost' => $this->getJoinHost() ?? '',
             'createdAt' => $this->getCreatedAt(),
         ];
     }

@@ -200,6 +200,7 @@ class NotSelfPacedTest extends TestCase {
             $this->createMock(IURLGenerator::class),
             $this->createMock(IAppConfig::class),
             new Limits($this->createMock(IAppConfig::class)),
+            $this->createMock(\OCA\Vibears\Service\JoinAddresses::class),
         );
     }
 

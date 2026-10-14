@@ -13,6 +13,7 @@ use OCA\Vibears\Db\RoomMapper;
 use OCA\Vibears\Service\CodeGenerator;
 use OCA\Vibears\Service\DeckService;
 use OCA\Vibears\Service\Input;
+use OCA\Vibears\Service\JoinAddresses;
 use OCA\Vibears\Service\JoinLimitException;
 use OCA\Vibears\Service\Limits;
 use OCA\Vibears\Service\PaceService;
@@ -137,6 +138,7 @@ class PublicVoteController extends Controller {
         private IURLGenerator $urlGenerator,
         private IAppConfig $appConfig,
         private Limits $limits,
+        private JoinAddresses $joinAddresses,
     ) {
         parent::__construct(Application::APP_ID, $request);
     }
@@ -204,6 +206,11 @@ class PublicVoteController extends Controller {
         }
         if ($response === null) {
             $state['version'] = $version;
+            // The projector builds the join link and its QR code from this;
+            // null = the address of its own page (JoinAddresses).
+            if (is_array($state['room'] ?? null)) {
+                $state['room']['joinOrigin'] = $this->joinAddresses->joinOrigin($state['room']['joinHost'] ?? null);
+            }
             $response = new JSONResponse($state);
         }
         if ($sendCookie && $token !== null) {
