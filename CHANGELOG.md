@@ -11,6 +11,20 @@ notes of a version from its section here, so every version needs an entry.
 ## [Unreleased]
 
 ### Added
+- **Images travel with the deck file.** A deck whose questions have images
+  exports as a ZIP (`vibears-CODE.zip`) with `deck.md` and the images next
+  to it (`images/3.png`, numbered by position), named by `image:` lines in
+  the Markdown; a deck without images stays a plain `.md`. The import takes
+  both; the images go through the same checks, re-encoding and image budget
+  as an upload. A re-packed folder (one folder around everything, macOS
+  junk) imports as well.
+- **Deck files in Nextcloud Files.** "Save to Files" in a room's menu
+  writes the deck file into a folder of the account's Files (Nextcloud's
+  own picker, so shared folders are in reach); the file is named after the
+  room. "Import from Files" on the start page, and "Import into vibeARS"
+  on a Markdown or ZIP file in the Files app, make a new room from a deck
+  file there — a deck a colleague shared included. New routes
+  `POST /api/1.0/rooms/{code}/files` and `POST /api/1.0/import/files`.
 - **Item statistics in the summary of a quiz.** Per question how many
   answered, the difficulty (share of correct answers) and the
   discrimination (corrected item-total correlation over the number of

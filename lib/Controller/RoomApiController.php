@@ -14,7 +14,9 @@ use OCA\Vibears\Db\Room;
 use OCA\Vibears\Db\RoomMapper;
 use OCA\Vibears\Service\ConflictException;
 use OCA\Vibears\Service\DeckImportService;
-use OCA\Vibears\Service\DeckMarkdown;
+use OCA\Vibears\Service\DeckArchive;
+use OCA\Vibears\Service\DeckExportService;
+use OCA\Vibears\Service\FilesService;
 use OCA\Vibears\Service\DeckService;
 use OCA\Vibears\Service\DemoService;
 use OCA\Vibears\Service\Input;
@@ -97,9 +99,11 @@ class RoomApiController extends Controller {
         private ITimeFactory $timeFactory,
         private ILimiter $limiter,
         private Limits $limits,
-        // the deck file (Markdown with a YAML header): export and import
-        private DeckMarkdown $deckMarkdown,
+        // the deck file (Markdown with a YAML header, or a ZIP with images): export and import
+        private DeckExportService $deckExport,
         private DeckImportService $deckImport,
+        // the deck file in the account's Files (save, import)
+        private FilesService $files,
     ) {
         parent::__construct(Application::APP_ID, $request);
     }
@@ -149,40 +153,104 @@ class RoomApiController extends Controller {
     }
 
     /**
-     * The deck as a file: Markdown with a YAML header (DeckMarkdown), the
+     * The deck as a file (DeckExportService): Markdown with a YAML header, or
+     * a ZIP with the Markdown and the question images when there are any; the
      * questions with their solutions and settings, no votes and no images.
      * Downloaded like the CSV: with the request token in the query.
      */
     #[NoAdminRequired]
     public function exportMarkdown(string $code): Response {
         return $this->withRoom($code, function ($room) {
-            return new DataDownloadResponse(
-                $this->deckMarkdown->export($room, $this->deckService->deck($room)),
-                'vibears-' . $room->getCode() . '.md',
-                'text/markdown; charset=utf-8',
-            );
+            $file = $this->deckExport->export($room);
+            return new DataDownloadResponse($file['content'], 'vibears-' . $room->getCode() . '.' . $file['ext'], $file['mime']);
         });
     }
 
     /**
-     * A new room from a deck file. Body: { markdown: string }. Counts
-     * against the room rate limit (it creates one) and the caps; a file
-     * that does not parse, or a question the composer would refuse, is a
-     * 400 with a message that names the line or the question, and no room
-     * stays behind (DeckImportService).
+     * A new room from a deck file. Body: { markdown: string }, or the file
+     * itself (Markdown, or the ZIP export with images) as the upload
+     * `file`. Counts against the room rate limit (it creates one) and the
+     * caps; a file that does not parse, or a question the composer would
+     * refuse, is a 400 with a message that names the line or the question,
+     * and no room stays behind (DeckImportService).
      */
     #[NoAdminRequired]
     public function importMarkdown(): JSONResponse {
         if ($limited = $this->rateLimited(Limits::RATE_CREATE)) {
             return $limited;
         }
-        $markdown = Input::str($this->request->getParam('markdown'));
         try {
-            $room = $this->deckImport->import($this->uid(), $markdown);
+            $content = $this->uploadedDeck() ?? Input::str($this->request->getParam('markdown'));
+            $room = $this->deckImport->import($this->uid(), $content);
         } catch (\InvalidArgumentException $e) {
             return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
         }
         return new JSONResponse($this->deckService->roomView($room), Http::STATUS_CREATED);
+    }
+
+    /**
+     * A new room from a deck file in the account's Files. Body: { path },
+     * relative to the account's root as the Files app names it. The start
+     * page's "Import from Files" and the Files app's "Import into vibeARS"
+     * (src/files.js) both land here; otherwise like importMarkdown.
+     */
+    #[NoAdminRequired]
+    public function importFromFiles(): JSONResponse {
+        if ($limited = $this->rateLimited(Limits::RATE_CREATE)) {
+            return $limited;
+        }
+        $path = Input::str($this->request->getParam('path'));
+        try {
+            $room = $this->deckImport->import($this->uid(), $this->files->read($this->uid(), $path));
+        } catch (\InvalidArgumentException $e) {
+            return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+        }
+        return new JSONResponse($this->deckService->roomView($room), Http::STATUS_CREATED);
+    }
+
+    /**
+     * The deck file written into a folder of the account's Files. Body:
+     * { folder } (relative to the account's root, "/" for the root). The
+     * file is named after the room's title (DeckExportService::fileStem)
+     * and gets " (2)" and so on when the name is taken; answers
+     * { path, name }. 400 with a message for a folder that is not there or
+     * not writable.
+     */
+    #[NoAdminRequired]
+    public function saveToFiles(string $code): Response {
+        return $this->withRoom($code, function ($room) {
+            $folder = Input::str($this->request->getParam('folder'), '/');
+            $file = $this->deckExport->export($room);
+            $path = $this->files->save($this->uid(), $folder, DeckExportService::fileStem($room) . '.' . $file['ext'], $file['content']);
+            return new JSONResponse(['path' => $path, 'name' => basename($path)]);
+        }, Http::STATUS_BAD_REQUEST);
+    }
+
+    /**
+     * The deck file sent as the upload `file`: its content, or null when
+     * the request carries none (then the JSON body's `markdown` applies).
+     *
+     * @throws \InvalidArgumentException an upload that failed or is too large
+     */
+    private function uploadedDeck(): ?string {
+        $upload = $this->request->getUploadedFile('file');
+        // No upload at all (or not one PHP produced: no error code, no temp
+        // file) -> the JSON body applies.
+        if (!is_array($upload) || !is_int($upload['error'] ?? null) || !is_string($upload['tmp_name'] ?? null)
+            || $upload['error'] === UPLOAD_ERR_NO_FILE || $upload['tmp_name'] === '') {
+            return null;
+        }
+        if ($upload['error'] !== UPLOAD_ERR_OK) {
+            throw new \InvalidArgumentException($this->l10n->t('The file did not arrive.'));
+        }
+        if ((int)($upload['size'] ?? 0) > DeckArchive::MAX_BYTES) {
+            throw new \InvalidArgumentException($this->l10n->t('The file is too large.'));
+        }
+        $content = @file_get_contents($upload['tmp_name']);
+        if ($content === false) {
+            throw new \InvalidArgumentException($this->l10n->t('The file did not arrive.'));
+        }
+        return $content;
     }
 
     #[NoAdminRequired]

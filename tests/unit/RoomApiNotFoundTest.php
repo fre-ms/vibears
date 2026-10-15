@@ -84,7 +84,7 @@ class RoomApiNotFoundTest extends TestCase {
         $out = [];
         foreach ((new \ReflectionClass(RoomApiController::class))->getMethods(\ReflectionMethod::IS_PUBLIC) as $m) {
             if ($m->getDeclaringClass()->getName() !== RoomApiController::class
-                || in_array($m->getName(), ['__construct', 'index', 'create', 'importMarkdown'], true)) {
+                || in_array($m->getName(), ['__construct', 'index', 'create', 'importMarkdown', 'importFromFiles'], true)) {
                 continue;
             }
             $args = [];
@@ -127,6 +127,7 @@ class RoomApiNotFoundTest extends TestCase {
             'demoSeed' => ['demoSeed', ['ABCDEF'], 'vibears-demo', 30],
             // creates a room, so it shares the room limit
             'importMarkdown' => ['importMarkdown', [], 'vibears-create', 30],
+            'importFromFiles' => ['importFromFiles', [], 'vibears-create', 30],
         ];
     }
 
@@ -216,6 +217,13 @@ class RoomApiNotFoundTest extends TestCase {
         $pace = $this->createMock(PaceService::class);
         $pace->method('locked')->willReturnCallback(fn (Room $r, callable $fn): mixed => $fn($r));
 
+        // The deck file services answer with an empty file and a path.
+        $export = $this->createMock(\OCA\Vibears\Service\DeckExportService::class);
+        $export->method('export')->willReturn(['content' => '', 'ext' => 'md', 'mime' => 'text/markdown; charset=utf-8']);
+        $files = $this->createMock(\OCA\Vibears\Service\FilesService::class);
+        $files->method('read')->willReturn('');
+        $files->method('save')->willReturn('/Deck.md');
+
         return new RoomApiController(
             $request,
             $session,
@@ -232,8 +240,9 @@ class RoomApiNotFoundTest extends TestCase {
             $this->createMock(ITimeFactory::class),
             $this->limiter,
             new Limits($this->createMock(IAppConfig::class)),
-            $this->createMock(\OCA\Vibears\Service\DeckMarkdown::class),
+            $export,
             $this->importer(),
+            $files,
         );
     }
 

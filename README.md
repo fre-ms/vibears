@@ -138,8 +138,11 @@ vibeARS is licensed under AGPL-3.0-or-later and comes without any warranty.
   on, and a correct answer then earns the full points regardless of speed. In
   a self-paced quiz such a question can be skipped.
 - **Decks as files:** "Export as Markdown" in a room's menu writes the
-  questions, solutions and settings as Markdown with a YAML header; "Import a
-  deck" on the start page turns such a file into a new room. See
+  questions, solutions and settings as Markdown with a YAML header — as a
+  ZIP with the images when there are any; "Import a deck" on the start page
+  turns such a file into a new room. "Save to Files" and "Import from Files"
+  keep the file in Nextcloud Files, and a Markdown or ZIP file in the Files
+  app offers "Import into vibeARS". See
   [Deck files](#deck-files-markdown-with-a-yaml-header).
 - Rooms stay until their owner deletes them. The administration can let a
   daily background job delete rooms after a chosen number of days without any
@@ -252,12 +255,16 @@ and deleting a Nextcloud account deletes that account's rooms at once.
 ## Deck files (Markdown with a YAML header)
 
 Every room's menu offers **Export as Markdown** (also under "My rooms", in a
-room's menu), and the start page **Import a deck (Markdown)**. The file holds
-the questions with their solutions and settings — no votes, no participants
-and no images (the image of a question is not exported; add it again after
-the import). Importing creates a new room; the caps of the account and every
-rule of the composer apply, and a file that fails on its seventh question
-leaves no room behind. The format, version `vibears/1`:
+room's menu), and the start page **Import a deck (Markdown or ZIP)**. The file
+holds the questions with their solutions and settings — no votes and no
+participants. A deck without images is a plain `.md`; as soon as a question
+has an image, the export is a ZIP with the Markdown as `deck.md` and the
+images next to it, see [Images in the deck file](#images-in-the-deck-file).
+The same file can be saved into and imported from the account's Files, see
+[Deck files in Nextcloud Files](#deck-files-in-nextcloud-files). Importing
+creates a new room; the caps of the account and every rule of the composer
+apply, and a file that fails on its seventh question leaves no room behind.
+The format, version `vibears/1`:
 
 ```markdown
 ---
@@ -343,8 +350,49 @@ time: 60
 - Files are limited to 1 MB and must be UTF-8; a BOM and Windows line
   endings are fine.
 
+- `image: images/3.png` names the question's image, relative to `deck.md`,
+  in the ZIP export. A plain `.md` that names an image is refused with the
+  question's number: only the ZIP carries it.
+
 The export is stable: importing a file and exporting the new room gives the
 same file again, so a deck kept in git shows only real changes in its diffs.
+
+### Images in the deck file
+
+As soon as a question has an image, "Export as Markdown" downloads
+`vibears-CODE.zip` instead of `.md`: `deck.md` plus `images/1.png`,
+`images/3.jpg`, … numbered by the question's position, each named by an
+`image:` line. The import takes the ZIP like the Markdown — the file input,
+"Import from Files" and the Files app's action all accept both — and each
+image goes through the same checks, re-encoding and image budget as an
+upload (`PollImageService::storeBytes`), so the stored bytes of a round trip
+can differ while `deck.md` stays the same. A folder that was unpacked and
+zipped again reads as well: one folder around everything is stripped, macOS
+resource forks and `.DS_Store` are ignored, and a single `*.md` at the top
+counts as the deck when it is not called `deck.md`. Limits: 50 MB for the
+archive, 5 MB per image (the upload limit), 300 entries. `DeckArchive`
+reads and writes it, `DeckExportService` decides between `.md` and `.zip`.
+
+### Deck files in Nextcloud Files
+
+- **Save to Files** (a room's menu, in the deck and under "My rooms") writes
+  the deck file into a folder of the account's Files — Nextcloud's own
+  picker, so a folder shared with write access is in reach. The file is
+  named after the room's title (`Lecture 3.md` or `.zip`; `vibears-CODE`
+  without a title), and a taken name gets " (2)", " (3)", … like the Files
+  app does.
+- **Import from Files** (start page) makes a new room from a deck file in
+  Files — a deck a colleague shared included.
+- **Import into vibeARS** is an entry in the actions of a Markdown or ZIP
+  file in the Files app (`FilesScriptsListener` loads `js/vibears-files.js`
+  there, nowhere else). The server reads the file, so nothing passes through
+  the browser; a Markdown file that is not a deck is refused with the line
+  that is wrong.
+
+Paths are relative to the account's root, as the Files app names them, and
+stay inside it. The two menu entries use the server's legacy
+`OC.dialogs.filepicker`, present in every supported server; where it is
+missing they stay away, the file input and the Files app action remain.
 
 ## Formatting and formulas
 
@@ -439,12 +487,15 @@ lib/Service/      RoomService (rooms), DeckService (questions), VoteService (vot
                   PublicPayload (capped public views), Limits (caps per account),
                   Retention (the administration's deletion setting),
                   JoinAddresses (the addresses the join link can use),
-                  DeckMarkdown (the deck file: export and parse) + DeckImportService
+                  DeckMarkdown (the deck file: export and parse) + DeckImportService,
+                  DeckArchive (the ZIP with images), DeckExportService (the file as
+                  downloaded or saved), FilesService (deck files in the account's Files)
 lib/Settings/     AdminSettings + AdminSection (Settings → Administration → ARS)
 lib/SetupCheck/   EmbedFraming (setup check for the PowerPoint embed)
 lib/BackgroundJob/ CleanupStaleRoomsJob (deletes unused rooms when the administration says so,
                   rooms of deleted accounts and question images nothing refers to)
-lib/Listener/     UserDeletedListener (a deleted account takes its rooms with it)
+lib/Listener/     UserDeletedListener (a deleted account takes its rooms with it),
+                  FilesScriptsListener (loads the Files app action, src/files.js)
 lib/Migration/    Schema (vibears_rooms, vibears_polls, vibears_votes, … vibears_progress)
 src/              Moderator.vue (control desk), Participant.vue (phone), Screen.vue (projector),
                   components/StageRow.vue (stage row model), ResultsView.vue,
@@ -456,7 +507,9 @@ src/              Moderator.vue (control desk), Participant.vue (phone), Screen.
                   util/routes.js (every URL and request time limit of the Vue frontend;
                   js/vibears-embed.js builds its own),
                   styles.js (token layer without Vue — for the embed shell),
-                  admin.js (the administration form, without Vue)
+                  admin.js (the administration form, without Vue),
+                  files.js ("Import into vibeARS" in the Files app, without Vue),
+                  util/files.js (Nextcloud's file picker for the deck file)
 templates/        index.php (moderator), public.php (phone, projector), embed.php, admin.php
 css/              public.css, embed.css, admin.css; katex/ = KaTeX's stylesheet and woff2
                   fonts, vendored by build/vendor-katex.js
@@ -889,8 +942,6 @@ respective owners.
   Transifex and need Nextcloud's involvement.
 - Nextcloud 34 and 35 only (`min-version="34" max-version="35"`; Pulse's
   test on 35 is described in `docs/APPSTORE.md`).
-- The deck file carries no images; a question's image has to be added again
-  after an import.
 - Question type image hotspot (tap on an image instead of choosing an answer).
 - Self-paced quiz: a rejoin code for switching devices, starting from the
   waiting state without a tap, a demo race and store images; plus small engine

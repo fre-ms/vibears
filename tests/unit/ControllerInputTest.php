@@ -186,6 +186,8 @@ class ControllerInputTest extends TestCase {
             'demoClear' => ['demoClear', $c, false],
             'exportMarkdown' => ['exportMarkdown', $c, false],
             'importMarkdown' => ['importMarkdown', [], false],
+            'importFromFiles' => ['importFromFiles', [], false],
+            'saveToFiles' => ['saveToFiles', $c, false],
         ];
     }
 
@@ -575,9 +577,30 @@ class ControllerInputTest extends TestCase {
             $this->time,
             $this->createMock(ILimiter::class),
             new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
-            $this->createMock(\OCA\Vibears\Service\DeckMarkdown::class),
+            $this->deckFiles(\OCA\Vibears\Service\DeckExportService::class),
             $this->createMock(\OCA\Vibears\Service\DeckImportService::class),
+            $this->deckFiles(\OCA\Vibears\Service\FilesService::class),
         );
+    }
+
+    /**
+     * The deck file services answer with an empty file and a path: the
+     * actions read the array and the string, and a null would be a TypeError
+     * that has nothing to do with the input.
+     *
+     * @template T of object
+     * @param class-string<T> $class
+     * @return T
+     */
+    private function deckFiles(string $class): object {
+        $mock = $this->createMock($class);
+        if ($class === \OCA\Vibears\Service\DeckExportService::class) {
+            $mock->method('export')->willReturn(['content' => '', 'ext' => 'md', 'mime' => 'text/markdown; charset=utf-8']);
+        } else {
+            $mock->method('read')->willReturn('');
+            $mock->method('save')->willReturn('/Deck.md');
+        }
+        return $mock;
     }
 
     private function public(): PublicVoteController {

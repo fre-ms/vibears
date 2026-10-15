@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace OCA\Vibears\AppInfo;
 
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
+use OCA\Vibears\Listener\FilesScriptsListener;
 use OCA\Vibears\Listener\UserDeletedListener;
 use OCA\Vibears\SetupCheck\EmbedFraming;
 use OCP\AppFramework\App;
@@ -42,6 +44,10 @@ class Application extends App implements IBootstrap {
         $context->registerSetupCheck(EmbedFraming::class);
         // A deleted account takes its rooms with it.
         $context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
+        // "Import into vibeARS" on a deck file in the Files app (src/files.js).
+        // The event class belongs to the Files app; the name is enough here, and
+        // the listener is only ever called when that app dispatches it.
+        $context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesScriptsListener::class);
     }
 
     public function boot(IBootContext $context): void {

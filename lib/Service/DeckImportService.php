@@ -12,37 +12,54 @@ use OCA\Vibears\Db\RoomMapper;
 use OCP\IL10N;
 
 /**
- * Import of a deck file (DeckMarkdown): a new room with the file's flow
- * settings and questions. Every question goes through DeckService::addPoll,
- * so the caps (questions per room, option lengths, …) and the per-type
- * rules apply exactly as in the composer; the room itself counts against
- * the rooms-per-account cap in RoomService::createRoom. A file that fails
- * on its seventh question leaves nothing behind: the half-filled room is
- * deleted again and the error names the question.
+ * Import of a deck file (DeckMarkdown, or the ZIP export with images —
+ * DeckArchive): a new room with the file's flow settings and questions.
+ * Every question goes through DeckService::addPoll, so the caps (questions
+ * per room, option lengths, …) and the per-type rules apply exactly as in
+ * the composer; an image goes through PollImageService like an upload, so
+ * the image budget and the re-encoding apply as well; the room itself
+ * counts against the rooms-per-account cap in RoomService::createRoom. A
+ * file that fails on its seventh question leaves nothing behind: the
+ * half-filled room is deleted again (with the images stored so far) and the
+ * error names the question.
  */
 class DeckImportService {
     public function __construct(
         private DeckMarkdown $format,
+        private DeckArchive $archive,
         private RoomService $roomService,
         private DeckService $deckService,
+        private PollImageService $images,
         private RoomMapper $roomMapper,
         private IL10N $l10n,
     ) {
     }
 
     /**
+     * @param string $content the file: Markdown, or the ZIP export
      * @throws \InvalidArgumentException the file, a cap, or a question (with its number)
      */
-    public function import(string $uid, string $markdown): Room {
-        $deck = $this->format->parse($markdown);
+    public function import(string $uid, string $content): Room {
+        $images = null;
+        if (DeckArchive::isArchive($content)) {
+            $read = $this->archive->read($content);
+            $content = $read['markdown'];
+            $images = $read['images'];
+        }
+        $deck = $this->format->parse($content);
         $room = $this->roomService->createRoom($uid, $deck['mode'], $deck['title']);
         try {
             $this->applyFlow($room, $deck);
             foreach ($deck['questions'] as $i => $body) {
+                $image = $body['image'] ?? null;
+                unset($body['image']);
                 try {
-                    $this->deckService->addPoll($room, $body);
+                    $poll = $this->deckService->addPoll($room, $body);
                 } catch (\InvalidArgumentException $e) {
                     throw new \InvalidArgumentException($this->l10n->t('Question %1$d: %2$s', [$i + 1, $e->getMessage()]), 0, $e);
+                }
+                if ($image !== null) {
+                    $this->images->storeBytes($poll, $this->imageBytes($images, (string)$image, $i + 1));
                 }
             }
         } catch (\Throwable $e) {
@@ -54,6 +71,27 @@ class DeckImportService {
             throw $e;
         }
         return $room;
+    }
+
+    /**
+     * The bytes an `image:` line points at. A plain .md names an image it
+     * cannot carry; the ZIP export does.
+     *
+     * @param ?array<string, string> $images the archive's files, null for a plain .md
+     * @throws \InvalidArgumentException
+     */
+    private function imageBytes(?array $images, string $path, int $number): string {
+        if ($images === null) {
+            throw new \InvalidArgumentException($this->l10n->t('Question %1$d: the file names an image ("%2$s") — import the ZIP export, which carries it.', [$number, $path]));
+        }
+        $key = ltrim(str_replace("\\", '/', $path), '/');
+        if (str_starts_with($key, './')) {
+            $key = substr($key, 2);
+        }
+        if (!isset($images[$key])) {
+            throw new \InvalidArgumentException($this->l10n->t('Question %1$d: the image "%2$s" is not in the archive.', [$number, $path]));
+        }
+        return $images[$key];
     }
 
     /**

@@ -12,10 +12,12 @@ use OCA\Vibears\Db\PollMapper;
 use OCA\Vibears\Db\Room;
 use OCA\Vibears\Db\RoomMapper;
 use OCA\Vibears\Service\CodeGenerator;
+use OCA\Vibears\Service\DeckArchive;
 use OCA\Vibears\Service\DeckImportService;
 use OCA\Vibears\Service\DeckMarkdown;
 use OCA\Vibears\Service\DeckService;
 use OCA\Vibears\Service\Limits;
+use OCA\Vibears\Service\PollImageService;
 use OCA\Vibears\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
@@ -355,10 +357,86 @@ class DeckMarkdownTest extends TestCase {
 
     // ── Helpers ─────────────────────────────────────────────────────────────
 
-    private function importer(RoomService $rooms, DeckService $deck, RoomMapper $mapper): DeckImportService {
+    // ── Images: the `image:` line and the ZIP export ───────────────────────
+
+    public function testTheImageLineIsWrittenOnlyWhenTheExportCarriesTheImage(): void {
+        $room = $this->room('poll');
+        $poll = $this->deck->addPoll($room, ['type' => 'choice', 'question' => 'Which?', 'options' => ['a', 'b']]);
+
+        $plain = $this->format->export($room, [$poll]);
+        $withImage = $this->format->export($room, [$poll], [$poll->getId() => 'images/1.png']);
+
+        // (The file's comment block mentions the line; the question block is what counts.)
+        $this->assertStringContainsString("## Which?\ntype: choice\n- a\n", $plain);
+        $this->assertStringContainsString("## Which?\ntype: choice\nimage: images/1.png\n- a\n", $withImage);
+        $this->assertSame('images/1.png', $this->format->parse($withImage)['questions'][0]['image']);
+        $this->assertArrayNotHasKey('image', $this->format->parse($plain)['questions'][0]);
+    }
+
+    public function testImportStoresTheArchivesImagesOnTheirQuestions(): void {
+        $rooms = $this->createMock(RoomService::class);
+        $rooms->method('createRoom')->willReturn($this->room('poll'));
+        $archive = $this->createMock(DeckArchive::class);
+        $archive->method('read')->willReturn([
+            'markdown' => "---\nmode: poll\n---\n## A\nimage: ./images/1.png\n- 1\n- 2\n## B\n- 1\n- 2\n",
+            'images' => ['images/1.png' => 'PNG-BYTES'],
+        ]);
+        $deck = $this->createMock(DeckService::class);
+        $bodies = [];
+        $deck->method('addPoll')->willReturnCallback(static function (Room $room, array $body) use (&$bodies): Poll {
+            $bodies[] = $body;
+            $poll = new Poll();
+            $poll->setId(count($bodies));
+            return $poll;
+        });
+        $images = $this->createMock(PollImageService::class);
+        $images->expects($this->once())->method('storeBytes')
+            ->with($this->callback(static fn (Poll $p): bool => $p->getId() === 1), 'PNG-BYTES')
+            ->willReturnArgument(0);
+
+        $this->importer($rooms, $deck, $this->createMock(RoomMapper::class), $archive, $images)->import('alice', "PK\x03\x04 whatever");
+
+        // The path never reaches DeckService: it is not a question field.
+        $this->assertArrayNotHasKey('image', $bodies[0]);
+        $this->assertArrayNotHasKey('image', $bodies[1]);
+    }
+
+    public function testAnImageMissingFromTheArchiveOrNamedByAPlainFileIsRefusedAndTheRoomGoes(): void {
+        $cases = [
+            ["PK\x03\x04", ['images/2.png' => 'x'], 'Question 1: the image "images/1.png" is not in the archive.'],
+            ["---\nmode: poll\n---\n## A\nimage: images/1.png\n- 1\n- 2\n", null, 'Question 1: the file names an image ("images/1.png") — import the ZIP export, which carries it.'],
+        ];
+        foreach ($cases as [$content, $archiveImages, $message]) {
+            $rooms = $this->createMock(RoomService::class);
+            $rooms->method('createRoom')->willReturn($this->room('poll'));
+            $rooms->expects($this->once())->method('deleteRoom');
+            $archive = $this->createMock(DeckArchive::class);
+            $archive->method('read')->willReturn(['markdown' => "---\nmode: poll\n---\n## A\nimage: images/1.png\n- 1\n- 2\n", 'images' => $archiveImages ?? []]);
+            $deck = $this->createMock(DeckService::class);
+            $deck->method('addPoll')->willReturn(new Poll());
+            $images = $this->createMock(PollImageService::class);
+            $images->expects($this->never())->method('storeBytes');
+            try {
+                $this->importer($rooms, $deck, $this->createMock(RoomMapper::class), $archive, $images)->import('alice', $content);
+                $this->fail('expected a refusal');
+            } catch (\InvalidArgumentException $e) {
+                $this->assertSame($message, $e->getMessage());
+            }
+        }
+    }
+
+    private function importer(RoomService $rooms, DeckService $deck, RoomMapper $mapper, ?DeckArchive $archive = null, ?PollImageService $images = null): DeckImportService {
         $l10n = $this->createMock(IL10N::class);
         $l10n->method('t')->willReturnCallback(static fn (string $text, array $params = []): string => vsprintf($text, $params));
-        return new DeckImportService($this->format, $rooms, $deck, $mapper, $l10n);
+        return new DeckImportService(
+            $this->format,
+            $archive ?? $this->createMock(DeckArchive::class),
+            $rooms,
+            $deck,
+            $images ?? $this->createMock(PollImageService::class),
+            $mapper,
+            $l10n,
+        );
     }
 
     private function room(string $mode, string $title = ''): Room {

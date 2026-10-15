@@ -107,6 +107,26 @@ class PollImageService {
         if ($raw === false || $raw === '') {
             throw new \InvalidArgumentException($this->l10n->t('No image received.'));
         }
+        return $this->storeRaw($poll, $raw);
+    }
+
+    /**
+     * The same for image bytes that did not arrive as an upload — the deck
+     * import takes them out of the ZIP export (DeckImportService). Same
+     * checks, same budget, same re-encoding.
+     *
+     * @throws \InvalidArgumentException
+     * @throws ConflictException
+     */
+    public function storeBytes(Poll $poll, string $raw): Poll {
+        if ($raw === '' || strlen($raw) > self::MAX_BYTES) {
+            throw new \InvalidArgumentException($this->l10n->t('Please upload an image of up to 5 MB.'));
+        }
+        return $this->storeRaw($poll, $raw);
+    }
+
+    /** Validate, re-encode, store and record: the shared tail of store() and storeBytes(). */
+    private function storeRaw(Poll $poll, string $raw): Poll {
         // Do not trust the client's Content-Type — ask the file itself.
         $info = @getimagesizefromstring($raw);
         if ($info === false || !isset(self::ACCEPTED[$info[2]])) {

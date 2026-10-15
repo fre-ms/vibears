@@ -172,8 +172,9 @@ class NotSelfPacedTest extends TestCase {
             $this->time,
             $this->createMock(ILimiter::class),
             new Limits($this->createMock(IAppConfig::class)),
-            $this->createMock(\OCA\Vibears\Service\DeckMarkdown::class),
+            $this->createMock(\OCA\Vibears\Service\DeckExportService::class),
             $this->createMock(\OCA\Vibears\Service\DeckImportService::class),
+            $this->createMock(\OCA\Vibears\Service\FilesService::class),
         );
     }
 

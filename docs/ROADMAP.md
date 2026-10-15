@@ -25,9 +25,9 @@ students, questions of exam quality, decks kept for several semesters.
 ## What is missing
 
 - **Content and media:** no content slides between questions, one image per
-  question only, no images as answer options, no video or audio, images are
-  lost on deck export. ~~No formulas or markup in the question text.~~ (done,
-  see rank 3)
+  question only, no images as answer options, no video or audio. ~~Images
+  are lost on deck export.~~ (done, see rank 7) ~~No formulas or markup in
+  the question text.~~ (done, see rank 3)
 - **Question types:** no image hotspot, no open-text poll with idea collection
   and voting, no confidence rating on an answer, no fill-in-the-blank.
 - **Audience interaction:** no audience questions with upvotes, no standing
@@ -37,9 +37,10 @@ students, questions of exam quality, decks kept for several semesters.
   podium, no sounds, no nickname generator, no name filter.
 - **Analysis:** ~~only distributions and CSV, no figures per question.~~ (done,
   see rank 1) No report per person across several runs.
-- **Author comfort:** no question bank with folders and tags, no sharing of
-  decks with colleagues, no import from Excel, Moodle or Kahoot, no AI
-  generation, English and German only.
+- **Author comfort:** no question bank with folders and tags inside the
+  app, no import from Excel, Moodle or Kahoot, no AI generation, English
+  and German only. ~~No sharing of decks with colleagues.~~ (done, see
+  rank 6: deck files live in Nextcloud Files and travel with its shares)
 - **Platform:** no LMS integration, no real-time push, no device switch in a
   self-paced quiz, no study modes such as flashcards.
 
@@ -56,8 +57,8 @@ the architecture (anonymous participants, polling, Nextcloud conventions).
 | 3 | Formulas and simple markup in the question text: KaTeX and a Markdown subset, bundled locally | small to medium | Indispensable for statistics and informatics. A local bundle stays within the CSP. | done (unreleased) |
 | 4 | Live feedback widget on the pace, permanently open, aggregated on the projector | small to medium | Kahoot does not have it, Particify and ARSnova do. In a lecture worth more than any game mechanic. | planned |
 | 5 | Scoring options: factor per question, streak bonus, mode without speed bonus, mode without leaderboard | small | Kahoot calls these the Accuracy and Lecture modes. The scoring is encapsulated in `AnswerRules` and `QuizService`. | planned |
-| 6 | Open and save deck files in Nextcloud Files, including "Open with vibeARS" for Markdown with a `vibears/1` header | small to medium | Replaces Kahoot's question bank and shared folders with Nextcloud shares. The native way. | planned |
-| 7 | Images in the deck export, a ZIP with the Markdown and an image folder | small to medium | Closes the documented gap and makes rank 6 complete. | planned |
+| 6 | Open and save deck files in Nextcloud Files, including "Import into vibeARS" on a Markdown or ZIP file in the Files app | small to medium | Replaces Kahoot's question bank and shared folders with Nextcloud shares. The native way. | done (unreleased) |
+| 7 | Images in the deck export, a ZIP with the Markdown and an image folder | small to medium | Closes the documented gap and makes rank 6 complete. | done (unreleased) |
 | 8 | Audience questions with upvotes and moderation | medium | Slido's core feature. New entity, moderation view, projector display. | planned |
 | 9 | Open-text poll with cards on the projector and optional voting | medium | Kahoot's Brainstorm and Open-ended. The release logic of `TextGrading` can be reused; moderation against abuse is a must. | planned |
 | 10 | Import from Moodle GIFT, the Kahoot Excel template and CSV | small to medium per format | Everything maps onto the existing Markdown model. GIFT first, because university question banks live there. | planned |

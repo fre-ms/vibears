@@ -60,11 +60,22 @@ export function roomMarkdown(code) {
 }
 
 /**
- * Moderator API: a new room from a deck file (POST { markdown }).
+ * Moderator API: a new room from a deck file (POST { markdown }, or the
+ * file itself as the upload `file`).
  * @return {string} URL
  */
 export function importApi() {
 	return generateUrl('/apps/vibears/api/1.0/import')
+}
+
+/**
+ * Moderator API: a new room from a deck file in the account's Files
+ * (POST { path }) — the start page's "Import from Files" and the Files
+ * app's "Import into vibeARS".
+ * @return {string} URL
+ */
+export function importFilesApi() {
+	return generateUrl('/apps/vibears/api/1.0/import/files')
 }
 
 /**

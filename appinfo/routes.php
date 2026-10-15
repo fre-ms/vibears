@@ -22,6 +22,10 @@ return [
         // The deck as a file (Markdown with a YAML header) and a new room from one
         ['name' => 'roomApi#exportMarkdown', 'url' => '/api/1.0/rooms/{code}/markdown',   'verb' => 'GET', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#importMarkdown', 'url' => '/api/1.0/import',                  'verb' => 'POST'],
+        // The deck file in the account's Files: a new room from one (POST { path }),
+        // and the export written into a folder (POST { folder } → { path, name })
+        ['name' => 'roomApi#importFromFiles', 'url' => '/api/1.0/import/files',           'verb' => 'POST'],
+        ['name' => 'roomApi#saveToFiles',    'url' => '/api/1.0/rooms/{code}/files',      'verb' => 'POST', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#show',       'url' => '/api/1.0/rooms/{code}',                'verb' => 'GET',    'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#destroy',    'url' => '/api/1.0/rooms/{code}',                'verb' => 'DELETE', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#rename',     'url' => '/api/1.0/rooms/{code}/title',          'verb' => 'POST',   'requirements' => ['code' => '[A-Za-z0-9]{6}']],

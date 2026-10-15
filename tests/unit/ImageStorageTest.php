@@ -346,6 +346,30 @@ class ImageStorageTest extends TestCase {
 
     // ── Helpers ─────────────────────────────────────────────────────────────
 
+    public function testStoreBytesTakesRawBytesLikeAnUpload(): void {
+        $poll = $this->poll(10, room: 1);
+
+        $stored = $this->service()->storeBytes($poll, $this->png(8));
+
+        $this->assertMatchesRegularExpression('/^[a-z0-9]{16}\.png$/', $stored->getImage());
+        $this->assertSame(['10-' . $stored->getImage()], array_keys($this->fakeFiles));
+    }
+
+    public function testStoreBytesRefusesEmptyOrOversizedBytesBeforeDecoding(): void {
+        $poll = $this->poll(10, room: 1);
+        $service = $this->service();
+
+        foreach (['', str_repeat('x', PollImageService::MAX_BYTES + 1)] as $raw) {
+            try {
+                $service->storeBytes($poll, $raw);
+                $this->fail('expected a refusal');
+            } catch (\InvalidArgumentException $e) {
+                $this->assertSame('Please upload an image of up to 5 MB.', $e->getMessage());
+            }
+        }
+        $this->assertSame([], $this->fakeFiles);
+    }
+
     private function service(): PollImageService {
         $l10n = $this->createMock(IL10N::class);
         $l10n->method('t')->willReturnCallback(static fn (string $text, array $p = []): string => vsprintf($text, $p));

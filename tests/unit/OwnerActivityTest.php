@@ -43,7 +43,7 @@ class OwnerActivityTest extends TestCase {
 
     private const NOW = 1_800_000_000;
     /** Actions without a room: they must not touch anything. */
-    private const WITHOUT_ROOM = ['index', 'create', 'importMarkdown'];
+    private const WITHOUT_ROOM = ['index', 'create', 'importMarkdown', 'importFromFiles'];
 
     private Room $room;
     private bool $foreign = false;
@@ -92,6 +92,7 @@ class OwnerActivityTest extends TestCase {
             'demoSeed' => ['demoSeed', $c],
             'demoClear' => ['demoClear', $c],
             'exportMarkdown' => ['exportMarkdown', $c],
+            'saveToFiles' => ['saveToFiles', $c],
         ];
     }
 
@@ -236,6 +237,14 @@ class OwnerActivityTest extends TestCase {
         $time = $this->createMock(ITimeFactory::class);
         $time->method('getTime')->willReturn(self::NOW);
 
+        // The deck file services answer with an empty file and a path, so the
+        // two actions run through to their response.
+        $export = $this->createMock(\OCA\Vibears\Service\DeckExportService::class);
+        $export->method('export')->willReturn(['content' => '', 'ext' => 'md', 'mime' => 'text/markdown; charset=utf-8']);
+        $files = $this->createMock(\OCA\Vibears\Service\FilesService::class);
+        $files->method('read')->willReturn('');
+        $files->method('save')->willReturn('/Deck.md');
+
         return new RoomApiController(
             $request,
             $this->createMock(IUserSession::class),
@@ -252,8 +261,9 @@ class OwnerActivityTest extends TestCase {
             $time,
             $this->createMock(\OCP\Security\RateLimiting\ILimiter::class),
             new \OCA\Vibears\Service\Limits($this->createMock(\OCP\IAppConfig::class)),
-            $this->createMock(\OCA\Vibears\Service\DeckMarkdown::class),
+            $export,
             $this->createMock(\OCA\Vibears\Service\DeckImportService::class),
+            $files,
         );
     }
 

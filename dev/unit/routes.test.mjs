@@ -60,7 +60,7 @@ const routes = await import('../../src/util/routes.js')
 const { csvUrl, markdownUrl } = await import('../../src/util/csv.js')
 const { serverMessage } = await import('../../src/toast.js')
 const {
-	MOD_TIMEOUT, PHONE_TIMEOUT, roomsApi, roomApi, importApi, adminRetentionApi, publicApi, pollImage,
+	MOD_TIMEOUT, PHONE_TIMEOUT, roomsApi, roomApi, importApi, importFilesApi, adminRetentionApi, publicApi, pollImage,
 	participantPage, joinPage, screenPage, roomPage, home, addinManifest, openProjector, chunkBase,
 } = routes
 
@@ -128,6 +128,8 @@ const GOLDEN = () => [
 	['Moderator goHome', 'GET', home(), '/index.php/apps/vibears/'],
 	['Moderator downloadAddin', 'GET', addinManifest(), '/index.php/apps/vibears/addin/manifest.xml'],
 	['Moderator importDeck', 'POST', importApi(), '/index.php/apps/vibears/api/1.0/import'],
+	['Moderator importFromFiles, files.js', 'POST', importFilesApi(), '/index.php/apps/vibears/api/1.0/import/files'],
+	['Moderator saveToFiles', 'POST', roomApi(CODE, '/files'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/files'],
 	// admin.js (administration settings)
 	['admin retention', 'POST', adminRetentionApi(), '/index.php/apps/vibears/api/1.0/admin/retention'],
 	// util/csv.js (Moderator export button, PaceRun downloads, the deck file)
@@ -190,8 +192,8 @@ function routeOf(url, prefix, verb) {
 	return ROUTES.find((r) => r.verb === verb && r.re.test(path))
 }
 
-test('routes.php: all 47 url entries parsed, each with a verb and a controller', () => {
-	assert.equal(ROUTES.length, 47)
+test('routes.php: all 49 url entries parsed, each with a verb and a controller', () => {
+	assert.equal(ROUTES.length, 49)
 	for (const r of ROUTES) assert.match(r.verb, /^(GET|POST|PUT|DELETE)$/, r.url)
 	assert.deepEqual([...new Set(ROUTES.map((r) => r.controller))].sort(), ['addin', 'adminSettings', 'page', 'public', 'publicVote', 'roomApi'])
 	// the parser picked up the requirements: a 6-character code only
@@ -416,6 +418,7 @@ const BUILDERS = {
 	markdownUrl: { code: true, paths: () => [markdownUrl(CODE)] },
 	downloadMarkdown: { code: true, paths: () => [markdownUrl(CODE)] }, // location.assign(markdownUrl(code))
 	importApi: { paths: () => [importApi()] },
+	importFilesApi: { paths: () => [importFilesApi()] },
 	adminRetentionApi: { paths: () => [adminRetentionApi()] },
 }
 const CALL = new RegExp('(?<![\\w$.])(' + Object.keys(BUILDERS).map((b) => b.replace('.', '\\.')).join('|') + ')\\(', 'g')

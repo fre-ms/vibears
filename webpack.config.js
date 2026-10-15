@@ -5,15 +5,17 @@
 const path = require('path')
 const webpackConfig = require('@nextcloud/webpack-vue-config')
 
-// Four entry points: main = moderator, public = participant, styles = only the
+// Five entry points: main = moderator, public = participant, styles = only the
 // token layer + design system for pages without Vue (the embed shell), admin =
-// the administration settings form (no Vue either).
+// the administration settings form (no Vue either), files = the "Import into
+// vibeARS" action in the Files app (no Vue, loaded there by FilesScriptsListener).
 // webpack-vue-config prefixes the app name -> js/vibears-main.js, js/vibears-public.js
 webpackConfig.entry = {
 	main: { import: path.join(__dirname, 'src', 'main.js') },
 	public: { import: path.join(__dirname, 'src', 'public.js') },
 	styles: { import: path.join(__dirname, 'src', 'styles.js') },
 	admin: { import: path.join(__dirname, 'src', 'admin.js') },
+	files: { import: path.join(__dirname, 'src', 'files.js') },
 }
 
 // clean:true (from the NC config) empties js/ before every build and would take the

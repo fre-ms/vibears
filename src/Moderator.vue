@@ -33,15 +33,20 @@
 				     text button, not as a second outlined button next to Start. -->
 				<a class="start-join" :href="joinPagePath" target="_blank" rel="noopener">{{ t('vibears', 'Join a room') }}</a>
 
-				<!-- A deck file (Markdown with a YAML header, see "Export as Markdown"
-				     in a room's menu) becomes a new room. The file input stays hidden
-				     behind a labelled button; the text is read in the browser and sent
-				     as JSON, so the server sees one string, not an upload. -->
+				<!-- A deck file (Markdown with a YAML header, or the ZIP export with
+				     images — see "Export as Markdown" in a room's menu) becomes a new
+				     room. The file input stays hidden behind a labelled button; Markdown
+				     is read in the browser and sent as JSON, a ZIP goes up as an upload.
+				     "Import from Files" takes the file from the account's Files instead
+				     (Nextcloud's picker, so shared folders are in reach). -->
 				<p class="start-import">
 					<label class="vibears-btn is-secondary is-sm start-import-pick" :class="{ 'is-disabled': busy || importBusy }">
-						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ importBusy ? t('vibears', 'Importing …') : t('vibears', 'Import a deck (Markdown)') }}
-						<input ref="importInput" class="start-import-input" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" :disabled="busy || importBusy" @change="importDeck">
+						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ importBusy ? t('vibears', 'Importing …') : t('vibears', 'Import a deck (Markdown or ZIP)') }}
+						<input ref="importInput" class="start-import-input" type="file" accept=".md,.markdown,.txt,.zip,text/markdown,text/plain,application/zip" :disabled="busy || importBusy" @change="importDeck">
 					</label>
+					<button v-if="filesPicker" type="button" class="vibears-btn is-secondary is-sm" :disabled="busy || importBusy" @click="importFromFiles">
+						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ t('vibears', 'Import from Files') }}
+					</button>
 				</p>
 			</div>
 
@@ -568,7 +573,8 @@
  */
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
-import { MOD_TIMEOUT, roomsApi, roomApi, importApi, pollImage, participantPage, joinPage, screenPage, roomPage, home, addinManifest, openProjector } from './util/routes.js'
+import { MOD_TIMEOUT, roomsApi, roomApi, importApi, importFilesApi, pollImage, participantPage, joinPage, screenPage, roomPage, home, addinManifest, openProjector } from './util/routes.js'
+import { hasFilePicker, pickFolder, pickDeckFile } from './util/files.js'
 import { t, n } from './util/l10n.js'
 import { showError, showSuccess, serverMessage } from './toast.js'
 import draggable from 'vuedraggable'
@@ -643,6 +649,11 @@ export default {
 		}
 	},
 	computed: {
+		// Nextcloud's file picker is there (util/files.js): "Save to Files" and
+		// "Import from Files" only show up when it is.
+		filesPicker() {
+			return hasFilePicker()
+		},
 		// Freely chosen room name; empty = the UI falls back to "Your deck/quiz".
 		roomTitle() {
 			return (this.room && this.room.title) || ''
@@ -880,6 +891,9 @@ export default {
 			if (this.deck.length) {
 				items.push({ key: 'summary', label: t('vibears', 'Summary'), icon: 'poll', act: this.openSummary })
 				items.push({ key: 'md', label: t('vibears', 'Export as Markdown'), icon: 'download', act: this.exportMarkdown })
+				if (this.filesPicker) {
+					items.push({ key: 'save', label: t('vibears', 'Save to Files'), icon: 'copy', disabled: this.busy, act: () => this.saveToFiles(this.room.code) })
+				}
 			}
 			// Self-paced mode has neither interim standings to show nor a
 			// "Reveal at the end" — the window governs both.
@@ -1177,8 +1191,16 @@ export default {
 			if (!file) return
 			this.importBusy = true
 			try {
-				const markdown = await file.text()
-				const { data } = await axios.post(importApi(), { markdown })
+				// A ZIP (the export with images) goes up as it is; Markdown as text.
+				const zip = /\.zip$/i.test(file.name) || /zip/.test(file.type || '')
+				let body
+				if (zip) {
+					body = new FormData()
+					body.append('file', file, file.name)
+				} else {
+					body = { markdown: await file.text() }
+				}
+				const { data } = await axios.post(importApi(), body)
 				showSuccess(t('vibears', 'Imported: {room}', { room: data.title || this.spaced(data.code) }))
 				await this.openRoom(data.code)
 			} catch (e) {
@@ -1187,6 +1209,37 @@ export default {
 				this.importBusy = false
 				// The same file again counts as a change next time.
 				input.value = ''
+			}
+		},
+		// A deck file from the account's Files (Nextcloud's picker; the server
+		// reads the file, POST /import/files with its path).
+		async importFromFiles() {
+			const path = await pickDeckFile(t('vibears', 'Choose a deck file (Markdown or ZIP)'))
+			if (!path) return
+			this.importBusy = true
+			try {
+				const { data } = await axios.post(importFilesApi(), { path })
+				showSuccess(t('vibears', 'Imported: {room}', { room: data.title || this.spaced(data.code) }))
+				await this.openRoom(data.code)
+			} catch (e) {
+				showError(serverMessage(e, t('vibears', 'Could not import the file.')))
+			} finally {
+				this.importBusy = false
+			}
+		},
+		// The deck file written into a folder of the account's Files (POST
+		// /files with the folder); the server names it after the room.
+		async saveToFiles(code) {
+			const folder = await pickFolder(t('vibears', 'Choose a folder for the deck file'))
+			if (!folder) return
+			this.busy = true
+			try {
+				const { data } = await axios.post(this.api(code, '/files'), { folder })
+				showSuccess(t('vibears', 'Saved: {path}', { path: data.path }))
+			} catch (e) {
+				showError(serverMessage(e, t('vibears', 'Could not save to Files.')))
+			} finally {
+				this.busy = false
 			}
 		},
 		// The address of the join link, kept per room (POST /joinhost): the
@@ -1819,6 +1872,7 @@ export default {
 			return [
 				{ key: 'copy', label: t('vibears', 'Copy as a template'), icon: 'copy', disabled: this.busy, act: () => this.duplicateRoom(r) },
 				{ key: 'md', label: t('vibears', 'Export as Markdown'), icon: 'download', disabled: !r.pollCount, act: () => downloadMarkdown(r.code) },
+				...(this.filesPicker ? [{ key: 'save', label: t('vibears', 'Save to Files'), icon: 'copy', disabled: !r.pollCount || this.busy, act: () => this.saveToFiles(r.code) }] : []),
 				{ key: 'del', label: t('vibears', 'Delete room'), icon: 'trash', act: () => this.deleteRoom(r), danger: true },
 			]
 		},

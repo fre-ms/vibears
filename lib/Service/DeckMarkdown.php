@@ -44,8 +44,9 @@ use OCP\IL10N;
  * `axisX`/`axisY` as "title | low | high", the four `corner…` labels and
  * `heatmapThreshold`). Settings are "key: value" lines; a list item may be
  * "-", "*", "+" or "1." — any list style for any type, only the order and
- * the [x] marks count. HTML comments are ignored. Images are not part of
- * the file.
+ * the [x] marks count. HTML comments are ignored. `image: images/1.png`
+ * names the question's image in the ZIP export (DeckArchive, numbered by
+ * position); a plain .md carries no images.
  *
  * The header is a flat YAML mapping (scalars only; quoted strings with the
  * usual escapes, booleans, numbers) — enough for these keys, and read by a
@@ -74,6 +75,7 @@ class DeckMarkdown {
         'range' => 'range', 'axisx' => 'axisX', 'axisy' => 'axisY', 'heatmapthreshold' => 'heatmapThreshold',
         'cornerbottomleft' => 'cornerBottomLeft', 'cornerbottomright' => 'cornerBottomRight',
         'cornertopleft' => 'cornerTopLeft', 'cornertopright' => 'cornerTopRight',
+        'image' => 'image',
     ];
 
     public function __construct(
@@ -85,8 +87,10 @@ class DeckMarkdown {
 
     /**
      * @param Poll[] $polls the deck in order
+     * @param array<int, string> $images the path of a question's image in the
+     *        archive, by poll ID — only the ZIP export (DeckExportService) has them
      */
-    public function export(Room $room, array $polls): string {
+    public function export(Room $room, array $polls, array $images = []): string {
         $quiz = $room->getMode() === 'quiz';
         $head = [
             'format' => self::FORMAT,
@@ -110,7 +114,7 @@ class DeckMarkdown {
         $out[] = '  One question per "## heading"; below it "key: value" settings and a list';
         $out[] = '  of options. Quiz: "- [x]" marks a correct option, an ordered list is the';
         $out[] = '  correct order, "left → right" is a matching pair, "time: none" lets the';
-        $out[] = '  moderator end the question. Images are not part of this file.';
+        $out[] = '  moderator end the question. "image: images/1.png" names a file of the ZIP export.';
         $out[] = '-->';
         foreach ($polls as $poll) {
             $out[] = '';
@@ -118,6 +122,9 @@ class DeckMarkdown {
             $out[] = 'type: ' . $poll->getType();
             if ($quiz) {
                 $out[] = 'time: ' . ($poll->getTimeLimit() > 0 ? (string)$poll->getTimeLimit() : 'none');
+            }
+            if (isset($images[$poll->getId()])) {
+                $out[] = 'image: ' . $images[$poll->getId()];
             }
             foreach ($this->questionLines($poll, $quiz) as $line) {
                 $out[] = $line;
@@ -487,6 +494,12 @@ class DeckMarkdown {
         $body = ['type' => $type, 'question' => $block['question']];
         if ($quiz) {
             $body['timeLimit'] = $this->timeLimit($attr('time'), $block['attrs']['time']['line'] ?? $block['line']);
+        }
+        // The image's path within the archive; the import takes it out of
+        // the body before DeckService sees it (DeckImportService).
+        $image = trim($attr('image') ?? '');
+        if ($image !== '') {
+            $body['image'] = $image;
         }
         switch ($type) {
             case 'choice':

@@ -183,14 +183,24 @@ class UserDeletedListenerTest extends TestCase {
     }
 
     public function testApplicationRegistersTheListener(): void {
+        $registered = [];
         $context = $this->createMock(IRegistrationContext::class);
-        $context->expects($this->once())
+        $context->expects($this->exactly(2))
             ->method('registerEventListener')
-            ->with(UserDeletedEvent::class, UserDeletedListener::class);
+            ->willReturnCallback(static function (string $event, string $listener) use (&$registered): void {
+                $registered[$event] = $listener;
+            });
 
         // Without the constructor: App::__construct needs a booted server.
         $app = (new \ReflectionClass(Application::class))->newInstanceWithoutConstructor();
         $app->register($context);
+
+        // The second one is the Files app's script hook (src/files.js); its
+        // event class is named, not loaded — the Files app may be absent.
+        $this->assertSame([
+            UserDeletedEvent::class => UserDeletedListener::class,
+            'OCA\Files\Event\LoadAdditionalScriptsEvent' => \OCA\Vibears\Listener\FilesScriptsListener::class,
+        ], $registered);
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────

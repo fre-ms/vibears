@@ -11,10 +11,11 @@ use OCA\Vibears\Controller\RoomApiController;
 use OCA\Vibears\Db\Poll;
 use OCA\Vibears\Db\Room;
 use OCA\Vibears\Db\RoomMapper;
+use OCA\Vibears\Service\DeckExportService;
 use OCA\Vibears\Service\DeckImportService;
-use OCA\Vibears\Service\DeckMarkdown;
 use OCA\Vibears\Service\DeckService;
 use OCA\Vibears\Service\DemoService;
+use OCA\Vibears\Service\FilesService;
 use OCA\Vibears\Service\Limits;
 use OCA\Vibears\Service\PaceService;
 use OCA\Vibears\Service\PaceStateService;
@@ -78,7 +79,7 @@ class RoomApiErrorMapTest extends TestCase {
      * so they have no case in missingPoll() (demoSeed finds the running
      * question through the cursor and answers "No active question." itself).
      */
-    private const WITHOUT_QUESTION_LOOKUP = ['addPoll', 'create', 'demoSeed', 'duplicate', 'importMarkdown', 'joinHost', 'pace'];
+    private const WITHOUT_QUESTION_LOOKUP = ['addPoll', 'create', 'demoSeed', 'duplicate', 'importFromFiles', 'importMarkdown', 'joinHost', 'pace', 'saveToFiles'];
 
     /** 'service::method' that throws InvalidArgumentException('x'); '' = none. */
     private string $throwAt = '';
@@ -98,8 +99,9 @@ class RoomApiErrorMapTest extends TestCase {
     private PollImageService&MockObject $images;
     private PaceService&MockObject $pace;
     private PaceStateService&MockObject $paceState;
-    private DeckMarkdown&MockObject $markdown;
+    private DeckExportService&MockObject $export;
     private DeckImportService&MockObject $importer;
+    private FilesService&MockObject $files;
 
     protected function setUp(): void {
         $this->room = $this->liveRoom();
@@ -172,11 +174,14 @@ class RoomApiErrorMapTest extends TestCase {
             'version' => fn (): string => 'v1',
         ]);
 
-        $this->markdown = $this->createMock(DeckMarkdown::class);
-        $this->stub($this->markdown, 'markdown', ['export' => fn (): string => '']);
+        $this->export = $this->createMock(DeckExportService::class);
+        $this->stub($this->export, 'export', ['export' => fn (): array => ['content' => '', 'ext' => 'md', 'mime' => 'text/markdown']]);
 
         $this->importer = $this->createMock(DeckImportService::class);
         $this->stub($this->importer, 'importer', ['import' => fn (): Room => $this->room]);
+
+        $this->files = $this->createMock(FilesService::class);
+        $this->stub($this->files, 'files', ['read' => fn (): string => '', 'save' => fn (): string => '/Deck.md']);
     }
 
     // ── InvalidArgumentException → 400 / 404 ─────────────────────────────
@@ -200,6 +205,9 @@ class RoomApiErrorMapTest extends TestCase {
             'uploadImage: unusable image' => ['uploadImage', ['ABCDEF', 7], 'images::store', Http::STATUS_BAD_REQUEST],
             'demoSeed' => ['demoSeed', ['ABCDEF'], 'demo::seedDemoVotes', Http::STATUS_BAD_REQUEST],
             'importMarkdown' => ['importMarkdown', [], 'importer::import', Http::STATUS_BAD_REQUEST],
+            'importFromFiles: file unusable' => ['importFromFiles', [], 'files::read', Http::STATUS_BAD_REQUEST],
+            'importFromFiles: deck refused' => ['importFromFiles', [], 'importer::import', Http::STATUS_BAD_REQUEST],
+            'saveToFiles' => ['saveToFiles', ['ABCDEF'], 'files::save', Http::STATUS_BAD_REQUEST],
             // 404
             'setCurrent' => ['setCurrent', ['ABCDEF'], 'deck::setCurrent', Http::STATUS_NOT_FOUND],
             'deletePoll' => ['deletePoll', ['ABCDEF', 7], 'deck::deletePoll', Http::STATUS_NOT_FOUND],
@@ -230,7 +238,7 @@ class RoomApiErrorMapTest extends TestCase {
             }
         }
         $catching = array_values(array_unique(array_column(self::invalidArgument(), 0)));
-        $this->assertCount(18, $catching, 'actions that answer with the InvalidArgumentException message');
+        $this->assertCount(20, $catching, 'actions that answer with the InvalidArgumentException message');
         $known = array_merge($catching, self::WITHOUT_MESSAGE_ANSWER);
         sort($declared);
         sort($known);
@@ -330,7 +338,7 @@ class RoomApiErrorMapTest extends TestCase {
             'index' => ['index', [], 'rooms::listRooms', false],
             'summary' => ['summary', ['ABCDEF'], 'state::summary', false],
             'exportCsv' => ['exportCsv', ['ABCDEF'], 'state::exportCsv', false],
-            'exportMarkdown' => ['exportMarkdown', ['ABCDEF'], 'markdown::export', false],
+            'exportMarkdown' => ['exportMarkdown', ['ABCDEF'], 'export::export', false],
             'rename' => ['rename', ['ABCDEF'], 'rooms::setTitle', false],
             'leaderboard' => ['leaderboard', ['ABCDEF'], 'votes::leaderboardFor', false],
             'show' => ['show', ['ABCDEF'], 'deck::roomView', false],
@@ -451,7 +459,10 @@ class RoomApiErrorMapTest extends TestCase {
         $request->method('getParam')->willReturnCallback(
             fn (string $key, mixed $default = null): mixed => array_key_exists($key, $this->params) ? $this->params[$key] : $default,
         );
-        $request->method('getUploadedFile')->willReturn(['name' => 'a.png', 'tmp_name' => '/nonexistent', 'error' => 0, 'size' => 1]);
+        // An image upload for uploadImage; no deck upload, so importMarkdown reads its JSON body.
+        $request->method('getUploadedFile')->willReturnCallback(
+            static fn (string $key): ?array => $key === 'file' ? null : ['name' => 'a.png', 'tmp_name' => '/nonexistent', 'error' => 0, 'size' => 1],
+        );
 
         $l10n = $this->createMock(IL10N::class);
         $l10n->method('t')->willReturnArgument(0);
@@ -477,8 +488,9 @@ class RoomApiErrorMapTest extends TestCase {
             $this->createMock(ITimeFactory::class),
             $this->createMock(ILimiter::class),
             new Limits($this->createMock(IAppConfig::class)),
-            $this->markdown,
+            $this->export,
             $this->importer,
+            $this->files,
         );
     }
 
