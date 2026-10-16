@@ -120,6 +120,10 @@ vibeARS is licensed under AGPL-3.0-or-later and comes without any warranty.
 - **Item statistics** in the summary of a quiz: per question the difficulty
   and the discrimination, per answer option its own discrimination, also in
   the CSV. See [Item statistics](#item-statistics).
+- **Floating results window:** the live result in a browser window that
+  stays above every other window, a full-screen Impress or Keynote show
+  included, so any presentation programme works. See
+  [Floating results window](#floating-results-window).
 - **Several addresses:** on an instance that is reachable under more than one
   name (`trusted_domains` in `config.php` — an internal name, a public one, a
   short alias for the lecture hall), the moderator chooses per room which
@@ -671,6 +675,7 @@ node dev/unit/routes.test.mjs                  # Vue frontend URLs and their cal
 node dev/unit/composer-limits.test.mjs         # composer maxlength/min/max, checked against what DeckService keeps
 node dev/unit/wordcloud.test.mjs               # projector word-cloud layout (long words fit), phone word length vs. server
 node dev/unit/richtext.test.mjs                # inline markup of questions and answers (escaping, emphasis, formula placeholders)
+node dev/unit/float.test.mjs                   # floating results window: browser capability, the card's content and layout
 dev/sim/run.sh        # HTTP simulation of complete runs against the running instance (dev/sim/README.md)
 ```
 
@@ -688,6 +693,35 @@ The unit suite stays database-free (grading, tallying, text normalisation,
 parameter pass-through). Paths that really touch the database are exercised by
 the HTTP simulation and by throwaway scripts against a running instance, which
 are not part of the repository — see `tests/README.md`.
+
+## Floating results window
+
+For a lecture that runs in Impress, Keynote, Google Slides or a PDF viewer:
+**Float results**, a corner button on the projector page (it appears when the
+mouse moves) and an entry in the moderator's menu while presenting, opens the
+live result in a small window that the browser keeps above every other
+window — above a full-screen slide show too. Drag it into a corner of the
+projector and present as usual; it follows the moderator's question
+changes. Nothing is installed on the presenting computer.
+
+How the window is made depends on the browser (`src/util/float.js`):
+
+- **Chromium (Chrome, Edge, Brave …):** document picture-in-picture. The
+  window holds the projector page itself, scaled down, so every stage, the
+  countdown and the leaderboard look as they do on the big screen.
+- **Safari:** video picture-in-picture. A compact card — question, the bars
+  of a choice question with their letters and colours, answers, countdown —
+  is painted on a canvas, streamed into a video and that video floated.
+  Other question types show the question and the count; the full stage
+  stays on the projector page.
+- **Firefox** has no API for it, only its own picture-in-picture button on
+  every video: the same card appears as a video on the page with a hint to
+  use that button.
+
+The window stays above full-screen applications on Windows and macOS; on
+Linux it depends on the window manager, and the fallback there is Impress's
+own "window" presentation type. The PowerPoint add-in remains the way to
+have the result *inside* a slide.
 
 ## Embedding in PowerPoint
 
@@ -946,6 +980,10 @@ respective owners.
 - Self-paced quiz: a rejoin code for switching devices, starting from the
   waiting state without a tap, a demo race and store images; plus small engine
   follow-ups (list in `docs/pace-2026-09/UI.md`).
+- The floating results window shows the projector page itself only in
+  Chromium browsers; Safari gets the painted card, Firefox the card as a
+  video on the page. Whether it stays above a full-screen show on Linux
+  depends on the window manager.
 - Real push instead of polling — would need a WebSocket service of its own;
   `notify_push` is not an option because participants are anonymous and not
   signed in.

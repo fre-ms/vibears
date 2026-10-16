@@ -187,6 +187,16 @@
 				</div>
 			</div>
 		</template>
+
+		<!-- The floating results window (util/float.js): a corner button that
+		     shows on mouse movement, so the projection stays clean. Not in the
+		     floating window itself. -->
+		<button v-if="canFloat && !inFloat && roomExists" type="button" class="scr-float" :class="{ 'is-on': floating }"
+			:title="t('vibears', 'Show the live result in a small window that stays above other windows — above a full-screen slide show too.')"
+			@click="openFloat">
+			<VibearsIcon name="beamer" size="1.1em" /> {{ floating ? t('vibears', 'Floating') : t('vibears', 'Float results') }}
+		</button>
+		<FloatResults v-if="canFloat && !inFloat" ref="float" :screen-url="floatUrl" :card="floatCardState" @change="floating = $event" />
 	</div>
 </template>
 
@@ -197,7 +207,8 @@
  * repository (see "References in code comments" in the README).
  */
 import axios from '@nextcloud/axios'
-import { PHONE_TIMEOUT, publicApi, pollImage, participantPage } from './util/routes.js'
+import { PHONE_TIMEOUT, publicApi, pollImage, participantPage, screenPage } from './util/routes.js'
+import { floatCard, floatMode } from './util/float.js'
 import { loadState } from '@nextcloud/initial-state'
 import { formatCode, remainingSecs, fmtDeadline } from './util/format.js'
 import { windowState, trimRaceBoard, fitRaceRows, RACE_BOARD_ROWS } from './util/pace.js'
@@ -213,6 +224,7 @@ import WordCloud from './components/WordCloud.vue'
 import QrCode from './components/QrCode.vue'
 import StageRace from './components/StageRace.vue'
 import RichText from './components/RichText.vue'
+import FloatResults from './components/FloatResults.vue'
 
 // Floor of the shrink loop (§2.3): below it the stage is only readable from 5 m —
 // then there is too much content on it.
@@ -221,11 +233,17 @@ const FIT_FLOOR_PX = 24
 export default {
 	name: 'Screen',
 	mixins: [pollingMixin],
-	components: { VibearsIcon, ResultsView, CountdownRing, IntakeBoard, StageOpen, Leaderboard, WordCloud, QrCode, StageRace, RichText },
+	components: { VibearsIcon, ResultsView, CountdownRing, IntakeBoard, StageOpen, Leaderboard, WordCloud, QrCode, StageRace, RichText, FloatResults },
 	data() {
 		return {
 			code: loadState('vibears', 'code', ''),
 			roomExists: loadState('vibears', 'roomExists', false),
+			// The floating results window (util/float.js): this browser can
+			// float, a window is floating, and this page IS the floating
+			// window's content (?float=1) — then it offers no button of its own.
+			canFloat: floatMode() !== 'none',
+			floating: false,
+			inFloat: new URLSearchParams(window.location.search).get('float') === '1',
 			// The address of the join link (JoinAddresses): '' = this page's own; /state keeps it current.
 			joinOrigin: loadState('vibears', 'joinOrigin', '') || '',
 			practice: false,
@@ -507,6 +525,16 @@ export default {
 		remaining() {
 			return remainingSecs(this.poll, this.nowSec, this.serverSkew)
 		},
+		// ── Floating results window ────────────────────────────────────
+		// This page again, marked as the floating window's content.
+		floatUrl() {
+			const path = screenPage(this.code)
+			return window.location.origin + path + '?float=1'
+		},
+		// What the painted card shows where the browser cannot float the page itself.
+		floatCardState() {
+			return floatCard({ poll: this.poll, results: this.results, answered: this.answered, remaining: this.remaining, revealed: this.revealed })
+		},
 		// The stage computes entirely in em; exactly this one px value is
 		// written, everything else follows (§2.3).
 		// Refit only on a structural change (question, type, row count) —
@@ -611,6 +639,14 @@ export default {
 		document.removeEventListener('visibilitychange', this.onPollVisibility)
 	},
 	methods: {
+		// From the corner button: the window needs the click (user gesture).
+		openFloat() {
+			if (this.floating) {
+				if (this.$refs.float) this.$refs.float.close()
+				return
+			}
+			if (this.$refs.float) this.$refs.float.open()
+		},
 		base(suffix = '') {
 			return publicApi(this.code, suffix)
 		},
@@ -1035,6 +1071,13 @@ export default {
 /* QR + code: the code stays in class B — from the back row it is the
    actual way to join; scanning a QR from 12 m does not work. */
 .scr-join-mini { display: flex; align-items: center; gap: 0.6em; flex: 0 0 auto; }
+
+/* Floating results window: a quiet corner button, visible while the mouse
+   moves over the page (the projector is usually left alone) and while a
+   window floats. */
+.scr-float { position: fixed; right: 14px; bottom: 14px; z-index: 40; display: inline-flex; align-items: center; gap: 0.4em; padding: 8px 14px; border: 1px solid var(--vibears-border-strong); border-radius: 999px; background: var(--vibears-surface, #fff); color: var(--vibears-text); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; opacity: 0; transition: opacity .25s; }
+.scr:hover .scr-float, .scr-float:focus-visible, .scr-float.is-on { opacity: 1; }
+.scr-float.is-on { border-color: var(--vibears-primary); color: var(--vibears-primary); }
 .scr-qr-mini { width: 88px; background: #fff; padding: 4px; border: 2px solid var(--vibears-border-strong); border-radius: var(--vibears-r-el); }
 .scr-pin-mini { font-weight: 800; font-size: var(--scr-stage-fs); letter-spacing: 0.08em; color: var(--vibears-text); font-variant-numeric: tabular-nums; }
 

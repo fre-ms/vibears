@@ -11,6 +11,14 @@ notes of a version from its section here, so every version needs an entry.
 ## [Unreleased]
 
 ### Added
+- **Floating results window.** "Float results" on the projector page (a
+  corner button) and in the moderator's menu while presenting opens the
+  live result in a small window that the browser keeps above every other
+  window — above a full-screen slide show of Impress, Keynote or a PDF
+  viewer too. Chromium shows the projector page itself in a document
+  picture-in-picture window; Safari gets a painted card (question, bars,
+  answers, countdown) as video picture-in-picture; Firefox shows that card
+  as a video on the page for its own picture-in-picture button.
 - **Images travel with the deck file.** A deck whose questions have images
   exports as a ZIP (`vibears-CODE.zip`) with `deck.md` and the images next
   to it (`images/3.png`, numbered by position), named by `image:` lines in

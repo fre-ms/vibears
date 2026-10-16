@@ -1,5 +1,13 @@
 {
 	"translations": {
+		"Float results": "Ergebnis schweben lassen",
+		"Floating": "Schwebt",
+		"Show the live result in a small window that stays above other windows — above a full-screen slide show too.": "Zeigt das Live-Ergebnis in einem kleinen Fenster, das über anderen Fenstern bleibt — auch über einer Vollbild-Präsentation.",
+		"The results now float above other windows. Drag the window onto the projector.": "Das Ergebnis schwebt jetzt über anderen Fenstern. Zieh das Fenster auf den Beamer.",
+		"The floating window could not be opened.": "Das schwebende Fenster konnte nicht geöffnet werden.",
+		"Hover the video and use the browser’s own picture-in-picture button.": "Fahre mit der Maus über das Video und nutze den Bild-im-Bild-Knopf des Browsers.",
+		"Shown in full on the projector": "Vollständig auf dem Projektor zu sehen",
+		"Revealed": "Aufgedeckt",
 		"Import a deck (Markdown or ZIP)": "Deck importieren (Markdown oder ZIP)",
 		"Import from Files": "Aus Dateien importieren",
 		"Save to Files": "In Dateien speichern",

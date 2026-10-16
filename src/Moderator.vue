@@ -481,6 +481,10 @@
 							<iframe v-if="room" class="mod-frame" :style="frameStyle" :src="screenPath" :title="t('vibears', 'Preview of the projector view')" />
 						</div>
 					</div>
+					<!-- The floating results window (menu → "Float results"): the
+					     projector page in a window above every other, or the painted
+					     card where the browser cannot float a page. -->
+					<FloatResults v-if="canFloat && room" ref="float" :screen-url="floatUrl" :card="floatCardState" />
 					<!-- "Only for you" (E3): the state the room does NOT see.
 					     In fullscreen the panel is not hidden but not in the
 					     document at all — fullscreen is exactly the mode that
@@ -598,12 +602,14 @@ import PaceOpenDialog from './components/PaceOpenDialog.vue'
 import PaceDeckStatus from './components/PaceDeckStatus.vue'
 import PaceRun from './components/PaceRun.vue'
 import RichText from './components/RichText.vue'
+import FloatResults from './components/FloatResults.vue'
 import { hasRich } from './util/richtext.js'
+import { floatCard, floatMode } from './util/float.js'
 
 export default {
 	name: 'Moderator',
 	mixins: [pollingMixin],
-	components: { ResultsView, QrCode, Leaderboard, LivePlayers, TextGrading, VibearsIcon, VibearsSegmented, VibearsMenu, CountdownRing, IntakeBoard, draggable, PaceOpenDialog, PaceDeckStatus, PaceRun, RichText },
+	components: { ResultsView, QrCode, Leaderboard, LivePlayers, TextGrading, VibearsIcon, VibearsSegmented, VibearsMenu, CountdownRing, IntakeBoard, draggable, PaceOpenDialog, PaceDeckStatus, PaceRun, RichText, FloatResults },
 	data() {
 		return {
 			phase: 'start', // 'start' | 'deck' | 'present' | 'summary' | 'leaderboard' | 'pace' (run view, self-paced)
@@ -818,6 +824,20 @@ export default {
 		screenPath() {
 			return this.room ? screenPage(this.room.code) : ''
 		},
+		// ── Floating results window (util/float.js) ────────────────────
+		canFloat() {
+			return floatMode() !== 'none'
+		},
+		// The projector page as the floating window's content.
+		floatUrl() {
+			if (!this.room) return ''
+			const path = screenPage(this.room.code)
+			return window.location.origin + path + '?float=1'
+		},
+		// The painted card where the browser cannot float the page itself.
+		floatCardState() {
+			return floatCard({ poll: this.currentPoll, results: this.results, answered: this.results ? (this.results.total || 0) : 0, remaining: null })
+		},
 		canvasStyle() {
 			return { width: Math.round(1280 * this.frameScale) + 'px', height: Math.round(720 * this.frameScale) + 'px' }
 		},
@@ -962,6 +982,9 @@ export default {
 			}
 			items.push({ key: 'fs', label: this.isFullscreen ? t('vibears', 'Exit full screen') : t('vibears', 'Full screen'), icon: 'fullscreen', act: this.toggleFullscreen })
 			items.push({ key: 'beamer', label: t('vibears', 'Projector'), icon: 'beamer', act: this.openBeamer })
+			if (this.canFloat) {
+				items.push({ key: 'float', label: t('vibears', 'Float results'), icon: 'beamer', act: this.openFloat })
+			}
 			if (this.isQuiz && !this.isPractice && this.phase !== 'leaderboard') {
 				items.push({ key: 'lb', label: t('vibears', 'Leaderboard'), icon: 'ranking', act: this.openLeaderboard })
 			}
@@ -2003,6 +2026,10 @@ export default {
 		openBeamer() {
 			if (!this.room) return
 			openProjector(this.room.code)
+		},
+		// The floating results window (needs the click of the menu entry).
+		openFloat() {
+			if (this.$refs.float) this.$refs.float.open()
 		},
 		/*
 		 * Fetch the Office manifest of this instance. The server fills in the

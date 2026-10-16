@@ -67,6 +67,7 @@ jobs:
           node dev/unit/composer-limits.test.mjs
           node dev/unit/wordcloud.test.mjs
           node dev/unit/richtext.test.mjs
+          node dev/unit/float.test.mjs
 
       # css/katex/ is KaTeX's stylesheet and woff2 fonts, copied from the
       # npm package by build/vendor-katex.js; a version bump without a
