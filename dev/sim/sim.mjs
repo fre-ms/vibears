@@ -416,7 +416,10 @@ async function quizRun({ revealAtEnd, practice, label }) {
 			check(fix.status === 200, `${tag}: Korrektur im Fenster`, fix.data)
 			const fix2 = await phones[2].vote(quizAnswer(poll, true))
 			check(fix2.status === 400, `${tag}: zweite Korrektur abgelehnt`, fix2.status)
-			await sleep(3500)
+			// Das Fenster (3 s) zählt in ganzen Sekunden — wie FINAL(fw) unten: fw + 1,5 s
+			// warten, sonst hängt die Ablehnung davon ab, in welchem Sekundenbruchteil
+			// die Antwort gelandet ist (3,5 s reichten nur in etwa jedem zweiten Lauf).
+			await sleep(FINAL(3) * 1000)
 			const late = await phones[0].vote(quizAnswer(poll, false))
 			check(late.status === 400, `${tag}: Korrektur nach dem Fenster abgelehnt`, late.status)
 		}
@@ -586,7 +589,8 @@ async function quizTiming() {
 	check(!(es.data.items || []).some((it) => it.poll.question === 'Ganz neu?'), 'Quiz: bearbeitete Frage gilt als nie gezeigt', (es.data.items || []).map((it) => it.poll.question))
 	const copy = await modOk('POST', '/' + code + '/duplicate')
 	created.push(copy.code)
-	check(copy.polls.length === 2 && copy.polls.every((p) => p.status === 'active' && p.startedAt === 0) && copy.activePollId === 0, 'Duplizieren: frisches Deck')
+	// Drei Fragen im Timer-Raum (geklemmt, 5 s, ohne Limit) — die Kopie trägt alle, unberührt.
+	check(copy.polls.length === 3 && copy.polls.every((p) => p.status === 'active' && p.startedAt === 0) && copy.activePollId === 0, 'Duplizieren: frisches Deck', copy.polls.length)
 	check((await new Phone('x', copy.code).summary()).data.items.length === 0, 'Duplizieren: Kopie zeigt vorab keine Fragen')
 	await modOk('POST', '/' + code + '/reset')
 	const s3 = await a.state()
