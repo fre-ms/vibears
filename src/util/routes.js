@@ -14,7 +14,7 @@
  * under src/ and checks each path with its verb against appinfo/routes.php.
  * generateUrl() puts the webroot and, without mod_rewrite, /index.php in
  * front. A query string goes on outside it: the image's ?v= here, the CSV
- * export's view= and requesttoken= in util/csv.js (which reads the token at
+ * export's view= and requesttoken= in util/downloads.js (which reads the token at
  * call time).
  *
  * Only URLs, no requests: the axios calls stay in the views, and the public
@@ -57,6 +57,15 @@ export function roomApi(code, suffix = '') {
  */
 export function roomMarkdown(code) {
 	return generateUrl('/apps/vibears/api/1.0/rooms/' + code + '/markdown')
+}
+
+/**
+ * The deck of a quiz room as a Moodle GIFT file (GET, a download).
+ * @param {string} code room code
+ * @return {string} URL
+ */
+export function roomGift(code) {
+	return generateUrl('/apps/vibears/api/1.0/rooms/' + code + '/gift')
 }
 
 /**

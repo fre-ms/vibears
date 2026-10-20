@@ -33,16 +33,17 @@
 				     text button, not as a second outlined button next to Start. -->
 				<a class="start-join" :href="joinPagePath" target="_blank" rel="noopener">{{ t('vibears', 'Join a room') }}</a>
 
-				<!-- A deck file (Markdown with a YAML header, or the ZIP export with
-				     images — see "Export as Markdown" in a room's menu) becomes a new
-				     room. The file input stays hidden behind a labelled button; Markdown
-				     is read in the browser and sent as JSON, a ZIP goes up as an upload.
+				<!-- A deck file (Markdown with a YAML header, the ZIP export with
+				     images — see "Export as Markdown" in a room's menu — or a Moodle
+				     GIFT file) becomes a new room. The file input stays hidden behind a
+				     labelled button; text is read in the browser and sent as JSON, a
+				     ZIP goes up as an upload.
 				     "Import from Files" takes the file from the account's Files instead
 				     (Nextcloud's picker, so shared folders are in reach). -->
 				<p class="start-import">
 					<label class="vibears-btn is-secondary is-sm start-import-pick" :class="{ 'is-disabled': busy || importBusy }">
-						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ importBusy ? t('vibears', 'Importing …') : t('vibears', 'Import a deck (Markdown or ZIP)') }}
-						<input ref="importInput" class="start-import-input" type="file" accept=".md,.markdown,.txt,.zip,text/markdown,text/plain,application/zip" :disabled="busy || importBusy" @change="importDeck">
+						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ importBusy ? t('vibears', 'Importing …') : t('vibears', 'Import a deck (Markdown, ZIP or GIFT)') }}
+						<input ref="importInput" class="start-import-input" type="file" accept=".md,.markdown,.txt,.gift,.zip,text/markdown,text/plain,application/zip" :disabled="busy || importBusy" @change="importDeck">
 					</label>
 					<button v-if="filesPicker" type="button" class="vibears-btn is-secondary is-sm" :disabled="busy || importBusy" @click="importFromFiles">
 						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ t('vibears', 'Import from Files') }}
@@ -594,7 +595,7 @@ import CountdownRing from './components/CountdownRing.vue'
 import IntakeBoard from './components/IntakeBoard.vue'
 import { vibearsConfirm } from './util/confirm.js'
 import { formatCode, remainingSecs, paceStateChip, fmtAgo, fmtNum } from './util/format.js'
-import { csvUrl, downloadMarkdown } from './util/csv.js'
+import { csvUrl, downloadGift, downloadMarkdown } from './util/downloads.js'
 import { isPacedRoom, windowState, progressCounts } from './util/pace.js'
 import { QUESTION_TYPES, emptyDraft, typeOptionsFor, typeTag, scaleModeLabel, typeLabel, answerHint, lossText } from './util/question-types.js'
 import pollingMixin from './mixins/polling.js'
@@ -749,7 +750,7 @@ export default {
 			return joinPage()
 		},
 		// With the request token in the query: an <a download> sends no header,
-		// and without the token the route answered with 412 (util/csv.js).
+		// and without the token the route answered with 412 (util/downloads.js).
 		exportUrl() {
 			return this.room ? csvUrl(this.room.code) : ''
 		},
@@ -898,6 +899,10 @@ export default {
 			if (this.deck.length) {
 				items.push({ key: 'summary', label: t('vibears', 'Summary'), icon: 'poll', act: this.openSummary })
 				items.push({ key: 'md', label: t('vibears', 'Export as Markdown'), icon: 'download', act: this.exportMarkdown })
+				// GIFT holds graded questions: a quiz only.
+				if (this.isQuiz) {
+					items.push({ key: 'gift', label: t('vibears', 'Export for Moodle (GIFT)'), icon: 'download', act: this.exportGift })
+				}
 				if (this.filesPicker) {
 					items.push({ key: 'save', label: t('vibears', 'Save to Files'), icon: 'copy', disabled: this.busy, act: () => this.saveToFiles(this.room.code) })
 				}
@@ -1174,6 +1179,10 @@ export default {
 		// solutions and settings. A download, like the CSV.
 		exportMarkdown() {
 			if (this.room) downloadMarkdown(this.room.code)
+		},
+		// The same deck as a Moodle GIFT file, for a question bank.
+		exportGift() {
+			if (this.room) downloadGift(this.room.code)
 		},
 		// A deck file becomes a new room (POST /import). The file is read here
 		// and sent as text; the server answers with the room, which we open
@@ -1825,6 +1834,7 @@ export default {
 			return [
 				{ key: 'copy', label: t('vibears', 'Copy as a template'), icon: 'copy', disabled: this.busy, act: () => this.duplicateRoom(r) },
 				{ key: 'md', label: t('vibears', 'Export as Markdown'), icon: 'download', disabled: !r.pollCount, act: () => downloadMarkdown(r.code) },
+				...(r.mode === 'quiz' ? [{ key: 'gift', label: t('vibears', 'Export for Moodle (GIFT)'), icon: 'download', disabled: !r.pollCount, act: () => downloadGift(r.code) }] : []),
 				...(this.filesPicker ? [{ key: 'save', label: t('vibears', 'Save to Files'), icon: 'copy', disabled: !r.pollCount || this.busy, act: () => this.saveToFiles(r.code) }] : []),
 				{ key: 'del', label: t('vibears', 'Delete room'), icon: 'trash', act: () => this.deleteRoom(r), danger: true },
 			]

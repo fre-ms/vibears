@@ -79,7 +79,7 @@ class RoomApiErrorMapTest extends TestCase {
      * so they have no case in missingPoll() (demoSeed finds the running
      * question through the cursor and answers "No active question." itself).
      */
-    private const WITHOUT_QUESTION_LOOKUP = ['addPoll', 'create', 'demoSeed', 'duplicate', 'importFromFiles', 'importMarkdown', 'joinHost', 'pace', 'saveToFiles'];
+    private const WITHOUT_QUESTION_LOOKUP = ['addPoll', 'create', 'demoSeed', 'duplicate', 'exportGift', 'importFromFiles', 'importMarkdown', 'joinHost', 'pace', 'saveToFiles'];
 
     /** 'service::method' that throws InvalidArgumentException('x'); '' = none. */
     private string $throwAt = '';
@@ -208,6 +208,7 @@ class RoomApiErrorMapTest extends TestCase {
             'importFromFiles: file unusable' => ['importFromFiles', [], 'files::read', Http::STATUS_BAD_REQUEST],
             'importFromFiles: deck refused' => ['importFromFiles', [], 'importer::import', Http::STATUS_BAD_REQUEST],
             'saveToFiles' => ['saveToFiles', ['ABCDEF'], 'files::save', Http::STATUS_BAD_REQUEST],
+            'exportGift: a poll' => ['exportGift', ['ABCDEF'], 'export::export', Http::STATUS_BAD_REQUEST],
             // 404
             'setCurrent' => ['setCurrent', ['ABCDEF'], 'deck::setCurrent', Http::STATUS_NOT_FOUND],
             'deletePoll' => ['deletePoll', ['ABCDEF', 7], 'deck::deletePoll', Http::STATUS_NOT_FOUND],
@@ -238,7 +239,7 @@ class RoomApiErrorMapTest extends TestCase {
             }
         }
         $catching = array_values(array_unique(array_column(self::invalidArgument(), 0)));
-        $this->assertCount(20, $catching, 'actions that answer with the InvalidArgumentException message');
+        $this->assertCount(21, $catching, 'actions that answer with the InvalidArgumentException message');
         $known = array_merge($catching, self::WITHOUT_MESSAGE_ANSWER);
         sort($declared);
         sort($known);

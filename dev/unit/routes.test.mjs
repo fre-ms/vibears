@@ -18,7 +18,7 @@
 //   route, a link to a GET route. The public bundle reaches only public
 //   routes, every axios call takes one of these URLs, and the time limits
 //   are the two constants, the phone's on the public side.
-// - util/csv.js reads the request token at call time; the query keeps
+// - util/downloads.js reads the request token at call time; the query keeps
 //   view= before requesttoken=.
 // - The time limits, the projector window, and serverMessage() from
 //   src/toast.js (the `||` of the copies it replaced).
@@ -57,7 +57,7 @@ function setup({ webroot, rewrite }) {
 setup({ webroot: '', rewrite: false })
 
 const routes = await import('../../src/util/routes.js')
-const { csvUrl, markdownUrl } = await import('../../src/util/csv.js')
+const { csvUrl, giftUrl, markdownUrl } = await import('../../src/util/downloads.js')
 const { serverMessage } = await import('../../src/toast.js')
 const {
 	MOD_TIMEOUT, PHONE_TIMEOUT, roomsApi, roomApi, importApi, importFilesApi, adminRetentionApi, publicApi, pollImage,
@@ -132,8 +132,9 @@ const GOLDEN = () => [
 	['Moderator saveToFiles', 'POST', roomApi(CODE, '/files'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/files'],
 	// admin.js (administration settings)
 	['admin retention', 'POST', adminRetentionApi(), '/index.php/apps/vibears/api/1.0/admin/retention'],
-	// util/csv.js (Moderator export button, PaceRun downloads, the deck file)
+	// util/downloads.js (Moderator export button, PaceRun downloads, the deck file)
 	['markdownUrl deck file', 'GET', markdownUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/markdown?requesttoken=tok%2Fen%2B%3D'],
+	['giftUrl Moodle file', 'GET', giftUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/gift?requesttoken=tok%2Fen%2B%3D'],
 	['csvUrl results per question', 'GET', csvUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?requesttoken=tok%2Fen%2B%3D'],
 	['csvUrl players', 'GET', csvUrl(CODE, 'players'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?view=players&requesttoken=tok%2Fen%2B%3D'],
 	['csvUrl answers', 'GET', csvUrl(CODE, 'answers'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?view=answers&requesttoken=tok%2Fen%2B%3D'],
@@ -192,8 +193,8 @@ function routeOf(url, prefix, verb) {
 	return ROUTES.find((r) => r.verb === verb && r.re.test(path))
 }
 
-test('routes.php: all 49 url entries parsed, each with a verb and a controller', () => {
-	assert.equal(ROUTES.length, 49)
+test('routes.php: all 50 url entries parsed, each with a verb and a controller', () => {
+	assert.equal(ROUTES.length, 50)
 	for (const r of ROUTES) assert.match(r.verb, /^(GET|POST|PUT|DELETE)$/, r.url)
 	assert.deepEqual([...new Set(ROUTES.map((r) => r.controller))].sort(), ['addin', 'adminSettings', 'page', 'public', 'publicVote', 'roomApi'])
 	// the parser picked up the requirements: a 6-character code only
@@ -417,6 +418,8 @@ const BUILDERS = {
 	downloadCsv: { code: true, paths: () => [csvUrl(CODE)] }, // location.assign(csvUrl(code, view))
 	markdownUrl: { code: true, paths: () => [markdownUrl(CODE)] },
 	downloadMarkdown: { code: true, paths: () => [markdownUrl(CODE)] }, // location.assign(markdownUrl(code))
+	giftUrl: { code: true, paths: () => [giftUrl(CODE)] },
+	downloadGift: { code: true, paths: () => [giftUrl(CODE)] }, // location.assign(giftUrl(code))
 	importApi: { paths: () => [importApi()] },
 	importFilesApi: { paths: () => [importFilesApi()] },
 	adminRetentionApi: { paths: () => [adminRetentionApi()] },
@@ -555,7 +558,7 @@ test('call sites: every path with its verb resolves in routes.php (requests: an 
 
 test('call sites: the public bundle reaches only public routes', () => {
 	for (const f of ['src/Participant.vue', 'src/Screen.vue', 'src/mixins/pace-phone.js']) assert.ok(PUBLIC_FILES.has(f), f)
-	for (const f of ['src/Moderator.vue', 'src/components/PaceRun.vue', 'src/util/csv.js', 'src/mixins/progress-poll.js']) {
+	for (const f of ['src/Moderator.vue', 'src/components/PaceRun.vue', 'src/util/downloads.js', 'src/mixins/progress-poll.js']) {
 		assert.ok(MAIN_FILES.has(f) && !PUBLIC_FILES.has(f), f)
 	}
 	const wrong = []

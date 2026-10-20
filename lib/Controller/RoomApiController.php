@@ -167,6 +167,18 @@ class RoomApiController extends Controller {
     }
 
     /**
+     * The deck as a Moodle GIFT file (DeckGift) for a question bank; a
+     * poll has nothing to grade and is a 400 with a message.
+     */
+    #[NoAdminRequired]
+    public function exportGift(string $code): Response {
+        return $this->withRoom($code, function ($room) {
+            $file = $this->deckExport->export($room, 'gift');
+            return new DataDownloadResponse($file['content'], 'vibears-' . $room->getCode() . '.' . $file['ext'], $file['mime']);
+        }, Http::STATUS_BAD_REQUEST);
+    }
+
+    /**
      * A new room from a deck file. Body: { markdown: string }, or the file
      * itself (Markdown, or the ZIP export with images) as the upload
      * `file`. Counts against the room rate limit (it creates one) and the
@@ -210,17 +222,19 @@ class RoomApiController extends Controller {
 
     /**
      * The deck file written into a folder of the account's Files. Body:
-     * { folder } (relative to the account's root, "/" for the root). The
-     * file is named after the room's title (DeckExportService::fileStem)
-     * and gets " (2)" and so on when the name is taken; answers
-     * { path, name }. 400 with a message for a folder that is not there or
-     * not writable.
+     * { folder, format? } (the folder relative to the account's root, "/"
+     * for the root; format "gift" for the Moodle file, otherwise the deck
+     * file). The file is named after the room's title
+     * (DeckExportService::fileStem) and gets " (2)" and so on when the name
+     * is taken; answers { path, name }. 400 with a message for a folder
+     * that is not there or not writable, or GIFT of a poll.
      */
     #[NoAdminRequired]
     public function saveToFiles(string $code): Response {
         return $this->withRoom($code, function ($room) {
             $folder = Input::str($this->request->getParam('folder'), '/');
-            $file = $this->deckExport->export($room);
+            $format = Input::str($this->request->getParam('format')) === 'gift' ? 'gift' : 'markdown';
+            $file = $this->deckExport->export($room, $format);
             $path = $this->files->save($this->uid(), $folder, DeckExportService::fileStem($room) . '.' . $file['ext'], $file['content']);
             return new JSONResponse(['path' => $path, 'name' => basename($path)]);
         }, Http::STATUS_BAD_REQUEST);

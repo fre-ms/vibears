@@ -21,15 +21,22 @@ class DeckExportService {
         private DeckService $deckService,
         private DeckMarkdown $markdown,
         private DeckArchive $archive,
+        private DeckGift $gift,
         private PollImageService $images,
     ) {
     }
 
     /**
-     * @return array{content: string, ext: string, mime: string} ext is md or zip
+     * @param string $format 'markdown' (the deck file, .md or .zip with
+     *        images) or 'gift' (Moodle GIFT, quiz rooms only)
+     * @return array{content: string, ext: string, mime: string} ext is md, zip or gift
+     * @throws \InvalidArgumentException GIFT of a poll
      */
-    public function export(Room $room): array {
+    public function export(Room $room, string $format = 'markdown'): array {
         $polls = array_values($this->deckService->deck($room));
+        if ($format === 'gift') {
+            return ['content' => $this->gift->export($room, $polls), 'ext' => 'gift', 'mime' => 'text/plain; charset=utf-8'];
+        }
         $paths = [];
         $files = [];
         foreach ($polls as $i => $poll) {

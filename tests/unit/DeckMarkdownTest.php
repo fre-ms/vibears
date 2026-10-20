@@ -8,24 +8,19 @@ declare(strict_types=1);
 namespace OCA\Vibears\Tests\Unit;
 
 use OCA\Vibears\Db\Poll;
-use OCA\Vibears\Db\PollMapper;
 use OCA\Vibears\Db\Room;
 use OCA\Vibears\Db\RoomMapper;
-use OCA\Vibears\Service\CodeGenerator;
 use OCA\Vibears\Service\DeckArchive;
+use OCA\Vibears\Service\DeckGift;
 use OCA\Vibears\Service\DeckImportService;
 use OCA\Vibears\Service\DeckMarkdown;
 use OCA\Vibears\Service\DeckService;
-use OCA\Vibears\Service\Limits;
 use OCA\Vibears\Service\PollImageService;
 use OCA\Vibears\Service\RoomService;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IAppConfig;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 /**
  * The deck file (DeckMarkdown): what the export writes is what the import
@@ -41,42 +36,15 @@ use ReflectionProperty;
 #[CoversClass(DeckMarkdown::class)]
 #[CoversClass(DeckImportService::class)]
 class DeckMarkdownTest extends TestCase {
+    use DeckServiceFixture;
 
     private DeckMarkdown $format;
     private DeckService $deck;
-    private int $nextId = 1;
 
     protected function setUp(): void {
-        $l10n = $this->createMock(IL10N::class);
-        $l10n->method('t')->willReturnCallback(static fn (string $text, array $params = []): string => vsprintf($text, $params));
+        $l10n = $this->englishL10n();
         $this->format = new DeckMarkdown($l10n);
-
-        $polls = $this->createMock(PollMapper::class);
-        $polls->method('insert')->willReturnCallback(function (Poll $poll): Poll {
-            $poll->setId($this->nextId++);
-            return $poll;
-        });
-        $polls->method('nextPosition')->willReturn(0);
-        $polls->method('countByRoom')->willReturn(0);
-
-        $n = 0;
-        $codes = $this->createMock(CodeGenerator::class);
-        $codes->method('optionId')->willReturnCallback(static function () use (&$n): string {
-            return 'ID' . str_pad((string)(++$n), 3, '0', STR_PAD_LEFT);
-        });
-        $time = $this->createMock(ITimeFactory::class);
-        $time->method('getTime')->willReturn(5000);
-
-        $this->deck = (new \ReflectionClass(DeckService::class))->newInstanceWithoutConstructor();
-        foreach ([
-            'pollMapper' => $polls,
-            'codeGenerator' => $codes,
-            'timeFactory' => $time,
-            'l10n' => $l10n,
-            'limits' => new Limits($this->createMock(IAppConfig::class)),
-        ] as $name => $value) {
-            (new ReflectionProperty(DeckService::class, $name))->setValue($this->deck, $value);
-        }
+        $this->deck = $this->deckService($l10n);
     }
 
     // ── Round trip ──────────────────────────────────────────────────────────
@@ -425,12 +393,35 @@ class DeckMarkdownTest extends TestCase {
         }
     }
 
-    private function importer(RoomService $rooms, DeckService $deck, RoomMapper $mapper, ?DeckArchive $archive = null, ?PollImageService $images = null): DeckImportService {
+    public function testImportTellsTheMarkdownFileFromAGiftFile(): void {
+        $deckOf = static fn (string $q): array => ['title' => '', 'mode' => 'quiz', 'revealAtEnd' => false, 'pace' => 'live', 'timed' => true, 'feedback' => 'each', 'questions' => [['type' => 'truefalse', 'question' => $q, 'correctIndex' => 0, 'timeLimit' => 30]]];
+        $gift = $this->createMock(DeckGift::class);
+        $gift->expects($this->once())->method('parse')->with("Water boils? {T}\n")->willReturn($deckOf('from gift'));
+        $rooms = $this->createMock(RoomService::class);
+        $rooms->method('createRoom')->willReturn($this->room('quiz'));
+        $deck = $this->createMock(DeckService::class);
+        $questions = [];
+        $deck->method('addPoll')->willReturnCallback(static function (Room $room, array $body) use (&$questions): Poll {
+            $questions[] = $body['question'];
+            return new Poll();
+        });
+        $importer = $this->importer($rooms, $deck, $this->createMock(RoomMapper::class), null, null, $gift);
+
+        $importer->import('alice', "Water boils? {T}\n");
+        $importer->import('alice', "\xEF\xBB\xBF  ---\nmode: quiz\n---\n## From markdown\n- [x] 1\n- 2\n");
+
+        $this->assertSame(['from gift', 'From markdown'], $questions, 'the header decides, a BOM or blanks before it do not');
+    }
+
+    private function importer(RoomService $rooms, DeckService $deck, RoomMapper $mapper, ?DeckArchive $archive = null, ?PollImageService $images = null, ?DeckGift $gift = null): DeckImportService {
         $l10n = $this->createMock(IL10N::class);
         $l10n->method('t')->willReturnCallback(static fn (string $text, array $params = []): string => vsprintf($text, $params));
         return new DeckImportService(
             $this->format,
             $archive ?? $this->createMock(DeckArchive::class),
+            // The real reader: a text without the Markdown header is GIFT, and
+            // one that is neither is refused by it.
+            $gift ?? new DeckGift($l10n),
             $rooms,
             $deck,
             $images ?? $this->createMock(PollImageService::class),

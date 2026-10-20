@@ -118,7 +118,7 @@ class DeckMarkdown {
         $out[] = '-->';
         foreach ($polls as $poll) {
             $out[] = '';
-            $out[] = '## ' . self::oneLine($poll->getQuestion());
+            $out[] = '## ' . DeckText::oneLine($poll->getQuestion());
             $out[] = 'type: ' . $poll->getType();
             if ($quiz) {
                 $out[] = 'time: ' . ($poll->getTimeLimit() > 0 ? (string)$poll->getTimeLimit() : 'none');
@@ -142,7 +142,7 @@ class DeckMarkdown {
                 foreach ($poll->getOptionsArray() as $o) {
                     $lines[] = $quiz
                         ? self::checkItem($o['id'] === $poll->getCorrectOption(), $o['label'])
-                        : '- ' . self::oneLine($o['label']);
+                        : '- ' . DeckText::oneLine($o['label']);
                 }
                 break;
             case 'truefalse':
@@ -157,7 +157,7 @@ class DeckMarkdown {
                 break;
             case 'rank':
                 foreach (array_values($poll->getOptionsArray()) as $i => $o) {
-                    $lines[] = ($i + 1) . '. ' . self::oneLine($o['label']);
+                    $lines[] = ($i + 1) . '. ' . DeckText::oneLine($o['label']);
                 }
                 break;
             case 'match':
@@ -172,16 +172,16 @@ class DeckMarkdown {
                     $right = isset($map[$item['id']]) && isset($targetLabel[$map[$item['id']]])
                         ? $targetLabel[$map[$item['id']]]
                         : ($match['targets'][$i]['label'] ?? '');
-                    $lines[] = '- ' . self::oneLine($item['label']) . ' → ' . self::oneLine($right);
+                    $lines[] = '- ' . DeckText::oneLine($item['label']) . ' → ' . DeckText::oneLine($right);
                 }
                 break;
             case 'number':
-                $lines[] = 'target: ' . self::number($key['target'] ?? 0);
-                $lines[] = 'tolerance: ' . self::number($key['tolerance'] ?? 0);
+                $lines[] = 'target: ' . DeckText::number($key['target'] ?? 0);
+                $lines[] = 'tolerance: ' . DeckText::number($key['tolerance'] ?? 0);
                 break;
             case 'text':
                 foreach ((array)($key['accepted'] ?? []) as $answer) {
-                    $lines[] = '- ' . self::oneLine((string)$answer);
+                    $lines[] = '- ' . DeckText::oneLine((string)$answer);
                 }
                 break;
             case 'words':
@@ -193,22 +193,22 @@ class DeckMarkdown {
                 if ($scale['mode'] === 'spectrum') {
                     $lines[] = 'scaleMax: ' . $scale['max'];
                     foreach ($scale['aspects'] ?? [] as $a) {
-                        $lines[] = '- ' . self::oneLine($a['label']) . ' | ' . self::oneLine($a['poleLow']) . ' | ' . self::oneLine($a['poleHigh']);
+                        $lines[] = '- ' . DeckText::oneLine($a['label']) . ' | ' . DeckText::oneLine($a['poleLow']) . ' | ' . DeckText::oneLine($a['poleHigh']);
                     }
                 } elseif ($scale['mode'] === 'compass') {
                     $lines[] = 'range: ' . $scale['range'];
                     $lines[] = 'axisX: ' . self::axis($scale['axisX']);
                     $lines[] = 'axisY: ' . self::axis($scale['axisY']);
                     $corners = $scale['cornerLabels'] + ['', '', '', ''];
-                    $lines[] = 'cornerBottomLeft: ' . self::oneLine($corners[0]);
-                    $lines[] = 'cornerBottomRight: ' . self::oneLine($corners[1]);
-                    $lines[] = 'cornerTopLeft: ' . self::oneLine($corners[2]);
-                    $lines[] = 'cornerTopRight: ' . self::oneLine($corners[3]);
+                    $lines[] = 'cornerBottomLeft: ' . DeckText::oneLine($corners[0]);
+                    $lines[] = 'cornerBottomRight: ' . DeckText::oneLine($corners[1]);
+                    $lines[] = 'cornerTopLeft: ' . DeckText::oneLine($corners[2]);
+                    $lines[] = 'cornerTopRight: ' . DeckText::oneLine($corners[3]);
                     $lines[] = 'heatmapThreshold: ' . $scale['heatmapThreshold'];
                 } else {
                     $lines[] = 'scaleMax: ' . $scale['max'];
-                    $lines[] = 'minLabel: ' . self::oneLine($scale['minLabel']);
-                    $lines[] = 'maxLabel: ' . self::oneLine($scale['maxLabel']);
+                    $lines[] = 'minLabel: ' . DeckText::oneLine($scale['minLabel']);
+                    $lines[] = 'maxLabel: ' . DeckText::oneLine($scale['maxLabel']);
                 }
                 break;
         }
@@ -216,22 +216,12 @@ class DeckMarkdown {
     }
 
     private static function checkItem(bool $checked, string $label): string {
-        return '- [' . ($checked ? 'x' : ' ') . '] ' . self::oneLine($label);
+        return '- [' . ($checked ? 'x' : ' ') . '] ' . DeckText::oneLine($label);
     }
 
     /** @param array{title:string,poleLow:string,poleHigh:string} $axis */
     private static function axis(array $axis): string {
-        return self::oneLine($axis['title']) . ' | ' . self::oneLine($axis['poleLow']) . ' | ' . self::oneLine($axis['poleHigh']);
-    }
-
-    /** One line of text: a label or question never spans lines in the file. */
-    private static function oneLine(string $s): string {
-        return trim(preg_replace('/\s*[\r\n]+\s*/', ' ', $s) ?? $s);
-    }
-
-    private static function number(int|float|string $v): string {
-        $n = (float)$v;
-        return $n === floor($n) && abs($n) < 1e15 ? (string)(int)$n : (string)$n;
+        return DeckText::oneLine($axis['title']) . ' | ' . DeckText::oneLine($axis['poleLow']) . ' | ' . DeckText::oneLine($axis['poleHigh']);
     }
 
     /** A header value: strings always double-quoted, so a title like "yes" or "1" stays text. */
@@ -242,7 +232,7 @@ class DeckMarkdown {
         if (is_int($v)) {
             return (string)$v;
         }
-        return '"' . str_replace(['\\', '"'], ['\\\\', '\\"'], self::oneLine($v)) . '"';
+        return '"' . str_replace(['\\', '"'], ['\\\\', '\\"'], DeckText::oneLine($v)) . '"';
     }
 
     // ── Import ──────────────────────────────────────────────────────────────

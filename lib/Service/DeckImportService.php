@@ -27,6 +27,7 @@ class DeckImportService {
     public function __construct(
         private DeckMarkdown $format,
         private DeckArchive $archive,
+        private DeckGift $gift,
         private RoomService $roomService,
         private DeckService $deckService,
         private PollImageService $images,
@@ -36,7 +37,9 @@ class DeckImportService {
     }
 
     /**
-     * @param string $content the file: Markdown, or the ZIP export
+     * @param string $content the file: Markdown with its YAML header, the ZIP
+     *        export, or a Moodle GIFT file (anything that does not start with
+     *        the header is read as GIFT)
      * @throws \InvalidArgumentException the file, a cap, or a question (with its number)
      */
     public function import(string $uid, string $content): Room {
@@ -46,7 +49,7 @@ class DeckImportService {
             $content = $read['markdown'];
             $images = $read['images'];
         }
-        $deck = $this->format->parse($content);
+        $deck = self::isMarkdown($content) ? $this->format->parse($content) : $this->gift->parse($content);
         $room = $this->roomService->createRoom($uid, $deck['mode'], $deck['title']);
         try {
             $this->applyFlow($room, $deck);
@@ -71,6 +74,14 @@ class DeckImportService {
             throw $e;
         }
         return $room;
+    }
+
+    /** The Markdown deck file starts with its YAML header; everything else is GIFT. */
+    public static function isMarkdown(string $content): bool {
+        if (str_starts_with($content, "\xEF\xBB\xBF")) {
+            $content = substr($content, 3);
+        }
+        return str_starts_with(ltrim($content), '---');
     }
 
     /**

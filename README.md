@@ -377,6 +377,34 @@ counts as the deck when it is not called `deck.md`. Limits: 50 MB for the
 archive, 5 MB per image (the upload limit), 300 entries. `DeckArchive`
 reads and writes it, `DeckExportService` decides between `.md` and `.zip`.
 
+### Moodle GIFT
+
+A quiz room's menu offers **Export for Moodle (GIFT)**: the deck as a
+[GIFT](https://docs.moodle.org/en/GIFT_format) file (`vibears-CODE.gift`),
+which Moodle's question bank imports (format: GIFT), and which "Import a
+deck" and "Import from Files" take back — anything that is not the
+Markdown deck file or its ZIP is read as GIFT and always makes a quiz.
+
+| vibeARS | GIFT |
+|---|---|
+| multiple choice | `{=Jupiter ~Saturn ~Earth}` |
+| true/false | `{TRUE}`, `{FALSE}` |
+| multiple answers | `{~%50%2 ~%50%3 ~%-100%4}` (the share per key from Moodle's list, a wrong pick cancels the question) |
+| number guess | `{#1989:1}` (target:tolerance); `{#1..5}` reads as the middle with half the span |
+| free text | `{=Goethe =Johann Wolfgang von Goethe}` |
+| matching | `{=Paris -> France =Berlin -> Germany}` |
+| ranking | `{=1 -> Mercury =2 -> Venus}` — positions to items; it comes back as matching |
+
+Question names (`::name::`), feedback (`#…`), categories and comments are
+read and dropped; an `[html]` question loses its tags, a `[markdown]` one
+keeps its markup, which vibeARS renders. GIFT has no time per question, so
+every imported question gets the composer's default. A block that cannot be
+a question here — a description without an answer block, an essay without
+an answer to check, a choice without a key — is refused with its number
+and line, and nothing is stored. The export refuses a poll: GIFT holds
+graded questions. `DeckGift` writes and reads the format, tested in
+`tests/unit/DeckGiftTest.php` against Moodle's own documentation examples.
+
 ### Deck files in Nextcloud Files
 
 - **Save to Files** (a room's menu, in the deck and under "My rooms") writes

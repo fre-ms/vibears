@@ -21,6 +21,8 @@ return [
         ['name' => 'roomApi#exportCsv',  'url' => '/api/1.0/rooms/{code}/export',         'verb' => 'GET', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         // The deck as a file (Markdown with a YAML header) and a new room from one
         ['name' => 'roomApi#exportMarkdown', 'url' => '/api/1.0/rooms/{code}/markdown',   'verb' => 'GET', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
+        // The same deck as a Moodle GIFT file (quiz rooms)
+        ['name' => 'roomApi#exportGift',     'url' => '/api/1.0/rooms/{code}/gift',       'verb' => 'GET', 'requirements' => ['code' => '[A-Za-z0-9]{6}']],
         ['name' => 'roomApi#importMarkdown', 'url' => '/api/1.0/import',                  'verb' => 'POST'],
         // The deck file in the account's Files: a new room from one (POST { path }),
         // and the export written into a folder (POST { folder } → { path, name })

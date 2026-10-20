@@ -21,7 +21,7 @@ const ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width=
 	+ '<path d="M2.5 1.75h11a1.75 1.75 0 0 1 1.75 1.75v6.5a1.75 1.75 0 0 1-1.75 1.75H7.2L3.9 14.4v-2.65H2.5A1.75 1.75 0 0 1 .75 10V3.5A1.75 1.75 0 0 1 2.5 1.75z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>'
 	+ '<path d="M5 8.75V7.25M8 8.75V5.25M11 8.75V3.75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
 
-const isDeckFile = (node) => node && node.type === FileType.File && /\.(md|markdown|zip)$/i.test(node.basename || '')
+const isDeckFile = (node) => node && node.type === FileType.File && /\.(md|markdown|zip|gift)$/i.test(node.basename || '')
 
 function toast(kind, text) {
 	const api = window.OCP && window.OCP.Toast

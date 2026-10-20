@@ -23,7 +23,7 @@ the section "Engine follow-up round" before "Known and open".
 | Step | Content | Status |
 |---|---|---|
 | 4.0 | Starting point: baseline `out-pre-pace-ui`, sim, brute-force counter | done |
-| 4.1 | Foundations: `util/pace.js`, `util/csv.js`, icons, tokens, additive props on the building blocks, two German translation fixes, probe commands | done |
+| 4.1 | Foundations: `util/pace.js`, `util/downloads.js`, icons, tokens, additive props on the building blocks, two German translation fixes, probe commands | done |
 | 4.2 | Self-paced deck, switch, open dialog, status in the deck, room list | done |
 | 4.3a | Run view: header, table, joining, main action, stop without releasing | done |
 | 4.3b | Run view: free-text grading, removing, menu, projector preview, summary | done |
@@ -57,7 +57,7 @@ room.pace === 'self'`; phone/projector: `data.room.pace === 'self'`).
 | Area | File |
 |---|---|
 | Pure rules without a browser: window state, deadlines, presets, phone cards, `canNext`, polling intervals, race rows, counts from `/progress` | `src/util/pace.js` (test: `dev/unit/pace.test.mjs`) |
-| CSV with the request token in the query (otherwise 412) | `src/util/csv.js` |
+| CSV with the request token in the query (otherwise 412) | `src/util/downloads.js` |
 | URLs and request time limits (15 s moderator, 10 s phone and projector) | `src/util/routes.js` (test: `dev/unit/routes.test.mjs`) |
 | Deadlines, durations, "x min ago", state chip | `src/util/format.js` (`fmtDeadline`, `fmtDuration`, `fmtAgo`, `paceStateChip`) |
 | Switch, locks, deck header, counts for confirmations, errors/409 | `src/Moderator.vue` (`deckMenu`, `paceLock`, `deckPrimary`, `fetchCounts`, `failWrite`, `refreshRoom`); the loss sentence `lossText` in `src/util/question-types.js` |

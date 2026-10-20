@@ -2452,7 +2452,7 @@ async function paceRunClicks(s, dl) {
 	})
 	previewMarks()
 
-	// 8. CSV in the browser (§6.2): the address as in src/util/csv.js csvUrl() (route +
+	// 8. CSV in the browser (§6.2): the address as in src/util/downloads.js csvUrl() (route +
 	// view + requesttoken in the query) -> 200 + text/csv; without the token 412.
 	const csv = await s.async(`
 		const done = arguments[arguments.length - 1]

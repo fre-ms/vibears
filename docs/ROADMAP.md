@@ -38,8 +38,9 @@ students, questions of exam quality, decks kept for several semesters.
 - **Analysis:** ~~only distributions and CSV, no figures per question.~~ (done,
   see rank 1) No report per person across several runs.
 - **Author comfort:** no question bank with folders and tags inside the
-  app, no import from Excel, Moodle or Kahoot, no AI generation, English
-  and German only. ~~No sharing of decks with colleagues.~~ (done, see
+  app, no import from Excel or Kahoot, no AI generation, English and
+  German only. ~~No import from Moodle.~~ (done, see rank 11: GIFT in both
+  directions) ~~No sharing of decks with colleagues.~~ (done, see
   rank 7: deck files live in Nextcloud Files and travel with its shares)
 - **Platform:** no LMS integration, no real-time push, no device switch in a
   self-paced quiz, no study modes such as flashcards. ~~No way to show the
@@ -64,7 +65,7 @@ the architecture (anonymous participants, polling, Nextcloud conventions).
 | 8 | Images in the deck export, a ZIP with the Markdown and an image folder | small to medium | Closes the documented gap and makes rank 7 complete. | done (unreleased) |
 | 9 | Audience questions with upvotes and moderation | medium | Slido's core feature. New entity, moderation view, projector display. | planned |
 | 10 | Open-text poll with cards on the projector and optional voting | medium | Kahoot's Brainstorm and Open-ended. The release logic of `TextGrading` can be reused; moderation against abuse is a must. | planned |
-| 11 | Import from Moodle GIFT, the Kahoot Excel template and CSV | small to medium per format | Everything maps onto the existing Markdown model. GIFT first, because university question banks live there. | planned |
+| 11 | Import from Moodle GIFT, the Kahoot Excel template and CSV | small to medium per format | Everything maps onto the existing Markdown model. GIFT first, because university question banks live there. | GIFT done, import and export (unreleased); Excel and CSV planned |
 | 12 | Images as answer options | medium | Storage budget and re-encoding exist. Touches phone, projector, results and export. | planned |
 | 13 | Confidence rating on an answer | small to medium | Kahoot introduced it in 2026. Didactically rewarding, shows gaps in knowledge. | planned |
 | 14 | Image hotspot, poll and quiz variant | medium | Coordinates, target region, heat map. The compass type's heat map can be reused. | planned |

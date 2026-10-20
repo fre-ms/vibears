@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 /*
- * vibeARS — the moderator's downloads (CSV, the deck as Markdown) with a
- * request token.
+ * vibeARS — the moderator's downloads (CSV, the deck file as Markdown or
+ * ZIP, the Moodle GIFT file) with a request token.
  *
  * The export route only has #[NoAdminRequired]; Nextcloud's SecurityMiddleware
  * therefore requires a request token. An <a href download> or
@@ -13,7 +13,7 @@
  * CHANGELOG 0.17 fixed for the image route). Request::passesCSRFCheck
  * also reads `requesttoken` from the query, though, so that is where it goes.
  */
-import { roomApi, roomMarkdown } from './routes.js'
+import { roomApi, roomGift, roomMarkdown } from './routes.js'
 import { getRequestToken } from '@nextcloud/auth'
 
 /**
@@ -54,4 +54,21 @@ export function markdownUrl(code) {
  */
 export function downloadMarkdown(code) {
 	window.location.assign(markdownUrl(code))
+}
+
+/**
+ * URL of the Moodle GIFT file of a quiz, token read at call time.
+ * @param {string} code room code
+ * @return {string} URL with request token
+ */
+export function giftUrl(code) {
+	return roomGift(code) + '?requesttoken=' + encodeURIComponent(getRequestToken() || '')
+}
+
+/**
+ * Download the Moodle GIFT file (buttons without <a>).
+ * @param {string} code room code
+ */
+export function downloadGift(code) {
+	window.location.assign(giftUrl(code))
 }

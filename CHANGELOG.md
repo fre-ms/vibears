@@ -11,6 +11,17 @@ notes of a version from its section here, so every version needs an entry.
 ## [Unreleased]
 
 ### Added
+- **Moodle GIFT import and export.** "Export for Moodle (GIFT)" in a quiz
+  room's menu writes the deck as a GIFT file for Moodle's question bank;
+  the import takes GIFT files as well (the file input, "Import from Files"
+  and the Files app's action), always as a quiz. Multiple choice, true/
+  false, multiple answers (weighted), number guess (with tolerance), free
+  text and matching map one to one; a ranking goes out as matching of
+  positions to items. Names, feedback, categories, comments, escapes, the
+  `[html]` prefix, the missing-word form and numerical ranges are read as
+  Moodle writes them; a description, an essay or a choice without a key is
+  refused with its number and line. New route
+  `GET /api/1.0/rooms/{code}/gift`; "Save to Files" takes `format: gift`.
 - **Floating results window.** "Float results" on the projector page (a
   corner button) and in the moderator's menu while presenting opens the
   live result in a small window that the browser keeps above every other

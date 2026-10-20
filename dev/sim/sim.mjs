@@ -556,8 +556,11 @@ async function quizRun({ revealAtEnd, practice, label }) {
 async function quizTiming() {
 	console.log('\n=== Quiz: Timer, Wieder öffnen, Bearbeiten ===')
 	const { code } = await newRoom('quiz', 'SIM Timer')
-	const p0 = await modOk('POST', '/' + code + '/polls', { type: 'choice', question: 'Zeit?', options: ['a', 'b'], correctIndex: 0, timeLimit: 0 })
+	// 0 = kein Limit (seit 0.20.0, DeckService::NO_LIMIT); alles andere wird auf 5…300 s geklemmt.
+	const p0 = await modOk('POST', '/' + code + '/polls', { type: 'choice', question: 'Zeit?', options: ['a', 'b'], correctIndex: 0, timeLimit: 2 })
 	check(p0.timeLimit === 5, 'Quiz: Zeitlimit wird auf mindestens 5 s geklemmt (UI bietet 10–90 s)', p0.timeLimit)
+	const pInf = await modOk('POST', '/' + code + '/polls', { type: 'choice', question: 'Ohne Limit?', options: ['a', 'b'], correctIndex: 0, timeLimit: 0 })
+	check(pInf.timeLimit === 0, 'Quiz: Zeitlimit 0 bleibt 0 (kein Limit, der Moderator beendet die Frage)', pInf.timeLimit)
 	const p1 = await modOk('POST', '/' + code + '/polls', { type: 'choice', question: 'Schnell?', options: ['a', 'b'], correctIndex: 0, timeLimit: 5 })
 	const a = new Phone('T1', code)
 	await a.join('T1')
