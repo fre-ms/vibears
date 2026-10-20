@@ -52,7 +52,7 @@ function pick(title, mimetypes, directories) {
 		try {
 			window.OC.dialogs.filepicker(title, done, false, mimetypes, true, TYPE_CHOOSE(), directories ? '/' : undefined, {
 				allowDirectoryChooser: directories,
-				filter: directories ? undefined : (node) => /\.(md|markdown|zip|gift|txt)$/i.test(node.basename || node.name || ''),
+				filter: directories ? undefined : (node) => /\.(md|markdown|zip|gift|txt|csv|xlsx)$/i.test(node.basename || node.name || ''),
 			})
 		} catch (e) {
 			console.warn('vibeARS: the file picker could not be opened', e)

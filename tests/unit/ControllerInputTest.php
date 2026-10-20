@@ -186,6 +186,7 @@ class ControllerInputTest extends TestCase {
             'demoClear' => ['demoClear', $c, false],
             'exportMarkdown' => ['exportMarkdown', $c, false],
             'exportGift' => ['exportGift', $c, false],
+            'exportTable' => ['exportTable', $c, false],
             'importMarkdown' => ['importMarkdown', [], false],
             'importFromFiles' => ['importFromFiles', [], false],
             'saveToFiles' => ['saveToFiles', $c, false],

@@ -13,7 +13,7 @@
  * CHANGELOG 0.17 fixed for the image route). Request::passesCSRFCheck
  * also reads `requesttoken` from the query, though, so that is where it goes.
  */
-import { roomApi, roomGift, roomMarkdown } from './routes.js'
+import { roomApi, roomGift, roomMarkdown, roomTable } from './routes.js'
 import { getRequestToken } from '@nextcloud/auth'
 
 /**
@@ -71,4 +71,21 @@ export function giftUrl(code) {
  */
 export function downloadGift(code) {
 	window.location.assign(giftUrl(code))
+}
+
+/**
+ * URL of the deck as a CSV table, token read at call time.
+ * @param {string} code room code
+ * @return {string} URL with request token
+ */
+export function tableUrl(code) {
+	return roomTable(code) + '?requesttoken=' + encodeURIComponent(getRequestToken() || '')
+}
+
+/**
+ * Download the deck as a CSV table (buttons without <a>).
+ * @param {string} code room code
+ */
+export function downloadTable(code) {
+	window.location.assign(tableUrl(code))
 }

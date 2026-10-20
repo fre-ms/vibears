@@ -39,6 +39,7 @@ class RoutesTest extends TestCase {
         ['roomApi#exportCsv', '/api/1.0/rooms/{code}/export', 'GET'],
         ['roomApi#exportMarkdown', '/api/1.0/rooms/{code}/markdown', 'GET'],
         ['roomApi#exportGift', '/api/1.0/rooms/{code}/gift', 'GET'],
+        ['roomApi#exportTable', '/api/1.0/rooms/{code}/table', 'GET'],
         ['roomApi#importMarkdown', '/api/1.0/import', 'POST'],
         ['roomApi#importFromFiles', '/api/1.0/import/files', 'POST'],
         ['roomApi#saveToFiles', '/api/1.0/rooms/{code}/files', 'POST'],
@@ -110,7 +111,7 @@ class RoutesTest extends TestCase {
             $withCode += isset($expected['code']) ? 1 : 0;
             $withPollId += isset($expected['pollId']) ? 1 : 0;
         }
-        $this->assertSame(41, $withCode, 'routes with {code}');
+        $this->assertSame(42, $withCode, 'routes with {code}');
         $this->assertSame(11, $withPollId, 'routes with {pollId}');
     }
 

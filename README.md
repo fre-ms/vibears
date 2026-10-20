@@ -405,6 +405,42 @@ and line, and nothing is stored. The export refuses a poll: GIFT holds
 graded questions. `DeckGift` writes and reads the format, tested in
 `tests/unit/DeckGiftTest.php` against Moodle's own documentation examples.
 
+### CSV and Kahoot!'s spreadsheet template
+
+**Export as CSV (spreadsheet)** in a room's menu writes the deck as a
+comma-separated table (`vibears-CODE-deck.csv`, UTF-8 with a BOM) with the
+columns of Kahoot!'s quiz template plus a type column:
+
+```
+Type,Question,Answer 1,Answer 2,Answer 3,Answer 4,Correct answer(s),Time limit (sec)
+choice,Which planet is the largest?,Jupiter,Saturn,Earth,,1,20
+multi,Which are prime numbers?,2,3,4,9,"1,2",30
+truefalse,Water boils at 100 °C at sea level.,True,False,,,1,15
+number,In which year did the Berlin Wall fall?,1989,1,,,,30
+text,"Who wrote ""Faust""?",Goethe,Johann Wolfgang von Goethe,,,,60
+rank,Order the planets.,Mercury,Venus,Earth,,,45
+match,Match capital and country.,Paris -> France,Berlin -> Germany,,,,60
+```
+
+The import reads such a table back — as CSV with a comma, semicolon or
+tab, or as an `.xlsx` workbook: Kahoot!'s own template
+(`KahootQuizTemplate.xlsx`, filled in and uploaded as it is) or any sheet
+with those headers. The header row is found by its "Question" column
+wherever it sits (the template has seven rows of instructions above it),
+the other columns by their headers, in German as well. Without a Type
+column the type is inferred the way the template means it: one correct
+answer is multiple choice, several are multiple answers, "True"/"False" is
+true/false; correct answers are numbers, letters or the answer's text. A
+sheet without any correct answer becomes a poll; a number question takes
+the target and the tolerance as its first two answers, a word cloud the
+number of words, a single scale its maximum and the two pole labels. A row
+that cannot be stored is refused with its row number, and nothing is
+stored. The `.xlsx` reader is small on purpose — the first sheet, shared
+and inline strings, numbers; no formulas, nothing loaded from outside the
+file, every part capped — and lives with the rest in `DeckTable`, tested in
+`tests/unit/DeckTableTest.php` against a template built the way Excel
+writes it.
+
 ### Deck files in Nextcloud Files
 
 - **Save to Files** (a room's menu, in the deck and under "My rooms") writes

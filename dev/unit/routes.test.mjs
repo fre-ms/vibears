@@ -57,7 +57,7 @@ function setup({ webroot, rewrite }) {
 setup({ webroot: '', rewrite: false })
 
 const routes = await import('../../src/util/routes.js')
-const { csvUrl, giftUrl, markdownUrl } = await import('../../src/util/downloads.js')
+const { csvUrl, giftUrl, markdownUrl, tableUrl } = await import('../../src/util/downloads.js')
 const { serverMessage } = await import('../../src/toast.js')
 const {
 	MOD_TIMEOUT, PHONE_TIMEOUT, roomsApi, roomApi, importApi, importFilesApi, adminRetentionApi, publicApi, pollImage,
@@ -135,6 +135,7 @@ const GOLDEN = () => [
 	// util/downloads.js (Moderator export button, PaceRun downloads, the deck file)
 	['markdownUrl deck file', 'GET', markdownUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/markdown?requesttoken=tok%2Fen%2B%3D'],
 	['giftUrl Moodle file', 'GET', giftUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/gift?requesttoken=tok%2Fen%2B%3D'],
+	['tableUrl CSV table', 'GET', tableUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/table?requesttoken=tok%2Fen%2B%3D'],
 	['csvUrl results per question', 'GET', csvUrl(CODE), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?requesttoken=tok%2Fen%2B%3D'],
 	['csvUrl players', 'GET', csvUrl(CODE, 'players'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?view=players&requesttoken=tok%2Fen%2B%3D'],
 	['csvUrl answers', 'GET', csvUrl(CODE, 'answers'), '/index.php/apps/vibears/api/1.0/rooms/Ab3dE9/export?view=answers&requesttoken=tok%2Fen%2B%3D'],
@@ -193,8 +194,8 @@ function routeOf(url, prefix, verb) {
 	return ROUTES.find((r) => r.verb === verb && r.re.test(path))
 }
 
-test('routes.php: all 50 url entries parsed, each with a verb and a controller', () => {
-	assert.equal(ROUTES.length, 50)
+test('routes.php: all 51 url entries parsed, each with a verb and a controller', () => {
+	assert.equal(ROUTES.length, 51)
 	for (const r of ROUTES) assert.match(r.verb, /^(GET|POST|PUT|DELETE)$/, r.url)
 	assert.deepEqual([...new Set(ROUTES.map((r) => r.controller))].sort(), ['addin', 'adminSettings', 'page', 'public', 'publicVote', 'roomApi'])
 	// the parser picked up the requirements: a 6-character code only
@@ -420,6 +421,8 @@ const BUILDERS = {
 	downloadMarkdown: { code: true, paths: () => [markdownUrl(CODE)] }, // location.assign(markdownUrl(code))
 	giftUrl: { code: true, paths: () => [giftUrl(CODE)] },
 	downloadGift: { code: true, paths: () => [giftUrl(CODE)] }, // location.assign(giftUrl(code))
+	tableUrl: { code: true, paths: () => [tableUrl(CODE)] },
+	downloadTable: { code: true, paths: () => [tableUrl(CODE)] }, // location.assign(tableUrl(code))
 	importApi: { paths: () => [importApi()] },
 	importFilesApi: { paths: () => [importFilesApi()] },
 	adminRetentionApi: { paths: () => [adminRetentionApi()] },

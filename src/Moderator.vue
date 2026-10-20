@@ -42,8 +42,8 @@
 				     (Nextcloud's picker, so shared folders are in reach). -->
 				<p class="start-import">
 					<label class="vibears-btn is-secondary is-sm start-import-pick" :class="{ 'is-disabled': busy || importBusy }">
-						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ importBusy ? t('vibears', 'Importing …') : t('vibears', 'Import a deck (Markdown, ZIP or GIFT)') }}
-						<input ref="importInput" class="start-import-input" type="file" accept=".md,.markdown,.txt,.gift,.zip,text/markdown,text/plain,application/zip" :disabled="busy || importBusy" @change="importDeck">
+						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ importBusy ? t('vibears', 'Importing …') : t('vibears', 'Import a deck (Markdown, ZIP, GIFT, CSV or Excel)') }}
+						<input ref="importInput" class="start-import-input" type="file" accept=".md,.markdown,.txt,.gift,.csv,.xlsx,.zip,text/markdown,text/plain,text/csv,application/zip,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :disabled="busy || importBusy" @change="importDeck">
 					</label>
 					<button v-if="filesPicker" type="button" class="vibears-btn is-secondary is-sm" :disabled="busy || importBusy" @click="importFromFiles">
 						<VibearsIcon name="download" size="1em" class="ic-flip-v" /> {{ t('vibears', 'Import from Files') }}
@@ -595,7 +595,7 @@ import CountdownRing from './components/CountdownRing.vue'
 import IntakeBoard from './components/IntakeBoard.vue'
 import { vibearsConfirm } from './util/confirm.js'
 import { formatCode, remainingSecs, paceStateChip, fmtAgo, fmtNum } from './util/format.js'
-import { csvUrl, downloadGift, downloadMarkdown } from './util/downloads.js'
+import { csvUrl, downloadGift, downloadMarkdown, downloadTable } from './util/downloads.js'
 import { isPacedRoom, windowState, progressCounts } from './util/pace.js'
 import { QUESTION_TYPES, emptyDraft, typeOptionsFor, typeTag, scaleModeLabel, typeLabel, answerHint, lossText } from './util/question-types.js'
 import pollingMixin from './mixins/polling.js'
@@ -903,6 +903,7 @@ export default {
 				if (this.isQuiz) {
 					items.push({ key: 'gift', label: t('vibears', 'Export for Moodle (GIFT)'), icon: 'download', act: this.exportGift })
 				}
+				items.push({ key: 'csv', label: t('vibears', 'Export as CSV (spreadsheet)'), icon: 'download', act: this.exportTable })
 				if (this.filesPicker) {
 					items.push({ key: 'save', label: t('vibears', 'Save to Files'), icon: 'copy', disabled: this.busy, act: () => this.saveToFiles(this.room.code) })
 				}
@@ -1184,6 +1185,10 @@ export default {
 		exportGift() {
 			if (this.room) downloadGift(this.room.code)
 		},
+		// The deck as a CSV table, the columns of Kahoot!'s template.
+		exportTable() {
+			if (this.room) downloadTable(this.room.code)
+		},
 		// A deck file becomes a new room (POST /import). The file is read here
 		// and sent as text; the server answers with the room, which we open
 		// like one from "My rooms". The caps, the rate limit and every rule
@@ -1195,8 +1200,8 @@ export default {
 			if (!file) return
 			this.importBusy = true
 			try {
-				// A ZIP (the export with images) goes up as it is; Markdown as text.
-				const zip = /\.zip$/i.test(file.name) || /zip/.test(file.type || '')
+				// A ZIP (the export with images) or a workbook goes up as it is; text as text.
+				const zip = /\.(zip|xlsx)$/i.test(file.name) || /zip|spreadsheetml/.test(file.type || '')
 				let body
 				if (zip) {
 					body = new FormData()
@@ -1835,6 +1840,7 @@ export default {
 				{ key: 'copy', label: t('vibears', 'Copy as a template'), icon: 'copy', disabled: this.busy, act: () => this.duplicateRoom(r) },
 				{ key: 'md', label: t('vibears', 'Export as Markdown'), icon: 'download', disabled: !r.pollCount, act: () => downloadMarkdown(r.code) },
 				...(r.mode === 'quiz' ? [{ key: 'gift', label: t('vibears', 'Export for Moodle (GIFT)'), icon: 'download', disabled: !r.pollCount, act: () => downloadGift(r.code) }] : []),
+				{ key: 'csv', label: t('vibears', 'Export as CSV (spreadsheet)'), icon: 'download', disabled: !r.pollCount, act: () => downloadTable(r.code) },
 				...(this.filesPicker ? [{ key: 'save', label: t('vibears', 'Save to Files'), icon: 'copy', disabled: !r.pollCount || this.busy, act: () => this.saveToFiles(r.code) }] : []),
 				{ key: 'del', label: t('vibears', 'Delete room'), icon: 'trash', act: () => this.deleteRoom(r), danger: true },
 			]

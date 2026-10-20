@@ -13,6 +13,16 @@ notes of a version from its section here, so every version needs an entry.
 ## [0.21.0] - 2026-10-20
 
 ### Added
+- **CSV and Kahoot!'s spreadsheet template.** "Export as CSV (spreadsheet)"
+  writes the deck as a comma-separated table with the columns of Kahoot!'s
+  quiz template plus a type column; the import reads such a table as CSV
+  (comma, semicolon or tab) or as an `.xlsx` workbook — the template
+  itself, filled in, or any sheet with those headers. The header row is
+  found by its "Question" column wherever it sits, types are inferred the
+  way the template means them (one key: multiple choice; several: multiple
+  answers; True/False), a sheet without keys becomes a poll, and a row
+  that cannot be stored is refused with its row number. New route
+  `GET /api/1.0/rooms/{code}/table`; "Save to Files" takes `format: table`.
 - **Moodle GIFT import and export.** "Export for Moodle (GIFT)" in a quiz
   room's menu writes the deck as a GIFT file for Moodle's question bank;
   the import takes GIFT files as well (the file input, "Import from Files"

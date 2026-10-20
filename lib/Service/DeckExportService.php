@@ -22,20 +22,25 @@ class DeckExportService {
         private DeckMarkdown $markdown,
         private DeckArchive $archive,
         private DeckGift $gift,
+        private DeckTable $table,
         private PollImageService $images,
     ) {
     }
 
     /**
      * @param string $format 'markdown' (the deck file, .md or .zip with
-     *        images) or 'gift' (Moodle GIFT, quiz rooms only)
-     * @return array{content: string, ext: string, mime: string} ext is md, zip or gift
+     *        images), 'gift' (Moodle GIFT, quiz rooms only) or 'table' (CSV
+     *        with the columns of Kahoot!'s template)
+     * @return array{content: string, ext: string, mime: string} ext is md, zip, gift or csv
      * @throws \InvalidArgumentException GIFT of a poll
      */
     public function export(Room $room, string $format = 'markdown'): array {
         $polls = array_values($this->deckService->deck($room));
         if ($format === 'gift') {
             return ['content' => $this->gift->export($room, $polls), 'ext' => 'gift', 'mime' => 'text/plain; charset=utf-8'];
+        }
+        if ($format === 'table') {
+            return ['content' => $this->table->export($room, $polls), 'ext' => 'csv', 'mime' => 'text/csv; charset=utf-8'];
         }
         $paths = [];
         $files = [];

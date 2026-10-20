@@ -70,7 +70,7 @@ class RoomApiErrorMapTest extends TestCase {
      * one side.
      */
     private const WITHOUT_MESSAGE_ANSWER = [
-        'index', 'summary', 'exportCsv', 'exportMarkdown', 'rename', 'leaderboard', 'show', 'destroy',
+        'index', 'summary', 'exportCsv', 'exportMarkdown', 'exportTable', 'rename', 'leaderboard', 'show', 'destroy',
         'resetRoom', 'practice', 'reveal', 'endQuiz', 'progress', 'showImage', 'demoClear',
     ];
 
@@ -340,6 +340,7 @@ class RoomApiErrorMapTest extends TestCase {
             'summary' => ['summary', ['ABCDEF'], 'state::summary', false],
             'exportCsv' => ['exportCsv', ['ABCDEF'], 'state::exportCsv', false],
             'exportMarkdown' => ['exportMarkdown', ['ABCDEF'], 'export::export', false],
+            'exportTable' => ['exportTable', ['ABCDEF'], 'export::export', false],
             'rename' => ['rename', ['ABCDEF'], 'rooms::setTitle', false],
             'leaderboard' => ['leaderboard', ['ABCDEF'], 'votes::leaderboardFor', false],
             'show' => ['show', ['ABCDEF'], 'deck::roomView', false],

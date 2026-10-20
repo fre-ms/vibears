@@ -93,6 +93,7 @@ class OwnerActivityTest extends TestCase {
             'demoClear' => ['demoClear', $c],
             'exportMarkdown' => ['exportMarkdown', $c],
             'exportGift' => ['exportGift', $c],
+            'exportTable' => ['exportTable', $c],
             'saveToFiles' => ['saveToFiles', $c],
         ];
     }

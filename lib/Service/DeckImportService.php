@@ -28,6 +28,7 @@ class DeckImportService {
         private DeckMarkdown $format,
         private DeckArchive $archive,
         private DeckGift $gift,
+        private DeckTable $table,
         private RoomService $roomService,
         private DeckService $deckService,
         private PollImageService $images,
@@ -38,18 +39,30 @@ class DeckImportService {
 
     /**
      * @param string $content the file: Markdown with its YAML header, the ZIP
-     *        export, or a Moodle GIFT file (anything that does not start with
-     *        the header is read as GIFT)
+     *        export, an .xlsx workbook (Kahoot!'s template), a CSV table or a
+     *        Moodle GIFT file. A ZIP is a workbook when it holds one, a text
+     *        is Markdown by its header, a table by a header row with a
+     *        "Question" column, and GIFT otherwise.
      * @throws \InvalidArgumentException the file, a cap, or a question (with its number)
      */
     public function import(string $uid, string $content): Room {
         $images = null;
-        if (DeckArchive::isArchive($content)) {
-            $read = $this->archive->read($content);
-            $content = $read['markdown'];
-            $images = $read['images'];
+        if (DeckArchive::isArchive($content) && $this->table->isXlsx($content)) {
+            $deck = $this->table->parseXlsx($content);
+        } else {
+            if (DeckArchive::isArchive($content)) {
+                $read = $this->archive->read($content);
+                $content = $read['markdown'];
+                $images = $read['images'];
+            }
+            if (self::isMarkdown($content)) {
+                $deck = $this->format->parse($content);
+            } elseif (DeckTable::looksLikeCsv($content)) {
+                $deck = $this->table->parseCsv($content);
+            } else {
+                $deck = $this->gift->parse($content);
+            }
         }
-        $deck = self::isMarkdown($content) ? $this->format->parse($content) : $this->gift->parse($content);
         $room = $this->roomService->createRoom($uid, $deck['mode'], $deck['title']);
         try {
             $this->applyFlow($room, $deck);

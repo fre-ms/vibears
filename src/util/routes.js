@@ -69,6 +69,15 @@ export function roomGift(code) {
 }
 
 /**
+ * The deck of a room as a CSV table (GET, a download).
+ * @param {string} code room code
+ * @return {string} URL
+ */
+export function roomTable(code) {
+	return generateUrl('/apps/vibears/api/1.0/rooms/' + code + '/table')
+}
+
+/**
  * Moderator API: a new room from a deck file (POST { markdown }, or the
  * file itself as the upload `file`).
  * @return {string} URL

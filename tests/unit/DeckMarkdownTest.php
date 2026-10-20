@@ -422,6 +422,7 @@ class DeckMarkdownTest extends TestCase {
             // The real reader: a text without the Markdown header is GIFT, and
             // one that is neither is refused by it.
             $gift ?? new DeckGift($l10n),
+            $this->createMock(\OCA\Vibears\Service\DeckTable::class),
             $rooms,
             $deck,
             $images ?? $this->createMock(PollImageService::class),

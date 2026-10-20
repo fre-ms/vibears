@@ -21,16 +21,37 @@ class CsvFormat {
      * 8.4 wants the escape character stated explicitly).
      *
      * @param iterable<list<int|string>> $rows
+     * @param string $separator `;` for the result exports (Excel), `,` for
+     *        the deck table (DeckTable), which spreadsheets and scripts read alike
+     * @param bool $quoteOnlyWhenNeeded quote a field only when it holds the
+     *        separator, a quote or a line break (RFC 4180, the way a spreadsheet
+     *        writes it) — fputcsv also quotes every field with a space, which
+     *        makes a deck table hard to read and diff
      */
-    public static function document(iterable $rows): string {
+    public static function document(iterable $rows, string $separator = ';', bool $quoteOnlyWhenNeeded = false): string {
+        if ($quoteOnlyWhenNeeded) {
+            $csv = '';
+            foreach ($rows as $row) {
+                $csv .= implode($separator, array_map(static fn (int|string $f): string => self::field((string)$f, $separator), $row)) . "\r\n";
+            }
+            return "\xEF\xBB\xBF" . $csv;
+        }
         $fh = fopen('php://temp', 'r+');
         foreach ($rows as $row) {
-            fputcsv($fh, $row, ';', '"', '');
+            fputcsv($fh, $row, $separator, '"', '');
         }
         rewind($fh);
         $csv = stream_get_contents($fh);
         fclose($fh);
         return "\xEF\xBB\xBF" . $csv; // UTF-8 BOM
+    }
+
+    /** A field as RFC 4180 writes it: quoted, with quotes doubled, only when it must be. */
+    private static function field(string $f, string $separator): string {
+        if ($f === '' || !preg_match('/[' . preg_quote($separator, '/') . '"\r\n]/', $f)) {
+            return $f;
+        }
+        return '"' . str_replace('"', '""', $f) . '"';
     }
 
     /**

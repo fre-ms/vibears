@@ -179,6 +179,19 @@ class RoomApiController extends Controller {
     }
 
     /**
+     * The deck as a CSV table (DeckTable): the columns of Kahoot!'s quiz
+     * template plus a type column; "-deck" in the name keeps it apart from
+     * the results CSV.
+     */
+    #[NoAdminRequired]
+    public function exportTable(string $code): Response {
+        return $this->withRoom($code, function ($room) {
+            $file = $this->deckExport->export($room, 'table');
+            return new DataDownloadResponse($file['content'], 'vibears-' . $room->getCode() . '-deck.' . $file['ext'], $file['mime']);
+        });
+    }
+
+    /**
      * A new room from a deck file. Body: { markdown: string }, or the file
      * itself (Markdown, or the ZIP export with images) as the upload
      * `file`. Counts against the room rate limit (it creates one) and the
@@ -223,8 +236,8 @@ class RoomApiController extends Controller {
     /**
      * The deck file written into a folder of the account's Files. Body:
      * { folder, format? } (the folder relative to the account's root, "/"
-     * for the root; format "gift" for the Moodle file, otherwise the deck
-     * file). The file is named after the room's title
+     * for the root; format "gift" for the Moodle file, "table" for the CSV
+     * table, otherwise the deck file). The file is named after the room's title
      * (DeckExportService::fileStem) and gets " (2)" and so on when the name
      * is taken; answers { path, name }. 400 with a message for a folder
      * that is not there or not writable, or GIFT of a poll.
@@ -233,7 +246,8 @@ class RoomApiController extends Controller {
     public function saveToFiles(string $code): Response {
         return $this->withRoom($code, function ($room) {
             $folder = Input::str($this->request->getParam('folder'), '/');
-            $format = Input::str($this->request->getParam('format')) === 'gift' ? 'gift' : 'markdown';
+            $wanted = Input::str($this->request->getParam('format'));
+            $format = in_array($wanted, ['gift', 'table'], true) ? $wanted : 'markdown';
             $file = $this->deckExport->export($room, $format);
             $path = $this->files->save($this->uid(), $folder, DeckExportService::fileStem($room) . '.' . $file['ext'], $file['content']);
             return new JSONResponse(['path' => $path, 'name' => basename($path)]);
