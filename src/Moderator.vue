@@ -130,6 +130,7 @@
 					<span class="vibears-chip deck-mode" :class="isQuiz ? 'is-quiz' : 'is-accent'"><VibearsIcon :name="isQuiz ? 'quiz' : 'poll'" size="1em" /> {{ isPaced ? t('vibears', 'Quiz · self-paced') : isQuiz ? t('vibears', 'Quiz') : t('vibears', 'Poll') }}</span>
 					<span v-if="deckStateChip" class="vibears-chip deck-state" :class="deckStateChip.cls"><span v-if="deckStateChip.dot" class="vibears-chip-dot" />{{ deckStateChip.label }}</span>
 					<span class="deck-head-spacer" />
+					<button v-if="room" class="vibears-btn is-secondary is-sm deck-beamer" :title="t('vibears', 'Open the projector view in a window of its own')" @click="openBeamer"><VibearsIcon name="beamer" size="1em" /> {{ t('vibears', 'Projector') }}</button>
 					<VibearsMenu :items="deckMenu" :label="t('vibears', 'More actions')" />
 					<!-- Empty deck: the header has no primary action, the empty state in the
 					     middle carries it. While a form is open, the header steps
@@ -445,7 +446,9 @@
 				<span v-if="isQuiz && room && room.joinsLocked" class="vibears-chip is-locked"><VibearsIcon name="lock" size="1em" /> {{ t('vibears', 'Joining locked') }}</span>
 				<span class="mod-spacer" />
 				<span v-if="room" class="mod-code" :title="t('vibears', 'Room code')">{{ spacedCode }}</span>
-				<button class="vibears-btn is-secondary is-sm" :aria-expanded="joinOpen ? 'true' : 'false'" @click="toggleJoin">{{ t('vibears', 'Join') }}</button>
+				<!-- The projector is a window of its own, as it was before the
+				     redesign: a visible button, not a menu entry. -->
+				<button class="vibears-btn is-secondary is-sm mod-beamer" :title="t('vibears', 'Open the projector view in a window of its own')" @click="openBeamer"><VibearsIcon name="beamer" size="1em" /> {{ t('vibears', 'Projector') }}</button>
 				<!-- Overflow menu: everything needed once or twice per session,
 				     instead of glowing permanently next to the work area. -->
 				<VibearsMenu :items="menuItems" :label="t('vibears', 'More actions')" small />
@@ -471,31 +474,45 @@
 						@conflict="refreshRoom(true)" />
 				</div>
 				<template v-else>
-					<!-- Canvas preview instead of a replica: the same page as
-					     /screen/{code}, scaled down to 16:9. A rebuild would be a
-					     second truth that drifts apart; this way the moderator
-					     sees what the room sees. Read-only — the direction
-					     "projector mirrors the moderator" stays forbidden. -->
-					<div ref="canvas" class="mod-canvas">
-						<div class="mod-canvas-in" :style="canvasStyle">
-							<iframe v-if="room" class="mod-frame" :style="frameStyle" :src="screenPath" :title="t('vibears', 'Preview of the projector view')" />
+					<!-- The lecturer's view as it was before the July 2026 redesign
+					     (Pulse 0.17): the join column with the QR code on the left, the
+					     question with its live distribution on the right — and no mirror
+					     of the projector in here. The projector is a window of its own
+					     ("Projector" in the header), so the two never get mixed up on
+					     the presenting laptop. -->
+					<aside class="mod-joincol" :aria-label="t('vibears', 'Join in')">
+						<h2 class="mod-joincol-head">{{ t('vibears', 'Join in') }}</h2>
+						<div class="qr-card mod-join-qr"><QrCode :value="joinUrlFull" /></div>
+						<span class="join-hint">{{ t('vibears', 'Join in — code at') }} <b>{{ joinBase }}</b></span>
+						<span class="join-code">{{ spacedCode }}</span>
+						<div class="join-link">
+							<a class="join-url" :href="joinPath" target="_blank" rel="noopener">{{ joinUrl }}</a>
+							<button class="vibears-btn is-secondary is-icon is-xs join-copy" :title="t('vibears', 'Copy join link')" :aria-label="t('vibears', 'Copy join link')" @click="copyJoin"><VibearsIcon name="copy" size="1em" /></button>
 						</div>
-					</div>
+						<!-- Several addresses (trusted_domains): the moderator picks the one the
+						     audience should use; the room keeps it, so projector and add-in follow. -->
+						<label v-if="joinHosts.length > 1" class="join-host">
+							<span class="join-host-lbl">{{ t('vibears', 'Address of the join link') }}</span>
+							<select class="pinput pinput--sel join-host-sel" :value="joinHostValue" :disabled="busy" :aria-label="t('vibears', 'Address of the join link')" @change="setJoinHost($event.target.value)">
+								<option v-for="h in joinHosts" :key="h.host" :value="h.host">{{ h.host }}</option>
+							</select>
+						</label>
+					</aside>
 					<!-- The floating results window (menu → "Float results"): the
 					     projector page in a window above every other, or the painted
 					     card where the browser cannot float a page. -->
 					<FloatResults v-if="canFloat && room" ref="float" :screen-url="floatUrl" :card="floatCardState" />
-					<!-- "Only for you" (E3): the state the room does NOT see.
-					     In fullscreen the panel is not hidden but not in the
-					     document at all — fullscreen is exactly the mode that
-					     gets projected. This is not a question of looks but one
-					     of security (§9.3). -->
-					<aside v-if="!isFullscreen" class="mod-private">
-						<h2 class="mod-private-head"><VibearsIcon name="lock" size="1.05em" /> {{ t('vibears', 'Only for you') }}</h2>
-						<p class="mod-private-sub">{{ t('vibears', 'Live distribution — this panel never goes on the projector.') }}</p>
+					<!-- The question and the state the room does NOT see yet: the live
+					     distribution of a quiz question stays here until the reveal (§9.3). -->
+					<main class="mod-main">
+						<template v-if="currentPoll">
+							<RichText tag="h2" class="mod-q" :text="currentPoll.question" />
+							<img v-if="currentPoll.image" class="mod-qimg" :src="modImageUrl(currentPoll)" :alt="t('vibears', 'Image for the question')">
+						</template>
+						<p class="mod-private-sub"><VibearsIcon name="lock" size="1em" /> {{ t('vibears', 'Live distribution — this panel never goes on the projector.') }}</p>
 						<div v-if="currentPoll" class="mod-private-body">
 							<TextGrading v-if="currentPoll.type === 'text'" :results="results" @grade="gradeAnswer" />
-							<ResultsView v-else dense :results="results" :correct-id="currentPoll.correctOption || ''" :correct-ids="((currentPoll.answerKey || {}).correct) || []" :answer-key="currentPoll.answerKey || null" />
+							<ResultsView v-else :results="results" :correct-id="currentPoll.correctOption || ''" :correct-ids="((currentPoll.answerKey || {}).correct) || []" :answer-key="currentPoll.answerKey || null" />
 						</div>
 						<p v-else class="mod-private-empty">{{ t('vibears', 'No question yet — the room shows the code and waits.') }}</p>
 						<Leaderboard v-if="isQuiz && leaderboard.length" class="mod-private-lb" :rows="leaderboard" :limit="5" />
@@ -518,18 +535,24 @@
 							<button class="vibears-btn is-secondary is-sm" :disabled="demoBusy" @click="seedDemo"><VibearsIcon name="plus" size="1em" /> {{ t('vibears', 'Create votes') }}</button>
 							<button class="vibears-btn is-danger is-sm" :disabled="demoBusy" @click="clearDemo"><VibearsIcon name="trash" size="1em" /> {{ t('vibears', 'Clear demo') }}</button>
 						</div>
-					</aside>
+					</main>
 				</template>
 			</div>
 
+			<!-- The button row as in the lecturer's view before the redesign: paging,
+			     the one filled button that knows what is up next (Reveal → Next
+			     question → Show final standings → Finish), the leaderboard and
+			     Finish side by side — nobody has to click through the whole deck to
+			     end a quiz, and nothing hides in the menu that is needed during a
+			     talk. -->
 			<footer class="mod-bar">
 				<button class="vibears-btn is-secondary" :disabled="!canPrev || (phase === 'leaderboard' && quizOver)" @click="prev"><VibearsIcon name="chevron" size="1em" class="ic-flip" /> {{ t('vibears', 'Back') }}</button>
-				<!-- The only filled button on the screen, and it knows what is
-				     up next (§9.1). Colored as destructive only at the final standings. -->
+				<button v-if="canNext && primary.key !== 'next' && !(phase === 'leaderboard' && quizOver)" class="vibears-btn is-secondary" @click="next">{{ t('vibears', 'Next') }} <VibearsIcon name="chevron" size="1em" /></button>
 				<button class="vibears-btn mod-primary is-lg" :class="primary.danger ? 'is-danger is-solid' : 'is-primary'" :disabled="!online || busy" :title="online ? '' : t('vibears', 'No connection to the room')" @click="runPrimary">
 					<VibearsIcon :name="primary.icon" size="1.05em" /> {{ primary.label }}
 				</button>
-				<button v-if="canNext && primary.key !== 'next' && !(phase === 'leaderboard' && quizOver)" class="vibears-btn is-secondary" @click="next">{{ t('vibears', 'Next') }} <VibearsIcon name="chevron" size="1em" /></button>
+				<button v-if="isQuiz && !isPractice && phase === 'present'" class="vibears-btn is-secondary" @click="openLeaderboard"><VibearsIcon name="ranking" size="1em" /> {{ t('vibears', 'Leaderboard') }}</button>
+				<button v-if="phase === 'present' && !['finish', 'end', 'standings'].includes(primary.key)" class="vibears-btn is-danger" :disabled="!online || busy" @click="finish"><VibearsIcon name="close" size="1em" /> {{ isQuiz ? t('vibears', 'Finish quiz') : t('vibears', 'Finish') }}</button>
 				<span v-if="advanceIn !== null" class="vibears-chip is-accent auto-next" role="status"><VibearsIcon name="timer" size="1em" /> {{ advanceLabel }} {{ t('vibears', 'in {seconds} s', { seconds: advanceIn }) }}</span>
 				<button v-if="advanceIn !== null" class="vibears-btn is-secondary is-sm" @click="cancelAdvance">{{ t('vibears', 'Stop') }}</button>
 				<span class="mod-spacer" />
@@ -542,29 +565,6 @@
 			     nobody is connected — that is when it is needed —, then
 			     collapsed once and reachable via the button in the header.
 			     The link sits only here, not permanently. -->
-			<div v-if="joinOpen" class="mod-joinwrap" @click.self="joinOpen = false">
-				<aside class="mod-joinpanel" role="dialog" :aria-label="t('vibears', 'Join in')">
-					<div class="mod-join-head">
-						<h2>{{ t('vibears', 'Join in') }}</h2>
-						<button class="vibears-btn is-secondary is-icon is-sm" :title="t('vibears', 'Close')" :aria-label="t('vibears', 'Close')" @click="joinOpen = false"><VibearsIcon name="close" size="1.05em" /></button>
-					</div>
-					<div class="qr-card mod-join-qr"><QrCode :value="joinUrlFull" /></div>
-					<span class="join-hint">{{ t('vibears', 'Join in — code at') }} <b>{{ joinBase }}</b></span>
-					<span class="join-code">{{ spacedCode }}</span>
-					<div class="join-link">
-						<a class="join-url" :href="joinPath" target="_blank" rel="noopener">{{ joinUrl }}</a>
-						<button class="vibears-btn is-secondary is-icon is-xs join-copy" :title="t('vibears', 'Copy join link')" :aria-label="t('vibears', 'Copy join link')" @click="copyJoin"><VibearsIcon name="copy" size="1em" /></button>
-					</div>
-				<!-- Several addresses (trusted_domains): the moderator picks the one the
-					     audience should use; the room keeps it, so projector and add-in follow. -->
-					<label v-if="joinHosts.length > 1" class="join-host">
-						<span class="join-host-lbl">{{ t('vibears', 'Address of the join link') }}</span>
-						<select class="pinput pinput--sel join-host-sel" :value="joinHostValue" :disabled="busy" :aria-label="t('vibears', 'Address of the join link')" @change="setJoinHost($event.target.value)">
-							<option v-for="h in joinHosts" :key="h.host" :value="h.host">{{ h.host }}</option>
-						</select>
-					</label>
-				</aside>
-			</div>
 		</section>
 	</div>
 </template>
@@ -633,8 +633,6 @@ export default {
 			// The addresses the join link can use (trusted_domains), current one first (JoinAddresses).
 			joinHosts: (loadState('vibears', 'joinHosts', { hosts: [] }).hosts || []),
 			isFullscreen: false,
-			joinOpen: false,   // join panel — a state, not a column (§9.4)
-			frameScale: 0.5,   // scale of the canvas preview (1280×720 -> box)
 			tickTimer: null,
 			advanceTimer: null,  // auto-advance after the timer ends
 			advanceAtSec: 0,     // local target second (0 = nothing scheduled)
@@ -819,11 +817,6 @@ export default {
 			if (!this.currentPoll) return t('vibears', 'No question yet')
 			return t('vibears', 'Question {number} of {total}', { number: this.currentIndex + 1, total: this.deck.length })
 		},
-		// The canvas preview shows the real projector page (same-origin), not
-		// a rebuild: two truths would otherwise drift apart.
-		screenPath() {
-			return this.room ? screenPage(this.room.code) : ''
-		},
 		// ── Floating results window (util/float.js) ────────────────────
 		canFloat() {
 			return floatMode() !== 'none'
@@ -837,12 +830,6 @@ export default {
 		// The painted card where the browser cannot float the page itself.
 		floatCardState() {
 			return floatCard({ poll: this.currentPoll, results: this.results, answered: this.results ? (this.results.total || 0) : 0, remaining: null })
-		},
-		canvasStyle() {
-			return { width: Math.round(1280 * this.frameScale) + 'px', height: Math.round(720 * this.frameScale) + 'px' }
-		},
-		frameStyle() {
-			return { transform: 'scale(' + this.frameScale + ')' }
 		},
 		/*
 		 * THE primary action (§9.1) — the only filled button, and it knows what is
@@ -998,9 +985,7 @@ export default {
 		},
 	},
 	watch: {
-		// The preview's scale depends on the box, the box on the phase.
 		phase(v) {
-			this.$nextTick(this.fitFrame)
 			if (v !== 'pace') this.paceFocus = false
 		},
 		// Room no longer self-paced (switched over, other tab): old
@@ -1039,10 +1024,6 @@ export default {
 		},
 	},
 	created() {
-		// Deliberately outside data(): Vue should not wrap the observer in a
-		// reactive proxy.
-		this.canvasRo = null
-		this.canvasWatched = null
 		// Deck order saves started so far (onReorder). Tells a read-back of the
 		// order whether a newer move has overtaken it; nothing renders it.
 		this.reorderSeq = 0
@@ -1050,9 +1031,6 @@ export default {
 	async mounted() {
 		document.addEventListener('fullscreenchange', this.onFsChange)
 		document.addEventListener('visibilitychange', this.onPollVisibility)
-		document.addEventListener('keydown', this.onEscape)
-		window.addEventListener('resize', this.fitFrame)
-		this.observeCanvas()
 		this.tickTimer = setInterval(() => { this.nowSec = Math.floor(Date.now() / 1000) }, 500)
 		const m = window.location.pathname.match(/\/room\/([A-Za-z0-9]{6})$/)
 		if (m) {
@@ -1063,18 +1041,12 @@ export default {
 			this.fetchMyRooms()
 		}
 	},
-	updated() {
-		this.observeCanvas()
-	},
 	beforeDestroy() {
 		this.pollStopped = true
 		this.stopPolling()
 		if (this.tickTimer) clearInterval(this.tickTimer)
 		document.removeEventListener('fullscreenchange', this.onFsChange)
 		document.removeEventListener('visibilitychange', this.onPollVisibility)
-		document.removeEventListener('keydown', this.onEscape)
-		window.removeEventListener('resize', this.fitFrame)
-		if (this.canvasRo) this.canvasRo.disconnect()
 	},
 	methods: {
 		hasRich,
@@ -1689,48 +1661,11 @@ export default {
 		runPrimary() {
 			this.primary.act()
 		},
-		toggleJoin() {
-			this.joinOpen = !this.joinOpen
-		},
-		onEscape(e) {
-			if (e.key !== 'Escape') return
-			if (this.joinOpen) this.joinOpen = false
-		},
 		// Empty stage: the way back into the deck with the composer open (§9.8).
 		addQuestion() {
 			this.backToDeck()
 			this.openComposer()
 		},
-		/*
-		 * Scale of the canvas preview: the projector page computes in vw/vh and
-		 * therefore needs its real kiosk (1280×720) — it is scaled down via
-		 * transform, not via the window size. Otherwise the iframe would hold a
-		 * different layout than the room, and the preview would be worthless.
-		 */
-		fitFrame() {
-			const box = this.$refs.canvas
-			if (!box) return
-			const k = Math.min(box.clientWidth / 1280, box.clientHeight / 720)
-			if (k > 0.05 && Math.abs(k - this.frameScale) > 0.002) this.frameScale = k
-		},
-		/*
-		 * The box also changes size without a window event: the private
-		 * panel goes, fullscreen comes. With fullscreen the new geometry only
-		 * exists AFTER the repaint — a fitFrame() in the same tick still
-		 * measures the old one. The ResizeObserver measures when the time comes.
-		 */
-		observeCanvas() {
-			const box = this.$refs.canvas || null
-			if (box === this.canvasWatched) return
-			if (this.canvasRo) this.canvasRo.disconnect()
-			this.canvasWatched = box
-			if (box && window.ResizeObserver) {
-				if (!this.canvasRo) this.canvasRo = new window.ResizeObserver(() => this.fitFrame())
-				this.canvasRo.observe(box)
-			}
-			this.fitFrame()
-		},
-
 		// ── Fullscreen ──────────────────────────────────────────────────────
 		toggleFullscreen() {
 			if (document.fullscreenElement) {
@@ -1741,11 +1676,6 @@ export default {
 		},
 		onFsChange() {
 			this.isFullscreen = document.fullscreenElement === this.$el
-			// Switching to fullscreen changes the geometry only after the
-			// repaint, and without a window event nothing reports it by
-			// itself — hence a few re-measurements instead of one.
-			this.$nextTick(this.fitFrame)
-			for (const ms of [120, 350, 800]) setTimeout(this.fitFrame, ms)
 		},
 
 		// ── Room ────────────────────────────────────────────────────────────
@@ -2474,19 +2404,20 @@ export default {
 /* Full row in the wrapping header — no grid cell of its own. */
 .mod-offline { flex: 1 0 100%; margin: 0; }
 
-/* Body: preview + private panel */
-.mod-body { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; min-height: 0; padding: 16px 20px; }
+/* Body: the join column on the left, the question with its live distribution
+   on the right — the lecturer's view before the redesign. */
+.mod-body { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 24px; min-height: 0; padding: 16px 20px; }
 /* Below 1000 px stacked — the control bar stays at the bottom (§9.8). */
 @media (max-width: 999px) { .mod-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); overflow-y: auto; } }
-.mod-canvas { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; }
-.mod-canvas-in { position: relative; overflow: hidden; border: 1px solid var(--vibears-border-strong); border-radius: var(--vibears-r-card); background: var(--vibears-screen-bg); }
-/* The kiosk computes in vw/vh: the iframe MUST be 1280×720 and is scaled down via
-   transform. A smaller window would give a different layout than
-   in the room — and with it a preview that proves nothing. */
-.mod-frame { width: 1280px; height: 720px; border: 0; transform-origin: top left; display: block; }
-.mod-private { min-width: 0; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding: 14px; border: 1px solid var(--vibears-border-strong); border-radius: var(--vibears-r-card); background: var(--vibears-surface, var(--vibears-hover)); font-size: 14px; }
-.mod-private-head { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; font-weight: 800; }
-.mod-private-sub { margin: 0 0 4px; font-size: 12px; color: var(--vibears-text-2); }
+.mod-joincol { min-width: 0; display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 16px; overflow-y: auto; border: 1px solid var(--vibears-border-strong); border-radius: var(--vibears-r-card); background: var(--vibears-surface, var(--vibears-hover)); }
+.mod-joincol-head { margin: 0 0 10px; font-size: 18px; }
+.mod-joincol .join-code { font-size: 36px; }
+.mod-joincol .join-hint { line-height: 1.5; }
+@media (max-width: 999px) { .mod-joincol { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 16px; } .mod-joincol-head { flex: 1 0 100%; margin: 0; } .mod-joincol .mod-join-qr { margin: 0; } }
+.mod-main { min-width: 0; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding: 4px 4px 0; font-size: 15px; }
+.mod-q { margin: 0; font-size: clamp(20px, 2vw, 28px); line-height: 1.25; }
+.mod-qimg { max-height: 220px; max-width: 100%; width: auto; align-self: flex-start; border-radius: var(--vibears-r-card); border: 1px solid var(--vibears-border); }
+.mod-private-sub { display: flex; align-items: center; gap: 6px; margin: 0 0 4px; font-size: 12px; color: var(--vibears-text-2); }
 .mod-private-body { min-width: 0; }
 .mod-private-empty { color: var(--vibears-text-2); }
 .mod-private-lb { margin-top: 8px; }
@@ -2501,26 +2432,13 @@ export default {
 .mod-intake { font-size: 11px; }
 .mod-intake :deep(.intake-num) { font-size: 1.9em; }
 
-/* Joining: a state instead of a column (§9.4) */
-.mod-joinwrap { position: absolute; inset: 0; z-index: 40; display: flex; justify-content: flex-end; background: rgba(0, 0, 0, 0.22); }
-/* Column, not flow: hint, code and link are <span>s from the old
-   QR column — side by side they ran into each other. */
-.mod-joinpanel { width: min(420px, 92vw); padding: 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: stretch; gap: 4px; background: var(--vibears-bg); border-inline-start: 1px solid var(--vibears-border-strong); box-shadow: var(--vibears-shadow-pop); }
-.mod-joinpanel .join-code { font-size: 40px; }
-.mod-joinpanel .join-hint { line-height: 1.5; }
-.mod-join-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.mod-join-head h2 { margin: 0; font-size: 20px; }
 .mod-join-qr { margin-bottom: 12px; }
 
-/* Fullscreen = the projected mode: only the canvas. The control bar comes back
-   on hover so you can advance without leaving
-   fullscreen — no answers are shown there. */
+/* Fullscreen: the same view without the header; the control bar comes back
+   on hover. The projector is its own window, so nothing here is meant to
+   be projected. */
 .vibears-mod.is-fs .mod-live { grid-template-rows: minmax(0, 1fr); }
 .vibears-mod.is-fs .mod-top, .vibears-mod.is-fs .mod-offline { display: none; }
-/* Without the private panel, its 360 px column would otherwise remain — the
-   preview would be narrower than the screen in fullscreen. */
-.vibears-mod.is-fs .mod-body { padding: 0; grid-template-columns: minmax(0, 1fr); }
-.vibears-mod.is-fs .mod-canvas-in { border: 0; border-radius: 0; }
 .vibears-mod.is-fs .mod-bar { position: absolute; inset-inline: 0; inset-block-end: 0; background: var(--vibears-bg); transform: translateY(100%); transition: transform 0.15s ease; }
 .vibears-mod.is-fs .mod-bar:hover, .vibears-mod.is-fs .mod-bar:focus-within { transform: none; }
 

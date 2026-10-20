@@ -437,8 +437,8 @@ page they are shown on. Where Nextcloud is reachable under several names, the
 moderator's join panel (in the deck and in the presentation view) offers a
 selector with every plain entry of `trusted_domains`, the current address
 first; wildcard entries such as `*.example.com` cannot become a link and are
-left out. The choice is stored with the room, so the projector window, the
-canvas preview and the PowerPoint add-in show the same address; it stays when
+left out. The choice is stored with the room, so the projector window and
+the PowerPoint add-in show the same address; it stays when
 the room is reopened and is taken over when the room is copied. A stored
 address that disappears from `trusted_domains` later falls back to the page's
 own.
@@ -863,7 +863,7 @@ network.
 - **Names on the podium.** Anyone with the code can join a quiz under any free
   name and reach the projector's podium. The host can lock joining ("Lock
   joining" in the menus) and remove players — in a moderated quiz from the
-  "Participants" list in the "Only for you" panel and under the standings, in
+  "Participants" list of the lecturer's view and under the standings, in
   a self-paced one from the progress view. A removed player's answers are
   deleted; they can join again from zero points unless joining is locked. In a
   moderated quiz a name is frozen once its player has answered or a question

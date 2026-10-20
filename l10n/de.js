@@ -1,6 +1,7 @@
 OC.L10N.register(
     "vibears",
     {
+        "Open the projector view in a window of its own": "Öffnet die Beamer-Ansicht in einem eigenen Fenster",
         "Float results": "Ergebnis schweben lassen",
         "Floating": "Schwebt",
         "Show the live result in a small window that stays above other windows — above a full-screen slide show too.": "Zeigt das Live-Ergebnis in einem kleinen Fenster, das über anderen Fenstern bleibt — auch über einer Vollbild-Präsentation.",

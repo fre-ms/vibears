@@ -54,6 +54,23 @@ notes of a version from its section here, so every version needs an entry.
   code, the join link, the projector and the PowerPoint add-in. The current
   address stays the default. New column `join_host` on the rooms table.
 
+### Changed
+- **The lecturer's view is the one from before the redesign again.** Pulse
+  0.17 (July 2026) rebuilt the presentation view around a scaled-down
+  mirror of the projector, with the join code behind a "Join" button and
+  "Projector", "Leaderboard" and "Finish" in an overflow menu. In a lecture
+  hall that reads as one window that shows the QR code and the questions
+  at once, and a quiz could only be ended by clicking through the deck
+  unless one found the menu. The view now has the join column with the
+  QR code, the code and the link on the left, the question with its live
+  distribution (the part the room does not see yet) on the right, and a
+  button row with Back, Next, the one filled button that knows what is up
+  next, Leaderboard and Finish side by side. "Projector" is a visible
+  button in the deck header and in the presentation header; it opens the
+  projector in a window of its own, as before. The projector mirror is
+  gone from this view — the real projector window and "Float results" show
+  what the room sees.
+
 ## [0.20.0] - 2026-10-09
 
 The first release of the fork, with an app ID of its own: `vibears`
