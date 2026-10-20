@@ -10,6 +10,8 @@ notes of a version from its section here, so every version needs an entry.
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-10-20
+
 ### Added
 - **Moodle GIFT import and export.** "Export for Moodle (GIFT)" in a quiz
   room's menu writes the deck as a GIFT file for Moodle's question bank;
